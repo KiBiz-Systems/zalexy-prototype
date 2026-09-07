@@ -1,0 +1,1631 @@
+<!--
+  Zalexy Prototype — Profile: Intake Tab
+  Spec:   ai-workspace/prototypes/client/profile-intake-tab.md (chrome revised: §4, §5, §6, §7, §8, §15)
+  Design: ai-workspace/prototypes/_shared/design-system.md §8 (detail-page shell)
+  Static prototype. Not production code. No app dependencies.
+  This screen displays what admin-intake-form-builder.html builds: one client's
+  filled-in "General Intake" form (groups 1,2,3,4,6), plus the Documents group
+  (5) which appears only because connected questions fired for this client.
+  Page chrome (page header, account summary band, alert rail, left rail —
+  Members + Quick Actions — and the two-row grouped nav) is ported verbatim
+  from profile-overview-tab.html, this tab's sibling on the same page, so
+  switching between them reads as a tab change, not a different application.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zalexy — Profile: Intake</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{
+  --primary:#334155; --primary-light:#475569; --primary-dark:#1e293b;
+  --secondary:#10b981; --secondary-light:#34d399; --secondary-dark:#059669;
+  --success:#10b981; --success-bg:#d1fae5; --success-dark:#047857;
+  --info:#3b82f6; --info-bg:#eff6ff; --info-dark:#1d4ed8; --info-hover:#2563eb;
+  --bg-default:#f8fafc; --bg-paper:#ffffff;
+  --text-primary:#0f172a; --text-secondary:#64748b;
+  --border:#f1f5f9; --border-input:#cbd5e1; --border-input-hover:#94a3b8;
+  --hover-row:#f1f5f9; --action-hover:rgba(71,85,105,.04); --action-selected:rgba(71,85,105,.08);
+  --danger:#ef4444; --warning:#f59e0b;
+  --radius-card:10px; --radius-base:8px; --radius-control:6px; --radius-chip:4px;
+  --shadow-card:0 2px 4px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.03);
+  --shadow-1:0 1px 3px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Inter","Roboto","Helvetica","Arial",sans-serif;color:var(--text-primary);}
+button,select,input,textarea{font-family:inherit;}
+.app{display:flex;height:100vh;overflow:hidden;}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px;}
+
+/* ---------- Sidebar (app shell) ---------- */
+.sidebar{width:240px;flex:0 0 240px;background:var(--primary-dark);color:#f8fafc;display:flex;flex-direction:column;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:10px;padding:20px 20px 16px;text-decoration:none;color:inherit;}
+.logo span{font-weight:700;font-size:1.05rem;letter-spacing:.02em;}
+.nav{padding:8px 12px;display:flex;flex-direction:column;gap:2px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-base);color:#f8fafc;font-size:.9rem;font-weight:500;text-decoration:none;cursor:pointer;}
+.nav-item .material-symbols-rounded{font-size:20px;min-width:24px;color:rgba(248,250,252,.7);}
+.nav-item.disabled{opacity:.42;cursor:not-allowed;}
+.nav-item:not(.disabled):hover{background:rgba(248,250,252,.08);}
+.nav-item.active{background:rgba(248,250,252,.14);}
+.nav-item.active .material-symbols-rounded{color:#f8fafc;}
+.nav-section{margin:16px 12px 6px;font-size:.7rem;font-weight:700;letter-spacing:.08em;color:rgba(248,250,252,.45);text-transform:uppercase;}
+
+/* ---------- Main ---------- */
+.main{flex:1;display:flex;flex-direction:column;background:var(--bg-default);overflow:hidden;}
+.content{flex:1;overflow-y:auto;}
+.page{max-width:1440px;margin:0 auto;padding:24px 24px 72px;}
+.crumb{font-size:.8rem;color:var(--text-secondary);margin:0;}
+.crumb a{color:var(--text-secondary);text-decoration:none;}
+.crumb a:hover{color:var(--primary);text-decoration:underline;}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
+.page-actions{display:flex;gap:10px;}
+
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:var(--radius-control);padding:8px 16px;font-weight:600;font-size:.875rem;cursor:pointer;box-shadow:none;white-space:nowrap;}
+.btn .material-symbols-rounded{font-size:18px;}
+.btn-sm{padding:6px 12px;font-size:.8rem;}
+.btn-primary{background:var(--info);color:#fff;}
+.btn-primary:hover{background:var(--info-hover);}
+.btn-secondary{background:var(--secondary);color:#fff;}
+.btn-secondary:hover{background:var(--secondary-dark);}
+.btn-outline{background:#fff;color:var(--text-primary);border:1px solid var(--border-input);}
+.btn-outline:hover{border-color:var(--primary);background:var(--action-hover);}
+.btn-danger-outline{background:#fff;color:var(--danger);border:1px solid #fecaca;}
+.btn-danger-outline:hover{background:#fee2e2;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn:disabled:hover{background:inherit;border-color:inherit;}
+
+/* ---------- Card base (group cards + rail cards) ---------- */
+.card{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);border:none;}
+
+/* ---------- Account summary band (ported from profile-overview-tab.html) ---------- */
+.summary-band{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:16px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.summary-name{font-size:1.1rem;font-weight:700;}
+.summary-sep{color:var(--text-secondary);}
+.summary-sub{font-size:.8rem;color:var(--text-secondary);}
+
+/* ---------- Alert rail (ported from profile-overview-tab.html) ---------- */
+.alert-rail{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.alert{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--radius-base);border-left:3px solid;font-size:.875rem;font-weight:500;}
+.alert .material-symbols-rounded{font-size:20px;flex:0 0 auto;}
+.alert-text{flex:1;}
+.alert-warning{background:#fef3c7;color:#b45309;border-left-color:var(--warning);}
+.alert-info{background:var(--info-bg);color:var(--info-dark);border-left-color:var(--info);}
+.alert-danger{background:#fee2e2;color:#b91c1c;border-left-color:var(--danger);}
+
+/* ---------- Review dropdown (intake behavior, now anchored inside an .alert) ---------- */
+.review-dropdown{position:absolute;top:100%;right:0;margin-top:6px;background:#fff;border-radius:var(--radius-base);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);z-index:30;min-width:240px;padding:8px;}
+.review-dropdown button{display:block;width:100%;text-align:left;background:none;border:none;padding:9px 10px;font-size:.8rem;font-weight:500;border-radius:6px;cursor:pointer;color:var(--text-primary);}
+.review-dropdown button:hover{background:var(--action-hover);}
+
+/* ---------- Two-column detail body (design-system §8, ported from profile-overview-tab.html) ---------- */
+.detail-body{display:flex;gap:24px;margin-top:8px;}
+.detail-left{flex-shrink:0;width:33.333%;}
+.detail-right{flex:1;min-width:0;background:#fff;border:1px solid #e2e8f0;border-radius:16px;min-height:500px;overflow:hidden;box-shadow:none;}
+@media(max-width:1024px){
+  .detail-body{flex-direction:column;}
+  .detail-left{width:100%;}
+}
+
+/* ---------- Left rail (ported from profile-overview-tab.html) ---------- */
+.rail-card{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:20px;}
+.rail-card + .rail-card{margin-top:16px;}
+.rail-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.rail-title{font-size:.95rem;font-weight:700;}
+.count-chip{height:20px;font-size:.65rem;font-weight:700;background:#e2e8f0;border-radius:var(--radius-chip);padding:0 7px;display:inline-flex;align-items:center;}
+.member-list{display:flex;flex-direction:column;gap:8px;}
+.member-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--radius-base);cursor:pointer;border-left:3px solid transparent;background:none;border-top:none;border-right:none;border-bottom:none;width:100%;text-align:left;}
+.member-row:hover{background:var(--hover-row);}
+.member-row.selected{background:#f0f9ff;border-left-color:#0369a1;}
+.member-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:.75rem;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.member-avatar.all-avatar{background:#475569;}
+.member-info{flex:1;min-width:0;}
+.member-name{font-size:.9rem;font-weight:700;color:#1e293b;}
+.member-row.selected .member-name{color:#0369a1;}
+.member-sub{font-size:.8rem;color:var(--text-secondary);margin-top:1px;}
+.member-chips{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;flex:0 0 auto;}
+.member-chips .chip-muted{background:#f1f5f9;color:var(--text-secondary);}
+.rail-divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.eyebrow{font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);margin:0 0 10px;}
+.qa-role-label{font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-secondary);display:block;margin:0 0 6px;}
+.role-select{height:34px;padding:6px 10px;font-size:.8rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);width:100%;margin-bottom:14px;}
+.role-select:hover{border-color:var(--border-input-hover);}
+.role-select:focus{border-color:var(--primary);outline:none;}
+.qa-list{display:flex;flex-direction:column;gap:8px;}
+.qa-btn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:1px solid var(--border-input);border-radius:var(--radius-control);padding:8px 14px;font-size:.875rem;font-weight:600;color:var(--text-primary);cursor:pointer;}
+.qa-btn:hover{border-color:var(--primary);background:var(--action-hover);}
+.qa-btn:disabled{opacity:.45;cursor:not-allowed;}
+.qa-btn:disabled:hover{border-color:var(--border-input);background:#fff;}
+.qa-btn .material-symbols-rounded{font-size:20px;color:var(--text-secondary);}
+
+/* ---------- Right panel nav (two rows, design-system §8.3, ported from profile-overview-tab.html) ---------- */
+.rp-pills{display:flex;gap:6px;padding:12px 16px 0;background:#f8fafc;flex-wrap:wrap;}
+.pill{background:transparent;color:#64748b;border:1.5px solid #e2e8f0;border-radius:8px;padding:4px 14px;min-height:36px;font-size:.78rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;text-transform:none;}
+.pill:hover{background:#f1f5f9;border-color:#cbd5e1;}
+.pill.active{background:#1e293b;color:#fff;border:1.5px solid transparent;box-shadow:0 1px 4px rgba(30,41,59,.18);}
+.rp-tabs{display:flex;gap:20px;padding:0 16px;background:#f8fafc;flex-wrap:wrap;}
+.rp-tabrow{border-bottom:1px solid #e2e8f0;background:#f8fafc;display:flex;align-items:center;justify-content:space-between;}
+.rp-tab{background:none;border:none;border-bottom:3px solid transparent;border-radius:0;font-size:.82rem;font-weight:600;color:#64748b;padding:8px 12px;min-height:40px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;text-transform:none;}
+.rp-tab.selected{color:#3b82f6;border-bottom-color:#3b82f6;}
+.new-dot{width:4px;height:4px;border-radius:50%;background:var(--info);display:inline-block;}
+.nav-legend{font-size:.7rem;color:var(--text-secondary);padding:6px 16px;white-space:nowrap;}
+.rp-body{padding:32px;}
+
+.placeholder-card{min-height:200px;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:.8rem;text-align:center;}
+
+/* ---------- Submission line ---------- */
+.submission-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;font-size:.875rem;}
+.submission-name{font-weight:600;color:var(--text-primary);}
+.version-chip{background:#f1f5f9;color:var(--text-secondary);font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:var(--radius-chip);}
+.submission-date{color:var(--text-secondary);font-size:.8rem;}
+.submission-spacer{flex:1;}
+
+/* ---------- Group cards ---------- */
+.groups{display:flex;flex-direction:column;gap:16px;}
+.group-card{overflow:hidden;}
+.group-head{display:flex;align-items:center;gap:10px;padding:16px 20px;cursor:pointer;}
+.group-head:hover{background:var(--action-hover);}
+.g-chevron{font-size:20px;color:var(--text-secondary);transition:transform .15s;flex:0 0 auto;}
+.group-block.expanded .g-chevron{transform:rotate(90deg);}
+.group-name{font-size:.95rem;font-weight:600;}
+.group-meta{font-size:.8rem;color:var(--text-secondary);margin-left:8px;}
+.group-flag{display:inline-flex;align-items:center;gap:4px;color:#b45309;font-size:.75rem;font-weight:700;background:#fef3c7;padding:3px 8px;border-radius:var(--radius-chip);}
+.group-flag .material-symbols-rounded{font-size:14px;}
+.group-head-actions{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.group-body{padding:0 20px 18px;}
+
+.answer-row{display:flex;gap:16px;padding:10px 0;border-bottom:1px solid var(--border);position:relative;}
+.answer-row:last-child{border-bottom:none;}
+.answer-label{width:240px;flex:0 0 240px;font-size:.8rem;color:var(--text-secondary);padding-top:2px;}
+.answer-value{flex:1;font-size:.875rem;font-weight:500;color:var(--text-primary);display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-width:0;}
+.answer-value.stack{align-items:flex-start;flex-direction:column;}
+.not-answered{font-style:italic;color:var(--text-secondary);font-weight:400;}
+.ask-link{background:none;border:none;color:var(--info-dark);font-weight:600;font-size:.8rem;cursor:pointer;padding:0;}
+.ask-link:hover{text-decoration:underline;}
+
+.chip{height:24px;border-radius:var(--radius-chip);font-size:.75rem;font-weight:600;padding:0 8px;display:inline-flex;align-items:center;}
+.chip-muted{background:var(--bg-default);color:var(--text-primary);}
+.chip-success{background:var(--success-bg);color:var(--success-dark);}
+.chip-info{background:var(--info-bg);color:var(--info-dark);}
+.chip-warning{background:#fef3c7;color:#b45309;}
+.chip-danger{background:#fee2e2;color:#b91c1c;}
+.chip-archived{background:#f1f5f9;color:var(--text-secondary);}
+.chips-wrap{display:flex;flex-wrap:wrap;gap:4px;}
+
+.marker-clock{background:none;border:none;color:var(--text-secondary);cursor:pointer;padding:2px;display:inline-flex;border-radius:4px;}
+.marker-clock:hover{background:var(--action-hover);}
+.marker-clock .material-symbols-rounded{font-size:16px;}
+.approved-line{color:var(--success-dark);font-size:.8rem;display:inline-flex;align-items:center;gap:4px;}
+.approved-line .material-symbols-rounded{font-size:16px;}
+.undo-link{background:none;border:none;color:var(--text-secondary);font-size:.75rem;font-weight:600;cursor:pointer;padding:0 0 0 6px;text-decoration:underline;opacity:0;}
+.answer-row:hover .undo-link{opacity:1;}
+
+.longtext{line-height:1.6;max-width:640px;}
+.longtext.clamped{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.show-more-btn{background:none;border:none;color:var(--info-dark);font-weight:600;font-size:.8rem;cursor:pointer;padding:2px 0;display:block;}
+
+.sig-box{width:200px;height:56px;border:1px solid var(--border-input);border-radius:var(--radius-control);display:flex;align-items:center;justify-content:center;background:#fff;}
+.sig-caption{font-size:.75rem;color:var(--text-secondary);margin-top:4px;}
+
+/* subgroup nested card */
+.subgroup-card{border-left:3px solid var(--info);background:var(--info-bg);border-radius:0 var(--radius-base) var(--radius-base) 0;padding:12px 14px;margin-top:12px;}
+.subgroup-head{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
+.subgroup-name{font-size:.875rem;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:6px;}
+.subgroup-name .material-symbols-rounded{font-size:16px;color:var(--info-dark);}
+.subgroup-reason{font-size:.75rem;color:var(--text-secondary);margin:0 0 10px;}
+.subgroup-blocks{color:#b91c1c;font-size:.75rem;font-weight:600;margin:-4px 0 8px;}
+.subgroup-actions{margin-left:auto;display:flex;align-items:center;gap:8px;}
+
+/* ---------- Edit mode ---------- */
+.edit-input, .edit-select, .edit-textarea{height:36px;padding:8px 12px;font-size:.875rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);width:100%;max-width:360px;}
+.edit-textarea{height:auto;min-height:64px;font-family:inherit;resize:vertical;}
+.edit-input:hover,.edit-select:hover,.edit-textarea:hover{border-color:var(--border-input-hover);}
+.edit-input:focus,.edit-select:focus,.edit-textarea:focus{border-color:var(--primary);outline:none;}
+.radio-group{display:flex;gap:14px;font-size:.85rem;flex-wrap:wrap;}
+.radio-group label{display:flex;align-items:center;gap:5px;font-weight:500;color:var(--text-primary);}
+.chip-toggle{border:1px solid var(--border-input);background:#fff;border-radius:999px;padding:5px 12px;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--text-primary);}
+.chip-toggle.on{background:var(--info);border-color:var(--info);color:#fff;}
+.helper-error{color:var(--danger);font-size:.75rem;margin-top:4px;}
+.retain-note{font-size:.75rem;color:var(--text-secondary);font-style:italic;margin:8px 0;}
+.edit-footer{display:flex;justify-content:flex-end;gap:12px;padding-top:14px;margin-top:6px;border-top:1px solid var(--border);}
+.agree-edit{display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:500;cursor:pointer;}
+
+/* ---------- Documents ---------- */
+.docs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:4px;}
+.doc-card{border:1px solid var(--border);border-radius:var(--radius-base);padding:12px;display:flex;flex-direction:column;gap:6px;background:#fff;}
+.doc-preview{position:relative;width:100%;height:150px;background:var(--bg-default);border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.doc-preview svg{width:78%;height:92%;filter:drop-shadow(0 2px 6px rgba(15,23,42,.12));}
+.doc-preview.blurred svg{filter:drop-shadow(0 2px 6px rgba(15,23,42,.12)) blur(1.5px);}
+.doc-format-badge{position:absolute;top:8px;left:8px;background:rgba(15,23,42,.65);color:#fff;font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:var(--radius-chip);letter-spacing:.02em;}
+.doc-empty{width:100%;height:150px;border:2px dashed var(--border-input);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--text-secondary);}
+.doc-empty .material-symbols-rounded{font-size:28px;}
+.doc-title{font-size:.875rem;font-weight:600;color:var(--text-primary);margin:2px 0 0;}
+.doc-file{font-size:.8rem;color:var(--text-secondary);}
+.doc-meta{font-size:.75rem;color:var(--text-secondary);}
+.doc-reject-reason{font-size:.75rem;color:#b91c1c;}
+.doc-actions{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;}
+.docs-group-note{font-size:.8rem;color:var(--text-secondary);margin:2px 0 14px;}
+
+/* ---------- Modal ---------- */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:200;}
+.modal{background:#fff;border-radius:var(--radius-card);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);width:480px;max-width:92vw;}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);}
+.modal-head h4{font-size:1.1rem;font-weight:600;margin:0;}
+.modal-head p{font-size:.8rem;color:var(--text-secondary);margin:4px 0 0;}
+.modal-close{position:absolute;top:16px;right:18px;background:none;border:none;font-size:20px;color:var(--text-secondary);cursor:pointer;}
+.modal-head{position:relative;}
+.modal-body{padding:18px 22px;}
+.modal-body label{display:block;font-size:.75rem;font-weight:600;color:var(--text-secondary);margin-bottom:6px;}
+.modal-body p.hint{font-size:.75rem;color:var(--text-secondary);margin:6px 0 0;}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.modal-foot-buttons{display:flex;gap:12px;}
+
+/* ---------- Viewer overlay ---------- */
+.viewer-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.75);display:flex;align-items:center;justify-content:center;z-index:300;}
+.viewer-panel{background:#fff;border-radius:var(--radius-card);width:min(880px,90vw);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;}
+.viewer-topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);}
+.viewer-topbar h4{font-size:1rem;font-weight:600;margin:0;}
+.viewer-close{margin-left:auto;background:none;border:none;font-size:22px;color:var(--text-secondary);cursor:pointer;}
+.viewer-body{padding:24px;overflow:auto;display:flex;align-items:center;justify-content:center;background:var(--bg-default);}
+.viewer-body svg{width:min(420px,70vw);filter:drop-shadow(0 4px 14px rgba(15,23,42,.18));}
+.viewer-body.blurred svg{filter:drop-shadow(0 4px 14px rgba(15,23,42,.18)) blur(2px);}
+.viewer-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:12px;}
+
+/* ---------- History popover ---------- */
+.history-popover{position:absolute;top:26px;left:0;width:260px;background:#fff;border-radius:var(--radius-base);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);padding:12px 14px;z-index:40;}
+.history-popover h5{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin:0 0 8px;}
+.history-popover hr{border:none;border-top:1px solid var(--border);margin:0 0 8px;}
+.history-row{display:flex;gap:10px;margin-bottom:8px;}
+.history-row:last-child{margin-bottom:0;}
+.history-tag{font-size:.7rem;font-weight:700;color:var(--text-secondary);width:44px;flex:0 0 auto;padding-top:2px;}
+.history-value{font-size:.8rem;font-weight:600;color:var(--text-primary);}
+.history-sub{font-size:.7rem;color:var(--text-secondary);}
+
+@keyframes flashPulse{
+  0%{box-shadow:0 0 0 3px var(--info);}
+  70%{box-shadow:0 0 0 3px var(--info);}
+  100%{box-shadow:0 0 0 3px rgba(59,130,246,0);}
+}
+.flash-target{animation:flashPulse .9s ease-out;border-radius:6px;}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--primary-dark);color:#f8fafc;padding:12px 18px;border-radius:var(--radius-base);font-size:.85rem;box-shadow:var(--shadow-card);z-index:400;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+@media (max-width:1024px){
+  .answer-label{width:180px;flex:0 0 180px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <a class="logo" href="index.html">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect width="28" height="28" rx="7" fill="#3b82f6"/>
+        <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>ZALEXY</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">point_of_sale</span>Point of Sale</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">groups</span>Leads</a>
+      <a class="nav-item active" aria-current="page"><span class="material-symbols-rounded">account_circle</span>Accounts</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Profiles</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">receipt_long</span>Transactions</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">request_quote</span>Invoices</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Staff</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">event</span>Scheduling</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">settings</span>Settings</a>
+      <div class="nav-section">Prototypes</div>
+      <a class="nav-item" href="index.html"><span class="material-symbols-rounded">grid_view</span>Prototype Gallery</a>
+      <a class="nav-item" href="admin-intake-form-builder.html"><span class="material-symbols-rounded">dynamic_form</span>Admin: Intake &amp; Builder</a>
+      <a class="nav-item active" href="profile-intake-tab.html"><span class="material-symbols-rounded">badge</span>Profile: Intake Tab</a>
+      <a class="nav-item" href="profile-overview-tab.html"><span class="material-symbols-rounded">contact_page</span>Profile: Details Tab</a>
+      <a class="nav-item" href="portal-profile-tab.html"><span class="material-symbols-rounded">family_restroom</span>Portal: My Account</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="content">
+      <div class="page" id="pageRoot"></div>
+    </div>
+  </main>
+</div>
+
+<div id="modalRoot"></div>
+<div id="overlayRoot"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =======================================================================
+   Data model — Group -> Subgroup -> Question, matching
+   out/admin-intake-form-builder.html exactly (names, types, options).
+   "General Intake" (v3) = groups 1,2,3,4,6 in that order. Group 5
+   (Documents) is not part of the form's own item list — it only appears
+   on a profile because a connected question fired.
+======================================================================= */
+const INTAKE_GROUPS = [
+  { id:1, name:'Client Information', questions:[
+      { id:'q_full_name', label:'Full name', type:'Short text' },
+      { id:'q_dob', label:'Date of birth', type:'Date' },
+      { id:'q_guardian', label:'Parent / guardian', type:'Short text' },
+      { id:'q_location', label:'Preferred location', type:'Dropdown (pick one)', options:['Solar Swim','Westside','Valley'] },
+      { id:'q_emergency', label:'Emergency contact', type:'Phone' },
+      { id:'q_requested_service', label:'Requested service', type:'Short text', connect:{ groupId:2, targets:['sg_swim','sg_basketball','sg_fitness'], mode:'multiple' } },
+    ], subgroups:[] },
+  { id:2, name:'Services', questions:[
+      { id:'q_start_date', label:'Preferred start date', type:'Date' },
+    ], subgroups:[
+      { id:'sg_swim', name:'Swim', reason:'shown because Requested service includes Swim', flags:{staffReview:false, blocksScheduling:false}, questions:[
+        { id:'q_swim_lessons', label:'Has taken lessons before?', type:'Yes/No' },
+        { id:'q_swim_float', label:'Can they float independently?', type:'Yes/No' },
+        { id:'q_swim_level', label:'Current level if known', type:'Dropdown (pick one)', options:['Not sure','Beginner 1','Beginner 2','Intermediate','Advanced'], triggersReview:true },
+        { id:'q_swim_birthcert', label:'Do you have a birth certificate?', type:'Yes/No', connect:{ groupId:5, targets:['sg_birthcert'], mode:'single' } },
+      ] },
+      { id:'sg_basketball', name:'Basketball', reason:'shown because Requested service includes Basketball', flags:{staffReview:false, blocksScheduling:false}, questions:[
+        { id:'q_bb_played', label:'Played organized basketball before?', type:'Yes/No' },
+        { id:'q_bb_position', label:'Position preference', type:'Radio (pick one)', options:['Guard','Forward','Center'] },
+      ] },
+      { id:'sg_fitness', name:'Fitness', reason:'shown because Requested service includes Fitness', flags:{staffReview:false, blocksScheduling:false}, questions:[
+        { id:'q_fit_goal', label:'Fitness goal', type:'Long text' },
+      ] },
+    ] },
+  { id:3, name:'Funding', questions:[
+      { id:'q_funding_type', label:'Funding type', type:'Short text', connect:{ groupId:3, targets:['sg_rc','sg_voucher','sg_selfpay'], mode:'single' } },
+    ], subgroups:[
+      { id:'sg_rc', name:'Regional Center', reason:'shown because Funding type is Regional Center', flags:{staffReview:true, blocksScheduling:false}, questions:[
+        { id:'q_rc_provider', label:'Regional Center / provider', type:'Dropdown (pick one)', options:['RCEB','Golden Gate RC','Valley Mountain RC'] },
+        { id:'q_rc_case_name', label:'Case manager name', type:'Short text' },
+        { id:'q_rc_case_email', label:'Case manager email', type:'Email' },
+        { id:'q_rc_member_id', label:'Client member ID', type:'Short text' },
+        { id:'q_rc_auth_num', label:'Known authorization number', type:'Short text' },
+        { id:'q_rc_authletter', label:'Do you have the authorization letter?', type:'Yes/No', connect:{ groupId:5, targets:['sg_rcauth'], mode:'single' } },
+      ] },
+      { id:'sg_voucher', name:'Homeschool Voucher', reason:'shown because Funding type is Homeschool Voucher', flags:{staffReview:true, blocksScheduling:true}, questions:[
+        { id:'q_v_id', label:'Voucher / auth ID', type:'Short text' },
+        { id:'q_v_org', label:'Funding organization', type:'Dropdown (pick one)', options:['District A','District B','District C'] },
+        { id:'q_v_from', label:'Valid from', type:'Date' },
+        { id:'q_v_to', label:'Valid to', type:'Date' },
+        { id:'q_v_credits', label:'Credits / units', type:'Number' },
+        { id:'q_v_doc', label:'Do you have the voucher document?', type:'Yes/No', connect:{ groupId:5, targets:['sg_voucherdoc'], mode:'single' } },
+      ] },
+      { id:'sg_selfpay', name:'Self-Pay', reason:'shown because Funding type is Self-Pay', flags:{staffReview:false, blocksScheduling:false}, questions:[
+        { id:'q_sp_hear', label:'How did you hear about us?', type:'Short text' },
+      ] },
+    ] },
+  { id:4, name:'Needs & Safety', questions:[
+      { id:'q_behavioral', label:'Behavioral needs', type:'Long text' },
+      { id:'q_physical', label:'Physical needs', type:'Long text' },
+      { id:'q_support', label:'Support needs', type:'Chips (pick many)', options:['Mobility aid','1:1 aide','Sensory sensitivity','Communication device'] },
+      { id:'q_medcond', label:'Has a medical or physical condition?', type:'Yes/No', connect:{ groupId:4, targets:['sg_medical'], mode:'single' } },
+    ], subgroups:[
+      { id:'sg_medical', name:'Medical Details', reason:'shown because Has a medical or physical condition? is Yes', flags:{staffReview:false, blocksScheduling:false}, questions:[
+        { id:'q_med_describe', label:'Please describe', type:'Long text', visibleTo:'staff' },
+        { id:'q_med_doc', label:'Does documentation need to be attached?', type:'Yes/No', connect:{ groupId:5, targets:['sg_doctorsclear'], mode:'single' } },
+      ] },
+    ] },
+  { id:5, name:'Documents', questions:[], subgroups:[
+      { id:'sg_birthcert', name:'Birth Certificate', flags:{staffReview:false, blocksScheduling:false}, questions:[ { id:'q_doc_birthcert', label:'Upload birth certificate', type:'Document upload' } ] },
+      { id:'sg_rcauth', name:'RC Authorization', flags:{staffReview:false, blocksScheduling:false}, questions:[ { id:'q_doc_rcauth', label:'Upload authorization letter', type:'Document upload' } ] },
+      { id:'sg_voucherdoc', name:'Homeschool Voucher', flags:{staffReview:false, blocksScheduling:false}, questions:[ { id:'q_doc_voucher', label:'Upload voucher', type:'Document upload' } ] },
+      { id:'sg_doctorsclear', name:"Doctor's Clearance", flags:{staffReview:false, blocksScheduling:false}, questions:[ { id:'q_doc_doctors', label:"Upload doctor's clearance", type:'Document upload' } ] },
+    ] },
+  { id:6, name:'Review & Consent', questions:[
+      { id:'q_liability', label:'Liability waiver', type:'Agreement checkbox' },
+      { id:'q_photo', label:'Photo consent', type:'Agreement checkbox' },
+      { id:'q_signature', label:'Parent signature', type:'Signature' },
+    ], subgroups:[] },
+];
+const PAGE_GROUP_ORDER = [1,2,3,4,5,6];
+
+function findIntakeGroup(id){ return INTAKE_GROUPS.find(g=>g.id===id); }
+function findSubgroup(groupId, sgId){ const g=findIntakeGroup(groupId); return g ? g.subgroups.find(s=>s.id===sgId) : null; }
+function findQuestion(qid){
+  for (const g of INTAKE_GROUPS){
+    const direct = g.questions.find(q=>q.id===qid); if (direct) return direct;
+    for (const s of g.subgroups){ const inSg = s.questions.find(q=>q.id===qid); if (inSg) return inSg; }
+  }
+  return null;
+}
+
+/* =======================================================================
+   Page chrome config — nav map, members, account (ported verbatim from
+   profile-overview-tab.html §4.2/§6.1 so the two tabs share one shell).
+   `profile-details` now carries the outbound `link`; `intake-docs` is this
+   tab's own content and has no link.
+======================================================================= */
+const GROUPS = [
+  { id:'profile', label:'Profile', tabs:[
+      { id:'profile-details', label:'Profile Details', link:'profile-overview-tab.html' },
+      { id:'intake-docs', label:'Intake & Documents', isNew:true },
+    ], defaultTab:'intake-docs' },
+  { id:'services', label:'Services', isNew:true, tabs:[
+      { id:'service-level', label:'Service & Level', isNew:true },
+      { id:'assessments', label:'Assessments', isNew:true },
+    ] },
+  { id:'purchases', label:'Purchases & Funding', tabs:[
+      { id:'purchases', label:'Purchases' },
+      { id:'entitlements', label:'Entitlements', isNew:true },
+      { id:'auth-vouchers', label:'Authorizations & Vouchers', isNew:true },
+      { id:'waivers', label:'Waivers' },
+    ] },
+  { id:'schedule', label:'Schedule & Bookings', tabs:[
+      { id:'my-bookings', label:'My Bookings' },
+      { id:'schedule-classes', label:'Schedule Classes' },
+      { id:'schedule-private', label:'Schedule Private' },
+    ] },
+  { id:'payments', label:'Payments', tabs:[
+      { id:'invoices', label:'Invoices' },
+      { id:'transactions', label:'Transactions' },
+      { id:'saved-cards', label:'Saved Cards' },
+    ] },
+];
+function findGroup(id){ return GROUPS.find(g=>g.id===id); }
+
+const MEMBERS = [
+  { id:'maria', name:'Maria Garcia', initials:'MG', sub:'Age 6 · Swim · Beginner 2', chips:[{label:'Voucher',tint:'info'}] },
+  { id:'diego', name:'Diego Garcia', initials:'DG', sub:'Age 9 · Swim · Beginner 3', chips:[{label:'RCEB',tint:'info'}] },
+  { id:'elena', name:'Elena Garcia', initials:'EG', sub:'Adult · Fitness', chips:[{label:'Primary',tint:'info'},{label:'Self-Pay',tint:'muted'}] },
+];
+function findMember(id){ return MEMBERS.find(m=>m.id===id); }
+
+const ACCOUNT = { name:'Garcia Household', status:'Active', netDue:'$0.00', email:'elena.garcia@example.com', phone:'(510) 555-0142', location:'Solar Swim' };
+
+/* =======================================================================
+   Seed data — §13, verbatim
+======================================================================= */
+const profile = { name:'Maria Garcia', initials:'MG', household:'Garcia Household', location:'Solar Swim', age:6, memberSince:'Mar 2026' };
+const submission = { formName:'General Intake', version:'v3', completedDate:'12 Mar 2026', newerVersion:'v4' };
+
+const initialAnswers = {
+  q_full_name:'Maria Garcia',
+  q_dob:'14 Aug 2019',
+  q_guardian:'Elena Garcia',
+  q_location:'Solar Swim',
+  q_emergency:'(510) 555-0142',
+  q_requested_service:['Swim','Basketball'],
+  q_start_date:'1 Apr 2026',
+  q_swim_lessons:'Yes',
+  q_swim_float:'No',
+  q_swim_level:'Beginner 1',
+  q_swim_birthcert:'Yes',
+  q_bb_played:'No',
+  q_bb_position:'Guard',
+  q_funding_type:'Homeschool Voucher',
+  q_v_id:'HS-4482',
+  q_v_org:'District A',
+  q_v_from:'1 Sep 2026',
+  q_v_to:'30 Sep 2026',
+  q_v_credits:'8',
+  q_v_doc:'Yes',
+  q_behavioral:'Gets anxious in loud rooms; responds well to a calm, steady voice and a short warning before transitions.',
+  q_physical:null,
+  q_support:['Sensory sensitivity','1:1 aide'],
+  q_medcond:'Yes',
+  q_med_describe:'Mild asthma. Carries an inhaler; guardian keeps a spare at the front desk.',
+  q_med_doc:'Yes',
+  q_liability:{ agreed:true, date:'12 Mar 2026' },
+  q_photo:{ agreed:true, date:'12 Mar 2026' },
+  q_signature:{ signed:true, date:'12 Mar 2026' },
+};
+
+const initialApprovals = {
+  q_swim_level: { kind:'question', label:'Current level', groupId:2, subgroupId:'sg_swim', status:'pending', by:null, date:null },
+  sg_voucher: { kind:'subgroup', label:'Homeschool Voucher', groupId:3, status:'pending', by:null, date:null },
+};
+
+const initialDocuments = {
+  sg_birthcert: { name:'Birth Certificate', file:'birth-certificate.jpg', format:'JPG', size:'1.2 MB', uploaded:'12 Mar 2026', status:'approved', approvedBy:'Rosanna Diaz', approvedDate:'13 Mar 2026' },
+  sg_voucherdoc: { name:'Homeschool Voucher', file:'voucher-HS4482.pdf', format:'PDF', size:'340 KB', uploaded:'12 Mar 2026', status:'pending' },
+  sg_doctorsclear: { name:"Doctor's Clearance", file:'clearance-scan.jpg', format:'JPG', size:'2.8 MB', uploaded:'13 Mar 2026', status:'rejected', reason:'Image is too blurry to read.' },
+};
+
+const historyLog = {
+  q_emergency: { previous:'(510) 555-0199', changedBy:'Rosanna Diaz', changedDate:'14 Mar 2026' },
+};
+
+/* =======================================================================
+   State — one plain object, re-render from it
+======================================================================= */
+const state = {
+  role:'manager', // 'manager' | 'frontdesk' | 'client'
+  selectedMember:'maria', // 'maria' | 'diego' | 'elena' | 'all'
+  activeGroup:'profile',
+  subTabByGroup:{ profile:'intake-docs', services:'service-level', purchases:'purchases', schedule:'my-bookings', payments:'invoices' },
+  expandedGroups: new Set([1,2,3]),
+  answers: Object.assign({}, initialAnswers),
+  approvals: JSON.parse(JSON.stringify(initialApprovals)),
+  documents: JSON.parse(JSON.stringify(initialDocuments)),
+  expandedLongText: new Set(),
+  editingGroupId: null,
+  editDraft: null,
+  reviewOpen:false,
+  historyOpenFor:null,
+  rejectModal:null,     // { kind:'subgroup'|'document', id, name, reason }
+  viewerDoc:null,       // subgroupId of an open document viewer
+  flashTarget:null,
+  scrollTarget:null,
+};
+
+/* =======================================================================
+   Helpers
+======================================================================= */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>t.classList.remove('show'), 2400);
+}
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function todayDisplay(){ const d=new Date(); return d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear(); }
+function parseDisplayDate(s){
+  if (!s) return null;
+  const parts = s.trim().split(' ');
+  if (parts.length!==3) return null;
+  const day=parseInt(parts[0],10), mi=MONTHS.indexOf(parts[1]), year=parseInt(parts[2],10);
+  if (isNaN(day)||mi<0||isNaN(year)) return null;
+  return { day, mi, year };
+}
+function displayToISO(s){ const p=parseDisplayDate(s); if (!p) return ''; return p.year+'-'+String(p.mi+1).padStart(2,'0')+'-'+String(p.day).padStart(2,'0'); }
+function isoToDisplay(iso){ if (!iso) return ''; const [y,m,d]=iso.split('-').map(Number); if(!y||!m||!d) return ''; return d+' '+MONTHS[m-1]+' '+y; }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function connectTargetNames(q){
+  if (!q.connect) return [];
+  const g = findIntakeGroup(q.connect.groupId);
+  if (!g) return [];
+  return q.connect.targets.map(id=>{ const s=g.subgroups.find(x=>x.id===id); return s ? s.name : null; }).filter(Boolean);
+}
+
+/* Which subgroups are currently visible, given an answers object (state
+   answers, or state answers merged with an in-progress edit draft). This
+   is the single source of truth for "only what they reached" (§3.3). */
+function computeVisibleSubgroups(answers){
+  const visible = new Set();
+  const service = Array.isArray(answers.q_requested_service) ? answers.q_requested_service : [];
+  if (service.includes('Swim')) visible.add('sg_swim');
+  if (service.includes('Basketball')) visible.add('sg_basketball');
+  if (service.includes('Fitness')) visible.add('sg_fitness');
+  if (answers.q_funding_type === 'Regional Center') visible.add('sg_rc');
+  if (answers.q_funding_type === 'Homeschool Voucher') visible.add('sg_voucher');
+  if (answers.q_funding_type === 'Self-Pay') visible.add('sg_selfpay');
+  if (answers.q_medcond === 'Yes') visible.add('sg_medical');
+  if (answers.q_swim_birthcert === 'Yes') visible.add('sg_birthcert');
+  if (answers.q_rc_authletter === 'Yes') visible.add('sg_rcauth');
+  if (answers.q_v_doc === 'Yes') visible.add('sg_voucherdoc');
+  if (answers.q_med_doc === 'Yes') visible.add('sg_doctorsclear');
+  return visible;
+}
+
+function pendingApprovalEntries(){
+  const visible = computeVisibleSubgroups(state.answers);
+  return Object.keys(state.approvals)
+    .map(id=>({ id, ...state.approvals[id] }))
+    .filter(e=> e.status==='pending' && (e.kind==='question' ? visible.has(e.subgroupId) : visible.has(e.id)));
+}
+function groupPendingCount(groupId){
+  return pendingApprovalEntries().filter(e=>e.groupId===groupId).length;
+}
+function bookingBlocked(){
+  const visible = computeVisibleSubgroups(state.answers);
+  for (const g of INTAKE_GROUPS){
+    for (const s of g.subgroups){
+      if (s.flags.blocksScheduling && visible.has(s.id)){
+        const appr = state.approvals[s.id];
+        if (!appr || appr.status !== 'approved') return { subgroupId:s.id, name:s.name };
+      }
+    }
+  }
+  return null;
+}
+
+/* =======================================================================
+   Inline SVG document previews — hand-drawn, distinguishable, no network
+======================================================================= */
+function svgBirthCertificate(){
+  return `<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Birth certificate preview">
+    <rect x="4" y="4" width="292" height="392" rx="4" fill="#fffdf6" stroke="#d6c9a3" stroke-width="2"/>
+    <rect x="16" y="16" width="268" height="368" fill="none" stroke="#c9a869" stroke-width="1.5"/>
+    <rect x="22" y="22" width="256" height="356" fill="none" stroke="#c9a869" stroke-width="1"/>
+    <text x="150" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="15" font-weight="700" fill="#7a5c1e" letter-spacing="1">CERTIFICATE OF BIRTH</text>
+    <line x1="60" y1="70" x2="240" y2="70" stroke="#c9a869" stroke-width="1"/>
+    <text x="150" y="98" text-anchor="middle" font-family="Georgia, serif" font-size="10" fill="#8a7a55">This certifies that</text>
+    <text x="150" y="122" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="600" fill="#3a2f14">Maria Garcia</text>
+    <text x="150" y="144" text-anchor="middle" font-family="Georgia, serif" font-size="10" fill="#8a7a55">was born on the fourteenth day of August, 2019</text>
+    <rect x="55" y="168" width="190" height="6" rx="3" fill="#e7ddc3"/>
+    <rect x="70" y="184" width="160" height="6" rx="3" fill="#e7ddc3"/>
+    <rect x="85" y="200" width="130" height="6" rx="3" fill="#e7ddc3"/>
+    <circle cx="72" cy="325" r="34" fill="none" stroke="#b9902f" stroke-width="2"/>
+    <circle cx="72" cy="325" r="26" fill="none" stroke="#b9902f" stroke-width="1"/>
+    <text x="72" y="322" text-anchor="middle" font-family="Georgia, serif" font-size="7" fill="#b9902f">OFFICIAL</text>
+    <text x="72" y="332" text-anchor="middle" font-family="Georgia, serif" font-size="7" fill="#b9902f">SEAL</text>
+    <line x1="140" y1="340" x2="230" y2="340" stroke="#8a7a55" stroke-width="1"/>
+    <text x="185" y="352" text-anchor="middle" font-family="Georgia, serif" font-size="7" fill="#8a7a55">Registrar</text>
+    <line x1="140" y1="364" x2="230" y2="364" stroke="#8a7a55" stroke-width="1"/>
+    <text x="185" y="376" text-anchor="middle" font-family="Georgia, serif" font-size="7" fill="#8a7a55">Date filed</text>
+  </svg>`;
+}
+function svgVoucher(){
+  return `<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Homeschool voucher preview">
+    <rect x="4" y="4" width="292" height="392" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="4" y="4" width="292" height="46" rx="4" fill="#1d4ed8"/>
+    <rect x="4" y="30" width="292" height="20" fill="#1d4ed8"/>
+    <rect x="18" y="16" width="22" height="22" rx="4" fill="#fff" opacity=".85"/>
+    <text x="48" y="32" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#fff">DISTRICT A SCHOOLS</text>
+    <text x="282" y="32" text-anchor="end" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#fff">No. HS-4482</text>
+    <text x="150" y="82" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#0f172a">HOMESCHOOL VOUCHER</text>
+    <rect x="30" y="100" width="240" height="90" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+    <line x1="30" y1="130" x2="270" y2="130" stroke="#cbd5e1" stroke-width="1"/>
+    <line x1="30" y1="160" x2="270" y2="160" stroke="#cbd5e1" stroke-width="1"/>
+    <line x1="150" y1="100" x2="150" y2="190" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="40" y="120" font-family="Inter" font-size="9" fill="#64748b">Valid from</text>
+    <text x="160" y="120" font-family="Inter" font-size="9" font-weight="600" fill="#0f172a">1 Sep 2026</text>
+    <text x="40" y="150" font-family="Inter" font-size="9" fill="#64748b">Valid to</text>
+    <text x="160" y="150" font-family="Inter" font-size="9" font-weight="600" fill="#0f172a">30 Sep 2026</text>
+    <text x="40" y="180" font-family="Inter" font-size="9" fill="#64748b">Credits</text>
+    <text x="160" y="180" font-family="Inter" font-size="9" font-weight="600" fill="#0f172a">8 units</text>
+    <rect x="30" y="212" width="220" height="6" rx="3" fill="#e2e8f0"/>
+    <rect x="30" y="228" width="180" height="6" rx="3" fill="#e2e8f0"/>
+    <rect x="30" y="244" width="200" height="6" rx="3" fill="#e2e8f0"/>
+    <line x1="30" y1="360" x2="140" y2="360" stroke="#94a3b8" stroke-width="1"/>
+    <text x="85" y="372" text-anchor="middle" font-family="Inter" font-size="7" fill="#64748b">Authorized signature</text>
+  </svg>`;
+}
+function svgDoctorsClearance(){
+  return `<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Doctor's clearance preview">
+    <rect x="4" y="4" width="292" height="392" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <circle cx="46" cy="46" r="20" fill="#fee2e2"/>
+    <rect x="41" y="35" width="10" height="22" rx="2" fill="#b91c1c"/>
+    <rect x="35" y="41" width="22" height="10" rx="2" fill="#b91c1c"/>
+    <text x="72" y="42" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#0f172a">Bayview Pediatric Clinic</text>
+    <text x="72" y="56" font-family="Inter, sans-serif" font-size="8" fill="#64748b">General Health Clearance</text>
+    <line x1="20" y1="74" x2="280" y2="74" stroke="#cbd5e1" stroke-width="1"/>
+    <rect x="20" y="94" width="260" height="6" rx="3" fill="#e2e8f0"/>
+    <rect x="20" y="110" width="230" height="6" rx="3" fill="#e2e8f0"/>
+    <rect x="20" y="126" width="245" height="6" rx="3" fill="#e2e8f0"/>
+    <rect x="20" y="142" width="200" height="6" rx="3" fill="#e2e8f0"/>
+    <rect x="20" y="158" width="220" height="6" rx="3" fill="#e2e8f0"/>
+    <rect x="20" y="174" width="160" height="6" rx="3" fill="#e2e8f0"/>
+    <line x1="20" y1="360" x2="150" y2="360" stroke="#94a3b8" stroke-width="1"/>
+    <text x="85" y="372" text-anchor="middle" font-family="Inter" font-size="7" fill="#64748b">Physician signature</text>
+  </svg>`;
+}
+function svgSignature(){
+  return `<svg viewBox="0 0 200 56" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Signature">
+    <path d="M10 40 C 20 15, 30 15, 36 32 C 40 44, 46 44, 50 30 C 54 18, 60 18, 64 34 C 68 46, 76 30, 84 22 C 92 14, 100 14, 104 28 C 108 40, 116 40, 124 24 C 130 14, 140 20, 150 32 C 156 40, 168 26, 180 20"
+      fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+function docSvgFor(id){
+  if (id==='sg_birthcert') return svgBirthCertificate();
+  if (id==='sg_voucherdoc') return svgVoucher();
+  if (id==='sg_doctorsclear') return svgDoctorsClearance();
+  if (id==='sg_rcauth') return svgVoucher();
+  return svgVoucher();
+}
+
+/* =======================================================================
+   Rendering — value display (read mode), §9.2
+======================================================================= */
+function statusChipHtml(status, textMap){
+  const map = {
+    approved: ['chip-success', textMap && textMap.approved || 'Approved'],
+    pending: ['chip-warning', textMap && textMap.pending || 'Pending review'],
+    rejected: ['chip-danger', textMap && textMap.rejected || 'Rejected'],
+    not_uploaded: ['chip-archived', textMap && textMap.not_uploaded || 'Not uploaded'],
+  };
+  const [cls, txt] = map[status] || map.not_uploaded;
+  return `<span class="chip ${cls}">${txt}</span>`;
+}
+
+function markersHtml(qid, opts){
+  opts = opts || {};
+  let out = '';
+  if (historyLog[qid]){
+    out += `<button class="marker-clock" data-history-toggle="${qid}" title="Answer history" aria-expanded="${state.historyOpenFor===qid}"><span class="material-symbols-rounded">schedule</span></button>`;
+  }
+  if (opts.staffOnly && state.role!=='client'){
+    out += `<span class="chip chip-archived">Staff only</span>`;
+  }
+  const appr = state.approvals[qid];
+  if (appr){
+    if (appr.status==='pending' && state.role!=='client'){
+      out += `<span class="chip chip-warning">Needs approval</span>`;
+      out += approveRejectButtons('question', qid, opts.label||qid);
+    } else if (appr.status==='approved'){
+      out += `<span class="approved-line"><span class="material-symbols-rounded">check_circle</span>Approved by ${esc(appr.by)} · ${esc(appr.date)}</span>`;
+      if (state.role==='manager') out += `<button class="undo-link" data-undo-question="${qid}">Undo</button>`;
+    } else if (appr.status==='rejected' && state.role!=='client'){
+      out += `<span class="chip chip-danger">Rejected</span>`;
+    }
+  }
+  return out;
+}
+
+function approveRejectButtons(kind, id, name){
+  if (state.role==='client') return '';
+  const disabled = state.role==='frontdesk';
+  const title = disabled ? 'title="Only a manager can approve this"' : '';
+  const dis = disabled ? 'disabled' : '';
+  return `<span style="display:inline-flex;gap:6px;">
+    <button class="btn btn-secondary btn-sm" ${dis} ${title} data-approve="${kind}:${id}">Approve</button>
+    <button class="btn btn-danger-outline btn-sm" ${dis} ${title} data-open-reject="${kind}:${id}:${esc(name)}">Reject</button>
+  </span>`;
+}
+
+function valueHtml(q, answers, opts){
+  opts = opts || {};
+  const val = answers[q.id];
+  if (q.connect && q.connect.targets.length>=2){
+    if (q.connect.mode==='multiple'){
+      const arr = Array.isArray(val) ? val : [];
+      if (!arr.length) return `<span class="not-answered">Not answered</span>`;
+      return `<span class="chips-wrap">${arr.map(v=>`<span class="chip chip-muted">${esc(v)}</span>`).join('')}</span>`;
+    }
+    return val ? `<span>${esc(val)}</span>` : `<span class="not-answered">Not answered</span>`;
+  }
+  switch(q.type){
+    case 'Short text': case 'Number': case 'Phone': case 'Email': case 'Date':
+      return val ? `<span>${esc(val)}</span>` : `<span class="not-answered">Not answered</span> <button class="ask-link" data-ask-client="${esc(q.label)}">Ask client</button>`;
+    case 'Long text': {
+      if (!val) return `<span class="not-answered">Not answered</span> <button class="ask-link" data-ask-client="${esc(q.label)}">Ask client</button>`;
+      const expanded = state.expandedLongText.has(q.id);
+      return `<span class="longtext ${expanded?'':'clamped'}" id="lt-${q.id}">${esc(val)}</span>
+        <button class="show-more-btn" data-toggle-longtext="${q.id}">${expanded?'Show less':'Show more'}</button>`;
+    }
+    case 'Yes/No': return val ? `<span>${esc(val)}</span>` : `<span class="not-answered">Not answered</span>`;
+    case 'Radio (pick one)': case 'Dropdown (pick one)':
+      return val ? `<span>${esc(val)}</span>` : `<span class="not-answered">Not answered</span>`;
+    case 'Chips (pick many)': {
+      const arr = Array.isArray(val) ? val : [];
+      if (!arr.length) return `<span class="not-answered">Not answered</span>`;
+      return `<span class="chips-wrap">${arr.map(v=>`<span class="chip chip-muted">${esc(v)}</span>`).join('')}</span>`;
+    }
+    case 'Agreement checkbox': {
+      const a = val || {};
+      return a.agreed ? `<span class="approved-line" style="color:var(--success-dark);"><span class="material-symbols-rounded">check_circle</span>Agreed on ${esc(a.date)}</span>` : `<span class="not-answered">Not answered</span>`;
+    }
+    case 'Signature': {
+      const a = val || {};
+      if (!a.signed) return `<span class="not-answered">Not answered</span>`;
+      return `<span class="answer-value stack"><span class="sig-box">${svgSignature()}</span><span class="sig-caption">Signed ${esc(a.date)}</span></span>`;
+    }
+    default: return `<span class="not-answered">Not answered</span>`;
+  }
+}
+
+/* =======================================================================
+   Rendering — edit mode controls, §9.4
+======================================================================= */
+function editControlHtml(q, draftAnswers){
+  const val = draftAnswers[q.id];
+  if (q.connect && q.connect.targets.length>=2){
+    const names = connectTargetNames(q);
+    if (q.connect.mode==='multiple'){
+      const arr = Array.isArray(val) ? val : [];
+      return `<div class="chips-wrap">${names.map(n=>`<button type="button" class="chip-toggle ${arr.includes(n)?'on':''}" data-edit-chip-toggle="${q.id}" data-chip-value="${esc(n)}">${esc(n)}</button>`).join('')}</div>`;
+    }
+    return `<select class="edit-select" data-edit-select="${q.id}">${names.map(n=>`<option value="${esc(n)}" ${val===n?'selected':''}>${esc(n)}</option>`).join('')}</select>`;
+  }
+  switch(q.type){
+    case 'Short text': case 'Number': case 'Phone': case 'Email':
+      return `<input class="edit-input" type="${q.type==='Number'?'number':q.type==='Phone'?'tel':q.type==='Email'?'email':'text'}" data-edit-field="${q.id}" value="${esc(val||'')}">`;
+    case 'Date':
+      return `<input class="edit-input" type="date" data-edit-date="${q.id}" value="${displayToISO(val)}">`;
+    case 'Long text':
+      return `<textarea class="edit-textarea" data-edit-field="${q.id}">${esc(val||'')}</textarea>`;
+    case 'Yes/No':
+      return `<div class="radio-group">
+        <label><input type="radio" name="ed_${q.id}" data-edit-radio="${q.id}" value="Yes" ${val==='Yes'?'checked':''}> Yes</label>
+        <label><input type="radio" name="ed_${q.id}" data-edit-radio="${q.id}" value="No" ${val==='No'?'checked':''}> No</label>
+      </div>`;
+    case 'Radio (pick one)':
+      return `<div class="radio-group">${(q.options||[]).map(o=>`<label><input type="radio" name="ed_${q.id}" data-edit-radio="${q.id}" value="${esc(o)}" ${val===o?'checked':''}> ${esc(o)}</label>`).join('')}</div>`;
+    case 'Dropdown (pick one)':
+      return `<select class="edit-select" data-edit-select="${q.id}"><option value="">&mdash; choose &mdash;</option>${(q.options||[]).map(o=>`<option value="${esc(o)}" ${val===o?'selected':''}>${esc(o)}</option>`).join('')}</select>`;
+    case 'Chips (pick many)': {
+      const arr = Array.isArray(val) ? val : [];
+      return `<div class="chips-wrap">${(q.options||[]).map(o=>`<button type="button" class="chip-toggle ${arr.includes(o)?'on':''}" data-edit-chip-toggle="${q.id}" data-chip-value="${esc(o)}">${esc(o)}</button>`).join('')}</div>`;
+    }
+    case 'Agreement checkbox': {
+      const a = val || {};
+      return `<label class="agree-edit"><input type="checkbox" data-edit-agree="${q.id}" ${a.agreed?'checked':''}> Agreed${a.date?` on ${esc(a.date)}`:''}</label>`;
+    }
+    case 'Signature': {
+      const a = val || {};
+      return `<div class="sig-box" style="cursor:pointer;" data-edit-sign="${q.id}">${a.signed?svgSignature():'<span style="font-size:.8rem;color:var(--text-secondary);">Click to sign</span>'}</div>`;
+    }
+    default: return '';
+  }
+}
+
+function requiredMissing(q, val){
+  if (!q.required) return false;
+  if (Array.isArray(val)) return val.length===0;
+  if (val && typeof val==='object') return !(val.agreed || val.signed);
+  return !val;
+}
+
+/* =======================================================================
+   Rendering — a group card
+======================================================================= */
+function renderQuestionRow(q, answers, ctx){
+  const editing = state.editingGroupId===ctx.groupId;
+  const label = `<div class="answer-label">${esc(q.label)}${q.required?' <span style="color:var(--danger);font-weight:700;">*</span>':''}</div>`;
+  if (editing){
+    const missing = requiredMissing(q, state.editDraft.answers[q.id]);
+    return `<div class="answer-row">
+      ${label}
+      <div class="answer-value stack">
+        ${editControlHtml(q, state.editDraft.answers)}
+        ${missing ? `<div class="helper-error">This field is required.</div>` : ''}
+      </div>
+    </div>`;
+  }
+  const staffOnly = q.visibleTo==='staff';
+  if (staffOnly && state.role==='client') return '';
+  return `<div class="answer-row" id="q-row-${q.id}">
+    ${label}
+    <div class="answer-value">${valueHtml(q, answers)} ${markersHtml(q.id, {staffOnly, label:q.label})}</div>
+  </div>`;
+}
+
+function renderSubgroupCard(g, s, answers){
+  const editing = state.editingGroupId===g.id;
+  const appr = state.approvals[s.id];
+  const blocked = s.flags.blocksScheduling && (!appr || appr.status!=='approved');
+  const flashCls = state.flashTarget===('subgroup-'+s.id) ? ' flash-target' : '';
+  let headExtra = '';
+  if (appr && appr.status==='pending' && state.role!=='client'){
+    headExtra = `<span class="subgroup-actions"><span class="chip chip-warning">Needs approval</span>${approveRejectButtons('subgroup', s.id, s.name)}</span>`;
+  } else if (appr && appr.status==='approved'){
+    headExtra = `<span class="subgroup-actions"><span class="approved-line"><span class="material-symbols-rounded">check_circle</span>Approved by ${esc(appr.by)} · ${esc(appr.date)}</span>${state.role==='manager'?`<button class="undo-link" data-undo-subgroup="${s.id}">Undo</button>`:''}</span>`;
+  } else if (appr && appr.status==='rejected' && state.role!=='client'){
+    headExtra = `<span class="subgroup-actions"><span class="chip chip-danger">Rejected</span></span>`;
+  }
+  let rows = s.questions.map(q=> renderQuestionRow(q, answers, { groupId:g.id, subgroupId:s.id })).join('');
+  return `<div class="subgroup-card${flashCls}" id="subgroup-${s.id}">
+    <div class="subgroup-head">
+      <span class="subgroup-name"><span class="material-symbols-rounded">subdirectory_arrow_right</span>${esc(s.name)}</span>
+      ${headExtra}
+    </div>
+    <p class="subgroup-reason">${esc(s.reason || '')}</p>
+    ${appr && appr.status!=='approved' && blocked && state.role!=='client' ? `<div class="subgroup-blocks">Blocks booking until approved</div>` : ''}
+    ${rows}
+  </div>`;
+}
+
+function groupMeta(g, visibleSubIds){
+  if (g.id===5) return ''; // Documents uses its own meta line
+  const answerCount = g.questions.length + visibleSubIds.reduce((n,sid)=>{ const s=findSubgroup(g.id,sid); return n + (s?s.questions.length:0); },0);
+  const parts = [];
+  if (visibleSubIds.length) parts.push(`${visibleSubIds.length} subgroup${visibleSubIds.length===1?'':'s'}`);
+  parts.push(`${answerCount} answer${answerCount===1?'':'s'}`);
+  return parts.join(' · ');
+}
+
+function renderGroupCard(g){
+  const answers = state.answers;
+  const visible = computeVisibleSubgroups(answers);
+  const visibleSubs = g.subgroups.filter(s=>visible.has(s.id));
+  const visibleSubIds = visibleSubs.map(s=>s.id);
+  const pendingCount = groupPendingCount(g.id);
+  const expanded = state.expandedGroups.has(g.id) || pendingCount>0;
+  const editing = state.editingGroupId===g.id;
+
+  let headerActions = '';
+  if (pendingCount>0 && state.role!=='client'){
+    headerActions += `<span class="group-flag"><span class="material-symbols-rounded">flag</span>${pendingCount}</span>`;
+  }
+  if (g.id!==5){
+    if (editing){
+      headerActions += `<button class="btn btn-outline btn-sm" data-cancel-edit>Cancel</button><button class="btn btn-primary btn-sm" data-save-edit>Save changes</button>`;
+    } else {
+      headerActions += `<button class="btn btn-outline btn-sm" data-edit-group="${g.id}">Edit</button>`;
+    }
+  }
+
+  let bodyHtml = '';
+  if (expanded){
+    if (g.id===5){
+      bodyHtml = renderDocumentsBody(g, visibleSubs);
+    } else {
+      const draftAnswers = editing ? state.editDraft.answers : answers;
+      const draftVisible = editing ? computeVisibleSubgroups(draftAnswers) : visible;
+      const bodyVisibleSubs = g.subgroups.filter(s=>draftVisible.has(s.id));
+      bodyHtml += g.questions.map(q=> renderQuestionRow(q, draftAnswers, {groupId:g.id})).join('');
+      if (editing){
+        const oldSubIds = new Set(visibleSubIds);
+        const hiddenNow = [...oldSubIds].filter(id=>!draftVisible.has(id)).map(id=>{ const s=findSubgroup(g.id,id); return s?s.name:id; });
+        if (hiddenNow.length){
+          bodyHtml += `<p class="retain-note">${hiddenNow.join(', ')} answers will be hidden but kept in history.</p>`;
+        }
+      }
+      bodyVisibleSubs.forEach(s=>{ bodyHtml += renderSubgroupCard(g, s, draftAnswers); });
+      if (editing){
+        bodyHtml += `<div class="edit-footer"><button class="btn btn-outline" data-cancel-edit>Cancel</button><button class="btn btn-primary" data-save-edit>Save changes</button></div>`;
+      }
+    }
+  }
+
+  const metaTxt = expanded===false ? groupMeta(g, visibleSubIds) : groupMeta(g, visibleSubIds);
+  const docsMeta = g.id===5 ? documentsMetaText(visibleSubs) : '';
+
+  return `<div class="card group-card group-block ${expanded?'expanded':''}" id="group-${g.id}">
+    <div class="group-head" data-toggle-group="${g.id}">
+      <span class="material-symbols-rounded g-chevron">chevron_right</span>
+      <span class="group-name">${esc(g.name)}</span>
+      <span class="group-meta">${g.id===5?docsMeta:metaTxt}</span>
+      <span class="group-head-actions">${headerActions}</span>
+    </div>
+    ${expanded ? `<div class="group-body">${bodyHtml}</div>` : ''}
+  </div>`;
+}
+
+/* ---------- Documents group (§10) ---------- */
+function documentsMetaText(visibleSubs){
+  const total = visibleSubs.length;
+  const uploaded = visibleSubs.filter(s=>{ const d=state.documents[s.id]; return d && (d.status==='approved'||d.status==='pending'); }).length;
+  return `${uploaded} of ${total} uploaded`;
+}
+
+function renderDocumentsBody(g, visibleSubs){
+  const cards = visibleSubs.map(s=>{
+    const d = state.documents[s.id] || { status:'not_uploaded' };
+    const isBlurred = d.status==='rejected';
+    let previewHtml;
+    if (d.status==='not_uploaded'){
+      previewHtml = `<div class="doc-empty"><span class="material-symbols-rounded">upload_file</span><span style="font-size:.75rem;">No file yet</span></div>`;
+    } else {
+      previewHtml = `<div class="doc-preview${isBlurred?' blurred':''}" data-doc-view="${s.id}">
+        <span class="doc-format-badge">${d.format}</span>
+        ${docSvgFor(s.id)}
+      </div>`;
+    }
+    let actions = '';
+    if (d.status==='approved'){
+      actions = `<button class="btn btn-outline btn-sm" data-doc-view="${s.id}">View</button><button class="btn btn-outline btn-sm" data-noop title="Not in this prototype">Replace</button>`;
+    } else if (d.status==='pending'){
+      actions = `<button class="btn btn-outline btn-sm" data-doc-view="${s.id}">View</button>`;
+      if (state.role!=='client'){
+        const disabled = state.role==='frontdesk';
+        const title = disabled ? 'title="Only a manager can approve this"' : '';
+        actions += `<button class="btn btn-secondary btn-sm" ${disabled?'disabled':''} ${title} data-doc-approve="${s.id}">Approve</button>
+          <button class="btn btn-danger-outline btn-sm" ${disabled?'disabled':''} ${title} data-doc-reject="${s.id}">Reject</button>`;
+      }
+    } else if (d.status==='rejected'){
+      actions = `<button class="btn btn-outline btn-sm" data-doc-view="${s.id}">View</button><button class="btn btn-outline btn-sm" data-noop title="Not in this prototype">Ask client to re-upload</button>`;
+    } else {
+      actions = `<button class="btn btn-outline btn-sm" data-noop title="Not in this prototype">Upload</button><button class="btn btn-outline btn-sm" data-ask-client="${esc(s.name)}">Ask client</button>`;
+    }
+    return `<div class="doc-card">
+      ${previewHtml}
+      <p class="doc-title">${esc(s.name)}</p>
+      ${d.status!=='not_uploaded' ? `<p class="doc-file">${esc(d.file)}</p><p class="doc-meta">Uploaded ${esc(d.uploaded)} · ${esc(d.size)}</p>` : ''}
+      ${d.status==='approved' ? `<p class="doc-meta">Approved by ${esc(d.approvedBy)} · ${esc(d.approvedDate)}</p>` : ''}
+      ${statusChipHtml(d.status)}
+      ${d.status==='rejected' ? `<p class="doc-reject-reason">${esc(d.reason)}</p>` : ''}
+      <div class="doc-actions">${actions}</div>
+    </div>`;
+  }).join('');
+  return `<p class="docs-group-note">Requested automatically based on Maria's answers.</p><div class="docs-grid">${cards}</div>`;
+}
+
+/* =======================================================================
+   Alert rail (§7, page-level — same markup as profile-overview-tab.html)
+   + submission line (§8)
+======================================================================= */
+function alertsFor(memberId){
+  if (memberId!=='maria') return [];
+  const list = [];
+  const blocked = bookingBlocked();
+  if (blocked){
+    if (state.role==='client'){
+      list.push({ tint:'danger', icon:'block', html:`We're reviewing your voucher. You'll be able to book once it's approved.` });
+    } else {
+      list.push({ tint:'danger', icon:'block', html:`<b>Maria — Voucher pending review, she can't book classes yet.</b> Approve the ${esc(blocked.name)} details to unblock.` });
+    }
+  }
+  if (state.role!=='client'){
+    const pending = pendingApprovalEntries();
+    if (pending.length){
+      const dropdownHtml = state.reviewOpen
+        ? `<div class="review-dropdown">${pending.map(e=>`<button data-review-item="${e.id}">${esc(e.label)}</button>`).join('')}</div>`
+        : '';
+      list.push({
+        tint:'warning', icon:'flag', relative:true,
+        html:`<b>Maria — ${pending.length} item${pending.length===1?'':'s'} need${pending.length===1?'s':''} manager approval</b>`,
+        actionHtml:`<button class="btn btn-outline btn-sm" data-toggle-review>Review <span class="material-symbols-rounded" style="font-size:16px;">expand_more</span></button>${dropdownHtml}`,
+      });
+    }
+  }
+  if (submission.newerVersion){
+    list.push({
+      tint:'info', icon:'info',
+      html:`<b>Maria — General Intake ${esc(submission.newerVersion)} is available.</b> She completed ${esc(submission.version)} on ${esc(submission.completedDate)}.`,
+      actionHtml:`<button class="btn btn-outline btn-sm" data-request-update>Request update</button>`,
+    });
+  }
+  return list;
+}
+
+function renderAlertRail(){
+  const alerts = alertsFor(state.selectedMember);
+  if (!alerts.length) return '';
+  return `<div class="alert-rail">${alerts.map(a=>`
+    <div class="alert alert-${a.tint}"${a.relative?' style="position:relative;"':''}>
+      <span class="material-symbols-rounded">${a.icon}</span>
+      <span class="alert-text">${a.html}</span>
+      ${a.actionHtml||''}
+    </div>`).join('')}</div>`;
+}
+
+function renderSubmissionLine(){
+  return `<div class="submission-line">
+    <span class="submission-name">${esc(submission.formName)}</span>
+    <span class="version-chip">${esc(submission.version)}</span>
+    <span class="submission-date">completed ${esc(submission.completedDate)}</span>
+    <span class="submission-spacer"></span>
+    ${submission.newerVersion ? `<button class="btn btn-outline btn-sm" data-request-update>Request update</button>` : ''}
+  </div>`;
+}
+
+/* =======================================================================
+   Left rail — Members + Quick Actions (ported verbatim from
+   profile-overview-tab.html §6.1/§6.2). Role switcher lives here (§5) —
+   this tab keeps Manager / Front desk / Client portal, not the overview
+   tab's role list; the control itself is styled identically.
+======================================================================= */
+function renderMembersCard(){
+  const rows = MEMBERS.map(m=>{
+    const selected = state.selectedMember===m.id;
+    const chips = m.chips.map(c=>`<span class="chip ${c.tint==='info'?'chip-info':'chip-muted'}">${esc(c.label)}</span>`).join('');
+    return `<button type="button" class="member-row${selected?' selected':''}" data-select-member="${m.id}">
+      <span class="member-avatar">${esc(m.initials)}</span>
+      <span class="member-info">
+        <span class="member-name">${esc(m.name)}</span>
+        <span class="member-sub">${esc(m.sub)}</span>
+      </span>
+      <span class="member-chips">${chips}</span>
+    </button>`;
+  }).join('');
+  const allSelected = state.selectedMember==='all';
+  return `<div class="rail-card">
+    <div class="rail-head"><span class="rail-title">Members</span><span class="count-chip">${MEMBERS.length}</span></div>
+    <div class="member-list">
+      <button type="button" class="member-row${allSelected?' selected':''}" data-select-member="all">
+        <span class="member-avatar all-avatar"><span class="material-symbols-rounded" style="font-size:18px;">functions</span></span>
+        <span class="member-info">
+          <span class="member-name">All Members</span>
+          <span class="member-sub">Consolidated overview</span>
+        </span>
+      </button>
+      <hr class="rail-divider" style="margin:6px 0;">
+      ${rows}
+    </div>
+  </div>`;
+}
+
+function renderQuickActionsCard(){
+  const role = state.role;
+  const addAuthDisabled = role!=='billing';
+  const overrideDisabled = role==='frontdesk';
+  const addAuthTitle = addAuthDisabled ? 'title="Only a billing admin can add an authorization."' : '';
+  const overrideTitle = overrideDisabled ? 'title="Only a manager or billing admin can apply an override."' : '';
+  return `<div class="rail-card">
+    <p class="eyebrow">Quick Actions</p>
+    <span class="qa-role-label">Prototype — view as</span>
+    <select class="role-select" id="roleSelect" aria-label="View profile as role">
+      <option value="manager" ${role==='manager'?'selected':''}>Manager</option>
+      <option value="frontdesk" ${role==='frontdesk'?'selected':''}>Front desk</option>
+      <option value="client" ${role==='client'?'selected':''}>Client portal</option>
+    </select>
+    <div class="qa-list">
+      <button type="button" class="qa-btn" data-qa="schedule-class"><span class="material-symbols-rounded">event</span>Schedule Class</button>
+      <button type="button" class="qa-btn" data-qa="request-assessment"><span class="material-symbols-rounded">pool</span>Request Assessment</button>
+      <button type="button" class="qa-btn" data-qa="review-intake"><span class="material-symbols-rounded">assignment</span>Review Intake</button>
+      <button type="button" class="qa-btn" data-qa="add-authorization" ${addAuthDisabled?`disabled ${addAuthTitle}`:''}><span class="material-symbols-rounded">verified_user</span>Add Authorization</button>
+      <button type="button" class="qa-btn" data-qa="apply-override" ${overrideDisabled?`disabled ${overrideTitle}`:''}><span class="material-symbols-rounded">gavel</span>Apply Override</button>
+    </div>
+  </div>`;
+}
+
+/* =======================================================================
+   Right panel nav — two rows (ported verbatim from
+   profile-overview-tab.html §4.2)
+======================================================================= */
+function renderPills(){
+  return `<div class="rp-pills">${GROUPS.map(g=>`
+    <button type="button" class="pill${state.activeGroup===g.id?' active':''}" data-pill="${g.id}">${esc(g.label)}${g.isNew?'<span class="new-dot" title="New in this proposal"></span>':''}</button>
+  `).join('')}</div>`;
+}
+function renderSubTabs(){
+  const g = findGroup(state.activeGroup);
+  if (!g || g.tabs.length<2) return '<div class="rp-tabrow" style="min-height:1px;"></div>';
+  const activeSub = state.subTabByGroup[g.id];
+  return `<div class="rp-tabrow">
+    <div class="rp-tabs">${g.tabs.map(t=>`
+      <button type="button" class="rp-tab${activeSub===t.id?' selected':''}" data-subtab="${t.id}" data-group="${g.id}" ${t.isNew?'title="New in this proposal"':''}>${esc(t.label)}${t.isNew?'<span class="new-dot"></span>':''}</button>
+    `).join('')}</div>
+    <span class="nav-legend">● New in this proposal</span>
+  </div>`;
+}
+
+/* =======================================================================
+   Right panel body — this tab's own intake content, or the member/tab
+   placeholders (§6)
+======================================================================= */
+function renderIntakeBody(){
+  let html = renderSubmissionLine();
+  html += `<div class="groups">${PAGE_GROUP_ORDER.map(id=>renderGroupCard(findIntakeGroup(id))).join('')}</div>`;
+  return `<div class="rp-body">${html}</div>`;
+}
+
+function renderRightPanelBody(){
+  const g = findGroup(state.activeGroup);
+  const subtab = state.subTabByGroup[g.id];
+  if (g.id==='profile' && subtab==='intake-docs'){
+    if (state.selectedMember==='all'){
+      return `<div class="rp-body"><div class="placeholder-card">Select a member to view their intake.</div></div>`;
+    }
+    if (state.selectedMember!=='maria'){
+      const name = findMember(state.selectedMember).name;
+      return `<div class="rp-body"><div class="placeholder-card">${esc(name)}'s intake is not seeded in this prototype — only Maria's submission is built.</div></div>`;
+    }
+    return renderIntakeBody();
+  }
+  const tabDef = g.tabs.find(t=>t.id===subtab);
+  return `<div class="rp-body"><div class="placeholder-card">${esc(tabDef.label)} — not built in this prototype.</div></div>`;
+}
+
+/* =======================================================================
+   Modals / overlays / popovers
+======================================================================= */
+function renderRejectModal(){
+  const root = document.getElementById('modalRoot');
+  const m = state.rejectModal;
+  if (!m){ root.innerHTML=''; return; }
+  const canSubmit = m.reason && m.reason.trim().length>0;
+  root.innerHTML = `<div class="modal-backdrop" data-modal-backdrop>
+    <div class="modal">
+      <div class="modal-head">
+        <h4>Reject ${esc(m.name)}</h4>
+        <p>${esc(profile.name.split(' ')[0])}'s guardian will be asked to redo it.</p>
+        <button class="modal-close" data-modal-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="rejectReason">Reason <span style="color:var(--danger);">*</span></label>
+        <textarea class="edit-textarea" id="rejectReason" data-reject-reason placeholder="e.g. Image is too blurry to read">${esc(m.reason||'')}</textarea>
+        <p class="hint">Shown to the guardian.</p>
+      </div>
+      <div class="modal-foot">
+        ${!canSubmit ? `<span class="helper-error">A reason is required.</span>` : ''}
+        <div class="modal-foot-buttons">
+          <button class="btn btn-outline" data-modal-close>Cancel</button>
+          <button class="btn btn-primary" data-modal-submit-reject ${canSubmit?'':'disabled'}>Reject item</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderViewerOverlay(){
+  const root = document.getElementById('overlayRoot');
+  const id = state.viewerDoc;
+  if (!id){ root.innerHTML=''; return; }
+  const s = findSubgroup(5, id);
+  const d = state.documents[id];
+  const blurred = d.status==='rejected';
+  let footerActions = '';
+  if (state.role==='manager' && d.status==='pending'){
+    footerActions = `<button class="btn btn-danger-outline" data-overlay-reject="${id}">Reject</button><button class="btn btn-secondary" data-overlay-approve="${id}">Approve</button>`;
+  }
+  root.innerHTML = `<div class="viewer-backdrop" data-overlay-backdrop>
+    <div class="viewer-panel">
+      <div class="viewer-topbar">
+        <h4>${esc(s.name)}</h4>
+        ${statusChipHtml(d.status)}
+        <button class="viewer-close" data-overlay-close>&times;</button>
+      </div>
+      <div class="viewer-body${blurred?' blurred':''}">${docSvgFor(id)}</div>
+      ${footerActions ? `<div class="viewer-foot">${footerActions}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+function historyPopoverHtml(qid){
+  if (state.historyOpenFor!==qid) return '';
+  const h = historyLog[qid];
+  if (!h) return '';
+  const now = state.answers[qid];
+  return `<div class="history-popover" data-history-popover>
+    <h5>Answer history</h5><hr>
+    <div class="history-row"><span class="history-tag">Now</span><div><div class="history-value">${esc(now)}</div><div class="history-sub">${esc(h.changedBy)} · ${esc(h.changedDate)}</div></div></div>
+    <div class="history-row"><span class="history-tag">Before</span><div><div class="history-value">${esc(h.previous)}</div><div class="history-sub">Submitted ${esc(submission.completedDate)}</div></div></div>
+  </div>`;
+}
+
+/* =======================================================================
+   Master render
+======================================================================= */
+function render(){
+  const root = document.getElementById('pageRoot');
+  const summaryChip = ACCOUNT.status==='Active' ? 'chip-success' : 'chip-muted';
+  let html = `
+    <div class="page-header">
+      <p class="crumb"><a href="index.html">Accounts</a> / ${esc(ACCOUNT.name)}</p>
+      <div class="page-actions">
+        <button type="button" class="btn btn-outline" data-noop title="Not in this prototype"><span class="material-symbols-rounded">arrow_back</span>Back to Accounts</button>
+        <button type="button" class="btn btn-danger-outline" data-noop title="Not in this prototype"><span class="material-symbols-rounded">delete</span>Delete Account</button>
+      </div>
+    </div>
+    <div class="summary-band">
+      <span class="summary-name">${esc(ACCOUNT.name)}</span>
+      <span class="chip ${summaryChip}">${esc(ACCOUNT.status)}</span>
+      <span class="chip chip-muted">Net Amount Due: ${esc(ACCOUNT.netDue)}</span>
+      <span class="summary-sub">${esc(ACCOUNT.email)} · ${esc(ACCOUNT.phone)} · ${esc(ACCOUNT.location)}</span>
+    </div>
+    ${renderAlertRail()}
+    <div class="detail-body">
+      <div class="detail-left">
+        ${renderMembersCard()}
+        ${renderQuickActionsCard()}
+      </div>
+      <div class="detail-right">
+        ${renderPills()}
+        ${renderSubTabs()}
+        ${renderRightPanelBody()}
+      </div>
+    </div>
+  `;
+  root.innerHTML = html;
+
+  // history popover needs to be positioned inside its row — inject after
+  if (state.historyOpenFor){
+    const row = document.getElementById('q-row-'+state.historyOpenFor);
+    if (row){
+      row.style.position = 'relative';
+      row.insertAdjacentHTML('beforeend', historyPopoverHtml(state.historyOpenFor));
+    }
+  }
+
+  renderRejectModal();
+  renderViewerOverlay();
+
+  if (state.scrollTarget){
+    const el = document.getElementById(state.scrollTarget);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'center' });
+    state.scrollTarget = null;
+  }
+}
+
+/* =======================================================================
+   Event delegation — click / change / input / keydown
+======================================================================= */
+document.addEventListener('click', (e)=>{
+  const t = e.target;
+
+  if (t.closest('[data-noop]')){ return; }
+
+  const toggleGroup = t.closest('[data-toggle-group]');
+  if (toggleGroup && !t.closest('.group-head-actions') && !t.closest('button')){
+    const id = Number(toggleGroup.dataset.toggleGroup);
+    if (state.expandedGroups.has(id)) state.expandedGroups.delete(id); else state.expandedGroups.add(id);
+    render(); return;
+  }
+
+  const editGroupBtn = t.closest('[data-edit-group]');
+  if (editGroupBtn){
+    const id = Number(editGroupBtn.dataset.editGroup);
+    state.editingGroupId = id;
+    state.editDraft = { answers: Object.assign({}, state.answers) };
+    state.expandedGroups.add(id);
+    render(); return;
+  }
+  if (t.closest('[data-cancel-edit]')){
+    state.editingGroupId = null; state.editDraft = null; render(); return;
+  }
+  if (t.closest('[data-save-edit]')){
+    saveEdit(); return;
+  }
+
+  const chipToggle = t.closest('[data-edit-chip-toggle]');
+  if (chipToggle){
+    const qid = chipToggle.dataset.editChipToggle;
+    const val = chipToggle.dataset.chipValue;
+    const arr = Array.isArray(state.editDraft.answers[qid]) ? state.editDraft.answers[qid].slice() : [];
+    const idx = arr.indexOf(val);
+    if (idx>-1) arr.splice(idx,1); else arr.push(val);
+    state.editDraft.answers[qid] = arr;
+    render(); return;
+  }
+  const editRadio = t.closest('[data-edit-radio]');
+  if (editRadio){ /* handled on change too, no-op for click on label wrapper */ }
+
+  const signBox = t.closest('[data-edit-sign]');
+  if (signBox){
+    const qid = signBox.dataset.editSign;
+    const cur = state.editDraft.answers[qid] || {};
+    state.editDraft.answers[qid] = cur.signed ? { signed:false, date:null } : { signed:true, date:todayDisplay() };
+    render(); return;
+  }
+
+  const longtextBtn = t.closest('[data-toggle-longtext]');
+  if (longtextBtn){
+    const qid = longtextBtn.dataset.toggleLongtext;
+    if (state.expandedLongText.has(qid)) state.expandedLongText.delete(qid); else state.expandedLongText.add(qid);
+    render(); return;
+  }
+
+  const askBtn = t.closest('[data-ask-client]');
+  if (askBtn){
+    showToast(`Request sent to ${profile.household.split(' ')[0]==='Garcia'?'Elena Garcia':'the guardian'}.`);
+    return;
+  }
+
+  const historyBtn = t.closest('[data-history-toggle]');
+  if (historyBtn){
+    const qid = historyBtn.dataset.historyToggle;
+    state.historyOpenFor = state.historyOpenFor===qid ? null : qid;
+    render(); return;
+  }
+  if (t.closest('[data-history-popover]')){ return; }
+  if (state.historyOpenFor && !t.closest('[data-history-toggle]')){
+    state.historyOpenFor = null; render(); return;
+  }
+
+  const approveBtn = t.closest('[data-approve]');
+  if (approveBtn && !approveBtn.disabled){
+    const [kind,id] = approveBtn.dataset.approve.split(':');
+    approveItem(kind, id);
+    return;
+  }
+  const undoQ = t.closest('[data-undo-question]');
+  if (undoQ){ undoItem('question', undoQ.dataset.undoQuestion); return; }
+  const undoSg = t.closest('[data-undo-subgroup]');
+  if (undoSg){ undoItem('subgroup', undoSg.dataset.undoSubgroup); return; }
+
+  const openReject = t.closest('[data-open-reject]');
+  if (openReject && !openReject.disabled){
+    const [kind,id,name] = openReject.dataset.openReject.split(':');
+    state.rejectModal = { kind, id, name, reason:'' };
+    render(); return;
+  }
+  const docApprove = t.closest('[data-doc-approve]');
+  if (docApprove && !docApprove.disabled){
+    const id = docApprove.dataset.docApprove;
+    state.documents[id].status='approved';
+    state.documents[id].approvedBy='Manager';
+    state.documents[id].approvedDate=todayDisplay();
+    showToast(`${state.documents[id].name} approved.`);
+    render(); return;
+  }
+  const docReject = t.closest('[data-doc-reject]');
+  if (docReject && !docReject.disabled){
+    const id = docReject.dataset.docReject;
+    state.rejectModal = { kind:'document', id, name: state.documents[id].name, reason:'' };
+    render(); return;
+  }
+  const docView = t.closest('[data-doc-view]');
+  if (docView){ state.viewerDoc = docView.dataset.docView; render(); return; }
+
+  if (t.closest('[data-modal-close]') || t.closest('[data-modal-backdrop]') === t){
+    state.rejectModal = null; render(); return;
+  }
+  const submitReject = t.closest('[data-modal-submit-reject]');
+  if (submitReject && !submitReject.disabled){
+    submitRejection(); return;
+  }
+
+  if (t.closest('[data-overlay-close]') || t.closest('[data-overlay-backdrop]') === t){
+    state.viewerDoc = null; render(); return;
+  }
+  const overlayApprove = t.closest('[data-overlay-approve]');
+  if (overlayApprove){
+    const id = overlayApprove.dataset.overlayApprove;
+    state.documents[id].status='approved';
+    state.documents[id].approvedBy='Manager';
+    state.documents[id].approvedDate=todayDisplay();
+    showToast(`${state.documents[id].name} approved.`);
+    state.viewerDoc = null;
+    render(); return;
+  }
+  const overlayReject = t.closest('[data-overlay-reject]');
+  if (overlayReject){
+    const id = overlayReject.dataset.overlayReject;
+    state.viewerDoc = null;
+    state.rejectModal = { kind:'document', id, name: state.documents[id].name, reason:'' };
+    render(); return;
+  }
+
+  const reviewToggle = t.closest('[data-toggle-review]');
+  if (reviewToggle){ state.reviewOpen = !state.reviewOpen; render(); return; }
+  const reviewItem = t.closest('[data-review-item]');
+  if (reviewItem){
+    const entry = state.approvals[reviewItem.dataset.reviewItem];
+    state.reviewOpen = false;
+    if (entry){
+      state.expandedGroups.add(entry.groupId);
+      const targetId = entry.kind==='subgroup' ? ('subgroup-'+reviewItem.dataset.reviewItem) : ('q-row-'+reviewItem.dataset.reviewItem);
+      state.flashTarget = entry.kind==='subgroup' ? ('subgroup-'+reviewItem.dataset.reviewItem) : null;
+      state.scrollTarget = targetId;
+      render();
+      setTimeout(()=>{ state.flashTarget=null; }, 1000);
+    }
+    return;
+  }
+  if (state.reviewOpen && !t.closest('.review-dropdown') && !t.closest('[data-toggle-review]')){
+    state.reviewOpen = false; render(); return;
+  }
+
+  if (t.closest('[data-request-update]')){
+    showToast('Update request sent to Elena Garcia.');
+    return;
+  }
+});
+
+/* =======================================================================
+   Chrome interactions — pills, sub-tabs, members, quick actions (ported
+   verbatim from profile-overview-tab.html's click branches, §5/§6)
+======================================================================= */
+document.addEventListener('click', (e)=>{
+  const t = e.target;
+
+  if (t.closest('[data-noop]')){ return; }
+
+  const pill = t.closest('[data-pill]');
+  if (pill){
+    const groupId = pill.dataset.pill;
+    const g = findGroup(groupId);
+    state.activeGroup = groupId;
+    state.subTabByGroup[groupId] = g.defaultTab || g.tabs[0].id;
+    render();
+    return;
+  }
+
+  const subtabBtn = t.closest('[data-subtab]');
+  if (subtabBtn){
+    const groupId = subtabBtn.dataset.group;
+    const subId = subtabBtn.dataset.subtab;
+    const tabDef = findGroup(groupId).tabs.find(x=>x.id===subId);
+    if (tabDef.link){ window.location.href = tabDef.link; return; }
+    state.activeGroup = groupId;
+    state.subTabByGroup[groupId] = subId;
+    render();
+    return;
+  }
+
+  const memberBtn = t.closest('[data-select-member]');
+  if (memberBtn){
+    state.selectedMember = memberBtn.dataset.selectMember;
+    render();
+    return;
+  }
+
+  const qaBtn = t.closest('[data-qa]');
+  if (qaBtn && !qaBtn.disabled){
+    const action = qaBtn.dataset.qa;
+    if (action==='apply-override') showToast('Override recorded (prototype).');
+    else if (action==='add-authorization'){ /* unreachable on this screen — no billing role */ }
+    else showToast('Not available in this prototype.');
+    return;
+  }
+});
+
+document.addEventListener('change', (e)=>{
+  const t = e.target;
+  if (t.id==='roleSelect'){
+    state.role = t.value;
+    state.editingGroupId = null; state.editDraft = null;
+    render(); return;
+  }
+  const radio = t.closest('[data-edit-radio]');
+  if (radio){ state.editDraft.answers[radio.dataset.editRadio] = radio.value; render(); return; }
+  const sel = t.closest('[data-edit-select]');
+  if (sel){ state.editDraft.answers[sel.dataset.editSelect] = sel.value; render(); return; }
+  const dateInput = t.closest('[data-edit-date]');
+  if (dateInput){ state.editDraft.answers[dateInput.dataset.editDate] = isoToDisplay(dateInput.value); render(); return; }
+  const agree = t.closest('[data-edit-agree]');
+  if (agree){
+    const qid = agree.dataset.editAgree;
+    state.editDraft.answers[qid] = agree.checked ? { agreed:true, date: todayDisplay() } : { agreed:false, date:null };
+    render(); return;
+  }
+});
+
+document.addEventListener('input', (e)=>{
+  const t = e.target;
+  const field = t.closest('[data-edit-field]');
+  if (field){ state.editDraft.answers[field.dataset.editField] = t.value; return; }
+  if (t.closest('[data-reject-reason]')){
+    if (state.rejectModal) state.rejectModal.reason = t.value;
+    const submitBtn = document.querySelector('[data-modal-submit-reject]');
+    const errText = document.querySelector('.modal-foot .helper-error');
+    const canSubmit = t.value.trim().length>0;
+    if (submitBtn) submitBtn.disabled = !canSubmit;
+    if (canSubmit && errText) errText.remove();
+    return;
+  }
+});
+
+document.addEventListener('keydown', (e)=>{
+  if (e.key !== 'Escape') return;
+  if (state.viewerDoc){ state.viewerDoc = null; render(); return; }
+  if (state.rejectModal){ state.rejectModal = null; render(); return; }
+  if (state.historyOpenFor){ state.historyOpenFor = null; render(); return; }
+  if (state.reviewOpen){ state.reviewOpen = false; render(); return; }
+});
+
+/* =======================================================================
+   Action helpers
+======================================================================= */
+function approveItem(kind, id){
+  const appr = state.approvals[id];
+  if (!appr) return;
+  appr.status = 'approved';
+  appr.by = 'Manager';
+  appr.date = todayDisplay();
+  showToast(`${appr.label} approved.`);
+  render();
+}
+function undoItem(kind, id){
+  const appr = state.approvals[id];
+  if (!appr) return;
+  appr.status = 'pending';
+  appr.by = null; appr.date = null;
+  showToast(`${appr.label} approval undone.`);
+  render();
+}
+function submitRejection(){
+  const m = state.rejectModal;
+  if (!m || !m.reason || !m.reason.trim()) return;
+  if (m.kind==='document'){
+    state.documents[m.id].status='rejected';
+    state.documents[m.id].reason=m.reason.trim();
+  } else {
+    const appr = state.approvals[m.id];
+    if (appr){ appr.status='rejected'; appr.reason=m.reason.trim(); appr.by=null; appr.date=null; }
+  }
+  showToast(`${m.name} rejected.`);
+  state.rejectModal = null;
+  render();
+}
+function saveEdit(){
+  const groupId = state.editingGroupId;
+  const g = findIntakeGroup(groupId);
+  const oldAnswers = state.answers;
+  const draft = state.editDraft.answers;
+
+  // required-field guard
+  const visibleBefore = computeVisibleSubgroups(oldAnswers);
+  const visibleDraft = computeVisibleSubgroups(draft);
+  const qsToCheck = g.questions.slice();
+  g.subgroups.filter(s=>visibleDraft.has(s.id)).forEach(s=> qsToCheck.push(...s.questions));
+  const hasMissing = qsToCheck.some(q=> requiredMissing(q, draft[q.id]));
+  if (hasMissing){ render(); return; }
+
+  let resetToast = null;
+  Object.keys(draft).forEach(qid=>{
+    const changed = JSON.stringify(draft[qid]) !== JSON.stringify(oldAnswers[qid]);
+    if (changed && state.approvals[qid] && state.approvals[qid].status==='approved'){
+      state.approvals[qid].status = 'pending';
+      state.approvals[qid].by = null; state.approvals[qid].date = null;
+      const q = findQuestion(qid);
+      resetToast = `${q ? q.label : state.approvals[qid].label} changed — approval reset.`;
+    }
+  });
+
+  Object.assign(state.answers, draft);
+  state.editingGroupId = null;
+  state.editDraft = null;
+  render();
+  if (resetToast) showToast(resetToast);
+}
+
+render();
+</script>
+</body>
+</html>

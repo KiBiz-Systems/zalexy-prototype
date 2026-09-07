@@ -1,0 +1,1348 @@
+<!--
+  Zalexy Prototype — Admin: Intake Form Builder (rebuilt — Question Group library + Forms + Preview)
+  Spec:   ai-workspace/prototypes/admin/intake-form-builder.md
+  Design: ai-workspace/prototypes/_shared/design-system.md
+  Static prototype. Not production code. No app dependencies.
+  Question Group tab is a shared library (groups/subgroups/questions, all
+  fully dynamic — nothing is fixed anymore). Forms tab composes a form from
+  that library: whole groups and/or standalone questions, in any order.
+  Preview tab renders whichever form is selected. Conditional logic is a
+  question's "Connect to" setting — a single target always opens directly
+  (no click), 2+ targets render a dropdown or chips the client must answer.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zalexy — Intake Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{
+  --primary:#334155; --primary-light:#475569; --primary-dark:#1e293b;
+  --secondary:#10b981; --secondary-light:#34d399; --secondary-dark:#059669;
+  --success:#10b981; --success-bg:#d1fae5; --success-dark:#047857;
+  --info:#3b82f6; --info-bg:#eff6ff; --info-dark:#1d4ed8; --info-hover:#2563eb;
+  --bg-default:#f8fafc; --bg-paper:#ffffff;
+  --text-primary:#0f172a; --text-secondary:#64748b;
+  --border:#f1f5f9; --border-input:#cbd5e1; --border-input-hover:#94a3b8;
+  --hover-row:#f1f5f9; --action-hover:rgba(71,85,105,.04); --action-selected:rgba(71,85,105,.08);
+  --danger:#ef4444; --warning:#f59e0b;
+  --radius-card:10px; --radius-base:8px; --radius-control:6px; --radius-chip:4px;
+  --shadow-card:0 2px 4px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.03);
+  --shadow-1:0 1px 3px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Inter","Roboto","Helvetica","Arial",sans-serif;color:var(--text-primary);}
+button{font-family:inherit;}
+.app{display:flex;height:100vh;overflow:hidden;}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px;}
+
+/* ---------- Sidebar ---------- */
+.sidebar{width:240px;flex:0 0 240px;background:var(--primary-dark);color:#f8fafc;display:flex;flex-direction:column;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:10px;padding:20px 20px 16px;text-decoration:none;color:inherit;}
+.logo span{font-weight:700;font-size:1.05rem;letter-spacing:.02em;}
+.nav{padding:8px 12px;display:flex;flex-direction:column;gap:2px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-base);color:#f8fafc;font-size:.9rem;font-weight:500;text-decoration:none;cursor:pointer;}
+.nav-item .material-symbols-rounded{font-size:20px;min-width:24px;color:rgba(248,250,252,.7);}
+.nav-item.disabled{opacity:.42;cursor:not-allowed;}
+.nav-item:not(.disabled):hover{background:rgba(248,250,252,.08);}
+.nav-item.active{background:rgba(248,250,252,.14);}
+.nav-item.active .material-symbols-rounded{color:#f8fafc;}
+.nav-section{margin:16px 12px 6px;font-size:.7rem;font-weight:700;letter-spacing:.08em;color:rgba(248,250,252,.45);text-transform:uppercase;}
+
+/* ---------- Main ---------- */
+.main{flex:1;display:flex;flex-direction:column;background:var(--bg-default);overflow:hidden;}
+.content{flex:1;overflow-y:auto;}
+.page{max-width:1360px;margin:0 auto;padding:28px 40px 72px;}
+.crumb{font-size:.8rem;color:var(--text-secondary);margin:0 0 10px;}
+.crumb a{color:var(--text-secondary);text-decoration:none;}
+.crumb a:hover{color:var(--primary);text-decoration:underline;}
+.header-row{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px;}
+h1{font-size:1.75rem;font-weight:600;letter-spacing:-.01em;margin:0;}
+.page-subtitle{font-size:.8rem;color:var(--text-secondary);line-height:1.5;margin:4px 0 0;max-width:560px;}
+.spacer{flex:1;}
+
+.tabs{display:flex;gap:4px;background:#eef1f5;padding:4px;border-radius:var(--radius-base);width:fit-content;}
+.tab-btn{border:none;background:transparent;padding:8px 18px;border-radius:6px;font-weight:600;font-size:.875rem;color:var(--text-secondary);cursor:pointer;}
+.tab-btn.active{background:#fff;color:var(--text-primary);box-shadow:var(--shadow-1);}
+
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:var(--radius-control);padding:8px 16px;font-weight:600;font-size:.875rem;cursor:pointer;box-shadow:none;white-space:nowrap;}
+.btn .material-symbols-rounded{font-size:18px;}
+.btn-primary{background:var(--info);color:#fff;}
+.btn-primary:hover{background:var(--info-hover);}
+.btn-primary:disabled{background:#cbd5e1;cursor:not-allowed;}
+.btn-outline{background:#fff;color:var(--text-primary);border:1px solid var(--border-input);}
+.btn-outline:hover{border-color:var(--primary);background:var(--action-hover);}
+
+/* ---------- Question Group outline ---------- */
+.card{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);overflow:hidden;max-width:1040px;}
+.group-row{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;border-bottom:1px solid var(--border);}
+.card > .group-block:last-child .group-row{border-bottom:none;}
+.group-row:hover{background:var(--action-hover);}
+.chevron{font-size:20px;color:var(--text-secondary);transition:transform .15s;flex:0 0 auto;}
+.group-block.expanded > .group-row .chevron{transform:rotate(90deg);}
+.group-num{width:22px;height:22px;border-radius:50%;background:var(--bg-default);color:var(--text-secondary);font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.group-name{font-size:.95rem;font-weight:600;flex:1;}
+.group-meta{font-size:.8rem;color:var(--text-secondary);white-space:nowrap;}
+.group-body{padding:2px 18px 16px 50px;border-bottom:1px solid var(--border);}
+.group-block:last-child .group-body{border-bottom:none;}
+.icon-btn{background:none;border:none;color:var(--text-secondary);cursor:pointer;padding:4px;border-radius:4px;}
+.icon-btn:hover{background:var(--action-hover);}
+.icon-btn .material-symbols-rounded{font-size:18px;display:block;}
+.icon-btn-danger{background:none;border:none;color:var(--danger);cursor:pointer;padding:4px;border-radius:4px;}
+.icon-btn-danger .material-symbols-rounded{font-size:18px;display:block;}
+.icon-btn-danger:hover{background:rgba(239,68,68,.1);}
+.footer-row{display:flex;gap:10px;padding:14px 18px;flex-wrap:wrap;}
+
+.q-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-radius:6px;position:relative;}
+.q-row:hover{background:var(--action-hover);}
+.q-text{flex:1;cursor:pointer;min-width:0;display:flex;align-items:baseline;gap:8px;padding:2px 0;flex-wrap:wrap;}
+.q-label{font-size:.875rem;font-weight:500;color:var(--text-primary);}
+.q-type{font-size:.8rem;color:var(--text-secondary);}
+.q-menu-btn{background:none;border:none;color:var(--text-secondary);font-size:18px;cursor:pointer;padding:2px 4px;border-radius:4px;flex:0 0 auto;}
+.q-menu-btn:hover{background:var(--action-hover);}
+.q-menu{position:absolute;right:4px;top:32px;background:#fff;border-radius:var(--radius-base);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);z-index:20;min-width:170px;padding:6px;}
+.q-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:8px 10px;font-size:.8rem;border-radius:6px;cursor:pointer;color:var(--danger);}
+.q-menu button:hover{background:var(--action-hover);}
+
+.add-link{background:none;border:none;color:var(--info-dark);font-weight:600;font-size:.8rem;cursor:pointer;padding:6px 4px;display:inline-flex;align-items:center;gap:4px;}
+.add-link:hover{text-decoration:underline;}
+.add-link.boxed{border:1px solid var(--border-input);border-radius:var(--radius-control);}
+
+.subgroups-label{font-size:.7rem;font-weight:700;letter-spacing:.06em;color:var(--text-secondary);text-transform:uppercase;margin:14px 0 6px;}
+.subgroup-block{margin:0 0 6px;}
+.subgroup-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-left:3px solid var(--info);background:var(--info-bg);border-radius:0 var(--radius-base) var(--radius-base) 0;cursor:pointer;flex-wrap:wrap;}
+.subgroup-name{font-size:.875rem;font-weight:600;color:var(--text-primary);}
+.subgroup-meta{font-size:.75rem;color:var(--info-dark);font-weight:600;white-space:nowrap;}
+.flag-inline{display:flex;align-items:center;gap:5px;font-size:.75rem;color:var(--info-dark);cursor:pointer;white-space:nowrap;}
+.subgroup-body{padding:8px 10px 12px 14px;border-left:3px solid var(--info-bg);margin-left:1px;}
+
+select, input[type=text], input[type=number], input[type=date], input[type=tel], input[type=email], textarea{
+  height:34px;padding:6px 10px;font-size:.85rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);
+}
+textarea{height:auto;min-height:60px;padding:8px 10px;font-family:inherit;width:100%;}
+select:hover, input:hover{border-color:var(--border-input-hover);}
+select:focus, input:focus, textarea:focus{border-color:var(--primary);outline:none;}
+.checkline{display:flex;align-items:center;gap:8px;font-size:.85rem;}
+
+/* ---------- Drawer ---------- */
+.drawer-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.35);z-index:90;}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:400px;max-width:92vw;background:#fff;box-shadow:-8px 0 24px rgba(0,0,0,.12);z-index:91;display:flex;flex-direction:column;}
+.drawer-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;}
+.drawer-head h4{font-size:1.1rem;font-weight:600;margin:0;}
+.drawer-close{background:none;border:none;font-size:20px;color:var(--text-secondary);cursor:pointer;}
+.drawer-body{padding:18px 20px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;flex:1;}
+.form-row{display:flex;flex-direction:column;gap:6px;}
+.form-row label{font-size:.75rem;font-weight:600;color:var(--text-secondary);}
+.form-row-inline{display:flex;align-items:center;gap:10px;}
+.hint{font-size:.75rem;color:var(--text-secondary);}
+.drawer-foot{padding:16px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;}
+.radio-group{display:flex;gap:14px;font-size:.85rem;flex-wrap:wrap;}
+.radio-group label{display:flex;align-items:center;gap:5px;font-weight:500;color:var(--text-primary);min-width:0;}
+.checklist{display:flex;flex-direction:column;gap:6px;border:1px solid var(--border);border-radius:var(--radius-base);padding:10px 12px;}
+.connect-preview{background:var(--bg-default);border-radius:var(--radius-base);padding:10px 12px;}
+.connect-preview-title{font-size:.8rem;font-weight:700;color:var(--text-primary);margin:0 0 4px;}
+.connect-preview-list{margin:0;padding-left:18px;font-size:.8rem;color:var(--text-secondary);display:flex;flex-direction:column;gap:2px;}
+select:disabled{background:var(--bg-default);color:var(--text-secondary);cursor:not-allowed;}
+
+/* ---------- Modal ---------- */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:100;}
+.modal{background:#fff;border-radius:var(--radius-card);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);width:420px;max-width:92vw;max-height:80vh;display:flex;flex-direction:column;}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;}
+.modal-head h4{font-size:1.1rem;font-weight:600;margin:0;}
+.modal-close{background:none;border:none;font-size:20px;color:var(--text-secondary);cursor:pointer;}
+.modal-body{padding:18px 22px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:12px;}
+.picker-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-base);cursor:pointer;text-align:left;background:#fff;font-size:.875rem;font-weight:500;color:var(--text-primary);width:100%;}
+.picker-row:hover{border-color:var(--primary);background:var(--action-hover);}
+
+/* ---------- Forms tab ---------- */
+.form-pills{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.form-pill-wrap{display:flex;align-items:stretch;border-radius:999px;overflow:hidden;box-shadow:var(--shadow-1);}
+.form-pill-wrap.active .form-pill{background:var(--info);color:#fff;}
+.form-pill{border:none;background:#fff;color:var(--text-primary);padding:8px 16px;font-weight:600;font-size:.85rem;cursor:pointer;}
+.form-pill-del{border:none;background:#fff;color:var(--text-secondary);padding:8px 10px;cursor:pointer;font-size:.9rem;}
+.form-pill-wrap.active .form-pill-del{background:var(--info-dark);color:#fff;}
+.form-pill-del:hover{background:#fee2e2;color:var(--danger);}
+.form-item-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);}
+.card > .form-item-row:last-of-type{border-bottom:none;}
+.form-item-row .material-symbols-rounded.item-icon{font-size:20px;color:var(--info-dark);}
+.form-item-row .up-down{display:flex;gap:2px;margin-left:auto;}
+.form-item-row .up-down button{background:none;border:none;color:var(--text-secondary);cursor:pointer;padding:2px;border-radius:4px;}
+.form-item-row .up-down button:hover{background:var(--action-hover);}
+.form-item-row .up-down button:disabled{opacity:.3;cursor:not-allowed;}
+
+/* ---------- Preview ---------- */
+.preview-header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;max-width:820px;margin:0 auto 24px;}
+.preview-eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary);margin:0 0 4px;}
+.preview-form-title{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;margin:0;}
+.preview-form-select{min-width:220px;}
+.pv-paper{max-width:820px;margin:0 auto;background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:44px 56px 40px;}
+.pv-group{padding:28px 0;border-bottom:1px solid var(--border);}
+.pv-group:first-child{padding-top:0;}
+.pv-group:last-child{border-bottom:none;padding-bottom:8px;}
+.pv-group-head{display:flex;align-items:center;gap:12px;margin:0 0 22px;}
+.pv-group-num{width:30px;height:30px;border-radius:50%;background:var(--info);color:#fff;font-size:.85rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.pv-group-title{font-size:1.2rem;font-weight:700;letter-spacing:-.01em;margin:0;color:var(--text-primary);}
+.pv-fields{display:grid;grid-template-columns:1fr 1fr;column-gap:28px;row-gap:22px;align-items:start;}
+.pv-subgroup{grid-column:1 / -1;margin:2px 0;padding:22px 24px;background:var(--bg-default);border:1px solid var(--border);border-left:4px solid var(--info);border-radius:0 var(--radius-base) var(--radius-base) 0;}
+.pv-subgroup-title{display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:var(--info-dark);margin:0 0 18px;text-transform:uppercase;letter-spacing:.05em;}
+.pv-subgroup-title .material-symbols-rounded{font-size:16px;}
+.pv-question{margin:0;min-width:0;}
+.pv-question.full{grid-column:1 / -1;}
+.pv-question:empty{display:none;}
+.pv-label{display:block;font-size:.8rem;font-weight:600;color:var(--text-secondary);margin-bottom:7px;}
+.pv-question input[type=text], .pv-question input[type=number], .pv-question input[type=date], .pv-question input[type=tel], .pv-question input[type=email], .pv-question select, .pv-question textarea{width:100%;height:38px;}
+.pv-question textarea{height:auto;}
+.pv-submit-row{max-width:820px;margin:8px auto 0;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;}
+@media (max-width:900px){ .pv-fields{grid-template-columns:1fr;} .pv-paper{padding:32px 24px;} }
+.req-star{color:var(--danger);font-weight:700;margin-left:2px;}
+.staff-tag{margin-left:8px;background:#f1f5f9;color:var(--text-secondary);font-size:.7rem;font-weight:600;padding:2px 6px;border-radius:var(--radius-chip);text-transform:none;}
+.chip-group{display:flex;flex-wrap:wrap;gap:8px;}
+.chip-toggle{border:1px solid var(--border-input);background:#fff;border-radius:999px;padding:6px 14px;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--text-primary);}
+.chip-toggle.on{background:var(--info);border-color:var(--info);color:#fff;}
+.sig-box{border:2px dashed var(--border-input);border-radius:var(--radius-base);height:64px;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:.85rem;cursor:pointer;font-weight:600;max-width:320px;}
+.sig-box.signed{border-color:var(--success);border-style:solid;color:var(--success-dark);background:var(--success-bg);}
+.agree-row{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:500;cursor:pointer;}
+.pv-empty{font-size:.8rem;color:var(--text-secondary);font-style:italic;}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--primary-dark);color:#f8fafc;padding:12px 18px;border-radius:var(--radius-base);font-size:.85rem;box-shadow:var(--shadow-card);z-index:200;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+@media (max-width:640px){ .drawer{width:100vw;} }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <a class="logo" href="index.html">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect width="28" height="28" rx="7" fill="#3b82f6"/>
+        <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>ZALEXY</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">point_of_sale</span>Point of Sale</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">groups</span>Leads</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">account_circle</span>Accounts</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Profiles</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">receipt_long</span>Transactions</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">request_quote</span>Invoices</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Staff</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">event</span>Scheduling</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">settings</span>Settings</a>
+      <div class="nav-section">Prototypes</div>
+      <a class="nav-item" href="index.html"><span class="material-symbols-rounded">grid_view</span>Prototype Gallery</a>
+      <a class="nav-item active" href="admin-intake-form-builder.html"><span class="material-symbols-rounded">dynamic_form</span>Admin: Intake &amp; Builder</a>
+      <a class="nav-item" href="profile-intake-tab.html"><span class="material-symbols-rounded">badge</span>Profile: Intake Tab</a>
+      <a class="nav-item" href="profile-overview-tab.html"><span class="material-symbols-rounded">contact_page</span>Profile: Details Tab</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="content">
+      <div class="page">
+        <p class="crumb"><a href="index.html">Home</a> / Admin: Intake &amp; Builder</p>
+        <div class="header-row">
+          <div>
+            <h1>Intake Builder</h1>
+            <p class="page-subtitle">Build reusable question groups, compose them into forms, and preview exactly what clients will see.</p>
+          </div>
+          <span class="spacer"></span>
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="build">Question Group</button>
+            <button class="tab-btn" data-tab="forms">Forms</button>
+            <button class="tab-btn" data-tab="preview">Preview</button>
+          </div>
+        </div>
+
+        <div id="buildPanel">
+          <div class="card" id="buildOutline"></div>
+        </div>
+        <div id="formsPanel" style="display:none;">
+          <div id="formsOutline"></div>
+        </div>
+        <div id="previewPanel" style="display:none;">
+          <div id="previewOutline"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="drawerRoot"></div>
+<div id="modalRoot"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------------------------------------------------------------
+   Question Group library — Group -> Subgroup -> Question. Nothing here is
+   fixed anymore: groups, subgroups, and questions can all be added, renamed
+   (subgroups/questions), and deleted (groups/subgroups/questions).
+   Conditional logic is entirely question-driven via q.connectTo:
+     null                                    -> plain question, Type applies
+     {groupId, subgroupIds:[one id]}         -> no client control at all —
+                                                that one subgroup's content
+                                                nests directly beneath this
+                                                question, always
+     {groupId, subgroupIds:[2+ ids], mode}   -> options are exactly the picked
+                                                subgroups' names; mode 'single'
+                                                renders a dropdown, 'multiple'
+                                                renders toggle chips; whichever
+                                                the client picks nests beneath
+   Type is only meaningful (and only editable) when connectTo is null.
+
+   A Form composes a subset of the library into a specific order: whole
+   groups and/or standalone questions authored just for that form. Preview
+   renders whichever form is selected.
+--------------------------------------------------------------------- */
+const TYPES = {
+  text: ['Short text','Long text','Number','Date','Phone','Email'],
+  choice: ['Yes/No','Radio (pick one)','Dropdown (pick one)','Chips (pick many)'],
+  upload: ['Document upload','Signature','Agreement checkbox'],
+};
+const OPTION_EDITABLE_TYPES = ['Radio (pick one)','Dropdown (pick one)','Chips (pick many)'];
+
+function q(id, label, type, extra){ return Object.assign({ id, label, type, required:false, visibleTo:'client', triggersReview:false, helpText:'', connectTo:null, options:[] }, extra||{}); }
+function sg(id, name, questions, flags){ return { id, name, questions, flags: flags || {staffReview:false, blocksScheduling:false} }; }
+function connect(groupId, subgroupIds, mode){ return { connectTo:{ groupId, subgroupIds, mode: subgroupIds.length>=2 ? (mode||'single') : 'single' } }; }
+
+const groups = [
+  { id:1, name:'Client Information', questions:[
+      q('q_full_name','Full name','Short text',{required:true}),
+      q('q_dob','Date of birth','Date',{required:true}),
+      q('q_guardian','Parent / guardian','Short text',{required:true}),
+      q('q_location','Preferred location','Dropdown (pick one)',{required:true, options:['Solar Swim','Westside','Valley']}),
+      q('q_emergency','Emergency contact','Phone',{required:true}),
+      q('q_requested_service','Requested service','Short text',{required:true, ...connect(2,['sg_swim','sg_basketball','sg_fitness'],'multiple')}),
+    ], subgroups:[] },
+  { id:2, name:'Services', questions:[
+      q('q_start_date','Preferred start date','Date'),
+    ], subgroups:[
+      sg('sg_swim','Swim',[
+        q('q_swim_lessons','Has taken lessons before?','Yes/No',{required:true}),
+        q('q_swim_float','Can they float independently?','Yes/No',{required:true}),
+        q('q_swim_level','Current level if known','Dropdown (pick one)',{options:['Not sure','Beginner 1','Beginner 2','Intermediate','Advanced']}),
+        q('q_swim_birthcert','Do you have a birth certificate?','Yes/No',connect(5,['sg_birthcert'])),
+      ]),
+      sg('sg_basketball','Basketball',[
+        q('q_bb_played','Played organized basketball before?','Yes/No'),
+        q('q_bb_position','Position preference','Radio (pick one)',{options:['Guard','Forward','Center']}),
+      ]),
+      sg('sg_fitness','Fitness',[
+        q('q_fit_goal','Fitness goal','Long text'),
+      ]),
+    ] },
+  { id:3, name:'Funding', questions:[
+      q('q_funding_type','Funding type','Short text',{required:true, ...connect(3,['sg_rc','sg_voucher','sg_selfpay'],'single')}),
+    ], subgroups:[
+      sg('sg_rc','Regional Center',[
+        q('q_rc_provider','Regional Center / provider','Dropdown (pick one)',{required:true, options:['RCEB','Golden Gate RC','Valley Mountain RC']}),
+        q('q_rc_case_name','Case manager name','Short text',{required:true}),
+        q('q_rc_case_email','Case manager email','Email',{required:true}),
+        q('q_rc_member_id','Client member ID','Short text'),
+        q('q_rc_auth_num','Known authorization number','Short text'),
+        q('q_rc_authletter','Do you have the authorization letter?','Yes/No',connect(5,['sg_rcauth'])),
+      ], {staffReview:true, blocksScheduling:false}),
+      sg('sg_voucher','Homeschool Voucher',[
+        q('q_v_id','Voucher / auth ID','Short text',{required:true}),
+        q('q_v_org','Funding organization','Dropdown (pick one)',{required:true, options:['District A','District B','District C']}),
+        q('q_v_from','Valid from','Date'),
+        q('q_v_to','Valid to','Date'),
+        q('q_v_credits','Credits / units','Number'),
+        q('q_v_doc','Do you have the voucher document?','Yes/No',connect(5,['sg_voucherdoc'])),
+      ], {staffReview:true, blocksScheduling:true}),
+      sg('sg_selfpay','Self-Pay',[
+        q('q_sp_hear','How did you hear about us?','Short text'),
+      ]),
+    ] },
+  { id:4, name:'Needs & Safety', questions:[
+      q('q_behavioral','Behavioral needs','Long text'),
+      q('q_physical','Physical needs','Long text'),
+      q('q_support','Support needs','Chips (pick many)',{options:['Mobility aid','1:1 aide','Sensory sensitivity','Communication device']}),
+      q('q_medcond','Has a medical or physical condition?','Yes/No',{required:true, ...connect(4,['sg_medical'])}),
+    ], subgroups:[
+      sg('sg_medical','Medical Details',[
+        q('q_med_describe','Please describe','Long text',{required:true}),
+        q('q_med_doc',"Does documentation need to be attached?",'Yes/No',connect(5,['sg_doctorsclear'])),
+      ]),
+    ] },
+  { id:5, name:'Documents', questions:[], subgroups:[
+      sg('sg_birthcert','Birth Certificate',[ q('q_doc_birthcert','Upload birth certificate','Document upload',{required:true}) ]),
+      sg('sg_rcauth','RC Authorization',[ q('q_doc_rcauth','Upload authorization letter','Document upload',{required:true}) ]),
+      sg('sg_voucherdoc','Homeschool Voucher',[ q('q_doc_voucher','Upload voucher','Document upload',{required:true}) ]),
+      sg('sg_doctorsclear',"Doctor's Clearance",[ q('q_doc_doctors',"Upload doctor's clearance",'Document upload',{required:true}) ]),
+    ] },
+  { id:6, name:'Review & Consent', questions:[
+      q('q_liability','Liability waiver','Agreement checkbox',{required:true}),
+      q('q_photo','Photo consent','Agreement checkbox'),
+      q('q_signature','Parent signature','Signature',{required:true}),
+    ], subgroups:[] },
+];
+
+const forms = [
+  { id:'form_general', name:'General Intake', items:[
+      {type:'group', groupId:1}, {type:'group', groupId:2}, {type:'group', groupId:3},
+      {type:'group', groupId:4}, {type:'group', groupId:6},
+    ] },
+  { id:'form_quick', name:'Quick Screening', items:[
+      {type:'group', groupId:1},
+      {type:'question', question: q('q_returning','Returning client?','Yes/No',{required:true})},
+      {type:'group', groupId:6},
+    ] },
+  { id:'form_swim', name:'Swim Program Intake', items:[
+      {type:'group', groupId:1},
+      {type:'group', groupId:2, pinnedSubgroupIds:['sg_swim']},
+      {type:'group', groupId:6},
+    ] },
+  { id:'form_funding', name:'Funding Verification', items:[
+      {type:'group', groupId:3},
+    ] },
+];
+
+const state = {
+  activeTab:'build',   // 'build' (Question Group) | 'forms' | 'preview'
+  // Question Group tab
+  expandedGroups: new Set(),
+  expandedSubgroups: new Set(),
+  openQuestionMenu:null,
+  drawer:null,           // see openDrawerForLibrary / openDrawerForForm
+  addSubgroupModal:null, // {groupId, name}
+  addGroupModal:null,    // {groupId: null|existingId, name}
+  // Forms tab
+  selectedFormId:'form_general',
+  addFormModal:null,          // {name}
+  addGroupToFormModal:null,   // {formId}
+  // Preview
+  answers:{},
+};
+
+/* ---------------------------------------------------------------------
+   Helpers
+--------------------------------------------------------------------- */
+function findGroup(id){ return groups.find(g=>g.id===Number(id)); }
+function findSubgroup(groupId, sgId){ const g=findGroup(groupId); return g ? g.subgroups.find(s=>s.id===sgId) : null; }
+function questionsContainer(groupId, subgroupId){ return subgroupId ? findSubgroup(groupId, subgroupId) : findGroup(groupId); }
+function findForm(id){ return forms.find(f=>f.id===id); }
+function allQuestionsFlat(){
+  const out = [];
+  groups.forEach(g=>{
+    g.questions.forEach(qq=> out.push(qq));
+    g.subgroups.forEach(s=> s.questions.forEach(qq=> out.push(qq)));
+  });
+  forms.forEach(f=> f.items.forEach(it=>{ if (it.type==='question') out.push(it.question); }));
+  return out;
+}
+function connectToLabel(qq){
+  if (!qq.connectTo) return null;
+  const g = findGroup(qq.connectTo.groupId);
+  if (!g) return '(deleted group)';
+  const names = qq.connectTo.subgroupIds.map(id=>{ const s=findSubgroup(qq.connectTo.groupId, id); return s ? s.name : '(deleted)'; });
+  if (names.length===1) return `${g.name} › ${names[0]}`;
+  return `${g.name}: ${names.join(', ')} (${qq.connectTo.mode==='multiple'?'pick multiple':'pick one'})`;
+}
+function optionsForQuestion(qq){
+  if (qq.connectTo && qq.connectTo.subgroupIds.length>=2){
+    return qq.connectTo.subgroupIds.map(id=>{ const s=findSubgroup(qq.connectTo.groupId, id); return s ? s.name : null; }).filter(Boolean);
+  }
+  return qq.options || [];
+}
+function cleanupConnectionsToSubgroup(groupId, subgroupId){
+  allQuestionsFlat().forEach(qq=>{
+    if (qq.connectTo && qq.connectTo.groupId===groupId){
+      const idx = qq.connectTo.subgroupIds.indexOf(subgroupId);
+      if (idx>-1){
+        qq.connectTo.subgroupIds.splice(idx,1);
+        if (qq.connectTo.subgroupIds.length===0) qq.connectTo = null;
+      }
+    }
+  });
+  forms.forEach(f=> f.items.forEach(it=>{
+    if (it.type==='group' && it.groupId===groupId && it.pinnedSubgroupIds){
+      const idx = it.pinnedSubgroupIds.indexOf(subgroupId);
+      if (idx>-1) it.pinnedSubgroupIds.splice(idx,1);
+    }
+  }));
+}
+function cleanupConnectionsToGroup(groupId){
+  allQuestionsFlat().forEach(qq=>{ if (qq.connectTo && qq.connectTo.groupId===groupId) qq.connectTo = null; });
+}
+function removeGroupEverywhere(groupId){
+  cleanupConnectionsToGroup(groupId);
+  forms.forEach(f=>{ f.items = f.items.filter(it=> !(it.type==='group' && it.groupId===groupId)); });
+  const idx = groups.findIndex(g=>g.id===groupId);
+  if (idx>-1) groups.splice(idx,1);
+}
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+/* ---------------------------------------------------------------------
+   Render: Question Group tab (the shared library)
+--------------------------------------------------------------------- */
+function questionRowHtml(qq, groupId, subgroupId){
+  const typeTxt = qq.connectTo ? `→ ${connectToLabel(qq)}` : qq.type;
+  return `<div class="q-row">
+    <span class="q-text" data-open-question="${qq.id}" data-group="${groupId}" data-subgroup="${subgroupId||''}" role="button" tabindex="0">
+      <span class="q-label">${qq.label}</span><span class="q-type">${typeTxt}</span>
+    </span>
+    <button class="q-menu-btn" data-open-qmenu="${qq.id}"><span class="material-symbols-rounded">more_vert</span></button>
+    ${state.openQuestionMenu===qq.id ? `<div class="q-menu"><button data-delete-question="${qq.id}" data-group="${groupId}" data-subgroup="${subgroupId||''}">Delete question</button></div>` : ''}
+  </div>`;
+}
+
+function subgroupBlockHtml(g, s){
+  const expanded = state.expandedSubgroups.has(s.id);
+  // Review/scheduling gates belong to the group that actually decides whether a
+  // client can proceed (funding type, needs). Documents subgroups are just upload
+  // placeholders triggered by those decisions, so the flags don't apply here.
+  const flagsApply = g.name !== 'Documents';
+  const flagsHtml = flagsApply ? `
+      <label class="flag-inline"><input type="checkbox" data-sg-flag="staffReview" data-group="${g.id}" data-subgroup="${s.id}" ${s.flags.staffReview?'checked':''}><span title="Staff must review before approving">Staff review</span></label>
+      <label class="flag-inline"><input type="checkbox" data-sg-flag="blocksScheduling" data-group="${g.id}" data-subgroup="${s.id}" ${s.flags.blocksScheduling?'checked':''}><span title="Client can't book until this is approved">Can't book</span></label>` : '';
+  let html = `<div class="subgroup-block">
+    <div class="subgroup-row" data-toggle-subgroup="${s.id}" data-group="${g.id}">
+      <span class="material-symbols-rounded chevron" style="${expanded?'transform:rotate(90deg)':''}">chevron_right</span>
+      <span class="subgroup-name">${s.name}</span>
+      <span class="subgroup-meta">${s.questions.length} question${s.questions.length===1?'':'s'}</span>
+      ${flagsHtml}
+      <button class="icon-btn-danger" data-delete-subgroup="${s.id}" data-group="${g.id}" title="Delete subgroup"><span class="material-symbols-rounded">delete</span></button>
+    </div>`;
+  if (expanded){
+    html += `<div class="subgroup-body">`;
+    s.questions.forEach(qq=> html += questionRowHtml(qq, g.id, s.id));
+    html += `<button class="add-link" data-add-question data-group="${g.id}" data-subgroup="${s.id}"><span class="material-symbols-rounded" style="font-size:16px;">add</span>Add question</button>`;
+    html += `</div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function groupBlockHtml(g, position){
+  const expanded = state.expandedGroups.has(g.id);
+  const parts = [];
+  if (g.questions.length) parts.push(`${g.questions.length} question${g.questions.length===1?'':'s'}`);
+  if (g.subgroups.length) parts.push(`${g.subgroups.length} subgroup${g.subgroups.length===1?'':'s'}`);
+  let html = `<div class="group-block ${expanded?'expanded':''}">
+    <div class="group-row" data-toggle-group="${g.id}">
+      <span class="material-symbols-rounded chevron">chevron_right</span>
+      <span class="group-num">${position}</span>
+      <span class="group-name">${g.name}</span>
+      <span class="group-meta">${parts.join(' · ')}</span>
+      <button class="icon-btn" data-rename-group="${g.id}" title="Rename group"><span class="material-symbols-rounded">edit</span></button>
+      <button class="icon-btn-danger" data-delete-group="${g.id}" title="Delete group"><span class="material-symbols-rounded">delete</span></button>
+    </div>`;
+  if (expanded){
+    html += `<div class="group-body">`;
+    g.questions.forEach(qq=> html += questionRowHtml(qq, g.id, null));
+    html += `<button class="add-link" data-add-question data-group="${g.id}"><span class="material-symbols-rounded" style="font-size:16px;">add</span>Add question</button>`;
+    if (g.subgroups.length){
+      html += `<div class="subgroups-label">Subgroups</div>`;
+      g.subgroups.forEach(s=> html += subgroupBlockHtml(g, s));
+    }
+    html += `<button class="add-link boxed" data-add-subgroup="${g.id}" style="margin-top:6px;"><span class="material-symbols-rounded" style="font-size:16px;">add</span>Add subgroup</button>`;
+    html += `</div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function renderBuild(){
+  const html = groups.length
+    ? groups.map((g,i)=>groupBlockHtml(g,i+1)).join('')
+    : `<p class="pv-empty" style="padding:24px 18px;">No groups yet — add one below.</p>`;
+  const footer = `<div class="footer-row"><button class="add-link boxed" id="addGroupBtn"><span class="material-symbols-rounded" style="font-size:16px;">add</span>Add group</button></div>`;
+  document.getElementById('buildOutline').innerHTML = html + footer;
+}
+
+/* ---------------------------------------------------------------------
+   Render: Question drawer (shared by the library and by form-standalone
+   questions — ctx:'library' targets a group/subgroup in the library;
+   ctx:'form' targets a specific form's standalone question list)
+--------------------------------------------------------------------- */
+function renderDrawer(){
+  const root = document.getElementById('drawerRoot');
+  const d = state.drawer;
+  if (!d){ root.innerHTML=''; return; }
+  const connected = d.connectGroupId != null;
+  const targetGroup = connected ? findGroup(d.connectGroupId) : null;
+  const pickedCount = d.connectSubgroupIds.length;
+  const showOptions = !connected && OPTION_EDITABLE_TYPES.includes(d.type);
+
+  let connectExtra = '';
+  if (connected && targetGroup){
+    connectExtra += `<div class="form-row"><label>Select subgroups to open</label>
+      <div class="checklist">
+        ${targetGroup.subgroups.length ? targetGroup.subgroups.map(s=>`<label class="checkline"><input type="checkbox" data-connect-sg="${s.id}" ${d.connectSubgroupIds.includes(s.id)?'checked':''}> ${s.name}</label>`).join('') : '<span class="hint">This group has no subgroups yet.</span>'}
+      </div>
+    </div>`;
+    if (pickedCount === 1){
+      const sObj = targetGroup.subgroups.find(s=>s.id===d.connectSubgroupIds[0]);
+      connectExtra += `<div class="form-row"><label>Opens directly — no question shown to the client</label>
+        <div class="connect-preview">
+          <p class="connect-preview-title">${sObj.name}</p>
+          <ul class="connect-preview-list">${sObj.questions.length ? sObj.questions.map(q2=>`<li>${q2.label}</li>`).join('') : '<li>No questions yet</li>'}</ul>
+        </div>
+      </div>`;
+    } else if (pickedCount >= 2){
+      connectExtra += `<div class="form-row"><label>Allow client to select only one or multiple</label>
+        <div class="radio-group">
+          <label><input type="radio" name="dMode" value="single" ${d.connectMode==='single'?'checked':''}> Only one</label>
+          <label><input type="radio" name="dMode" value="multiple" ${d.connectMode==='multiple'?'checked':''}> Multiple</label>
+        </div>
+      </div>`;
+    }
+  }
+
+  root.innerHTML = `<div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <div class="drawer">
+    <div class="drawer-head"><h4>${d.isNew?'Add question':'Question settings'}</h4><button class="drawer-close" id="drawerClose">&times;</button></div>
+    <div class="drawer-body">
+      <div class="form-row"><label>Label</label><input type="text" id="dLabel" value="${d.label}"></div>
+      <div class="form-row"><label>Connect to</label>
+        <select id="dConnectGroup">
+          <option value="none" ${!connected?'selected':''}>&mdash; none &mdash;</option>
+          ${groups.map(g=>`<option value="${g.id}" ${connected && d.connectGroupId===g.id?'selected':''}>${g.name}</option>`).join('')}
+        </select>
+      </div>
+      ${connectExtra}
+      <div class="form-row"><label>Type${connected?' (set by the connection above)':''}</label>
+        <select id="dType" ${connected?'disabled':''}>
+          <optgroup label="Text &amp; numbers">${TYPES.text.map(t=>`<option ${t===d.type?'selected':''}>${t}</option>`).join('')}</optgroup>
+          <optgroup label="Choices">${TYPES.choice.map(t=>`<option ${t===d.type?'selected':''}>${t}</option>`).join('')}</optgroup>
+          <optgroup label="Upload &amp; sign">${TYPES.upload.map(t=>`<option ${t===d.type?'selected':''}>${t}</option>`).join('')}</optgroup>
+        </select>
+      </div>
+      ${showOptions ? `<div class="form-row"><label>Options (comma separated)</label><input type="text" id="dOptions" value="${d.optionsText||''}"></div>` : ''}
+      <div class="form-row-inline"><label class="checkline"><input type="checkbox" id="dRequired" ${d.required?'checked':''}> Required</label></div>
+      <div class="form-row"><label>Visible to</label>
+        <div class="radio-group">
+          <label><input type="radio" name="dVis" value="client" ${d.visibleTo==='client'?'checked':''}> Client</label>
+          <label><input type="radio" name="dVis" value="staff" ${d.visibleTo==='staff'?'checked':''}> Staff only</label>
+        </div>
+      </div>
+      <label class="checkline"><input type="checkbox" id="dTriggersReview" ${d.triggersReview?'checked':''}> Triggers staff review</label>
+      <div class="form-row"><label>Help text</label><input type="text" id="dHelp" value="${d.helpText||''}" placeholder="optional"></div>
+    </div>
+    <div class="drawer-foot">
+      <span></span>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline" id="drawerCancel">Cancel</button>
+        <button class="btn btn-primary" id="drawerSave">Save</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function openDrawerForLibrary(groupId, subgroupId, qq){
+  state.drawer = { ctx:'library', groupId, subgroupId, formId:null, questionId: qq?qq.id:null, isNew: !qq,
+    label: qq?qq.label:'', type: qq?qq.type:'Short text', required: qq?!!qq.required:false,
+    visibleTo: qq?(qq.visibleTo||'client'):'client', triggersReview: qq?!!qq.triggersReview:false,
+    helpText: qq?(qq.helpText||''):'', optionsText: qq?(qq.options||[]).join(', '):'',
+    connectGroupId: qq && qq.connectTo ? qq.connectTo.groupId : null,
+    connectSubgroupIds: qq && qq.connectTo ? qq.connectTo.subgroupIds.slice() : [],
+    connectMode: qq && qq.connectTo ? (qq.connectTo.mode||'single') : 'single' };
+  renderDrawer();
+}
+function openDrawerForForm(formId, qq){
+  state.drawer = { ctx:'form', groupId:null, subgroupId:null, formId, questionId: qq?qq.id:null, isNew: !qq,
+    label: qq?qq.label:'', type: qq?qq.type:'Short text', required: qq?!!qq.required:false,
+    visibleTo: qq?(qq.visibleTo||'client'):'client', triggersReview: qq?!!qq.triggersReview:false,
+    helpText: qq?(qq.helpText||''):'', optionsText: qq?(qq.options||[]).join(', '):'',
+    connectGroupId: qq && qq.connectTo ? qq.connectTo.groupId : null,
+    connectSubgroupIds: qq && qq.connectTo ? qq.connectTo.subgroupIds.slice() : [],
+    connectMode: qq && qq.connectTo ? (qq.connectTo.mode||'single') : 'single' };
+  renderDrawer();
+}
+function saveDrawer(){
+  const d = state.drawer;
+  const label = document.getElementById('dLabel').value.trim() || 'Untitled question';
+  const connected = d.connectGroupId != null && d.connectSubgroupIds.length > 0;
+  const type = connected ? d.type : document.getElementById('dType').value;
+  const required = document.getElementById('dRequired').checked;
+  const visibleTo = document.querySelector('input[name="dVis"]:checked').value;
+  const triggersReview = document.getElementById('dTriggersReview').checked;
+  const helpText = document.getElementById('dHelp').value.trim();
+  let options = [];
+  const optionsInput = document.getElementById('dOptions');
+  if (optionsInput) options = optionsInput.value.split(',').map(s=>s.trim()).filter(Boolean);
+  const connectTo = connected ? { groupId:d.connectGroupId, subgroupIds:d.connectSubgroupIds.slice(),
+    mode: d.connectSubgroupIds.length>=2 ? d.connectMode : 'single' } : null;
+  const payload = { label, type, required, visibleTo, triggersReview, helpText, connectTo, options };
+
+  if (d.ctx==='form'){
+    const form = findForm(d.formId);
+    if (d.isNew){
+      form.items.push({ type:'question', question: Object.assign({ id:'q_'+Date.now() }, payload) });
+    } else {
+      const item = form.items.find(it=> it.type==='question' && it.question.id===d.questionId);
+      Object.assign(item.question, payload);
+    }
+  } else {
+    const container = questionsContainer(d.groupId, d.subgroupId);
+    if (d.isNew){
+      container.questions.push(Object.assign({ id:'q_'+Date.now() }, payload));
+    } else {
+      const qq = container.questions.find(x=>x.id===d.questionId);
+      Object.assign(qq, payload);
+    }
+  }
+  state.drawer = null;
+  renderDrawer();
+  if (d.ctx==='form') renderFormsTab(); else renderBuild();
+}
+
+/* ---------------------------------------------------------------------
+   Render: Add/rename modals (subgroup, group, form)
+--------------------------------------------------------------------- */
+function renderAddSubgroupModal(){
+  const root = document.getElementById('modalRoot');
+  const m = state.addSubgroupModal;
+  if (!m){ if(!state.addGroupModal && !state.addFormModal && !state.addGroupToFormModal) root.innerHTML=''; return; }
+  root.innerHTML = `<div class="modal-backdrop" id="asBackdrop">
+    <div class="modal">
+      <div class="modal-head"><h4>Add subgroup</h4><button class="modal-close" id="asClose">&times;</button></div>
+      <div class="modal-body">
+        <div class="form-row"><label>Name</label><input type="text" id="asName" value="${m.name||''}" placeholder="e.g. Voucher Details"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-outline" id="asCancel">Cancel</button>
+        <button class="btn btn-primary" id="asCreate" ${m.name && m.name.trim() ? '' : 'disabled'}>Create</button>
+      </div>
+    </div>
+  </div>`;
+}
+function renderAddGroupModal(){
+  const root = document.getElementById('modalRoot');
+  const m = state.addGroupModal;
+  if (!m){ if(!state.addSubgroupModal && !state.addFormModal && !state.addGroupToFormModal) root.innerHTML=''; return; }
+  const isEdit = m.groupId != null;
+  root.innerHTML = `<div class="modal-backdrop" id="agBackdrop">
+    <div class="modal">
+      <div class="modal-head"><h4>${isEdit?'Rename group':'Add group'}</h4><button class="modal-close" id="agClose">&times;</button></div>
+      <div class="modal-body">
+        <div class="form-row"><label>Name</label><input type="text" id="agName" value="${m.name||''}" placeholder="e.g. Insurance Details"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-outline" id="agCancel">Cancel</button>
+        <button class="btn btn-primary" id="agCreate" ${m.name && m.name.trim() ? '' : 'disabled'}>${isEdit?'Save':'Create'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function renderAddFormModal(){
+  const root = document.getElementById('modalRoot');
+  const m = state.addFormModal;
+  if (!m){ if(!state.addSubgroupModal && !state.addGroupModal && !state.addGroupToFormModal) root.innerHTML=''; return; }
+  root.innerHTML = `<div class="modal-backdrop" id="afBackdrop">
+    <div class="modal">
+      <div class="modal-head"><h4>New form</h4><button class="modal-close" id="afClose">&times;</button></div>
+      <div class="modal-body">
+        <div class="form-row"><label>Name</label><input type="text" id="afName" value="${m.name||''}" placeholder="e.g. Short Screening Form"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-outline" id="afCancel">Cancel</button>
+        <button class="btn btn-primary" id="afCreate" ${m.name && m.name.trim() ? '' : 'disabled'}>Create</button>
+      </div>
+    </div>
+  </div>`;
+}
+function renderAddGroupToFormModal(){
+  const root = document.getElementById('modalRoot');
+  const m = state.addGroupToFormModal;
+  if (!m){ if(!state.addSubgroupModal && !state.addGroupModal && !state.addFormModal) root.innerHTML=''; return; }
+  const form = findForm(m.formId);
+
+  if (m.groupId == null){
+    const usedIds = form.items.filter(it=>it.type==='group').map(it=>it.groupId);
+    const available = groups.filter(g=> !usedIds.includes(g.id));
+    root.innerHTML = `<div class="modal-backdrop" id="agfBackdrop">
+      <div class="modal">
+        <div class="modal-head"><h4>Add a group to this form</h4><button class="modal-close" id="agfClose">&times;</button></div>
+        <div class="modal-body">
+          ${available.length ? available.map(g=>`<button class="picker-row" data-pick-group="${g.id}">${g.name}</button>`).join('') : '<p class="pv-empty">All groups are already in this form.</p>'}
+        </div>
+        <div class="modal-foot"><button class="btn btn-outline" id="agfCancel">Close</button></div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  const g = findGroup(m.groupId);
+  root.innerHTML = `<div class="modal-backdrop" id="agfBackdrop">
+    <div class="modal">
+      <div class="modal-head"><h4>${g.name}</h4><button class="modal-close" id="agfClose">&times;</button></div>
+      <div class="modal-body">
+        <p class="hint">Its own questions are always included in this form. Also always show questions from:</p>
+        ${g.subgroups.length ? `<div class="checklist">${g.subgroups.map(s=>`<label class="checkline"><input type="checkbox" data-pin-sg="${s.id}" ${m.subgroupIds.includes(s.id)?'checked':''}> ${s.name}</label>`).join('')}</div>` : '<p class="hint">This group has no subgroups yet.</p>'}
+      </div>
+      <div class="modal-foot">
+        ${m.editIndex==null ? `<button class="btn btn-outline" id="agfBack">Back</button>` : `<button class="btn btn-outline" id="agfClose">Cancel</button>`}
+        <button class="btn btn-primary" id="agfAdd">${m.editIndex==null?'Add group':'Save'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------------------------------------------------------------------
+   Render: Forms tab
+--------------------------------------------------------------------- */
+function formItemRowHtml(form, item, index){
+  const isLast = index === form.items.length - 1;
+  const upDown = `<div class="up-down">
+    <button data-move-item="up" data-index="${index}" ${index===0?'disabled':''} title="Move up"><span class="material-symbols-rounded" style="font-size:18px;">arrow_upward</span></button>
+    <button data-move-item="down" data-index="${index}" ${isLast?'disabled':''} title="Move down"><span class="material-symbols-rounded" style="font-size:18px;">arrow_downward</span></button>
+    <button data-remove-item="${index}" title="Remove from form"><span class="material-symbols-rounded" style="font-size:18px;color:var(--danger);">close</span></button>
+  </div>`;
+  if (item.type==='group'){
+    const g = findGroup(item.groupId);
+    if (!g) return '';
+    const parts = [];
+    if (g.questions.length) parts.push(`${g.questions.length} question${g.questions.length===1?'':'s'}`);
+    if (g.subgroups.length) parts.push(`${g.subgroups.length} subgroup${g.subgroups.length===1?'':'s'}`);
+    const pinnedNames = (item.pinnedSubgroupIds||[]).map(id=>{ const s=g.subgroups.find(x=>x.id===id); return s?s.name:null; }).filter(Boolean);
+    if (pinnedNames.length) parts.push(`always shows: ${pinnedNames.join(', ')}`);
+    return `<div class="form-item-row">
+      <span class="material-symbols-rounded item-icon">folder</span>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;">
+        <span class="group-name">${g.name}</span>
+        <span class="group-meta">${parts.join(' · ')}</span>
+      </div>
+      ${g.subgroups.length ? `<button class="icon-btn" data-edit-pinned="${index}" title="Choose which subgroup questions always show"><span class="material-symbols-rounded">checklist</span></button>` : ''}
+      ${upDown}
+    </div>`;
+  }
+  const qq = item.question;
+  const typeTxt = qq.connectTo ? `→ ${connectToLabel(qq)}` : qq.type;
+  return `<div class="form-item-row">
+    <span class="material-symbols-rounded item-icon">help</span>
+    <span class="q-text" data-open-form-question="${qq.id}" data-form="${form.id}" role="button" tabindex="0" style="flex:1;cursor:pointer;">
+      <span class="q-label">${qq.label}</span> <span class="q-type">${typeTxt}</span>
+    </span>
+    ${upDown}
+  </div>`;
+}
+
+function renderFormsTab(){
+  const root = document.getElementById('formsOutline');
+  let html = `<div class="form-pills">`;
+  forms.forEach(f=>{
+    const active = f.id===state.selectedFormId;
+    html += `<div class="form-pill-wrap ${active?'active':''}">
+      <button class="form-pill" data-select-form="${f.id}">${f.name}</button>
+      <button class="form-pill-del" data-delete-form="${f.id}" title="Delete form">&times;</button>
+    </div>`;
+  });
+  html += `<button class="add-link boxed" id="addFormBtn"><span class="material-symbols-rounded" style="font-size:16px;">add</span>New form</button></div>`;
+
+  const form = findForm(state.selectedFormId);
+  if (!form){
+    root.innerHTML = html + `<p class="pv-empty">No form selected — create one above.</p>`;
+    return;
+  }
+  html += `<div class="card">`;
+  html += form.items.length ? form.items.map((it,i)=>formItemRowHtml(form,it,i)).join('') : `<p class="pv-empty" style="padding:24px 18px;">This form is empty. Add a group or a question below.</p>`;
+  html += `</div>
+    <div class="footer-row">
+      <button class="add-link boxed" data-add-group-to-form="${form.id}"><span class="material-symbols-rounded" style="font-size:16px;">add</span>Add group</button>
+      <button class="add-link boxed" data-add-question-to-form="${form.id}"><span class="material-symbols-rounded" style="font-size:16px;">add</span>Add question</button>
+    </div>`;
+  root.innerHTML = html;
+}
+
+/* ---------------------------------------------------------------------
+   Preview — per-form open-subgroup fixpoint + real inputs
+--------------------------------------------------------------------- */
+function formRootQuestions(form){
+  const list = [];
+  form.items.forEach(it=>{
+    if (it.type==='group'){ const g=findGroup(it.groupId); if (g) list.push(...g.questions); }
+    else if (it.type==='question'){ list.push(it.question); }
+  });
+  return list;
+}
+function computeOpenSubgroups(form){
+  const open = new Set();
+  function tryOpen(qq){
+    if (!qq.connectTo) return;
+    const { groupId, subgroupIds, mode } = qq.connectTo;
+    const targetGroup = findGroup(groupId);
+    if (!targetGroup) return;
+    const targets = [];
+    if (subgroupIds.length === 1){
+      targets.push(groupId+':'+subgroupIds[0]); // single target: always open, no client gate
+    } else {
+      const val = state.answers[qq.id];
+      const names = mode==='multiple' ? (Array.isArray(val) ? val : []) : (val ? [val] : []);
+      names.forEach(name=>{
+        const s = targetGroup.subgroups.find(x=> subgroupIds.includes(x.id) && x.name===name);
+        if (s) targets.push(groupId+':'+s.id);
+      });
+    }
+    targets.forEach(key=>{ if (!open.has(key)){ open.add(key); changed = true; } });
+  }
+  let changed = true;
+  while (changed){
+    changed = false;
+    const reachable = formRootQuestions(form).slice();
+    open.forEach(key=>{
+      const sep = key.indexOf(':');
+      const gId = Number(key.slice(0,sep)), sgId = key.slice(sep+1);
+      const s = findSubgroup(gId, sgId);
+      if (s) reachable.push(...s.questions);
+    });
+    reachable.forEach(tryOpen);
+  }
+  return open;
+}
+
+function previewConnectedQuestionHtml(qq){
+  const req = qq.required ? `<span class="req-star">*</span>` : '';
+  const { subgroupIds, mode } = qq.connectTo;
+  if (subgroupIds.length === 1) return ''; // no control — target nests in directly, always
+  const val = state.answers[qq.id];
+  const names = optionsForQuestion(qq);
+  if (mode === 'multiple'){
+    const arr = Array.isArray(val) ? val : [];
+    return `<div class="pv-question full"><label class="pv-label">${qq.label}${req}</label>
+      <div class="chip-group">${names.map(n=>`<button type="button" class="chip-toggle ${arr.includes(n)?'on':''}" data-ans-chip="${qq.id}" data-chip-value="${n}">${n}</button>`).join('')}</div></div>`;
+  }
+  return `<div class="pv-question"><label class="pv-label">${qq.label}${req}</label>
+    <select data-ans-select="${qq.id}"><option value="">&mdash; choose &mdash;</option>${names.map(n=>`<option ${val===n?'selected':''}>${n}</option>`).join('')}</select></div>`;
+}
+const PV_FULL_WIDTH_TYPES = ['Long text','Chips (pick many)','Document upload','Signature','Agreement checkbox'];
+
+function previewQuestionHtml(qq){
+  if (qq.connectTo) return previewConnectedQuestionHtml(qq);
+  const val = state.answers[qq.id];
+  const req = qq.required ? `<span class="req-star">*</span>` : '';
+  const staffTag = qq.visibleTo==='staff' ? `<span class="staff-tag">Staff only</span>` : '';
+  const fullCls = PV_FULL_WIDTH_TYPES.includes(qq.type) ? ' full' : '';
+  let control = '';
+  switch(qq.type){
+    case 'Short text': control = `<input type="text" data-ans="${qq.id}" value="${val||''}">`; break;
+    case 'Long text': control = `<textarea data-ans="${qq.id}" rows="2">${val||''}</textarea>`; break;
+    case 'Number': control = `<input type="number" data-ans="${qq.id}" value="${val||''}">`; break;
+    case 'Date': control = `<input type="date" data-ans="${qq.id}" value="${val||''}">`; break;
+    case 'Phone': control = `<input type="tel" data-ans="${qq.id}" value="${val||''}">`; break;
+    case 'Email': control = `<input type="email" data-ans="${qq.id}" value="${val||''}">`; break;
+    case 'Yes/No':
+      control = `<div class="radio-group">
+        <label><input type="radio" name="ans_${qq.id}" data-ans-radio="${qq.id}" value="Yes" ${val==='Yes'?'checked':''}> Yes</label>
+        <label><input type="radio" name="ans_${qq.id}" data-ans-radio="${qq.id}" value="No" ${val==='No'?'checked':''}> No</label>
+      </div>`; break;
+    case 'Radio (pick one)': {
+      const opts = optionsForQuestion(qq);
+      control = `<div class="radio-group">${opts.map(o=>`<label><input type="radio" name="ans_${qq.id}" data-ans-radio="${qq.id}" value="${o}" ${val===o?'checked':''}> ${o}</label>`).join('')}</div>`;
+      break; }
+    case 'Dropdown (pick one)': {
+      const opts = optionsForQuestion(qq);
+      control = `<select data-ans-select="${qq.id}"><option value="">&mdash; choose &mdash;</option>${opts.map(o=>`<option ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;
+      break; }
+    case 'Chips (pick many)': {
+      const opts = optionsForQuestion(qq);
+      const arr = Array.isArray(val) ? val : [];
+      control = `<div class="chip-group">${opts.map(o=>`<button type="button" class="chip-toggle ${arr.includes(o)?'on':''}" data-ans-chip="${qq.id}" data-chip-value="${o}">${o}</button>`).join('')}</div>`;
+      break; }
+    case 'Document upload': control = `<input type="file" data-ans-file="${qq.id}">`; break;
+    case 'Signature': control = `<div class="sig-box ${val==='signed'?'signed':''}" data-ans-sig="${qq.id}">${val==='signed'?'✓ Signed':'Click to sign'}</div>`; break;
+    case 'Agreement checkbox': return `<div class="pv-question full"><label class="agree-row"><input type="checkbox" data-ans-check="${qq.id}" ${val?'checked':''}> ${qq.label}${req}</label></div>`;
+  }
+  return `<div class="pv-question${fullCls}"><label class="pv-label">${qq.label}${req}${staffTag}</label>${control}</div>`;
+}
+
+// Renders a question, then — recursively — nests any of its connected
+// subgroups directly beneath it (only) if they're currently open. A subgroup
+// already rendered once (e.g. two different questions connect to it) is
+// skipped the second time, per the "appears once" rule.
+function subgroupPreviewHtml(sObj, open, rendered){
+  let inner = '';
+  sObj.questions.forEach(nq=> inner += renderQuestionWithNesting(nq, open, rendered));
+  return `<div class="pv-subgroup">
+    <p class="pv-subgroup-title"><span class="material-symbols-rounded">subdirectory_arrow_right</span>${sObj.name}</p>
+    <div class="pv-fields">${inner}</div>
+  </div>`;
+}
+
+function renderQuestionWithNesting(qq, open, rendered){
+  let html = previewQuestionHtml(qq);
+  if (qq.connectTo){
+    const { groupId, subgroupIds } = qq.connectTo;
+    const targetGroup = findGroup(groupId);
+    if (targetGroup) subgroupIds.forEach(sgId=>{
+      const key = groupId+':'+sgId;
+      if (open.has(key) && !rendered.has(key)){
+        rendered.add(key);
+        const sObj = targetGroup.subgroups.find(s=>s.id===sgId);
+        html += subgroupPreviewHtml(sObj, open, rendered);
+      }
+    });
+  }
+  return html;
+}
+
+function renderPreview(){
+  const root = document.getElementById('previewOutline');
+  const form = findForm(state.selectedFormId);
+  const header = `<div class="preview-header">
+    <div><p class="preview-eyebrow">Client-facing preview</p><h2 class="preview-form-title">${form?form.name:'No form selected'}</h2></div>
+    <select id="previewFormSelect" class="preview-form-select">${forms.map(f=>`<option value="${f.id}" ${f.id===state.selectedFormId?'selected':''}>${f.name}</option>`).join('')}</select>
+  </div>`;
+  if (!form){ root.innerHTML = header + `<div class="pv-paper"><p class="pv-empty">No form selected — create one in the Forms tab.</p></div>`; return; }
+
+  const open = computeOpenSubgroups(form);
+  const rendered = new Set();
+  let counter = 0;
+  let body = '';
+  form.items.forEach(it=>{
+    if (it.type==='group'){
+      const g = findGroup(it.groupId);
+      if (!g) return;
+      counter++;
+      let inner = '';
+      g.questions.forEach(qq=> inner += renderQuestionWithNesting(qq, open, rendered));
+      (it.pinnedSubgroupIds||[]).forEach(sgId=>{
+        const key = it.groupId+':'+sgId;
+        if (rendered.has(key)) return;
+        const sObj = g.subgroups.find(s=>s.id===sgId);
+        if (!sObj) return;
+        rendered.add(key);
+        inner += subgroupPreviewHtml(sObj, open, rendered);
+      });
+      body += `<div class="pv-group">
+        <div class="pv-group-head"><span class="pv-group-num">${counter}</span><h3 class="pv-group-title">${g.name}</h3></div>
+        ${inner ? `<div class="pv-fields">${inner}</div>` : '<p class="pv-empty">Nothing needed yet.</p>'}
+      </div>`;
+    } else if (it.type==='question'){
+      const inner = renderQuestionWithNesting(it.question, open, rendered);
+      if (inner) body += `<div class="pv-group"><div class="pv-fields">${inner}</div></div>`;
+    }
+  });
+  const paperBody = body || '<p class="pv-empty" style="padding:20px 0;">This form has nothing in it yet.</p>';
+  root.innerHTML = header + `<div class="pv-paper">${paperBody}</div>
+    <div class="pv-submit-row"><button class="btn btn-primary" data-noop><span class="material-symbols-rounded">send</span>Submit</button></div>`;
+}
+
+/* ---------------------------------------------------------------------
+   Event wiring
+--------------------------------------------------------------------- */
+document.addEventListener('click', (e)=>{
+  const t = e.target;
+
+  // Tabs
+  const tabBtn = t.closest('[data-tab]');
+  if (tabBtn){
+    state.activeTab = tabBtn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.tab===state.activeTab));
+    document.getElementById('buildPanel').style.display = state.activeTab==='build' ? '' : 'none';
+    document.getElementById('formsPanel').style.display = state.activeTab==='forms' ? '' : 'none';
+    document.getElementById('previewPanel').style.display = state.activeTab==='preview' ? '' : 'none';
+    if (state.activeTab==='forms') renderFormsTab();
+    if (state.activeTab==='preview') renderPreview();
+    return;
+  }
+
+  // ---- Question Group tab ----
+  const toggleGroup = t.closest('[data-toggle-group]');
+  if (toggleGroup && !t.closest('[data-rename-group]') && !t.closest('[data-delete-group]')){
+    const id = Number(toggleGroup.dataset.toggleGroup);
+    if (state.expandedGroups.has(id)) state.expandedGroups.delete(id); else state.expandedGroups.add(id);
+    state.openQuestionMenu = null;
+    return renderBuild();
+  }
+  const renameGroup = t.closest('[data-rename-group]');
+  if (renameGroup){ const g=findGroup(renameGroup.dataset.renameGroup); state.addGroupModal = { groupId:g.id, name:g.name }; return renderAddGroupModal(); }
+  const deleteGroup = t.closest('[data-delete-group]');
+  if (deleteGroup){
+    const id = Number(deleteGroup.dataset.deleteGroup);
+    if (confirm('Delete this group? Its subgroups, questions, and any connections to it are removed from every form. This cannot be undone.')){
+      removeGroupEverywhere(id);
+      state.expandedGroups.delete(id);
+      showToast('Group deleted');
+      return renderBuild();
+    }
+    return;
+  }
+  if (t.id==='addGroupBtn'){ state.addGroupModal = { groupId:null, name:'' }; return renderAddGroupModal(); }
+
+  const toggleSub = t.closest('[data-toggle-subgroup]');
+  if (toggleSub && !t.closest('.flag-inline') && !t.closest('[data-delete-subgroup]')){
+    const id = toggleSub.dataset.toggleSubgroup;
+    if (state.expandedSubgroups.has(id)) state.expandedSubgroups.delete(id); else state.expandedSubgroups.add(id);
+    state.openQuestionMenu = null;
+    return renderBuild();
+  }
+
+  const openQ = t.closest('[data-open-question]');
+  if (openQ){
+    const groupId = Number(openQ.dataset.group), subgroupId = openQ.dataset.subgroup || null;
+    const container = questionsContainer(groupId, subgroupId);
+    const qq = container.questions.find(x=>x.id===openQ.dataset.openQuestion);
+    return openDrawerForLibrary(groupId, subgroupId, qq);
+  }
+  const addQ = t.closest('[data-add-question]');
+  if (addQ){
+    const groupId = Number(addQ.dataset.group), subgroupId = addQ.dataset.subgroup || null;
+    return openDrawerForLibrary(groupId, subgroupId, null);
+  }
+  const openMenu = t.closest('[data-open-qmenu]');
+  if (openMenu){
+    const qid = openMenu.dataset.openQmenu;
+    state.openQuestionMenu = (state.openQuestionMenu===qid) ? null : qid;
+    return renderBuild();
+  }
+  if (!t.closest('.q-menu') && !t.closest('[data-open-qmenu]') && state.openQuestionMenu){
+    state.openQuestionMenu = null; renderBuild();
+  }
+  const delQ = t.closest('[data-delete-question]');
+  if (delQ){
+    const groupId = Number(delQ.dataset.group), subgroupId = delQ.dataset.subgroup || null;
+    const container = questionsContainer(groupId, subgroupId);
+    container.questions = container.questions.filter(x=>x.id!==delQ.dataset.deleteQuestion);
+    state.openQuestionMenu = null;
+    return renderBuild();
+  }
+
+  const addSub = t.closest('[data-add-subgroup]');
+  if (addSub){ state.addSubgroupModal = { groupId:Number(addSub.dataset.addSubgroup), name:'' }; return renderAddSubgroupModal(); }
+  const delSub = t.closest('[data-delete-subgroup]');
+  if (delSub){
+    const groupId = Number(delSub.dataset.group), sgId = delSub.dataset.deleteSubgroup;
+    if (confirm('Delete this subgroup? Questions connected to it will be updated. This cannot be undone.')){
+      cleanupConnectionsToSubgroup(groupId, sgId);
+      const g = findGroup(groupId);
+      g.subgroups = g.subgroups.filter(s=>s.id!==sgId);
+      state.expandedSubgroups.delete(sgId);
+      showToast('Subgroup deleted');
+      return renderBuild();
+    }
+    return;
+  }
+
+  // ---- Drawer (shared) ----
+  if (t.id==='drawerClose' || t.id==='drawerCancel' || t.id==='drawerBackdrop'){ state.drawer=null; return renderDrawer(); }
+  if (t.id==='drawerSave'){ return saveDrawer(); }
+
+  // ---- Add subgroup modal ----
+  if (t.id==='asClose' || t.id==='asCancel' || t.id==='asBackdrop'){ state.addSubgroupModal=null; return renderAddSubgroupModal(); }
+  if (t.id==='asCreate' && !t.disabled){
+    const m = state.addSubgroupModal;
+    const id = 'sg_'+Date.now();
+    const g = findGroup(m.groupId);
+    g.subgroups.push({ id, name:m.name.trim(), questions:[], flags:{staffReview:false, blocksScheduling:false} });
+    state.expandedGroups.add(m.groupId);
+    state.expandedSubgroups.add(id);
+    state.addSubgroupModal = null;
+    renderAddSubgroupModal();
+    showToast(`"${m.name.trim()}" added`);
+    return renderBuild();
+  }
+
+  // ---- Add/rename group modal ----
+  if (t.id==='agClose' || t.id==='agCancel' || t.id==='agBackdrop'){ state.addGroupModal=null; return renderAddGroupModal(); }
+  if (t.id==='agCreate' && !t.disabled){
+    const m = state.addGroupModal;
+    const name = m.name.trim();
+    if (m.groupId != null){
+      findGroup(m.groupId).name = name;
+      showToast('Group renamed');
+    } else {
+      const id = Date.now();
+      groups.push({ id, name, questions:[], subgroups:[] });
+      state.expandedGroups.add(id);
+      showToast(`"${name}" added`);
+    }
+    state.addGroupModal = null;
+    renderAddGroupModal();
+    return renderBuild();
+  }
+
+  // ---- Forms tab ----
+  const selectForm = t.closest('[data-select-form]');
+  if (selectForm){ state.selectedFormId = selectForm.dataset.selectForm; return renderFormsTab(); }
+  const deleteForm = t.closest('[data-delete-form]');
+  if (deleteForm){
+    const id = deleteForm.dataset.deleteForm;
+    if (confirm('Delete this form? This cannot be undone.')){
+      const idx = forms.findIndex(f=>f.id===id);
+      if (idx>-1) forms.splice(idx,1);
+      if (state.selectedFormId===id) state.selectedFormId = forms.length ? forms[0].id : null;
+      showToast('Form deleted');
+      return renderFormsTab();
+    }
+    return;
+  }
+  if (t.id==='addFormBtn'){ state.addFormModal = { name:'' }; return renderAddFormModal(); }
+  if (t.id==='afClose' || t.id==='afCancel' || t.id==='afBackdrop'){ state.addFormModal=null; return renderAddFormModal(); }
+  if (t.id==='afCreate' && !t.disabled){
+    const name = state.addFormModal.name.trim();
+    const id = 'form_'+Date.now();
+    forms.push({ id, name, items:[] });
+    state.selectedFormId = id;
+    state.addFormModal = null;
+    renderAddFormModal();
+    showToast(`"${name}" created`);
+    return renderFormsTab();
+  }
+
+  const addGroupToForm = t.closest('[data-add-group-to-form]');
+  if (addGroupToForm){ state.addGroupToFormModal = { formId: addGroupToForm.dataset.addGroupToForm, groupId:null, subgroupIds:[], editIndex:null }; return renderAddGroupToFormModal(); }
+  if (t.id==='agfClose' || t.id==='agfCancel' || t.id==='agfBackdrop'){ state.addGroupToFormModal=null; return renderAddGroupToFormModal(); }
+  const pickGroup = t.closest('[data-pick-group]');
+  if (pickGroup){
+    state.addGroupToFormModal.groupId = Number(pickGroup.dataset.pickGroup);
+    state.addGroupToFormModal.subgroupIds = [];
+    return renderAddGroupToFormModal();
+  }
+  if (t.id==='agfBack'){
+    state.addGroupToFormModal.groupId = null;
+    state.addGroupToFormModal.subgroupIds = [];
+    return renderAddGroupToFormModal();
+  }
+  if (t.id==='agfAdd'){
+    const m = state.addGroupToFormModal;
+    const form = findForm(m.formId);
+    const payload = { type:'group', groupId:m.groupId, pinnedSubgroupIds:m.subgroupIds.slice() };
+    if (m.editIndex != null) form.items[m.editIndex] = payload; else form.items.push(payload);
+    state.addGroupToFormModal = null;
+    renderAddGroupToFormModal();
+    return renderFormsTab();
+  }
+  const editPinned = t.closest('[data-edit-pinned]');
+  if (editPinned){
+    const form = findForm(state.selectedFormId);
+    const idx = Number(editPinned.dataset.editPinned);
+    const item = form.items[idx];
+    state.addGroupToFormModal = { formId: form.id, groupId:item.groupId, subgroupIds:(item.pinnedSubgroupIds||[]).slice(), editIndex: idx };
+    return renderAddGroupToFormModal();
+  }
+
+  const addQuestionToForm = t.closest('[data-add-question-to-form]');
+  if (addQuestionToForm){ return openDrawerForForm(addQuestionToForm.dataset.addQuestionToForm, null); }
+  const openFormQ = t.closest('[data-open-form-question]');
+  if (openFormQ){
+    const form = findForm(openFormQ.dataset.form);
+    const item = form.items.find(it=> it.type==='question' && it.question.id===openFormQ.dataset.openFormQuestion);
+    return openDrawerForForm(form.id, item.question);
+  }
+  const moveItem = t.closest('[data-move-item]');
+  if (moveItem){
+    const form = findForm(state.selectedFormId);
+    const i = Number(moveItem.dataset.index);
+    const j = moveItem.dataset.moveItem==='up' ? i-1 : i+1;
+    if (j>=0 && j<form.items.length){
+      const tmp = form.items[i]; form.items[i]=form.items[j]; form.items[j]=tmp;
+      return renderFormsTab();
+    }
+    return;
+  }
+  const removeItem = t.closest('[data-remove-item]');
+  if (removeItem){
+    const form = findForm(state.selectedFormId);
+    form.items.splice(Number(removeItem.dataset.removeItem), 1);
+    return renderFormsTab();
+  }
+
+  // ---- Preview: chip toggles + signature box (click-driven controls) ----
+  const chip = t.closest('[data-ans-chip]');
+  if (chip){
+    const qid = chip.dataset.ansChip, value = chip.dataset.chipValue;
+    const arr = Array.isArray(state.answers[qid]) ? state.answers[qid].slice() : [];
+    const idx = arr.indexOf(value);
+    if (idx>-1) arr.splice(idx,1); else arr.push(value);
+    state.answers[qid] = arr;
+    return renderPreview();
+  }
+  const sigBox = t.closest('[data-ans-sig]');
+  if (sigBox){
+    const qid = sigBox.dataset.ansSig;
+    state.answers[qid] = state.answers[qid]==='signed' ? null : 'signed';
+    return renderPreview();
+  }
+});
+
+document.addEventListener('change', (e)=>{
+  const t = e.target;
+
+  // Subgroup flags
+  if (t.dataset.sgFlag){
+    const g = findGroup(t.dataset.group), s = findSubgroup(t.dataset.group, t.dataset.subgroup);
+    s.flags[t.dataset.sgFlag] = t.checked;
+    return renderBuild();
+  }
+
+  // Drawer: Connect-to group / subgroup checklist / mode / Type all re-render
+  // (each one changes what other controls should be visible)
+  if (state.drawer){
+    if (t.id==='dConnectGroup'){
+      state.drawer.connectGroupId = t.value==='none' ? null : Number(t.value);
+      state.drawer.connectSubgroupIds = [];
+      state.drawer.connectMode = 'single';
+      return renderDrawer();
+    }
+    if (t.dataset.connectSg){
+      const id = t.dataset.connectSg;
+      const arr = state.drawer.connectSubgroupIds;
+      const idx = arr.indexOf(id);
+      if (t.checked && idx===-1) arr.push(id);
+      if (!t.checked && idx>-1) arr.splice(idx,1);
+      return renderDrawer();
+    }
+    if (t.name==='dMode'){ state.drawer.connectMode = t.value; return; }
+    if (t.id==='dType'){ state.drawer.type = t.value; return renderDrawer(); }
+  }
+
+  // Add-group-to-form modal: pinned subgroup checklist
+  if (state.addGroupToFormModal && t.dataset.pinSg){
+    const id = t.dataset.pinSg;
+    const arr = state.addGroupToFormModal.subgroupIds;
+    const idx = arr.indexOf(id);
+    if (t.checked && idx===-1) arr.push(id);
+    if (!t.checked && idx>-1) arr.splice(idx,1);
+    return;
+  }
+
+  // Add-subgroup / add-group / add-form modal name fields
+  if (state.addSubgroupModal && t.id==='asName'){ state.addSubgroupModal.name = t.value; return renderAddSubgroupModal(); }
+  if (state.addGroupModal && t.id==='agName'){ state.addGroupModal.name = t.value; return renderAddGroupModal(); }
+  if (state.addFormModal && t.id==='afName'){ state.addFormModal.name = t.value; return renderAddFormModal(); }
+
+  // Preview form selector
+  if (t.id==='previewFormSelect'){ state.selectedFormId = t.value; return renderPreview(); }
+
+  // Preview: real inputs
+  if (t.dataset.ans){ state.answers[t.dataset.ans] = t.value; return; }
+  if (t.dataset.ansRadio){ state.answers[t.dataset.ansRadio] = t.value; return renderPreview(); }
+  if (t.dataset.ansSelect){ state.answers[t.dataset.ansSelect] = t.value || null; return renderPreview(); }
+  if (t.dataset.ansFile){ state.answers[t.dataset.ansFile] = t.files[0] ? t.files[0].name : ''; return; }
+  if (t.dataset.ansCheck){ state.answers[t.dataset.ansCheck] = t.checked; return; }
+});
+
+document.addEventListener('input', (e)=>{
+  const id = e.target.id;
+  if (state.addSubgroupModal && id==='asName'){
+    state.addSubgroupModal.name = e.target.value;
+    const btn = document.getElementById('asCreate'); if (btn) btn.disabled = !e.target.value.trim();
+  }
+  if (state.addGroupModal && id==='agName'){
+    state.addGroupModal.name = e.target.value;
+    const btn = document.getElementById('agCreate'); if (btn) btn.disabled = !e.target.value.trim();
+  }
+  if (state.addFormModal && id==='afName'){
+    state.addFormModal.name = e.target.value;
+    const btn = document.getElementById('afCreate'); if (btn) btn.disabled = !e.target.value.trim();
+  }
+});
+
+renderBuild();
+</script>
+</body>
+</html>

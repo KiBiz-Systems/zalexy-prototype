@@ -1,0 +1,160 @@
+<!--
+  Zalexy Prototype — Home / Prototype Gallery
+  Spec:   ai-workspace/prototypes/admin/intake-form-builder.md (linked screen)
+  Design: ai-workspace/prototypes/_shared/design-system.md
+  Static prototype. Not production code. No app dependencies.
+  This shell is the entry point for client review: default app sidebar, every
+  real nav item disabled, only the prototype screen(s) below are wired up.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zalexy — Prototype Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{
+  --primary:#334155; --primary-light:#475569; --primary-dark:#1e293b;
+  --secondary:#10b981; --secondary-dark:#059669;
+  --success:#10b981; --success-bg:#d1fae5; --success-dark:#047857;
+  --info:#3b82f6; --info-bg:#eff6ff; --info-dark:#1d4ed8; --info-hover:#2563eb;
+  --bg-default:#f8fafc; --bg-paper:#ffffff;
+  --text-primary:#0f172a; --text-secondary:#64748b;
+  --border:#f1f5f9; --border-input:#cbd5e1; --border-input-hover:#94a3b8;
+  --hover-row:#f1f5f9; --action-hover:rgba(71,85,105,.04); --action-selected:rgba(71,85,105,.08);
+  --danger:#ef4444; --warning:#f59e0b;
+  --radius-card:10px; --radius-base:8px; --radius-control:6px; --radius-chip:4px;
+  --shadow-card:0 2px 4px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.03);
+  --shadow-1:0 1px 3px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Inter","Roboto","Helvetica","Arial",sans-serif;color:var(--text-primary);}
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* ---------- Sidebar ---------- */
+.sidebar{width:240px;flex:0 0 240px;background:var(--primary-dark);color:#f8fafc;display:flex;flex-direction:column;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:10px;padding:20px 20px 16px;}
+.logo svg{flex:0 0 auto;}
+.logo span{font-weight:700;font-size:1.05rem;letter-spacing:.02em;}
+.nav{padding:8px 12px;display:flex;flex-direction:column;gap:2px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-base);color:#f8fafc;font-size:.9rem;font-weight:500;text-decoration:none;cursor:pointer;}
+.nav-item .material-symbols-rounded{font-size:20px;min-width:24px;color:rgba(248,250,252,.7);}
+.nav-item.disabled{opacity:.42;cursor:not-allowed;}
+.nav-item:not(.disabled):hover{background:rgba(248,250,252,.08);}
+.nav-item.active{background:rgba(248,250,252,.14);}
+.nav-item.active .material-symbols-rounded{color:#f8fafc;}
+.nav-section{margin:16px 12px 6px;font-size:.7rem;font-weight:700;letter-spacing:.08em;color:rgba(248,250,252,.45);text-transform:uppercase;}
+.sidebar-foot{padding:14px 20px;font-size:.7rem;color:rgba(248,250,252,.4);border-top:1px solid rgba(248,250,252,.08);}
+
+/* ---------- Main ---------- */
+.main{flex:1;background:var(--bg-default);overflow-y:auto;}
+.page{max-width:960px;margin:0 auto;padding:40px 32px 64px;}
+.eyebrow{font-size:.8rem;font-weight:600;letter-spacing:.05em;color:var(--text-secondary);text-transform:uppercase;margin:0 0 8px;}
+h1{font-size:2rem;font-weight:700;letter-spacing:-.02em;margin:0 0 8px;}
+.subtitle{font-size:.875rem;color:var(--text-secondary);line-height:1.6;margin:0 0 32px;max-width:640px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+.card{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:24px;display:flex;flex-direction:column;gap:12px;}
+.card .tag{align-self:flex-start;background:var(--info-bg);color:var(--info-dark);font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:var(--radius-chip);}
+.card h4{font-size:1.25rem;font-weight:600;margin:0;}
+.card p{font-size:.875rem;color:var(--text-secondary);line-height:1.6;margin:0;flex:1;}
+.card .meta{font-size:.8rem;color:var(--text-secondary);}
+.btn{display:inline-flex;align-items:center;gap:6px;justify-content:center;border:none;border-radius:var(--radius-control);padding:8px 16px;font-weight:600;font-size:.875rem;cursor:pointer;text-decoration:none;box-shadow:none;}
+.btn-primary{background:var(--info);color:#fff;}
+.btn-primary:hover{background:var(--info-hover);}
+.card-placeholder{background:var(--bg-paper);border:1px dashed var(--border-input);border-radius:var(--radius-card);padding:24px;color:var(--text-secondary);font-size:.875rem;display:flex;align-items:center;gap:10px;}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect width="28" height="28" rx="7" fill="#3b82f6"/>
+        <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>ZALEXY</span>
+    </div>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">point_of_sale</span>Point of Sale</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">groups</span>Leads</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">account_circle</span>Accounts</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Profiles</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">receipt_long</span>Transactions</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">request_quote</span>Invoices</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Staff</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">event</span>Scheduling</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">settings</span>Settings</a>
+      <div class="nav-section">Prototypes</div>
+      <a class="nav-item active" href="index.html"><span class="material-symbols-rounded">grid_view</span>Prototype Gallery</a>
+      <a class="nav-item" href="admin-intake-form-builder.html"><span class="material-symbols-rounded">dynamic_form</span>Admin: Intake &amp; Builder</a>
+      <a class="nav-item" href="profile-intake-tab.html"><span class="material-symbols-rounded">badge</span>Profile: Intake Tab</a>
+      <a class="nav-item" href="profile-overview-tab.html"><span class="material-symbols-rounded">contact_page</span>Profile: Details Tab</a>
+      <a class="nav-item" href="portal-profile-tab.html"><span class="material-symbols-rounded">family_restroom</span>Portal: My Account</a>
+    </nav>
+    <div class="sidebar-foot">Prototype build · not production</div>
+  </aside>
+
+  <main class="main">
+    <div class="page">
+      <p class="eyebrow">Prototype Gallery</p>
+      <h1>Zalexy Prototype Screens</h1>
+      <p class="subtitle">Static HTML prototypes for client review. The sidebar mirrors the real
+        application shell — every existing nav item is disabled here. Only the
+        prototype screens below are wired up and clickable.</p>
+      <div class="grid">
+        <div class="card">
+          <span class="tag">Admin</span>
+          <h4>Intake &amp; Form Builder</h4>
+          <p>Build the client intake questionnaire from reusable question groups and
+            subgroups. A question connects to a group, and the client's answer opens the
+            matching subgroup — no conditions to write. Several named forms are assembled
+            from the same shared library, with a client-facing live preview.</p>
+          <span class="meta">PRD §7–§19, §24 · Phase 3 — Dynamic Intake</span>
+          <a class="btn btn-primary" href="admin-intake-form-builder.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag">Staff</span>
+          <h4>Profile: Intake Tab</h4>
+          <p>One client's completed intake on their profile — same groups, same order,
+            filled in. Per-group editing, manager approval on flagged answers and
+            subgroups, a booking block until funding clears, and document previews.
+            Switch roles to see the manager, front-desk and client views.</p>
+          <span class="meta">PRD §7–§19, §9 · Phase 2–3 — Client Portal &amp; Intake</span>
+          <a class="btn btn-primary" href="profile-intake-tab.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag">Staff</span>
+          <h4>Profile: Profile Details Tab</h4>
+          <p>The staff landing view of one client — what they can book right now, and if
+            they can't, why not. Every balance names its source, service and validity
+            window; every eligibility verdict carries its blocking reason. One household
+            covers all three funding branches: voucher, Regional Center and self-pay.</p>
+          <span class="meta">PRD §24, §26–28, §43–45, §76 · Phase 2 — Client Portal &amp; Service Model</span>
+          <a class="btn btn-primary" href="profile-overview-tab.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag">Client</span>
+          <h4>Portal: My Account &mdash; Profile Details</h4>
+          <p>The account holder's own view of one household member &mdash; the same funding,
+            entitlement and eligibility model as the staff screen, reworded and re-gated for a
+            parent. Shows every Regional Center authorization or voucher the family has ever
+            been granted, grouped Active/Pending vs. Past, with staff-only detail (audit names,
+            raw documents, override controls) never rendered.</p>
+          <span class="meta">PRD §3, §4–§6, §26–28, §43–56 &middot; Phase 2 &mdash; Client Portal</span>
+          <a class="btn btn-primary" href="portal-profile-tab.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card-placeholder">
+          <span class="material-symbols-rounded">hourglass_top</span>
+          More prototype screens land here as specs are approved.
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

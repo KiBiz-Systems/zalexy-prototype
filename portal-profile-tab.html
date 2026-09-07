@@ -1,0 +1,743 @@
+<!--
+  Zalexy Prototype — Client Portal: My Account / Profile Details (client role)
+  Spec:   ai-workspace/prototypes/client/portal-profile-tab.md
+  Design: ai-workspace/prototypes/_shared/design-system.md
+  Static prototype. Not production code. No app dependencies.
+  Renders the client-portal MyAccount.tsx shell (AppBar, no sidebar) and the
+  Profile Details tab body, with funding/authorization content reworded for
+  the account holder per the spec's client-visible / reworded / staff-only
+  field table (§3.3).
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zalexy — My Account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{
+  --primary:#334155; --primary-light:#475569; --primary-dark:#1e293b;
+  --secondary:#10b981; --secondary-light:#34d399; --secondary-dark:#059669;
+  --success:#10b981; --success-bg:#d1fae5; --success-dark:#047857;
+  --info:#3b82f6; --info-bg:#eff6ff; --info-dark:#1d4ed8; --info-hover:#2563eb;
+  --bg-default:#f8fafc; --bg-paper:#ffffff;
+  --text-primary:#0f172a; --text-secondary:#64748b;
+  --border:#f1f5f9; --border-input:#cbd5e1; --border-input-hover:#94a3b8;
+  --hover-row:#f1f5f9; --action-hover:rgba(71,85,105,.04); --action-selected:rgba(71,85,105,.08);
+  --danger:#ef4444; --warning:#f59e0b;
+  --radius-card:10px; --radius-base:8px; --radius-control:6px; --radius-chip:4px;
+  --shadow-card:0 2px 4px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.03);
+  --shadow-1:0 1px 3px rgba(0,0,0,.05);
+  --shadow-appbar:0 1px 1px rgba(51,65,85,.03);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;overflow-x:hidden;}
+body{font-family:"Inter","Roboto","Helvetica","Arial",sans-serif;color:var(--text-primary);background:var(--bg-default);}
+button,select,input,textarea{font-family:inherit;}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px;}
+
+/* ---------- Portal shell — no sidebar (spec §2, §4) ---------- */
+.portal-shell{display:flex;flex-direction:column;min-height:100vh;}
+.appbar{height:64px;flex:0 0 auto;background:#fff;border-bottom:1px solid var(--border-input);box-shadow:var(--shadow-appbar);display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
+.appbar-left{display:flex;align-items:center;gap:18px;min-width:0;}
+.appbar-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;flex:0 0 auto;}
+.appbar-logo span{font-weight:700;font-size:1rem;}
+.gallery-link{font-size:.8rem;color:var(--text-secondary);text-decoration:none;white-space:nowrap;}
+.gallery-link:hover{color:var(--primary);text-decoration:underline;}
+.appbar-right{display:flex;align-items:center;gap:16px;flex:0 0 auto;}
+.appbar-welcome{font-size:.8rem;color:var(--text-secondary);white-space:nowrap;}
+@media(max-width:640px){ .appbar-welcome{display:none;} }
+
+.portal-main{flex:1;overflow-y:auto;}
+.portal-container{max-width:1200px;margin:0 auto;padding:24px;}
+.portal-footer{flex:0 0 auto;text-align:center;padding:20px;color:var(--text-secondary);font-size:.8rem;border-top:1px solid var(--border);background:#fff;}
+
+.page-title{font-size:1.75rem;font-weight:600;letter-spacing:-0.01em;margin:0;}
+.page-subtitle{font-size:.8rem;color:var(--text-secondary);margin:4px 0 20px;}
+
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:var(--radius-control);padding:8px 16px;font-weight:600;font-size:.875rem;cursor:pointer;box-shadow:none;white-space:nowrap;}
+.btn .material-symbols-rounded{font-size:18px;}
+.btn-sm{padding:6px 12px;font-size:.8rem;}
+.btn-outline{background:#fff;color:var(--text-primary);border:1px solid var(--border-input);}
+.btn-outline:hover{border-color:var(--primary);background:var(--action-hover);}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn:disabled:hover{background:#fff;border-color:var(--border-input);}
+
+.chip{height:24px;border-radius:var(--radius-chip);font-size:.75rem;font-weight:600;padding:0 8px;display:inline-flex;align-items:center;white-space:nowrap;}
+.chip-success{background:var(--success-bg);color:var(--success-dark);}
+.chip-info{background:var(--info-bg);color:var(--info-dark);}
+.chip-warning{background:#fef3c7;color:#b45309;}
+.chip-danger{background:#fee2e2;color:#b91c1c;}
+.chip-muted{background:#f1f5f9;color:var(--text-secondary);}
+
+/* ---------- Account summary band (§6, reused verbatim) ---------- */
+.summary-band{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:16px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+.summary-name{font-size:1.1rem;font-weight:700;}
+.summary-sub{font-size:.8rem;color:var(--text-secondary);width:100%;}
+.summary-spacer{flex:1;}
+
+/* ---------- Two-column body (design-system §8.1) ---------- */
+.detail-body{display:flex;gap:24px;}
+.detail-left{flex-shrink:0;width:33.333%;}
+.detail-right{flex:1;min-width:0;background:#fff;border:1px solid #e2e8f0;border-radius:16px;min-height:500px;overflow:hidden;box-shadow:none;}
+@media(max-width:900px){
+  .detail-body{flex-direction:column;}
+  .detail-left{width:100%;}
+}
+
+/* ---------- Left rail — Members (§7) ---------- */
+.rail-card{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:20px;}
+.rail-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.rail-title{font-size:.95rem;font-weight:700;}
+.count-chip{height:20px;font-size:.65rem;font-weight:700;background:#e2e8f0;border-radius:var(--radius-chip);padding:0 7px;display:inline-flex;align-items:center;}
+.member-list{display:flex;flex-direction:column;gap:8px;}
+.member-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--radius-base);cursor:pointer;border-left:3px solid transparent;background:none;border-top:none;border-right:none;border-bottom:none;width:100%;text-align:left;}
+.member-row:hover{background:var(--hover-row);}
+.member-row.selected{background:#f0f9ff;border-left-color:#0369a1;}
+.member-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:.75rem;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.member-info{flex:1;min-width:0;}
+.member-name{font-size:.9rem;font-weight:700;color:#1e293b;}
+.member-row.selected .member-name{color:#0369a1;}
+.member-sub{font-size:.8rem;color:var(--text-secondary);margin-top:1px;}
+.member-chips{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;flex:0 0 auto;}
+.add-member-btn{margin-top:4px;width:100%;justify-content:center;}
+
+/* ---------- Right panel nav — group pills + sub-tabs (design-system §8.3) ---------- */
+.rp-pills{display:flex;gap:6px;padding:12px 16px 0;background:#f8fafc;flex-wrap:wrap;}
+.pill{background:transparent;color:#64748b;border:1.5px solid #e2e8f0;border-radius:8px;padding:4px 14px;min-height:36px;font-size:.78rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;text-transform:none;}
+.pill:hover{background:#f1f5f9;border-color:#cbd5e1;}
+.pill.active{background:#1e293b;color:#fff;border:1.5px solid transparent;box-shadow:0 1px 4px rgba(30,41,59,.18);}
+.rp-tabrow{border-bottom:1px solid #e2e8f0;background:#f8fafc;}
+.rp-tabs{display:flex;gap:20px;padding:0 16px;flex-wrap:wrap;}
+.rp-tab{background:none;border:none;border-bottom:3px solid transparent;border-radius:0;font-size:.82rem;font-weight:600;color:#64748b;padding:8px 12px;min-height:40px;cursor:pointer;text-transform:none;}
+.rp-tab.selected{color:#3b82f6;border-bottom-color:#3b82f6;}
+.rp-body{padding:32px;}
+.placeholder-card{min-height:200px;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:.8rem;text-align:center;}
+
+.pd-title{font-size:1.25rem;font-weight:600;margin:0 0 20px;}
+
+/* ---------- Status strip (§9) — exactly 4 cells ---------- */
+.status-strip{background:var(--bg-default);border-radius:var(--radius-base);padding:16px;display:grid;grid-template-columns:repeat(4,1fr);margin-bottom:28px;}
+.status-cell{padding:0 16px;border-left:1px solid var(--border);}
+.status-cell:first-child{border-left:none;padding-left:0;}
+.status-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#94a3b8;margin-bottom:6px;}
+.status-value{font-size:.95rem;font-weight:700;color:var(--text-primary);}
+.status-sub{font-size:.75rem;color:var(--text-secondary);margin-top:4px;}
+
+/* ---------- Section header (ProfileDetail.tsx recipe) ---------- */
+.section-block{margin-top:28px;}
+.section-block:first-child{margin-top:0;}
+.section-header{border-top:1px solid var(--border);padding-top:20px;margin-bottom:6px;display:flex;align-items:center;gap:6px;width:100%;background:none;border-left:none;border-right:none;border-bottom:none;text-align:left;}
+.section-header.collapsible{cursor:pointer;}
+.section-header .material-symbols-rounded{font-size:.85rem;color:#475569;}
+.section-header.danger-icon .material-symbols-rounded{color:var(--danger);}
+.section-title{font-size:.7rem;font-weight:800;letter-spacing:.8px;color:#475569;text-transform:uppercase;flex:1;}
+.section-chevron{font-size:20px !important;color:var(--text-secondary) !important;transition:transform .15s;margin-left:auto;}
+.section-header[aria-expanded="true"] .section-chevron{transform:rotate(90deg);}
+.section-sub{font-size:.8rem;color:var(--text-secondary);margin:8px 0 14px;}
+
+/* ---------- Eligibility table (§10) ---------- */
+.elig-table{width:100%;border-collapse:collapse;}
+.elig-table th{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);padding:12px 16px;border-bottom:1px solid var(--border);text-align:left;}
+.elig-table td{font-size:.875rem;padding:16px;border-bottom:1px solid var(--border);color:var(--text-primary);vertical-align:top;}
+.elig-table tr:last-child td{border-bottom:0;}
+.elig-table tr.row-waiting{box-shadow:inset 3px 0 0 var(--warning);}
+.elig-table tr.row-not-covered{opacity:.7;}
+.balance-text{font-size:.75rem;font-weight:700;color:#1d4ed8;}
+.reason-line{font-size:.8rem;color:var(--text-secondary);margin-top:4px;}
+.muted-italic{font-style:italic;color:var(--text-secondary);}
+.muted-dash{color:var(--text-secondary);}
+
+/* ---------- Entitlement cards (§11) ---------- */
+.ent-stack{display:flex;flex-direction:column;gap:12px;}
+.ent-card{background:#fff;border:1px solid #e2e8f0;border-radius:var(--radius-base);padding:16px;}
+.ent-top{display:flex;gap:12px;align-items:flex-start;}
+.ent-avatar{width:36px;height:36px;border-radius:var(--radius-base);background:var(--info-bg);color:var(--info-dark);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.ent-avatar.token{background:var(--success-bg);color:var(--success-dark);}
+.ent-info{flex:1;min-width:0;}
+.ent-title{font-size:.9rem;font-weight:700;}
+.ent-coverage{font-size:.8rem;color:var(--text-secondary);margin-top:2px;}
+.ent-validity{font-size:.75rem;color:var(--text-secondary);margin-top:4px;}
+.ent-balance{font-size:.8rem;font-weight:700;color:#1d4ed8;white-space:nowrap;flex:0 0 auto;}
+.ledger-bar{height:8px;border-radius:var(--radius-chip);overflow:hidden;display:flex;margin-top:14px;background:#e2e8f0;}
+.ledger-seg-used{background:#1d4ed8;height:100%;}
+.ledger-seg-reserved{background:#93c5fd;height:100%;}
+.ledger-breakdown{font-size:.75rem;color:var(--text-secondary);margin-top:6px;}
+.ent-note{font-size:.75rem;color:var(--text-secondary);margin-top:8px;font-style:italic;}
+.token-line{font-size:.75rem;color:var(--text-secondary);margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+/* ---------- Funding, Authorizations & Vouchers (§12) ---------- */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;margin-bottom:20px;}
+.detail-item{display:flex;gap:10px;}
+.detail-item-icon{width:40px;height:40px;border-radius:var(--radius-base);background:#f1f5f9;color:#64748b;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.detail-item-body{min-width:0;}
+.detail-item-label{font-size:.7rem;font-weight:600;text-transform:uppercase;color:#94a3b8;}
+.detail-item-value{font-size:.875rem;font-weight:600;color:var(--text-primary);margin-top:2px;}
+.detail-item-value a{color:var(--info-dark);text-decoration:none;}
+.detail-item-value a:hover{text-decoration:underline;}
+
+.auth-group-title{font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-secondary);margin:18px 0 10px;}
+.auth-group-title:first-of-type{margin-top:4px;}
+.auth-stack{display:flex;flex-direction:column;gap:12px;}
+.auth-card{background:#fff;border:1px solid #e2e8f0;border-radius:var(--radius-base);overflow:hidden;}
+.auth-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;gap:12px;}
+.auth-head-title{font-size:.9rem;font-weight:700;}
+.auth-divider{border:none;border-top:1px solid var(--border);margin:0;}
+.auth-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 16px;padding:14px 18px;}
+.auth-grid-item.span-2{grid-column:span 2;}
+.auth-grid-item .g-label{font-size:.7rem;font-weight:600;text-transform:uppercase;color:#94a3b8;}
+.auth-grid-item .g-value{font-size:.875rem;font-weight:600;color:var(--text-primary);margin-top:2px;}
+.auth-foot{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--border);gap:12px;flex-wrap:wrap;}
+.auth-audit{font-size:.8rem;color:var(--text-secondary);}
+.auth-empty{font-size:.85rem;color:var(--text-secondary);font-style:italic;padding:10px 0;}
+.auth-doc-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.auth-doc-helper{font-size:.7rem;color:var(--text-secondary);max-width:220px;text-align:right;}
+
+@media (max-width:900px){
+  .auth-grid{grid-template-columns:1fr;}
+  .auth-grid-item.span-2{grid-column:span 1;}
+  .detail-grid{grid-template-columns:1fr;}
+  .status-strip{grid-template-columns:repeat(2,1fr);row-gap:16px;}
+  .status-cell:nth-child(odd){border-left:none;}
+}
+</style>
+</head>
+<body>
+<div class="portal-shell">
+  <header class="appbar">
+    <div class="appbar-left">
+      <a class="appbar-logo" href="#" data-noop>
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <rect width="28" height="28" rx="7" fill="#3b82f6"/>
+          <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Zalexy</span>
+      </a>
+      <a class="gallery-link" href="index.html">&larr; Prototype Gallery</a>
+    </div>
+    <div class="appbar-right">
+      <span class="appbar-welcome" id="welcomeText">Welcome, Elena</span>
+      <button type="button" class="btn btn-outline btn-sm" data-noop>Store</button>
+      <button type="button" class="btn btn-outline btn-sm" data-noop><span class="material-symbols-rounded">logout</span>Logout</button>
+    </div>
+  </header>
+
+  <main class="portal-main">
+    <div class="portal-container">
+      <h2 class="page-title">My Account</h2>
+      <p class="page-subtitle">Manage your family profiles and subscriptions</p>
+
+      <div class="summary-band">
+        <span class="summary-name" id="summaryName"></span>
+        <span class="chip chip-success" id="summaryStatus"></span>
+        <span class="summary-spacer"></span>
+        <span style="font-size:.8rem;color:var(--text-secondary);">Amount Due: <strong style="color:var(--text-primary);" id="summaryDue"></strong></span>
+        <button type="button" class="btn btn-outline btn-sm" data-noop>Store</button>
+        <span class="summary-sub" id="summaryContact"></span>
+      </div>
+
+      <div class="detail-body">
+        <div class="detail-left" id="leftRail"></div>
+        <div class="detail-right" id="rightPanel"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="portal-footer">© 2026 Zalexy. All rights reserved.</footer>
+</div>
+
+<script>
+/* =======================================================================
+   Static config — account, members, nav groups
+======================================================================= */
+const ACCOUNT = { name:'Garcia Household', status:'Active', amountDue:'$0.00', email:'elena.garcia@example.com', phone:'(510) 555-0142' };
+
+const MEMBERS = [
+  { id:'maria', name:'Maria Garcia', initials:'MG', sub:'Age 6 · Swim · Beginner 2', chips:[{label:'Voucher'}] },
+  { id:'diego', name:'Diego Garcia', initials:'DG', sub:'Age 9 · Swim · Beginner 3', chips:[{label:'RCEB'}] },
+  { id:'elena', name:'Elena Garcia', initials:'EG', sub:'Adult · Fitness', chips:[{label:'Primary'},{label:'Self-Pay',muted:true}] },
+];
+function findMember(id){ return MEMBERS.find(m=>m.id===id); }
+
+const GROUPS = [
+  { id:'profile', label:'Profile', tabs:[ { id:'profile-details', label:'Profile Details' } ] },
+  { id:'purchases', label:'Purchases', tabs:[ { id:'purchases', label:'Purchases' }, { id:'waivers', label:'Waivers' } ] },
+  { id:'schedule', label:'Schedule & Bookings', tabs:[ { id:'my-classes', label:'My Classes' }, { id:'schedule-classes', label:'Schedule Classes' }, { id:'schedule-private', label:'Schedule Private Classes' } ] },
+  { id:'payments', label:'Payments', tabs:[ { id:'invoices', label:'Invoices' }, { id:'transactions', label:'Transactions' }, { id:'saved-cards', label:'Saved Cards' } ] },
+];
+function findGroup(id){ return GROUPS.find(g=>g.id===id); }
+
+/* =======================================================================
+   Seed data — §14, verbatim from the Garcia household model
+======================================================================= */
+const DATA = {
+  diego: {
+    primaryLevel:'Beginner 3', primaryService:'Swim',
+    assessment:{ status:'Approved', date:null },
+    funding:{ label:'RCEB', value:'AUTH-928472' },
+    booking:{ cls:'chip-warning', label:'1 on hold', sub:'Semi-Private Swim' },
+    eligibility:[
+      { service:'Swim · Semi-Private', level:'Beginner 3', assessment:'Approved', fundingSource:'RCEB AUTH-928472', balance:'Balance: 0 / 3 sessions', verdict:'waiting', reason:'Waiting on Regional Center approval — your requested time is being held until Sep 22, 2026' },
+      { service:'Swim · Private', level:'Beginner 3', assessment:'Approved', fundingSource:null, balance:null, verdict:'not-covered', reason:'Not covered by your current authorization (AUTH-928472 covers Semi-Private only)' },
+    ],
+    entitlements:[
+      { kind:'grant', title:'Regional Center AUTH-928472 · SRA11 · Regional Center of the East Bay', coverage:'Swim — Semi-Private', validFrom:'1 Sep 2026', validTo:'31 Dec 2026', granted:3, used:0, reserved:0, available:3, note:'Prorated first month — 3 of 8 monthly units.' },
+    ],
+    fundingProgram:'Regional Center of the East Bay (RCEB)', caseManagerName:'Priya Raman', caseManagerEmail:'p.raman@districta.example.gov',
+    authorizations:[
+      { group:'active', type:'Regional Center Authorization', id:'AUTH-928472', status:'pending', provider:'Regional Center of the East Bay', units:'3 sessions', service:'Swim', classTypes:'Semi-Private', validFrom:'1 Sep 2026', validTo:'31 Dec 2026', footerLabel:'Submitted 1 Sep 2026', docLabel:'View authorization letter', hasDoc:false },
+    ],
+    pastEmptyText:'No expired or past authorizations for Diego yet.',
+    basicInfo:{ fullName:'Diego Garcia', gender:null, dob:null, ageProfile:'Youth (5–12)', email:null, mobile:null, role:'Family Member' },
+    address:'1428 Marine Way\nApt 3B\nAlameda, CA\n94501 USA',
+    emergency:{ guardian:'Elena Garcia · (510) 555-0142', guardianEmail:'elena.garcia@example.com', emergencyContact:'Priya Raman · (510) 555-0177' },
+  },
+  maria: {
+    primaryLevel:'Beginner 2', primaryService:'Swim',
+    assessment:{ status:'Approved', date:'13 Mar 2026' },
+    funding:{ label:'Voucher', value:'HS-4482' },
+    booking:{ cls:'chip-warning', label:'1 blocked', sub:'Group Swim' },
+    eligibility:[
+      { service:'Swim · Private', level:'Beginner 2', assessment:'Approved', fundingSource:'Voucher HS-4482', balance:'Balance: 4 / 8 sessions', verdict:'eligible', reason:'Covered by your Homeschool Voucher (HS-4482) through Sep 30, 2026' },
+      { service:'Swim · Group', level:null, assessment:'Not assessed', fundingSource:'Voucher HS-4482', balance:'Balance: 4 / 8 sessions', verdict:'waiting', reason:'An in-person pool assessment is required before Maria can join a group class' },
+      { service:'Basketball', level:null, assessment:'Not assessed', fundingSource:null, balance:null, verdict:'not-covered', reason:'Not covered by your current funding — you’d purchase this separately' },
+    ],
+    entitlements:[
+      { kind:'grant', title:'Homeschool Voucher HS-4482 · District A', coverage:'Swim — Group, Private', validFrom:'1 Sep 2026', validTo:'30 Sep 2026', granted:8, used:3, reserved:1, available:4 },
+      { kind:'token', title:'Make-Up Token', coverage:'Swim — same level, same location', expires:'12 Oct 2026', horizon:'bookable within 7 days', count:1 },
+    ],
+    fundingProgram:'Homeschool Voucher Program (HS)', caseManagerName:'Priya Raman', caseManagerEmail:'p.raman@districta.example.gov',
+    authorizations:[
+      { group:'active', type:'Homeschool Voucher', id:'HS-4482', status:'approved', provider:'District A', units:'8 sessions', service:'Swim', classTypes:'Group, Private', validFrom:'1 Sep 2026', validTo:'30 Sep 2026', proration:'Scheduled occurrences', footerLabel:'Approved 13 Mar 2026', docLabel:'View voucher letter', hasDoc:true },
+    ],
+    pastEmptyText:'No expired or past vouchers for Maria yet.',
+    basicInfo:{ fullName:'Maria Garcia', gender:'Female', dob:'14 Aug 2019', ageProfile:'Youth (5–12)', email:null, mobile:null, role:'Family Member' },
+    address:'1428 Marine Way\nApt 3B\nAlameda, CA\n94501 USA',
+    emergency:{ guardian:'Elena Garcia · (510) 555-0142', guardianEmail:'elena.garcia@example.com', emergencyContact:'Priya Raman · (510) 555-0177' },
+  },
+  elena: {
+    primaryLevel:null, primaryService:'Fitness',
+    assessment:{ status:'Not required', date:null },
+    funding:{ label:'Self-Pay', value:null },
+    booking:{ cls:'chip-success', label:'All clear', sub:'No blockers' },
+    eligibility:[
+      { service:'Fitness · Open Gym', level:null, assessment:'Not required', fundingSource:'Self-Pay — 10-Session Pack', balance:'Balance: 7 / 10 sessions', verdict:'eligible', reason:'Covered by the 10-Session Pack through Dec 31, 2026' },
+    ],
+    entitlements:[
+      { kind:'grant', title:'10-Session Fitness Pack · Self-Pay', coverage:'Fitness — Open Gym', validFrom:'1 Sep 2026', validTo:'31 Dec 2026', granted:10, used:3, reserved:0, available:7 },
+    ],
+    fundingProgram:null, caseManagerName:null, caseManagerEmail:null,
+    authorizations:[],
+    emptyFundingText:'No Regional Center authorizations or vouchers on file. Elena’s services are self-pay.',
+    basicInfo:{ fullName:'Elena Garcia', gender:null, dob:null, ageProfile:'Adult (18+)', email:'elena.garcia@example.com', mobile:'(510) 555-0142', role:'Primary' },
+    address:'1428 Marine Way\nApt 3B\nAlameda, CA\n94501 USA',
+    emergency:{ guardian:null, guardianEmail:null, emergencyContact:null },
+  },
+};
+
+/* =======================================================================
+   State — single plain object, re-render from it
+======================================================================= */
+const state = {
+  selectedMember:'diego',
+  activeGroup:'profile',
+  subTabByGroup:{ profile:'profile-details', purchases:'purchases', schedule:'my-classes', payments:'invoices' },
+  collapsedSections:new Set(['basic-info','address','emergency']),
+};
+
+/* =======================================================================
+   Helpers
+======================================================================= */
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function verdictChip(v){
+  if (v==='eligible') return { cls:'chip-success', label:'Eligible' };
+  if (v==='waiting') return { cls:'chip-warning', label:'Waiting' };
+  return { cls:'chip-muted', label:'Not covered' };
+}
+function assessmentChip(status){
+  if (status==='Approved') return { cls:'chip-success', label:'Approved' };
+  if (status==='Not required') return { cls:'chip-muted', label:'Not required' };
+  return { cls:'chip-muted', label:'Not assessed' };
+}
+function fundingTint(label){ return (label==='Self-Pay') ? 'chip-muted' : 'chip-info'; }
+function detailItem(icon, label, valueHtml, isMuted){
+  return `<div class="detail-item">
+    <span class="detail-item-icon"><span class="material-symbols-rounded">${icon}</span></span>
+    <div class="detail-item-body">
+      <div class="detail-item-label">${esc(label)}</div>
+      <div class="detail-item-value">${isMuted?`<span class="muted-italic">${valueHtml}</span>`:valueHtml}</div>
+    </div>
+  </div>`;
+}
+
+/* =======================================================================
+   Rendering — account summary band
+======================================================================= */
+function renderSummary(){
+  document.getElementById('summaryName').textContent = ACCOUNT.name;
+  document.getElementById('summaryStatus').textContent = ACCOUNT.status;
+  document.getElementById('summaryDue').textContent = ACCOUNT.amountDue;
+  document.getElementById('summaryContact').textContent = `${ACCOUNT.email} · ${ACCOUNT.phone}`;
+}
+
+/* =======================================================================
+   Rendering — left rail (§7)
+======================================================================= */
+function renderLeftRail(){
+  const rows = MEMBERS.map(m=>{
+    const selected = state.selectedMember===m.id;
+    const chips = m.chips.map(c=>`<span class="chip ${c.muted?'chip-muted':'chip-info'}">${esc(c.label)}</span>`).join('');
+    return `<button type="button" class="member-row${selected?' selected':''}" data-select-member="${m.id}">
+      <span class="member-avatar">${esc(m.initials)}</span>
+      <span class="member-info">
+        <span class="member-name">${esc(m.name)}</span>
+        <span class="member-sub">${esc(m.sub)}</span>
+      </span>
+      <span class="member-chips">${chips}</span>
+    </button>`;
+  }).join('');
+  document.getElementById('leftRail').innerHTML = `<div class="rail-card">
+    <div class="rail-head"><span class="rail-title">Members</span><span class="count-chip">${MEMBERS.length}</span></div>
+    <div class="member-list">
+      ${rows}
+      <button type="button" class="btn btn-outline btn-sm add-member-btn" data-noop><span class="material-symbols-rounded">add</span>Add Member</button>
+    </div>
+  </div>`;
+}
+
+/* =======================================================================
+   Rendering — right panel nav (design-system §8.3)
+======================================================================= */
+function renderPills(){
+  return `<div class="rp-pills">${GROUPS.map(g=>`
+    <button type="button" class="pill${state.activeGroup===g.id?' active':''}" data-pill="${g.id}">${esc(g.label)}</button>
+  `).join('')}</div>`;
+}
+function renderSubTabs(){
+  const g = findGroup(state.activeGroup);
+  if (!g || g.tabs.length<2) return '';
+  const activeSub = state.subTabByGroup[g.id];
+  return `<div class="rp-tabrow"><div class="rp-tabs">${g.tabs.map(t=>`
+    <button type="button" class="rp-tab${activeSub===t.id?' selected':''}" data-subtab="${t.id}" data-group="${g.id}">${esc(t.label)}</button>
+  `).join('')}</div></div>`;
+}
+function renderGroupBody(){
+  if (state.activeGroup==='profile') return renderProfileDetailsBody(state.selectedMember);
+  const g = findGroup(state.activeGroup);
+  const activeSub = state.subTabByGroup[g.id];
+  const tab = g.tabs.find(t=>t.id===activeSub);
+  return `<div class="rp-body"><div class="placeholder-card">${esc(tab?tab.label:g.label)} — not built in this prototype.</div></div>`;
+}
+
+/* =======================================================================
+   Rendering — status strip (§9) — 4 cells, no INTAKE
+======================================================================= */
+function renderStatusStrip(memberId){
+  const d = DATA[memberId];
+  const asm = assessmentChip(d.assessment.status);
+  return `<div class="status-strip">
+    <div class="status-cell">
+      <div class="status-label">Service level</div>
+      <div class="status-value">${d.primaryLevel?esc(d.primaryLevel):'<span class="muted-italic">Not assigned</span>'}</div>
+      <div class="status-sub">${esc(d.primaryService)}</div>
+    </div>
+    <div class="status-cell">
+      <div class="status-label">Assessment</div>
+      <div class="status-value"><span class="chip ${asm.cls}">${asm.label}</span></div>
+      <div class="status-sub">${d.assessment.date?esc(d.assessment.date):'&nbsp;'}</div>
+    </div>
+    <div class="status-cell">
+      <div class="status-label">Funding</div>
+      <div class="status-value"><span class="chip ${fundingTint(d.funding.label)}">${esc(d.funding.label)}</span></div>
+      <div class="status-sub">${d.funding.value?esc(d.funding.value):'&nbsp;'}</div>
+    </div>
+    <div class="status-cell">
+      <div class="status-label">Booking</div>
+      <div class="status-value"><span class="chip ${d.booking.cls}">${esc(d.booking.label)}</span></div>
+      <div class="status-sub">${esc(d.booking.sub)}</div>
+    </div>
+  </div>`;
+}
+
+/* =======================================================================
+   Rendering — services & eligibility (§10)
+======================================================================= */
+function renderEligibility(memberId){
+  const d = DATA[memberId];
+  const firstName = findMember(memberId).name.split(' ')[0];
+  const rows = d.eligibility.map(r=>{
+    const v = verdictChip(r.verdict);
+    const rowCls = r.verdict==='waiting' ? 'row-waiting' : (r.verdict==='not-covered' ? 'row-not-covered' : '');
+    return `<tr class="${rowCls}">
+      <td>${esc(r.service)}</td>
+      <td>${r.level?esc(r.level):'<span class="muted-italic">Not assigned</span>'}</td>
+      <td>${r.assessment?esc(r.assessment):'<span class="muted-italic">Not assessed</span>'}</td>
+      <td>${r.fundingSource?esc(r.fundingSource):'<span class="muted-italic">None</span>'}</td>
+      <td>${r.balance?`<span class="balance-text">${esc(r.balance)}</span>`:'<span class="muted-dash">—</span>'}</td>
+      <td>
+        <span class="chip ${v.cls}">${v.label}</span>
+        <div class="reason-line">${esc(r.reason)}</div>
+      </td>
+    </tr>`;
+  }).join('');
+  return `<div class="section-block">
+    <div class="section-header">
+      <span class="material-symbols-rounded">checklist</span>
+      <span class="section-title">Services &amp; Eligibility</span>
+    </div>
+    <p class="section-sub">What ${esc(firstName)} can book right now, and what might be stopping it.</p>
+    <table class="elig-table">
+      <colgroup>
+        <col style="width:22%"><col style="width:12%"><col style="width:14%"><col style="width:22%"><col style="width:14%"><col style="width:16%">
+      </colgroup>
+      <thead><tr>
+        <th>Service</th><th>Level</th><th>Assessment</th><th>Funding source</th><th>Balance</th><th>Can book?</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+/* =======================================================================
+   Rendering — entitlements incl. Make-Up Tokens (§11)
+======================================================================= */
+function renderEntitlements(memberId){
+  const d = DATA[memberId];
+  const cards = d.entitlements.map(e=>{
+    if (e.kind==='token'){
+      return `<div class="ent-card">
+        <div class="ent-top">
+          <span class="ent-avatar token"><span class="material-symbols-rounded">redeem</span></span>
+          <div class="ent-info">
+            <div class="ent-title">${esc(e.title)}</div>
+            <div class="ent-coverage">${esc(e.coverage)}</div>
+          </div>
+          <span class="ent-balance">${e.count} available</span>
+        </div>
+        <div class="token-line">
+          <span>Token expires ${esc(e.expires)}</span>
+          <span class="chip chip-muted">${esc(e.horizon)}</span>
+        </div>
+      </div>`;
+    }
+    const total = e.granted || 1;
+    const usedPct = (e.used/total*100).toFixed(2);
+    const reservedPct = (e.reserved/total*100).toFixed(2);
+    return `<div class="ent-card">
+      <div class="ent-top">
+        <span class="ent-avatar"><span class="material-symbols-rounded">confirmation_number</span></span>
+        <div class="ent-info">
+          <div class="ent-title">${esc(e.title)}</div>
+          <div class="ent-coverage">${esc(e.coverage)}</div>
+          <div class="ent-validity">Valid ${esc(e.validFrom)} – ${esc(e.validTo)}</div>
+        </div>
+        <span class="ent-balance">Balance: ${e.available} / ${e.granted} sessions</span>
+      </div>
+      <div class="ledger-bar">
+        <div class="ledger-seg-used" style="width:${usedPct}%"></div>
+        <div class="ledger-seg-reserved" style="width:${reservedPct}%"></div>
+      </div>
+      <div class="ledger-breakdown">${e.granted} granted · ${e.used} used · ${e.reserved} reserved · ${e.available} available</div>
+      ${e.note?`<div class="ent-note">${esc(e.note)}</div>`:''}
+    </div>`;
+  }).join('');
+  return `<div class="section-block">
+    <div class="section-header">
+      <span class="material-symbols-rounded">account_balance_wallet</span>
+      <span class="section-title">Entitlements</span>
+    </div>
+    <p class="section-sub">Every balance is scoped to its source, its service and its valid dates.</p>
+    <div class="ent-stack">${cards}</div>
+  </div>`;
+}
+
+/* =======================================================================
+   Rendering — Funding, Authorizations & Vouchers (§12)
+======================================================================= */
+function authCard(memberId, a, idx){
+  const statusChip = a.status==='approved' ? {cls:'chip-success',label:'Approved'} : a.status==='pending' ? {cls:'chip-warning',label:'Pending'} : {cls:'chip-muted',label:'Expired'};
+  const prorationItem = a.proration ? `<div class="auth-grid-item span-2"><div class="g-label">Proration</div><div class="g-value">${esc(a.proration)}</div></div>` : '';
+  const docBtn = a.hasDoc
+    ? `<button type="button" class="btn btn-outline btn-sm" data-noop>${esc(a.docLabel)}</button>`
+    : `<div class="auth-doc-wrap">
+         <button type="button" class="btn btn-outline btn-sm" data-noop disabled title="No document on file — contact your case manager.">${esc(a.docLabel)}</button>
+         <span class="auth-doc-helper">No document on file — contact your case manager.</span>
+       </div>`;
+  return `<div class="auth-card" id="auth-card-${memberId}-${idx}">
+    <div class="auth-head">
+      <span class="auth-head-title">${esc(a.type)} &nbsp;${esc(a.id)}</span>
+      <span class="chip ${statusChip.cls}">${statusChip.label}</span>
+    </div>
+    <hr class="auth-divider">
+    <div class="auth-grid">
+      <div class="auth-grid-item"><div class="g-label">Provider</div><div class="g-value">${esc(a.provider)}</div></div>
+      <div class="auth-grid-item"><div class="g-label">Authorized units</div><div class="g-value">${esc(a.units)}</div></div>
+      <div class="auth-grid-item"><div class="g-label">Service</div><div class="g-value">${esc(a.service)}</div></div>
+      <div class="auth-grid-item"><div class="g-label">Class type(s)</div><div class="g-value">${esc(a.classTypes)}</div></div>
+      <div class="auth-grid-item"><div class="g-label">Valid from</div><div class="g-value">${esc(a.validFrom)}</div></div>
+      <div class="auth-grid-item"><div class="g-label">Valid to</div><div class="g-value">${esc(a.validTo)}</div></div>
+      ${prorationItem}
+    </div>
+    <hr class="auth-divider">
+    <div class="auth-foot">
+      <span class="auth-audit">${esc(a.footerLabel)}</span>
+      ${docBtn}
+    </div>
+  </div>`;
+}
+function renderFunding(memberId){
+  const d = DATA[memberId];
+  const fieldItems = [
+    detailItem('description', 'Funding Program', d.fundingProgram ? esc(d.fundingProgram) : 'No Program Assigned', !d.fundingProgram),
+    detailItem('badge', 'Case Manager', d.caseManagerName ? esc(d.caseManagerName) : 'Not assigned', !d.caseManagerName),
+  ];
+  if (d.caseManagerEmail){
+    fieldItems.push(detailItem('mail', 'Case Manager Email', `<a href="mailto:${esc(d.caseManagerEmail)}">${esc(d.caseManagerEmail)}</a>`, false));
+  }
+  const fieldGrid = `<div class="detail-grid">${fieldItems.join('')}</div>`;
+
+  let stackHtml;
+  if (!d.authorizations.length){
+    stackHtml = `<p class="auth-empty">${esc(d.emptyFundingText)}</p>`;
+  } else {
+    const active = d.authorizations.filter(a=>a.group==='active');
+    const past = d.authorizations.filter(a=>a.group==='past');
+    stackHtml = `
+      <p class="auth-group-title">ACTIVE / PENDING (${active.length})</p>
+      <div class="auth-stack">${active.map((a,i)=>authCard(memberId,a,i)).join('')}</div>
+      <p class="auth-group-title">PAST (${past.length})</p>
+      ${past.length ? `<div class="auth-stack">${past.map((a,i)=>authCard(memberId,a,'past-'+i)).join('')}</div>` : `<p class="auth-empty">${esc(d.pastEmptyText)}</p>`}
+    `;
+  }
+
+  return `<div class="section-block">
+    <div class="section-header">
+      <span class="material-symbols-rounded">verified_user</span>
+      <span class="section-title">Funding, Authorizations &amp; Vouchers</span>
+    </div>
+    <p class="section-sub">Every Regional Center authorization or voucher your family has been granted for this profile.</p>
+    ${fieldGrid}
+    ${stackHtml}
+  </div>`;
+}
+
+/* =======================================================================
+   Rendering — reference sections (§13, unchanged from staff screen)
+======================================================================= */
+function refSection(id, iconClass, icon, title, expanded, bodyHtml){
+  return `<div class="section-block">
+    <button type="button" class="section-header collapsible${iconClass?(' '+iconClass):''}" data-toggle-section="${id}" aria-expanded="${expanded}">
+      <span class="material-symbols-rounded">${icon}</span>
+      <span class="section-title">${esc(title)}</span>
+      <span class="material-symbols-rounded section-chevron">chevron_right</span>
+    </button>
+    ${expanded?bodyHtml:''}
+  </div>`;
+}
+function renderBasicInfo(memberId){
+  const b = DATA[memberId].basicInfo;
+  const expanded = !state.collapsedSections.has('basic-info');
+  const body = `<div class="detail-grid" style="margin-top:14px;">
+    ${detailItem('badge','Full Name', esc(b.fullName))}
+    ${detailItem('wc','Gender', b.gender?esc(b.gender):'Not provided', !b.gender)}
+    ${detailItem('cake','Date of Birth', b.dob?esc(b.dob):'Not provided', !b.dob)}
+    ${detailItem('groups','Membership Age Profile', esc(b.ageProfile))}
+    ${detailItem('mail','Email Address', b.email?esc(b.email):'No email on file', !b.email)}
+    ${detailItem('call','Mobile Number', b.mobile?esc(b.mobile):'Not provided', !b.mobile)}
+    ${detailItem('assignment_ind','Account Role', esc(b.role))}
+  </div>`;
+  return refSection('basic-info', '', 'person', 'Basic Info', expanded, body);
+}
+function renderAddress(memberId){
+  const addr = DATA[memberId].address;
+  const expanded = !state.collapsedSections.has('address');
+  const body = `<div class="detail-grid" style="margin-top:14px;grid-template-columns:1fr;">
+    ${detailItem('home','Full Address', addr ? esc(addr).replace(/\n/g,'<br>') : 'No address on file', !addr)}
+  </div>`;
+  return refSection('address', '', 'location_on', 'Address', expanded, body);
+}
+function renderEmergency(memberId){
+  const e = DATA[memberId].emergency;
+  if (!e.guardian && !e.guardianEmail && !e.emergencyContact) return '';
+  const expanded = !state.collapsedSections.has('emergency');
+  const body = `<div class="detail-grid" style="margin-top:14px;">
+    ${detailItem('escalator_warning','Guardian', e.guardian?esc(e.guardian):'Not provided', !e.guardian)}
+    ${detailItem('mail','Guardian Email', e.guardianEmail?esc(e.guardianEmail):'Not provided', !e.guardianEmail)}
+    ${detailItem('emergency','Emergency Contact', e.emergencyContact?esc(e.emergencyContact):'Not provided', !e.emergencyContact)}
+  </div>`;
+  return refSection('emergency', 'danger-icon', 'emergency', 'Emergency & Guardian', expanded, body);
+}
+
+/* =======================================================================
+   Rendering — Profile Details tab body
+======================================================================= */
+function renderProfileDetailsBody(memberId){
+  return `<div class="rp-body">
+    <h3 class="pd-title">Profile Details</h3>
+    ${renderStatusStrip(memberId)}
+    ${renderEligibility(memberId)}
+    ${renderEntitlements(memberId)}
+    ${renderFunding(memberId)}
+    ${renderBasicInfo(memberId)}
+    ${renderAddress(memberId)}
+    ${renderEmergency(memberId)}
+  </div>`;
+}
+
+/* =======================================================================
+   Rendering — right panel (pills + sub-tabs + body)
+======================================================================= */
+function renderRightPanel(){
+  document.getElementById('rightPanel').innerHTML = `${renderPills()}${renderSubTabs()}${renderGroupBody()}`;
+}
+
+/* =======================================================================
+   Master render
+======================================================================= */
+function render(){
+  renderLeftRail();
+  renderRightPanel();
+}
+
+/* =======================================================================
+   Event delegation
+======================================================================= */
+document.addEventListener('click', function(ev){
+  const memberBtn = ev.target.closest('[data-select-member]');
+  if (memberBtn){
+    state.selectedMember = memberBtn.getAttribute('data-select-member');
+    render();
+    return;
+  }
+  const pillBtn = ev.target.closest('[data-pill]');
+  if (pillBtn){
+    state.activeGroup = pillBtn.getAttribute('data-pill');
+    renderRightPanel();
+    return;
+  }
+  const subTabBtn = ev.target.closest('[data-subtab]');
+  if (subTabBtn){
+    const group = subTabBtn.getAttribute('data-group');
+    state.subTabByGroup[group] = subTabBtn.getAttribute('data-subtab');
+    renderRightPanel();
+    return;
+  }
+  const toggleBtn = ev.target.closest('[data-toggle-section]');
+  if (toggleBtn){
+    const id = toggleBtn.getAttribute('data-toggle-section');
+    if (state.collapsedSections.has(id)) state.collapsedSections.delete(id);
+    else state.collapsedSections.add(id);
+    renderRightPanel();
+    return;
+  }
+});
+
+renderSummary();
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,1162 @@
+<!--
+  Zalexy Prototype — Client Profile: Profile Details tab (staff view)
+  Spec:   ai-workspace/prototypes/client/profile-overview-tab.md
+  Design: ai-workspace/prototypes/_shared/design-system.md
+  Static prototype. Not production code. No app dependencies.
+  This is the existing Profile Details tab of AccountDetail, restructured so
+  decision data (eligibility, entitlements, funding) sits above reference data.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zalexy — Accounts / Garcia Household</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{
+  --primary:#334155; --primary-light:#475569; --primary-dark:#1e293b;
+  --secondary:#10b981; --secondary-light:#34d399; --secondary-dark:#059669;
+  --success:#10b981; --success-bg:#d1fae5; --success-dark:#047857;
+  --info:#3b82f6; --info-bg:#eff6ff; --info-dark:#1d4ed8; --info-hover:#2563eb;
+  --bg-default:#f8fafc; --bg-paper:#ffffff;
+  --text-primary:#0f172a; --text-secondary:#64748b;
+  --border:#f1f5f9; --border-input:#cbd5e1; --border-input-hover:#94a3b8;
+  --hover-row:#f1f5f9; --action-hover:rgba(71,85,105,.04); --action-selected:rgba(71,85,105,.08);
+  --danger:#ef4444; --warning:#f59e0b;
+  --radius-card:10px; --radius-base:8px; --radius-control:6px; --radius-chip:4px;
+  --shadow-card:0 2px 4px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.03);
+  --shadow-1:0 1px 3px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Inter","Roboto","Helvetica","Arial",sans-serif;color:var(--text-primary);}
+button,select,input,textarea{font-family:inherit;}
+.app{display:flex;height:100vh;overflow:hidden;}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px;}
+
+/* ---------- Sidebar (app shell) ---------- */
+.sidebar{width:240px;flex:0 0 240px;background:var(--primary-dark);color:#f8fafc;display:flex;flex-direction:column;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:10px;padding:20px 20px 16px;text-decoration:none;color:inherit;}
+.logo span{font-weight:700;font-size:1.05rem;letter-spacing:.02em;}
+.nav{padding:8px 12px;display:flex;flex-direction:column;gap:2px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-base);color:#f8fafc;font-size:.9rem;font-weight:500;text-decoration:none;cursor:pointer;}
+.nav-item .material-symbols-rounded{font-size:20px;min-width:24px;color:rgba(248,250,252,.7);}
+.nav-item.disabled{opacity:.42;cursor:not-allowed;}
+.nav-item:not(.disabled):hover{background:rgba(248,250,252,.08);}
+.nav-item.active{background:rgba(248,250,252,.14);}
+.nav-item.active .material-symbols-rounded{color:#f8fafc;}
+.nav-section{margin:16px 12px 6px;font-size:.7rem;font-weight:700;letter-spacing:.08em;color:rgba(248,250,252,.45);text-transform:uppercase;}
+
+/* ---------- Main ---------- */
+.main{flex:1;display:flex;flex-direction:column;background:var(--bg-default);overflow:hidden;}
+.content{flex:1;overflow-y:auto;}
+.page{max-width:1440px;margin:0 auto;padding:24px 24px 72px;}
+.crumb{font-size:.8rem;color:var(--text-secondary);margin:0;}
+.crumb a{color:var(--text-secondary);text-decoration:none;}
+.crumb a:hover{color:var(--primary);text-decoration:underline;}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
+.page-actions{display:flex;gap:10px;}
+
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:var(--radius-control);padding:8px 16px;font-weight:600;font-size:.875rem;cursor:pointer;box-shadow:none;white-space:nowrap;}
+.btn .material-symbols-rounded{font-size:18px;}
+.btn-sm{padding:6px 12px;font-size:.8rem;}
+.btn-primary{background:var(--info);color:#fff;}
+.btn-primary:hover{background:var(--info-hover);}
+.btn-secondary{background:var(--secondary);color:#fff;}
+.btn-secondary:hover{background:var(--secondary-dark);}
+.btn-outline{background:#fff;color:var(--text-primary);border:1px solid var(--border-input);}
+.btn-outline:hover{border-color:var(--primary);background:var(--action-hover);}
+.btn-danger-outline{background:#fff;color:var(--danger);border:1px solid #fecaca;}
+.btn-danger-outline:hover{background:#fee2e2;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn:disabled:hover{background:#fff;border-color:var(--border-input);}
+
+/* ---------- Account summary band ---------- */
+.summary-band{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:16px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.summary-name{font-size:1.1rem;font-weight:700;}
+.summary-sep{color:var(--text-secondary);}
+.summary-sub{font-size:.8rem;color:var(--text-secondary);}
+
+.chip{height:24px;border-radius:var(--radius-chip);font-size:.75rem;font-weight:600;padding:0 8px;display:inline-flex;align-items:center;white-space:nowrap;}
+.chip-success{background:var(--success-bg);color:var(--success-dark);}
+.chip-info{background:var(--info-bg);color:var(--info-dark);}
+.chip-warning{background:#fef3c7;color:#b45309;}
+.chip-danger{background:#fee2e2;color:#b91c1c;}
+.chip-muted{background:#f1f5f9;color:var(--text-secondary);}
+
+/* ---------- Alert rail ---------- */
+.alert-rail{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.alert{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--radius-base);border-left:3px solid;font-size:.875rem;font-weight:500;}
+.alert .material-symbols-rounded{font-size:20px;flex:0 0 auto;}
+.alert-text{flex:1;}
+.alert-warning{background:#fef3c7;color:#b45309;border-left-color:var(--warning);}
+.alert-info{background:var(--info-bg);color:var(--info-dark);border-left-color:var(--info);}
+.alert-danger{background:#fee2e2;color:#b91c1c;border-left-color:var(--danger);}
+
+/* ---------- Two-column detail body (design-system §8) ---------- */
+.detail-body{display:flex;gap:24px;margin-top:8px;}
+.detail-left{flex-shrink:0;width:33.333%;}
+.detail-right{flex:1;min-width:0;background:#fff;border:1px solid #e2e8f0;border-radius:16px;min-height:500px;overflow:hidden;box-shadow:none;}
+@media(max-width:1024px){
+  .detail-body{flex-direction:column;}
+  .detail-left{width:100%;}
+}
+
+/* ---------- Left rail ---------- */
+.rail-card{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:20px;}
+.rail-card + .rail-card{margin-top:16px;}
+.rail-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.rail-title{font-size:.95rem;font-weight:700;}
+.count-chip{height:20px;font-size:.65rem;font-weight:700;background:#e2e8f0;border-radius:var(--radius-chip);padding:0 7px;display:inline-flex;align-items:center;}
+.member-list{display:flex;flex-direction:column;gap:8px;}
+.member-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--radius-base);cursor:pointer;border-left:3px solid transparent;background:none;border-top:none;border-right:none;border-bottom:none;width:100%;text-align:left;}
+.member-row:hover{background:var(--hover-row);}
+.member-row.selected{background:#f0f9ff;border-left-color:#0369a1;}
+.member-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:.75rem;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.member-avatar.all-avatar{background:#475569;}
+.member-info{flex:1;min-width:0;}
+.member-name{font-size:.9rem;font-weight:700;color:#1e293b;}
+.member-row.selected .member-name{color:#0369a1;}
+.member-sub{font-size:.8rem;color:var(--text-secondary);margin-top:1px;}
+.member-chips{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;flex:0 0 auto;}
+.rail-divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.eyebrow{font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);margin:0 0 10px;}
+.qa-role-label{font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-secondary);display:block;margin:0 0 6px;}
+.role-select{height:34px;padding:6px 10px;font-size:.8rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);width:100%;margin-bottom:14px;}
+.role-select:hover{border-color:var(--border-input-hover);}
+.role-select:focus{border-color:var(--primary);outline:none;}
+.qa-list{display:flex;flex-direction:column;gap:8px;}
+.qa-btn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:1px solid var(--border-input);border-radius:var(--radius-control);padding:8px 14px;font-size:.875rem;font-weight:600;color:var(--text-primary);cursor:pointer;}
+.qa-btn:hover{border-color:var(--primary);background:var(--action-hover);}
+.qa-btn:disabled{opacity:.45;cursor:not-allowed;}
+.qa-btn:disabled:hover{border-color:var(--border-input);background:#fff;}
+.qa-btn .material-symbols-rounded{font-size:20px;color:var(--text-secondary);}
+
+/* ---------- Right panel nav ---------- */
+.rp-pills{display:flex;gap:6px;padding:12px 16px 0;background:#f8fafc;flex-wrap:wrap;}
+.pill{background:transparent;color:#64748b;border:1.5px solid #e2e8f0;border-radius:8px;padding:4px 14px;min-height:36px;font-size:.78rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;text-transform:none;}
+.pill:hover{background:#f1f5f9;border-color:#cbd5e1;}
+.pill.active{background:#1e293b;color:#fff;border:1.5px solid transparent;box-shadow:0 1px 4px rgba(30,41,59,.18);}
+.rp-tabs{display:flex;gap:20px;padding:0 16px;background:#f8fafc;flex-wrap:wrap;}
+.rp-tabrow{border-bottom:1px solid #e2e8f0;background:#f8fafc;display:flex;align-items:center;justify-content:space-between;}
+.rp-tab{background:none;border:none;border-bottom:3px solid transparent;border-radius:0;font-size:.82rem;font-weight:600;color:#64748b;padding:8px 12px;min-height:40px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;text-transform:none;}
+.rp-tab.selected{color:#3b82f6;border-bottom-color:#3b82f6;}
+.new-dot{width:4px;height:4px;border-radius:50%;background:var(--info);display:inline-block;}
+.nav-legend{font-size:.7rem;color:var(--text-secondary);padding:6px 16px;white-space:nowrap;}
+.rp-body{padding:32px;}
+
+.placeholder-card{min-height:200px;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:.8rem;text-align:center;}
+
+/* ---------- Member profile header ---------- */
+.mp-header{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.mp-title{font-size:1.1rem;font-weight:700;margin:0;}
+.mp-actions{margin-left:auto;display:flex;gap:8px;}
+
+/* ---------- Status strip ---------- */
+.status-strip{background:var(--bg-default);border-radius:var(--radius-base);padding:16px;display:grid;grid-template-columns:repeat(5,1fr);margin-bottom:28px;}
+.status-cell{padding:0 16px;border-left:1px solid var(--border);}
+.status-cell:first-child{border-left:none;padding-left:0;}
+.status-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#94a3b8;margin-bottom:6px;}
+.status-value{font-size:.95rem;font-weight:700;color:var(--text-primary);}
+.status-sub{font-size:.75rem;color:var(--text-secondary);margin-top:4px;}
+.status-more-link{color:var(--info-dark);cursor:pointer;font-weight:600;background:none;border:none;padding:0;font-size:inherit;}
+
+/* ---------- Section header (ProfileDetail.tsx recipe) ---------- */
+.section-block{margin-top:28px;}
+.section-block:first-child{margin-top:0;}
+.section-header{border-top:1px solid var(--border);padding-top:20px;margin-bottom:6px;display:flex;align-items:center;gap:6px;width:100%;background:none;border-left:none;border-right:none;border-bottom:none;text-align:left;}
+.section-header.collapsible{cursor:pointer;}
+.section-header .material-symbols-rounded{font-size:.85rem;color:#475569;}
+.section-header.danger-icon .material-symbols-rounded{color:var(--danger);}
+.section-title{font-size:.7rem;font-weight:800;letter-spacing:.8px;color:#475569;text-transform:uppercase;flex:1;}
+.section-chevron{font-size:20px !important;color:var(--text-secondary) !important;transition:transform .15s;margin-left:auto;}
+.section-header[aria-expanded="true"] .section-chevron{transform:rotate(90deg);}
+.section-sub{font-size:.8rem;color:var(--text-secondary);margin:8px 0 14px;}
+
+/* ---------- Eligibility table ---------- */
+.elig-table{width:100%;border-collapse:collapse;}
+.elig-table th{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);padding:12px 16px;border-bottom:1px solid var(--border);text-align:left;}
+.elig-table td{font-size:.875rem;padding:16px;border-bottom:1px solid var(--border);color:var(--text-primary);vertical-align:top;}
+.elig-table tr:last-child td{border-bottom:0;}
+.elig-table tr.row-blocked{box-shadow:inset 3px 0 0 var(--warning);}
+.elig-table tr.row-not-covered{opacity:.7;}
+.balance-text{font-size:.75rem;font-weight:700;color:#1d4ed8;}
+.reason-line{font-size:.8rem;color:var(--text-secondary);margin-top:4px;}
+.muted-italic{font-style:italic;color:var(--text-secondary);}
+.muted-dash{color:var(--text-secondary);}
+
+/* ---------- Entitlement cards ---------- */
+.ent-stack{display:flex;flex-direction:column;gap:12px;}
+.ent-card{background:#fff;border:1px solid #e2e8f0;border-radius:var(--radius-base);padding:16px;}
+.ent-top{display:flex;gap:12px;align-items:flex-start;}
+.ent-avatar{width:36px;height:36px;border-radius:var(--radius-base);background:var(--info-bg);color:var(--info-dark);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.ent-avatar.token{background:var(--success-bg);color:var(--success-dark);}
+.ent-info{flex:1;min-width:0;}
+.ent-title{font-size:.9rem;font-weight:700;}
+.ent-coverage{font-size:.8rem;color:var(--text-secondary);margin-top:2px;}
+.ent-validity{font-size:.75rem;color:var(--text-secondary);margin-top:4px;}
+.ent-days-left{color:#b45309;font-weight:600;}
+.ent-balance{font-size:.8rem;font-weight:700;color:#1d4ed8;white-space:nowrap;flex:0 0 auto;}
+.ledger-bar{height:8px;border-radius:var(--radius-chip);overflow:hidden;display:flex;margin-top:14px;background:#e2e8f0;}
+.ledger-seg-used{background:#1d4ed8;height:100%;}
+.ledger-seg-reserved{background:#93c5fd;height:100%;}
+.ledger-breakdown{font-size:.75rem;color:var(--text-secondary);margin-top:6px;}
+.ent-note{font-size:.75rem;color:var(--text-secondary);margin-top:8px;font-style:italic;}
+.token-line{font-size:.75rem;color:var(--text-secondary);margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+/* ---------- Funding & Authorization ---------- */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;margin-bottom:20px;}
+.detail-item{display:flex;gap:10px;}
+.detail-item-icon{width:40px;height:40px;border-radius:var(--radius-base);background:#f1f5f9;color:#64748b;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.detail-item-body{min-width:0;}
+.detail-item-label{font-size:.7rem;font-weight:600;text-transform:uppercase;color:#94a3b8;}
+.detail-item-value{font-size:.875rem;font-weight:600;color:var(--text-primary);margin-top:2px;}
+
+.auth-card{background:#fff;border:1px solid #e2e8f0;border-radius:var(--radius-base);overflow:hidden;}
+.auth-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;gap:12px;}
+.auth-head-title{font-size:.9rem;font-weight:700;}
+.auth-divider{border:none;border-top:1px solid var(--border);margin:0;}
+.auth-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 16px;padding:14px 18px;}
+.auth-grid-item .g-label{font-size:.7rem;font-weight:600;text-transform:uppercase;color:#94a3b8;}
+.auth-grid-item .g-value{font-size:.875rem;font-weight:600;color:var(--text-primary);margin-top:2px;}
+.auth-foot{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--border);gap:12px;flex-wrap:wrap;}
+.auth-audit{font-size:.8rem;color:var(--text-secondary);}
+.auth-empty{font-size:.85rem;color:var(--text-secondary);font-style:italic;padding:14px 0;}
+.auth-stack{display:flex;flex-direction:column;gap:12px;}
+
+/* ---------- Roll-up table ---------- */
+.rollup-table{width:100%;border-collapse:collapse;}
+.rollup-table th{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);padding:12px 16px;border-bottom:1px solid var(--border);text-align:left;}
+.rollup-table td{font-size:.875rem;padding:16px;border-bottom:1px solid var(--border);color:var(--text-primary);}
+.rollup-table tr:last-child td{border-bottom:0;}
+.rollup-title{font-size:.95rem;font-weight:700;margin:0 0 4px;}
+.rollup-sub{font-size:.8rem;color:var(--text-secondary);margin:0 0 16px;}
+
+/* ---------- Modal ---------- */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:200;}
+.modal{background:#fff;border-radius:var(--radius-card);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);width:560px;max-width:92vw;max-height:88vh;overflow-y:auto;}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);position:relative;}
+.modal-head h4{font-size:1.1rem;font-weight:600;margin:0;}
+.modal-head p{font-size:.8rem;color:var(--text-secondary);margin:4px 0 0;}
+.modal-close{position:absolute;top:16px;right:18px;background:none;border:none;font-size:20px;color:var(--text-secondary);cursor:pointer;}
+.modal-body{padding:18px 22px;}
+.form-row{margin-bottom:14px;}
+.form-row label{display:block;font-size:.75rem;font-weight:600;color:var(--text-secondary);margin-bottom:6px;}
+.form-row-2{display:flex;gap:12px;}
+.form-row-2 > div{flex:1;}
+.edit-input,.edit-select{height:36px;padding:8px 12px;font-size:.875rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);width:100%;}
+.edit-input:hover,.edit-select:hover{border-color:var(--border-input-hover);}
+.edit-input:focus,.edit-select:focus{border-color:var(--primary);outline:none;}
+.required-mark{color:var(--danger);font-weight:700;}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.modal-foot-buttons{display:flex;gap:12px;}
+.helper-text{font-size:.75rem;color:var(--text-secondary);}
+
+/* ---------- Toast ---------- */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--primary-dark);color:#f8fafc;padding:12px 18px;border-radius:var(--radius-base);font-size:.85rem;box-shadow:var(--shadow-card);z-index:400;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+@keyframes flashPulse{
+  0%{box-shadow:0 0 0 3px var(--info);}
+  70%{box-shadow:0 0 0 3px var(--info);}
+  100%{box-shadow:0 0 0 3px rgba(59,130,246,0);}
+}
+.flash-target{animation:flashPulse .9s ease-out;border-radius:var(--radius-base);}
+
+@media (max-width:1024px){
+  .auth-grid{grid-template-columns:repeat(2,1fr);}
+  .detail-grid{grid-template-columns:1fr;}
+  .status-strip{grid-template-columns:repeat(2,1fr);row-gap:16px;}
+  .status-cell:nth-child(odd){border-left:none;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <a class="logo" href="index.html">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect width="28" height="28" rx="7" fill="#3b82f6"/>
+        <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>ZALEXY</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">point_of_sale</span>Point of Sale</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">groups</span>Leads</a>
+      <a class="nav-item active" aria-current="page"><span class="material-symbols-rounded">account_circle</span>Accounts</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Profiles</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">receipt_long</span>Transactions</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">request_quote</span>Invoices</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Staff</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">event</span>Scheduling</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">settings</span>Settings</a>
+      <div class="nav-section">Prototypes</div>
+      <a class="nav-item" href="index.html"><span class="material-symbols-rounded">grid_view</span>Prototype Gallery</a>
+      <a class="nav-item" href="admin-intake-form-builder.html"><span class="material-symbols-rounded">dynamic_form</span>Admin: Intake &amp; Builder</a>
+      <a class="nav-item" href="profile-intake-tab.html"><span class="material-symbols-rounded">badge</span>Profile: Intake Tab</a>
+      <a class="nav-item active" href="profile-overview-tab.html"><span class="material-symbols-rounded">contact_page</span>Profile: Details Tab</a>
+      <a class="nav-item" href="portal-profile-tab.html"><span class="material-symbols-rounded">family_restroom</span>Portal: My Account</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="content">
+      <div class="page" id="pageRoot"></div>
+    </div>
+  </main>
+</div>
+
+<div id="modalRoot"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =======================================================================
+   Static config — nav map (§4.2), members, roles
+======================================================================= */
+const GROUPS = [
+  { id:'profile', label:'Profile', tabs:[
+      { id:'profile-details', label:'Profile Details' },
+      { id:'intake-docs', label:'Intake & Documents', isNew:true, link:'profile-intake-tab.html' },
+    ] },
+  { id:'services', label:'Services', isNew:true, tabs:[
+      { id:'service-level', label:'Service & Level', isNew:true },
+      { id:'assessments', label:'Assessments', isNew:true },
+    ] },
+  { id:'purchases', label:'Purchases & Funding', tabs:[
+      { id:'purchases', label:'Purchases' },
+      { id:'entitlements', label:'Entitlements', isNew:true },
+      { id:'auth-vouchers', label:'Authorizations & Vouchers', isNew:true },
+      { id:'waivers', label:'Waivers' },
+    ] },
+  { id:'schedule', label:'Schedule & Bookings', tabs:[
+      { id:'my-bookings', label:'My Bookings' },
+      { id:'schedule-classes', label:'Schedule Classes' },
+      { id:'schedule-private', label:'Schedule Private' },
+    ] },
+  { id:'payments', label:'Payments', tabs:[
+      { id:'invoices', label:'Invoices' },
+      { id:'transactions', label:'Transactions' },
+      { id:'saved-cards', label:'Saved Cards' },
+    ] },
+];
+function findGroup(id){ return GROUPS.find(g=>g.id===id); }
+
+const MEMBERS = [
+  { id:'maria', name:'Maria Garcia', initials:'MG', sub:'Age 6 · Swim · Beginner 2', chips:[{label:'Voucher',tint:'info'}] },
+  { id:'diego', name:'Diego Garcia', initials:'DG', sub:'Age 9 · Swim · Beginner 3', chips:[{label:'RCEB',tint:'info'}] },
+  { id:'elena', name:'Elena Garcia', initials:'EG', sub:'Adult · Fitness', chips:[{label:'Primary',tint:'info'},{label:'Self-Pay',tint:'muted'}] },
+];
+function findMember(id){ return MEMBERS.find(m=>m.id===id); }
+
+const ROLE_LABEL = { manager:'Manager', frontdesk:'Front desk', billing:'Billing admin' };
+
+const ACCOUNT = { name:'Garcia Household', status:'Active', netDue:'$0.00', email:'elena.garcia@example.com', phone:'(510) 555-0142', location:'Solar Swim' };
+
+/* =======================================================================
+   Seed data — §13, verbatim (mutated in-place by the interactions below)
+======================================================================= */
+const DATA = {
+  maria: {
+    assessmentRequested:false,
+    alertDismissed:false,
+    primaryLevel:'Beginner 2', primaryService:'Swim', moreServicesCount:1,
+    assessment:{ status:'Approved', date:'13 Mar 2026' },
+    funding:{ label:'Voucher', value:'HS-4482' },
+    intake:{ value:'v3 · 12 Mar', sub:'v4 available' },
+    eligibility:[
+      { id:'maria-swim-private', service:'Swim · Private', level:'Beginner 2', assessment:'Approved', fundingSource:'Voucher HS-4482', balance:'Balance: 4 / 8 sessions', verdict:'eligible', reason:'Covered by HS-4482 until 30 Sep 2026' },
+      { id:'maria-swim-group', service:'Swim · Group', level:null, assessment:'Not assessed', fundingSource:'Voucher HS-4482', balance:'Balance: 4 / 8 sessions', verdict:'blocked', reason:'In-pool assessment required before a group class' },
+      { id:'maria-basketball', service:'Basketball', level:null, assessment:'Not assessed', fundingSource:null, balance:null, verdict:'not-covered', reason:'Not covered by HS-4482 — needs a self-pay purchase' },
+    ],
+    entitlements:[
+      { kind:'grant', title:'Homeschool Voucher HS-4482 · District A', coverage:'Swim — Group, Private', validFrom:'1 Sep 2026', validTo:'30 Sep 2026', daysLeft:22, granted:8, used:3, reserved:1, available:4 },
+      { kind:'token', title:'Make-Up Token', coverage:'Swim — same level, same location', expires:'12 Oct 2026', horizon:'bookable within 7 days', count:1 },
+    ],
+    waiverProgram:'Homeschool Voucher Program (HS)', caseManagerName:'Priya Raman', caseManagerEmail:'p.raman@districta.example.gov',
+    authorizations:[
+      { type:'Homeschool Voucher', id:'HS-4482', status:'approved', provider:'District A', units:'8 sessions', service:'Swim', classTypes:'Group, Private', validFrom:'1 Sep 2026', validTo:'30 Sep 2026', proration:'Scheduled occurrences', sourceDoc:'voucher-HS4482.pdf', audit:'Approved by Rosanna Diaz · 13 Mar 2026' },
+    ],
+    basicInfo:{ fullName:'Maria Garcia', gender:'Female', dob:'14 Aug 2019', ageProfile:'Youth (5–12)', email:null, mobile:null, role:'Family Member' },
+    address:'1428 Marine Way\nApt 3B\nAlameda, CA\n94501 USA',
+    emergency:{ guardian:'Elena Garcia · (510) 555-0142', guardianEmail:'elena.garcia@example.com', emergencyContact:'Priya Raman · (510) 555-0177' },
+  },
+  diego: {
+    primaryLevel:'Beginner 3', primaryService:'Swim', moreServicesCount:0,
+    assessment:{ status:'Approved', date:null },
+    funding:{ label:'RCEB', value:'AUTH-928472' },
+    intake:{ value:'v3', sub:null },
+    eligibility:[
+      { id:'diego-swim-semi', service:'Swim · Semi-Private', level:'Beginner 3', assessment:'Approved', fundingSource:'RCEB AUTH-928472', balance:'Balance: 0 / 3 sessions', verdict:'blocked', reason:'Authorization pending — slot held until 22 Sep 2026' },
+      { id:'diego-swim-private', service:'Swim · Private', level:'Beginner 3', assessment:'Approved', fundingSource:null, balance:null, verdict:'not-covered', reason:'AUTH-928472 authorizes Semi-Private only' },
+    ],
+    entitlements:[
+      { kind:'grant', title:'Regional Center AUTH-928472 · SRA11 · Regional Center of the East Bay', coverage:'Swim — Semi-Private', validFrom:'1 Sep 2026', validTo:'31 Dec 2026', daysLeft:null, granted:3, used:0, reserved:0, available:3, note:'Prorated first month — 3 of 8 monthly units (PRD §47, scheduled occurrences).' },
+    ],
+    waiverProgram:null, caseManagerName:null, caseManagerEmail:null,
+    authorizations:[
+      { type:'Regional Center', id:'AUTH-928472', status:'pending', provider:'Regional Center of the East Bay (RCEB)', units:'3 sessions', service:'Swim', classTypes:'Semi-Private', validFrom:'1 Sep 2026', validTo:'31 Dec 2026', proration:'Scheduled occurrences', sourceDoc:null, audit:null },
+    ],
+    basicInfo:{ fullName:'Diego Garcia', gender:null, dob:null, ageProfile:'Youth (5–12)', email:null, mobile:null, role:'Family Member' },
+    address:'1428 Marine Way\nApt 3B\nAlameda, CA\n94501 USA',
+    emergency:{ guardian:'Elena Garcia · (510) 555-0142', guardianEmail:'elena.garcia@example.com', emergencyContact:'Priya Raman · (510) 555-0177' },
+  },
+  elena: {
+    primaryLevel:null, primaryService:'Fitness', moreServicesCount:0,
+    assessment:{ status:'Not required', date:null },
+    funding:{ label:'Self-Pay', value:null },
+    intake:{ value:'v3 · 12 Mar 2026', sub:null },
+    eligibility:[
+      { id:'elena-fitness', service:'Fitness · Open Gym', level:null, assessment:'Not required', fundingSource:'Self-Pay — 10-Session Pack', balance:'Balance: 7 / 10 sessions', verdict:'eligible', reason:'Covered by the 10-Session Pack until 31 Dec 2026' },
+    ],
+    entitlements:[
+      { kind:'grant', title:'10-Session Fitness Pack · Self-Pay', coverage:'Fitness — Open Gym', validFrom:'1 Sep 2026', validTo:'31 Dec 2026', daysLeft:null, granted:10, used:3, reserved:0, available:7 },
+    ],
+    waiverProgram:null, caseManagerName:null, caseManagerEmail:null,
+    authorizations:[],
+    basicInfo:{ fullName:'Elena Garcia', gender:null, dob:null, ageProfile:'Adult (18+)', email:'elena.garcia@example.com', mobile:'(510) 555-0142', role:'Primary' },
+    address:'1428 Marine Way\nApt 3B\nAlameda, CA\n94501 USA',
+    emergency:{ guardian:null, guardianEmail:null, emergencyContact:null },
+  },
+};
+
+/* =======================================================================
+   State — one plain object, re-render from it
+======================================================================= */
+const state = {
+  role:'manager', // 'manager' | 'frontdesk' | 'billing'
+  selectedMember:'maria', // 'maria' | 'diego' | 'elena' | 'all'
+  activeGroup:'profile',
+  subTabByGroup:{ profile:'profile-details', services:'service-level', purchases:'purchases', schedule:'my-bookings', payments:'invoices' },
+  collapsedSections: new Set(['basic-info','address','emergency']),
+  addAuthOpen:false,
+  addAuthForm:{ fundingType:'', authId:'', provider:'', service:'', classSubtype:'', validFrom:'2026-10-01', validTo:'', units:'', proration:'Scheduled occurrences' },
+  flashTarget:null,
+  scrollTarget:null,
+};
+
+/* =======================================================================
+   Helpers
+======================================================================= */
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+function verdictChip(verdict){
+  if (verdict==='eligible') return { cls:'chip-success', label:'Eligible' };
+  if (verdict==='blocked') return { cls:'chip-warning', label:'Blocked' };
+  return { cls:'chip-muted', label:'Not covered' };
+}
+function assessmentChip(status){
+  if (status==='Approved') return { cls:'chip-success', label:'Approved' };
+  if (status==='Requested') return { cls:'chip-warning', label:'Requested' };
+  if (status==='Not required') return { cls:'chip-muted', label:'Not required' };
+  return { cls:'chip-muted', label:'Not assessed' };
+}
+function fundingTint(label){
+  return (label==='Self-Pay') ? 'chip-muted' : 'chip-info';
+}
+function bookingCell(memberId){
+  if (memberId==='maria'){
+    const m = DATA.maria;
+    if (m.assessmentRequested) return { cls:'chip-warning', label:'Assessment requested', sub:'Group Swim' };
+    return { cls:'chip-warning', label:'1 blocked', sub:'Group Swim' };
+  }
+  if (memberId==='diego') return { cls:'chip-warning', label:'1 on hold', sub:'Semi-Private Swim' };
+  return { cls:'chip-success', label:'All clear', sub:'No blockers' };
+}
+
+/* =======================================================================
+   Alerts — page-level, profile-filtered (§5)
+======================================================================= */
+function alertsFor(memberId){
+  if (memberId==='maria'){
+    const list = [];
+    const m = DATA.maria;
+    if (!m.alertDismissed){
+      list.push({ id:'m-alert-1', tint:'warning', icon:'pool', html:'<b>Maria — Group Swim is blocked.</b> An in-pool assessment is required before she can join a group class.', action:'Request assessment', actionType:'request-assessment' });
+    }
+    list.push({ id:'m-alert-2', tint:'warning', icon:'schedule', html:'<b>Maria — Voucher HS-4482 expires in 22 days</b> (30 Sep 2026). 4 of 8 sessions unused.', action:'View funding', actionType:'view-funding' });
+    list.push({ id:'m-alert-3', tint:'info', icon:'info', html:'<b>Maria — General Intake v4 is available.</b> She completed v3 on 12 Mar 2026.', action:'Open intake', actionType:'open-intake' });
+    return list;
+  }
+  if (memberId==='diego'){
+    return [{ id:'d-alert-1', tint:'danger', icon:'block', html:'<b>Diego — Semi-Private Swim is on ghost hold.</b> Regional Center authorization AUTH-928472 is pending. Hold expires 22 Sep 2026.', action:'View funding', actionType:'view-funding' }];
+  }
+  return [];
+}
+
+/* =======================================================================
+   Rendering — alert rail
+======================================================================= */
+function renderAlertRail(){
+  let alerts = [];
+  if (state.selectedMember==='all'){
+    alerts = alertsFor('maria').map(a=>Object.assign({name:'maria'},a)).concat(alertsFor('diego').map(a=>Object.assign({name:'diego'},a)));
+  } else {
+    alerts = alertsFor(state.selectedMember).map(a=>Object.assign({name:state.selectedMember},a));
+  }
+  if (!alerts.length) return '';
+  return `<div class="alert-rail">${alerts.map(a=>`
+    <div class="alert alert-${a.tint}">
+      <span class="material-symbols-rounded">${a.icon}</span>
+      <span class="alert-text">${a.html}</span>
+      <button class="btn btn-outline btn-sm" data-alert-action="${a.actionType}" data-alert-member="${a.name}">${esc(a.action)}</button>
+    </div>`).join('')}</div>`;
+}
+
+/* =======================================================================
+   Rendering — left rail
+======================================================================= */
+function renderMembersCard(){
+  const rows = MEMBERS.map(m=>{
+    const selected = state.selectedMember===m.id;
+    const chips = m.chips.map(c=>`<span class="chip ${c.tint==='info'?'chip-info':'chip-muted'}">${esc(c.label)}</span>`).join('');
+    return `<button type="button" class="member-row${selected?' selected':''}" data-select-member="${m.id}">
+      <span class="member-avatar">${esc(m.initials)}</span>
+      <span class="member-info">
+        <span class="member-name">${esc(m.name)}</span>
+        <span class="member-sub">${esc(m.sub)}</span>
+      </span>
+      <span class="member-chips">${chips}</span>
+    </button>`;
+  }).join('');
+  const allSelected = state.selectedMember==='all';
+  return `<div class="rail-card">
+    <div class="rail-head"><span class="rail-title">Members</span><span class="count-chip">${MEMBERS.length}</span></div>
+    <div class="member-list">
+      <button type="button" class="member-row${allSelected?' selected':''}" data-select-member="all">
+        <span class="member-avatar all-avatar"><span class="material-symbols-rounded" style="font-size:18px;">functions</span></span>
+        <span class="member-info">
+          <span class="member-name">All Members</span>
+          <span class="member-sub">Consolidated overview</span>
+        </span>
+      </button>
+      <hr class="rail-divider" style="margin:6px 0;">
+      ${rows}
+    </div>
+  </div>`;
+}
+
+function renderQuickActionsCard(){
+  const role = state.role;
+  const addAuthDisabled = role!=='billing';
+  const overrideDisabled = role==='frontdesk';
+  const addAuthTitle = addAuthDisabled ? 'title="Only a billing admin can add an authorization."' : '';
+  const overrideTitle = overrideDisabled ? 'title="Only a manager or billing admin can apply an override."' : '';
+  return `<div class="rail-card">
+    <p class="eyebrow">Quick Actions</p>
+    <span class="qa-role-label">Prototype — view as</span>
+    <select class="role-select" id="roleSelect" aria-label="View profile as role">
+      <option value="manager" ${role==='manager'?'selected':''}>Manager</option>
+      <option value="frontdesk" ${role==='frontdesk'?'selected':''}>Front desk</option>
+      <option value="billing" ${role==='billing'?'selected':''}>Billing admin</option>
+    </select>
+    <div class="qa-list">
+      <button type="button" class="qa-btn" data-qa="schedule-class"><span class="material-symbols-rounded">event</span>Schedule Class</button>
+      <button type="button" class="qa-btn" data-qa="request-assessment"><span class="material-symbols-rounded">pool</span>Request Assessment</button>
+      <button type="button" class="qa-btn" data-qa="review-intake"><span class="material-symbols-rounded">assignment</span>Review Intake</button>
+      <button type="button" class="qa-btn" data-qa="add-authorization" ${addAuthDisabled?`disabled ${addAuthTitle}`:''}><span class="material-symbols-rounded">verified_user</span>Add Authorization</button>
+      <button type="button" class="qa-btn" data-qa="apply-override" ${overrideDisabled?`disabled ${overrideTitle}`:''}><span class="material-symbols-rounded">gavel</span>Apply Override</button>
+    </div>
+  </div>`;
+}
+
+/* =======================================================================
+   Rendering — right panel nav (two rows, §4.2)
+======================================================================= */
+function renderPills(){
+  return `<div class="rp-pills">${GROUPS.map(g=>`
+    <button type="button" class="pill${state.activeGroup===g.id?' active':''}" data-pill="${g.id}">${esc(g.label)}${g.isNew?'<span class="new-dot" title="New in this proposal"></span>':''}</button>
+  `).join('')}</div>`;
+}
+function renderSubTabs(){
+  const g = findGroup(state.activeGroup);
+  if (!g || g.tabs.length<2) return '<div class="rp-tabrow" style="min-height:1px;"></div>';
+  const activeSub = state.subTabByGroup[g.id];
+  return `<div class="rp-tabrow">
+    <div class="rp-tabs">${g.tabs.map(t=>`
+      <button type="button" class="rp-tab${activeSub===t.id?' selected':''}" data-subtab="${t.id}" data-group="${g.id}" ${t.isNew?'title="New in this proposal"':''}>${esc(t.label)}${t.isNew?'<span class="new-dot"></span>':''}</button>
+    `).join('')}</div>
+    <span class="nav-legend">● New in this proposal</span>
+  </div>`;
+}
+
+/* =======================================================================
+   Rendering — status strip (§7)
+======================================================================= */
+function renderStatusStrip(memberId){
+  const d = DATA[memberId];
+  const funding = d.funding;
+  const bk = bookingCell(memberId);
+  const asm = assessmentChip(d.assessment.status);
+  return `<div class="status-strip">
+    <div class="status-cell">
+      <div class="status-label">Service level</div>
+      <div class="status-value">${d.primaryLevel?esc(d.primaryLevel):'<span class="muted-italic">Not assigned</span>'}</div>
+      <div class="status-sub">${esc(d.primaryService)}${d.moreServicesCount?` <button type="button" class="status-more-link" data-scroll="eligibility-section">+${d.moreServicesCount} more</button>`:''}</div>
+    </div>
+    <div class="status-cell">
+      <div class="status-label">Assessment</div>
+      <div class="status-value"><span class="chip ${asm.cls}">${asm.label}</span></div>
+      <div class="status-sub">${d.assessment.date?esc(d.assessment.date):'&nbsp;'}</div>
+    </div>
+    <div class="status-cell">
+      <div class="status-label">Funding</div>
+      <div class="status-value"><span class="chip ${fundingTint(funding.label)}">${esc(funding.label)}</span></div>
+      <div class="status-sub">${funding.value?esc(funding.value):'&nbsp;'}</div>
+    </div>
+    <div class="status-cell">
+      <div class="status-label">Intake</div>
+      <div class="status-value">${esc(d.intake.value)}</div>
+      <div class="status-sub">${d.intake.sub?esc(d.intake.sub):'&nbsp;'}</div>
+    </div>
+    <div class="status-cell">
+      <div class="status-label">Booking</div>
+      <div class="status-value"><span class="chip ${bk.cls}">${bk.label}</span></div>
+      <div class="status-sub">${esc(bk.sub)}</div>
+    </div>
+  </div>`;
+}
+
+/* =======================================================================
+   Rendering — services & eligibility (§8)
+======================================================================= */
+function renderEligibility(memberId){
+  const d = DATA[memberId];
+  const firstName = findMember(memberId).name.split(' ')[0];
+  const rows = d.eligibility.map(r=>{
+    const v = verdictChip(r.verdict);
+    const rowCls = r.verdict==='blocked' ? 'row-blocked' : (r.verdict==='not-covered' ? 'row-not-covered' : '');
+    return `<tr class="${rowCls}">
+      <td>${esc(r.service)}</td>
+      <td>${r.level?esc(r.level):'<span class="muted-italic">Not assigned</span>'}</td>
+      <td>${r.assessment?esc(r.assessment):'<span class="muted-italic">Not assessed</span>'}</td>
+      <td>${r.fundingSource?esc(r.fundingSource):'<span class="muted-italic">None</span>'}</td>
+      <td>${r.balance?`<span class="balance-text">${esc(r.balance)}</span>`:'<span class="muted-dash">—</span>'}</td>
+      <td>
+        <span class="chip ${v.cls}">${v.label}</span>
+        <div class="reason-line">${esc(r.reason)}</div>
+      </td>
+    </tr>`;
+  }).join('');
+  return `<div class="section-block" id="eligibility-section">
+    <div class="section-header">
+      <span class="material-symbols-rounded">checklist</span>
+      <span class="section-title">Services &amp; Eligibility</span>
+    </div>
+    <p class="section-sub">What ${esc(firstName)} can book right now, and what is stopping her.</p>
+    <table class="elig-table">
+      <colgroup>
+        <col style="width:22%"><col style="width:12%"><col style="width:14%"><col style="width:22%"><col style="width:14%"><col style="width:16%">
+      </colgroup>
+      <thead><tr>
+        <th>Service</th><th>Level</th><th>Assessment</th><th>Funding source</th><th>Balance</th><th>Can book?</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+/* =======================================================================
+   Rendering — entitlements (§9)
+======================================================================= */
+function renderEntitlements(memberId){
+  const d = DATA[memberId];
+  const cards = d.entitlements.map(e=>{
+    if (e.kind==='token'){
+      return `<div class="ent-card">
+        <div class="ent-top">
+          <span class="ent-avatar token"><span class="material-symbols-rounded">redeem</span></span>
+          <div class="ent-info">
+            <div class="ent-title">${esc(e.title)}</div>
+            <div class="ent-coverage">${esc(e.coverage)}</div>
+          </div>
+          <span class="ent-balance">${e.count} available</span>
+        </div>
+        <div class="token-line">
+          <span>Token expires ${esc(e.expires)}</span>
+          <span class="chip chip-muted">${esc(e.horizon)}</span>
+        </div>
+      </div>`;
+    }
+    const total = e.granted || 1;
+    const usedPct = (e.used/total*100).toFixed(2);
+    const reservedPct = (e.reserved/total*100).toFixed(2);
+    const daysLeftHtml = (e.daysLeft!=null && e.daysLeft<30) ? ` · <span class="ent-days-left">${e.daysLeft} days left</span>` : '';
+    return `<div class="ent-card">
+      <div class="ent-top">
+        <span class="ent-avatar"><span class="material-symbols-rounded">confirmation_number</span></span>
+        <div class="ent-info">
+          <div class="ent-title">${esc(e.title)}</div>
+          <div class="ent-coverage">${esc(e.coverage)}</div>
+          <div class="ent-validity">Valid ${esc(e.validFrom)} – ${esc(e.validTo)}${daysLeftHtml}</div>
+        </div>
+        <span class="ent-balance">Balance: ${e.available} / ${e.granted} sessions</span>
+      </div>
+      <div class="ledger-bar">
+        <div class="ledger-seg-used" style="width:${usedPct}%"></div>
+        <div class="ledger-seg-reserved" style="width:${reservedPct}%"></div>
+      </div>
+      <div class="ledger-breakdown">${e.granted} granted · ${e.used} used · ${e.reserved} reserved · ${e.available} available</div>
+      ${e.note?`<div class="ent-note">${esc(e.note)}</div>`:''}
+    </div>`;
+  }).join('');
+  return `<div class="section-block">
+    <div class="section-header">
+      <span class="material-symbols-rounded">account_balance_wallet</span>
+      <span class="section-title">Entitlements</span>
+    </div>
+    <p class="section-sub">Every balance is scoped to its source, its service and its valid dates.</p>
+    <div class="ent-stack">${cards}</div>
+  </div>`;
+}
+
+/* =======================================================================
+   Rendering — funding & authorization (§10)
+======================================================================= */
+function detailItem(icon, label, value, isMuted){
+  return `<div class="detail-item">
+    <span class="detail-item-icon"><span class="material-symbols-rounded">${icon}</span></span>
+    <div class="detail-item-body">
+      <div class="detail-item-label">${esc(label)}</div>
+      <div class="detail-item-value">${isMuted?`<span class="muted-italic">${esc(value)}</span>`:esc(value)}</div>
+    </div>
+  </div>`;
+}
+function renderFunding(memberId){
+  const d = DATA[memberId];
+  const waiverGrid = `<div class="detail-grid">
+    ${detailItem('description','Waiver Program', d.waiverProgram || 'No Program Assigned', !d.waiverProgram)}
+    ${detailItem('badge','Case Manager Name', d.caseManagerName || 'Not assigned', !d.caseManagerName)}
+    ${detailItem('mail','Case Manager Email', d.caseManagerEmail || 'Not assigned', !d.caseManagerEmail)}
+  </div>`;
+  let authHtml;
+  if (!d.authorizations.length){
+    authHtml = `<div class="auth-empty">No authorizations. ${esc(findMember(memberId).name.split(' ')[0])} pays for their own sessions.</div>`;
+  } else {
+    authHtml = `<div class="auth-stack">${d.authorizations.map((a,i)=>{
+      const statusChip = a.status==='approved' ? {cls:'chip-success',label:'Approved'} : a.status==='pending' ? {cls:'chip-warning',label:'Pending'} : {cls:'chip-muted',label:'Expired'};
+      const isFlash = state.flashTarget==='auth-'+memberId+'-'+i ? ' flash-target' : '';
+      return `<div class="auth-card${isFlash}" id="auth-card-${memberId}-${i}">
+        <div class="auth-head">
+          <span class="auth-head-title">${esc(a.type)} &nbsp;${esc(a.id)}</span>
+          <span class="chip ${statusChip.cls}">${statusChip.label}</span>
+        </div>
+        <hr class="auth-divider">
+        <div class="auth-grid">
+          <div class="auth-grid-item"><div class="g-label">Provider</div><div class="g-value">${esc(a.provider)}</div></div>
+          <div class="auth-grid-item"><div class="g-label">Authorized units</div><div class="g-value">${esc(a.units)}</div></div>
+          <div class="auth-grid-item"><div class="g-label">Service</div><div class="g-value">${esc(a.service)}</div></div>
+          <div class="auth-grid-item"><div class="g-label">Class types</div><div class="g-value">${esc(a.classTypes)}</div></div>
+          <div class="auth-grid-item"><div class="g-label">Valid from</div><div class="g-value">${esc(a.validFrom)}</div></div>
+          <div class="auth-grid-item"><div class="g-label">Valid to</div><div class="g-value">${esc(a.validTo)}</div></div>
+          <div class="auth-grid-item"><div class="g-label">Proration</div><div class="g-value">${esc(a.proration)}</div></div>
+          <div class="auth-grid-item"><div class="g-label">Source document</div><div class="g-value">${a.sourceDoc?esc(a.sourceDoc):'<span class="muted-italic">Not provided</span>'}</div></div>
+        </div>
+        <hr class="auth-divider">
+        <div class="auth-foot">
+          <span class="auth-audit">${a.audit?esc(a.audit):'Awaiting review'}</span>
+          <span style="display:flex;gap:8px;">
+            <button type="button" class="btn btn-outline btn-sm" data-view-doc title="Document viewer lives on the Intake &amp; Documents tab.">View document</button>
+            ${renderOverrideButton()}
+          </span>
+        </div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+  return `<div class="section-block" id="funding-section">
+    <div class="section-header">
+      <span class="material-symbols-rounded">verified_user</span>
+      <span class="section-title">Funding &amp; Authorization</span>
+    </div>
+    ${waiverGrid}
+    ${authHtml}
+  </div>`;
+}
+function renderOverrideButton(){
+  const disabled = state.role==='frontdesk';
+  const title = disabled ? 'title="Only a manager or billing admin can apply an override."' : '';
+  return `<button type="button" class="btn btn-outline btn-sm" data-qa="apply-override" ${disabled?`disabled ${title}`:''}>Override</button>`;
+}
+
+/* =======================================================================
+   Rendering — reference sections (§11)
+======================================================================= */
+function refSection(id, iconClass, icon, title, expanded, bodyHtml){
+  return `<div class="section-block">
+    <button type="button" class="section-header collapsible${iconClass?(' '+iconClass):''}" data-toggle-section="${id}" aria-expanded="${expanded}">
+      <span class="material-symbols-rounded">${icon}</span>
+      <span class="section-title">${esc(title)}</span>
+      <span class="material-symbols-rounded section-chevron">chevron_right</span>
+    </button>
+    ${expanded?bodyHtml:''}
+  </div>`;
+}
+function renderBasicInfo(memberId){
+  const b = DATA[memberId].basicInfo;
+  const expanded = !state.collapsedSections.has('basic-info');
+  const body = `<div class="detail-grid" style="margin-top:14px;">
+    ${detailItem('badge','Full Name', b.fullName)}
+    ${detailItem('wc','Gender', b.gender || 'Not provided', !b.gender)}
+    ${detailItem('cake','Date of Birth', b.dob || 'Not provided', !b.dob)}
+    ${detailItem('groups','Membership Age Profile', b.ageProfile)}
+    ${detailItem('mail','Email Address', b.email || 'No email on file', !b.email)}
+    ${detailItem('call','Mobile Number', b.mobile || 'Not provided', !b.mobile)}
+    ${detailItem('assignment_ind','Account Role', b.role)}
+  </div>`;
+  return refSection('basic-info', '', 'person', 'Basic Info', expanded, body);
+}
+function renderAddress(memberId){
+  const addr = DATA[memberId].address;
+  const expanded = !state.collapsedSections.has('address');
+  const body = `<div class="detail-grid" style="margin-top:14px;grid-template-columns:1fr;">
+    ${detailItem('home','Full Address', addr ? addr.replace(/\n/g,'<br>') : 'No address on file', !addr)}
+  </div>`;
+  return refSection('address', '', 'location_on', 'Address', expanded, body);
+}
+function renderEmergency(memberId){
+  const e = DATA[memberId].emergency;
+  if (!e.guardian && !e.guardianEmail && !e.emergencyContact) return '';
+  const expanded = !state.collapsedSections.has('emergency');
+  const body = `<div class="detail-grid" style="margin-top:14px;">
+    ${detailItem('escalator_warning','Guardian', e.guardian || 'Not provided', !e.guardian)}
+    ${detailItem('mail','Guardian Email', e.guardianEmail || 'Not provided', !e.guardianEmail)}
+    ${detailItem('emergency','Emergency Contact', e.emergencyContact || 'Not provided', !e.emergencyContact)}
+  </div>`;
+  return refSection('emergency', 'danger-icon', 'emergency', 'Emergency & Guardian', expanded, body);
+}
+
+/* =======================================================================
+   Rendering — All Members roll-up (§6.1)
+======================================================================= */
+function renderRollup(){
+  const rows = MEMBERS.map(m=>{
+    const d = DATA[m.id];
+    const primary = d.eligibility[0];
+    const v = verdictChip(primary.verdict);
+    return `<tr>
+      <td>${esc(m.name)}</td>
+      <td>${esc(primary.service)}</td>
+      <td>${primary.level?esc(primary.level):'<span class="muted-italic">Not assigned</span>'}</td>
+      <td>${primary.fundingSource?esc(primary.fundingSource):'<span class="muted-italic">None</span>'}</td>
+      <td>${primary.balance?`<span class="balance-text">${esc(primary.balance)}</span>`:'<span class="muted-dash">—</span>'}</td>
+      <td><span class="chip ${v.cls}">${v.label}</span></td>
+    </tr>`;
+  }).join('');
+  return `<div class="rp-body">
+    <p class="rollup-title">All Members — Household Roll-Up</p>
+    <p class="rollup-sub">One row per member's primary service. Select a member on the left for full detail.</p>
+    <table class="rollup-table">
+      <thead><tr><th>Member</th><th>Service</th><th>Level</th><th>Funding</th><th>Balance</th><th>Verdict</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+/* =======================================================================
+   Rendering — profile details body (the tab this screen is about)
+======================================================================= */
+function renderProfileDetailsBody(memberId){
+  const m = findMember(memberId);
+  const primaryChip = m.chips.find(c=>c.label==='Primary');
+  return `<div class="rp-body">
+    <div class="mp-header">
+      <h3 class="mp-title">Member Profile</h3>
+      ${primaryChip?`<span class="chip chip-info">Primary</span>`:''}
+      <div class="mp-actions">
+        <button type="button" class="btn btn-outline btn-sm" data-noop title="QR Check-in — not in this prototype"><span class="material-symbols-rounded">qr_code_2</span>QR Check-in</button>
+        <button type="button" class="btn btn-outline btn-sm" data-noop title="Mark as Contact/Lead — not in this prototype">Mark as Contact/Lead</button>
+        <button type="button" class="btn btn-outline btn-sm" data-noop title="Edit — not in this prototype"><span class="material-symbols-rounded">edit</span>Edit</button>
+      </div>
+    </div>
+    ${renderStatusStrip(memberId)}
+    ${renderEligibility(memberId)}
+    ${renderEntitlements(memberId)}
+    ${renderFunding(memberId)}
+    ${renderBasicInfo(memberId)}
+    ${renderAddress(memberId)}
+    ${renderEmergency(memberId)}
+  </div>`;
+}
+
+function renderRightPanelBody(){
+  if (state.selectedMember==='all') return renderRollup();
+  const g = findGroup(state.activeGroup);
+  const subtab = state.subTabByGroup[g.id];
+  if (g.id==='profile' && subtab==='profile-details') return renderProfileDetailsBody(state.selectedMember);
+  const tabDef = g.tabs.find(t=>t.id===subtab);
+  return `<div class="rp-body"><div class="placeholder-card">${esc(tabDef.label)} — not built in this prototype.</div></div>`;
+}
+
+/* =======================================================================
+   Add Authorization modal (§12)
+======================================================================= */
+const FUNDING_TYPES = ['Regional Center','Homeschool Voucher','Insurance','Other'];
+const CLASS_SUBTYPES = ['Private','Semi-Private','Group'];
+const PRORATION_OPTIONS = ['Scheduled occurrences','Calendar days','Weekly','Manual','None'];
+const SERVICE_OPTIONS = ['Swim','Basketball','Fitness'];
+
+function addAuthFormValid(){
+  const f = state.addAuthForm;
+  return !!(f.fundingType && f.authId.trim() && f.provider.trim() && f.service && f.validFrom && f.units);
+}
+function renderAddAuthModal(){
+  const root = document.getElementById('modalRoot');
+  if (!state.addAuthOpen){ root.innerHTML=''; return; }
+  const f = state.addAuthForm;
+  const memberId = state.selectedMember==='all' ? 'maria' : state.selectedMember;
+  const m = findMember(memberId);
+  const valid = addAuthFormValid();
+  root.innerHTML = `<div class="modal-backdrop" data-modal-backdrop>
+    <div class="modal">
+      <div class="modal-head">
+        <h4>Add Authorization</h4>
+        <p>${esc(m.name)} · ${esc(ACCOUNT.name)}</p>
+        <button class="modal-close" data-modal-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <label>Funding type <span class="required-mark">*</span></label>
+          <select class="edit-select" data-auth-field="fundingType">
+            <option value="">— choose —</option>
+            ${FUNDING_TYPES.map(o=>`<option value="${esc(o)}" ${f.fundingType===o?'selected':''}>${esc(o)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Authorization ID <span class="required-mark">*</span></label>
+          <input class="edit-input" type="text" data-auth-field="authId" value="${esc(f.authId)}">
+        </div>
+        <div class="form-row">
+          <label>Provider <span class="required-mark">*</span></label>
+          <input class="edit-input" type="text" data-auth-field="provider" value="${esc(f.provider)}">
+        </div>
+        <div class="form-row">
+          <label>Service <span class="required-mark">*</span></label>
+          <select class="edit-select" data-auth-field="service">
+            <option value="">— choose —</option>
+            ${SERVICE_OPTIONS.map(o=>`<option value="${esc(o)}" ${f.service===o?'selected':''}>${esc(o)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Class subtype</label>
+          <select class="edit-select" data-auth-field="classSubtype">
+            <option value="">— choose —</option>
+            ${CLASS_SUBTYPES.map(o=>`<option value="${esc(o)}" ${f.classSubtype===o?'selected':''}>${esc(o)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-row form-row-2">
+          <div>
+            <label>Valid from <span class="required-mark">*</span></label>
+            <input class="edit-input" type="date" data-auth-field="validFrom" value="${esc(f.validFrom)}">
+          </div>
+          <div>
+            <label>Valid to</label>
+            <input class="edit-input" type="date" data-auth-field="validTo" value="${esc(f.validTo)}">
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Authorized units <span class="required-mark">*</span></label>
+          <input class="edit-input" type="number" min="0" data-auth-field="units" value="${esc(f.units)}">
+        </div>
+        <div class="form-row">
+          <label>Proration</label>
+          <select class="edit-select" data-auth-field="proration">
+            ${PRORATION_OPTIONS.map(o=>`<option value="${esc(o)}" ${f.proration===o?'selected':''}>${esc(o)}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="modal-foot">
+        ${!valid?`<span class="helper-text">Fill the required fields to continue.</span>`:''}
+        <div class="modal-foot-buttons">
+          <button type="button" class="btn btn-outline" data-modal-close>Cancel</button>
+          <button type="button" class="btn btn-primary" data-submit-auth ${valid?'':'disabled'}>Add authorization</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =======================================================================
+   Master render
+======================================================================= */
+function render(){
+  const root = document.getElementById('pageRoot');
+  const summaryChip = ACCOUNT.status==='Active' ? 'chip-success' : 'chip-muted';
+  let html = `
+    <div class="page-header">
+      <p class="crumb"><a href="index.html">Accounts</a> / ${esc(ACCOUNT.name)}</p>
+      <div class="page-actions">
+        <button type="button" class="btn btn-outline" data-noop title="Not in this prototype"><span class="material-symbols-rounded">arrow_back</span>Back to Accounts</button>
+        <button type="button" class="btn btn-danger-outline" data-noop title="Not in this prototype"><span class="material-symbols-rounded">delete</span>Delete Account</button>
+      </div>
+    </div>
+    <div class="summary-band">
+      <span class="summary-name">${esc(ACCOUNT.name)}</span>
+      <span class="chip ${summaryChip}">${esc(ACCOUNT.status)}</span>
+      <span class="chip chip-muted">Net Amount Due: ${esc(ACCOUNT.netDue)}</span>
+      <span class="summary-sub">${esc(ACCOUNT.email)} · ${esc(ACCOUNT.phone)} · ${esc(ACCOUNT.location)}</span>
+    </div>
+    ${renderAlertRail()}
+    <div class="detail-body">
+      <div class="detail-left">
+        ${renderMembersCard()}
+        ${renderQuickActionsCard()}
+      </div>
+      <div class="detail-right">
+        ${renderPills()}
+        ${renderSubTabs()}
+        ${renderRightPanelBody()}
+      </div>
+    </div>
+  `;
+  root.innerHTML = html;
+  renderAddAuthModal();
+
+  if (state.scrollTarget){
+    const el = document.getElementById(state.scrollTarget);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'center' });
+    state.scrollTarget = null;
+  }
+}
+
+/* =======================================================================
+   Interaction handlers
+======================================================================= */
+function requestAssessment(){
+  const m = DATA.maria;
+  if (m.assessmentRequested) return;
+  m.assessmentRequested = true;
+  m.alertDismissed = true;
+  const row = m.eligibility.find(r=>r.id==='maria-swim-group');
+  if (row){ row.assessment = 'Requested'; row.reason = 'Assessment requested — awaiting a coach slot'; }
+  showToast('Assessment requested — awaiting a coach slot.');
+}
+function viewFunding(memberId){
+  state.selectedMember = memberId;
+  state.activeGroup = 'profile';
+  state.subTabByGroup.profile = 'profile-details';
+  state.scrollTarget = 'funding-section';
+  state.flashTarget = 'auth-'+memberId+'-0';
+  render();
+  setTimeout(()=>{ state.flashTarget = null; }, 950);
+}
+
+document.addEventListener('click', (e)=>{
+  const t = e.target;
+
+  if (t.closest('[data-noop]')){ return; }
+
+  const pill = t.closest('[data-pill]');
+  if (pill){
+    const groupId = pill.dataset.pill;
+    state.activeGroup = groupId;
+    state.subTabByGroup[groupId] = findGroup(groupId).tabs[0].id;
+    render();
+    return;
+  }
+
+  const subtabBtn = t.closest('[data-subtab]');
+  if (subtabBtn){
+    const groupId = subtabBtn.dataset.group;
+    const subId = subtabBtn.dataset.subtab;
+    const tabDef = findGroup(groupId).tabs.find(x=>x.id===subId);
+    if (tabDef.link){ window.location.href = tabDef.link; return; }
+    state.activeGroup = groupId;
+    state.subTabByGroup[groupId] = subId;
+    render();
+    return;
+  }
+
+  const memberBtn = t.closest('[data-select-member]');
+  if (memberBtn){
+    state.selectedMember = memberBtn.dataset.selectMember;
+    render();
+    return;
+  }
+
+  const moreLink = t.closest('[data-scroll]');
+  if (moreLink){
+    state.scrollTarget = moreLink.dataset.scroll;
+    render();
+    return;
+  }
+
+  const alertAction = t.closest('[data-alert-action]');
+  if (alertAction){
+    const type = alertAction.dataset.alertAction;
+    const memberId = alertAction.dataset.alertMember;
+    if (type==='request-assessment'){ requestAssessment(); render(); }
+    else if (type==='view-funding'){ viewFunding(memberId); }
+    else if (type==='open-intake'){ window.location.href = 'profile-intake-tab.html'; }
+    return;
+  }
+
+  const qaBtn = t.closest('[data-qa]');
+  if (qaBtn && !qaBtn.disabled){
+    const action = qaBtn.dataset.qa;
+    if (action==='schedule-class') showToast('Opens Schedule & Bookings → Schedule Classes.');
+    else if (action==='request-assessment'){ requestAssessment(); render(); }
+    else if (action==='review-intake') window.location.href = 'profile-intake-tab.html';
+    else if (action==='add-authorization'){ state.addAuthOpen = true; render(); }
+    else if (action==='apply-override') showToast('Override recorded (prototype).');
+    return;
+  }
+
+  const sectionToggle = t.closest('[data-toggle-section]');
+  if (sectionToggle){
+    const id = sectionToggle.dataset.toggleSection;
+    if (state.collapsedSections.has(id)) state.collapsedSections.delete(id);
+    else state.collapsedSections.add(id);
+    render();
+    return;
+  }
+
+  if (t.closest('[data-modal-close]') || t.closest('[data-modal-backdrop]')===t){
+    state.addAuthOpen = false;
+    render();
+    return;
+  }
+
+  if (t.closest('[data-submit-auth]') && !t.closest('[data-submit-auth]').disabled){
+    const memberId = state.selectedMember==='all' ? 'maria' : state.selectedMember;
+    const f = state.addAuthForm;
+    const newId = f.authId;
+    DATA[memberId].authorizations.push({
+      type:f.fundingType, id:f.authId, status:'pending', provider:f.provider, units:f.units+' sessions',
+      service:f.service, classTypes:f.classSubtype||'—', validFrom:f.validFrom, validTo:f.validTo||'—',
+      proration:f.proration, sourceDoc:null, audit:null,
+    });
+    state.addAuthOpen = false;
+    state.addAuthForm = { fundingType:'', authId:'', provider:'', service:'', classSubtype:'', validFrom:'2026-10-01', validTo:'', units:'', proration:'Scheduled occurrences' };
+    render();
+    showToast(`Authorization ${newId} added — pending review.`);
+    return;
+  }
+});
+
+document.addEventListener('change', (e)=>{
+  const t = e.target;
+  if (t.id==='roleSelect'){
+    state.role = t.value;
+    render();
+    return;
+  }
+  const authField = t.closest('[data-auth-field]');
+  if (authField){
+    state.addAuthForm[authField.dataset.authField] = t.value;
+    render();
+    return;
+  }
+});
+
+render();
+</script>
+</body>
+</html>
