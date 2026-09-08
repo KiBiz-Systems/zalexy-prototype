@@ -59,20 +59,20 @@ select{font:inherit}
 .btn-sm{padding:4px 9px;font-size:.75rem}
 /* CALENDAR GRID CONTAINER */
 .cal-wrap{flex:1;overflow:hidden;background:#fff;border-radius:var(--radius-card);border:1px solid var(--border);box-shadow:var(--shadow-card);position:relative}
-.cal-scroll{width:100%;height:100%;overflow:auto;position:relative}
+.cal-scroll{width:100%;height:100%;max-height:calc(100vh - 280px);overflow:auto;position:relative}
 /* STICKY TABLE */
 .cal-table{border-collapse:collapse;table-layout:fixed;min-width:100%}
 /* CORNER CELL */
-.cal-corner{width:76px;min-width:76px;background:#f0f4f8;border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;position:sticky;left:0;top:0;z-index:30}
+.cal-corner{width:80px;min-width:80px;background:#f0f4f8;border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;position:sticky;left:0;top:0;z-index:30}
 /* TIME COLUMN CELLS */
-.time-cell{width:76px;min-width:76px;height:52px;background:#f8fafc;border-right:1px solid #e2e8f0;border-bottom:1px solid #f1f5f9;position:sticky;left:0;z-index:10;vertical-align:middle;padding:0 8px;white-space:nowrap}
+.time-cell{width:80px;min-width:80px;height:56px;background:#f8fafc;border-right:1px solid #e2e8f0;border-bottom:1px solid #f1f5f9;position:sticky;left:0;z-index:10;vertical-align:middle;padding:0 8px;white-space:nowrap}
 .time-label{font-size:.72rem;font-weight:600;color:var(--text-secondary)}
 /* COACH HEADER CELLS */
-.coach-cell{min-width:195px;width:195px;background:#f8fafc;border-right:1px solid #f1f5f9;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:9;padding:10px 12px;vertical-align:middle}
+.coach-cell{min-width:200px;width:200px;background:#f8fafc;border-right:1px solid #f1f5f9;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:9;padding:10px 12px;vertical-align:middle}
 .coach-nm{font-size:.8rem;font-weight:700;color:var(--text-primary)}
 .coach-cnt{font-size:.7rem;color:var(--text-secondary);margin-top:2px}
 /* SLOT CELLS */
-.slot-cell{min-width:195px;width:195px;height:52px;border-right:1px solid #f1f5f9;border-bottom:1px solid #f8fafc;vertical-align:top;padding:2px;position:relative}
+.slot-cell{min-width:200px;width:200px;height:56px;border-right:1px solid #f1f5f9;border-bottom:1px solid #f8fafc;vertical-align:top;padding:2px;position:relative}
 /* BOOKING BLOCKS */
 .block{border-radius:5px;padding:4px 7px;cursor:pointer;border-left:3px solid;overflow:hidden;position:absolute;left:3px;right:3px;transition:box-shadow 140ms;font-size:.72rem;z-index:5}
 .block:hover{box-shadow:0 2px 8px rgba(0,0,0,.12)}
@@ -84,9 +84,18 @@ select{font:inherit}
 .b-tentative{background:#fef3c7;border-left-color:#f59e0b}
 .b-semi-pending{background:#f3e8ff;border-left-color:#7c3aed}
 .b-waitlisted{background:#eff6ff;border-left-style:dashed;border-left-color:#3b82f6}
+.b-authhold{background:#fef3c7;border-left-style:dashed;border-left-color:#b45309}
+.b-paymenthold{background:#fee2e2;border-left-color:#ef4444}
+.b-cancel-early{background:#f1f5f9;border-left-color:#10b981}
+.b-cancel-late{background:#f1f5f9;border-left-color:#ef4444}
+.b-noshow{background:#fee2e2;border-left-color:#b91c1c}
+.b-completed{background:#f1f5f9;border-left-color:#64748b}
 .b-break{background:#f1f5f9;border-left-color:#94a3b8;cursor:default}
+.b-unavailable{background:#f8fafc;border-left-color:#e2e8f0;cursor:default}
+.block-line3-mandated{font-size:.68rem;line-height:1.3;margin-top:2px;font-weight:600}
+.ln-amber{color:#b45309}.ln-red{color:#b91c1c}.ln-green{color:#047857}.ln-slate{color:#64748b}
 /* EMPTY COLUMN */
-.empty-col{text-align:center;vertical-align:middle;color:var(--text-secondary);font-size:.78rem;font-style:italic;padding:20px 8px;border:1px dashed var(--border);border-radius:6px;margin:4px}
+.empty-col{text-align:center;vertical-align:middle;color:var(--text-secondary);font-size:.78rem;font-style:italic;padding:20px 8px;border:1px dashed var(--border);border-radius:6px;margin:4px;background:#fafafa}
 /* CHIP */
 .chip{display:inline-flex;align-items:center;height:20px;border-radius:3px;padding:0 6px;font-size:.67rem;font-weight:600;white-space:nowrap}
 .c-ok{background:var(--success-bg);color:var(--success-dark)}.c-info{background:var(--info-bg);color:var(--info-dark)}.c-warn{background:#fef3c7;color:#b45309}.c-danger{background:#fee2e2;color:#b91c1c}.c-purple{background:#f3e8ff;color:#7c3aed}
@@ -138,6 +147,24 @@ select{font:inherit}
 /* TENTATIVE NOTICE */
 .tent-notice{background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:12px;margin-top:10px;font-size:.8rem;color:#92400e}
 .tent-notice strong{display:block;margin-bottom:3px}
+/* NEW PANELS */
+.panel-amber{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:16px;margin-top:10px}
+.panel-amber h4{font-size:.8rem;font-weight:700;margin-bottom:8px;letter-spacing:.03em;color:var(--text-primary)}
+.panel-green{background:var(--success-bg);border:1px solid #a7f3d0;border-radius:8px;padding:16px;margin-top:10px;font-size:.82rem;color:var(--text-primary)}
+.panel-green h4{color:var(--success-dark);font-size:.8rem;font-weight:700;margin-bottom:6px;letter-spacing:.03em}
+.panel-blue{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;color:#1e40af;font-size:.8rem;margin-bottom:8px}
+.panel-red{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 14px;color:#991b1b;font-size:.8rem}
+.panel-muted{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text-secondary);font-size:.8rem;margin-bottom:8px}
+.body2-note{font-size:.8rem;color:var(--text-secondary);line-height:1.4}
+.small-note{font-size:.72rem;color:var(--text-secondary);margin-top:4px}
+.field-lbl{font-size:.72rem;font-weight:600;color:var(--text-secondary);margin:10px 0 4px}
+.radio-row{display:flex;align-items:center;gap:6px;font-size:.82rem;margin-bottom:4px;font-weight:400}
+.policy-list{margin:6px 0 0 18px;font-size:.8rem;line-height:1.5}
+.textarea{width:100%;border:1px solid var(--border-input);border-radius:6px;padding:7px 10px;font-size:.82rem;min-height:56px;font-family:inherit;resize:vertical}
+.c-muted{background:#f1f5f9;color:var(--text-secondary)}
+.date-input{height:36px;padding:6px 10px;font-size:.8rem;border:1px solid var(--border-input);border-radius:6px;background:#fff;outline:none}
+.date-input:focus{border-color:var(--info)}
+.role-sel{border:none;background:transparent;font-weight:700;font-size:.825rem;color:var(--text-secondary);cursor:pointer;outline:none}
 </style>
 </head>
 <body>
@@ -147,7 +174,12 @@ select{font:inherit}
 <div class="main-shell">
   <div class="topbar">
     <div class="loc-pill"><span class="ms" style="font-size:15px">location_on</span>Solar Swim (PDT)</div>
-    <button class="btn btn-out btn-sm" data-noop>Michael Torres ▾</button>
+    <div class="loc-pill">Role:
+      <select class="role-sel" id="roleSel" onchange="setRole(this.value)">
+        <option value="staff">Staff</option>
+        <option value="manager">Manager</option>
+      </select>
+    </div>
   </div>
   <div class="main-area">
     <!-- PAGE HEADER -->
@@ -170,13 +202,17 @@ select{font:inherit}
         <span class="date-lbl" id="dateLbl">Thu Sep 3</span>
         <button class="btn btn-out btn-sm" id="nextDay" onclick="navDay(1)">Next &#8594;</button>
       </div>
+      <div>
+        <div style="font-size:.68rem;font-weight:600;color:var(--text-secondary);margin-bottom:2px">Jump to date</div>
+        <input type="date" class="date-input" id="datePicker" onchange="onDatePicker(this.value)">
+      </div>
       <button class="btn btn-out btn-sm" onclick="goToday()">Today</button>
       <div class="sep"></div>
-      <select id="fLoc" onchange="applyFilters()"><option>Solar Swim</option><option>Uptown Swim</option></select>
-      <select id="fSvc" onchange="applyFilters()"><option>All Services</option><option>Swim</option><option>Basketball</option><option>Fitness</option></select>
-      <select id="fLvl" onchange="applyFilters()"><option>All Levels</option><option>Beginner 1</option><option>Beginner 2</option><option>Intermediate</option></select>
-      <select id="fStat" onchange="applyFilters()"><option>All Statuses</option><option>Confirmed</option><option>Tentative</option><option>Semi-Private</option></select>
-      <select id="fStaff" onchange="applyFilters()"><option>All Staff</option><option>Michael Torres</option><option>Sarah Chen</option><option>James Wright</option><option>Anthony Lee</option><option>Shaquem Hill</option><option>Tina Wu</option></select>
+      <select id="fLoc" onchange="applyFilters()"><option>All Locations</option><option>Solar Swim — Main</option><option>Solar Swim — North Annex</option></select>
+      <select id="fSvc" onchange="applyFilters()"><option>All Services</option><option>Swim</option><option>Basketball</option><option>Group Fitness</option></select>
+      <select id="fLvl" onchange="applyFilters()"><option>All Levels</option><option>Beginner 1</option><option>Beginner 2</option><option>Unassigned</option></select>
+      <select id="fStat" onchange="applyFilters()"><option>All Statuses</option><option>Confirmed</option><option>Pending Partner</option><option>Waitlisted</option><option>Authorization Hold</option><option>Payment Hold</option><option>Cancelled (Early)</option><option>Cancelled (Late)</option><option>No-Show</option><option>Completed</option></select>
+      <select id="fStaff" onchange="applyFilters()"><option>All Staff</option><option>Anthony Lee</option><option>Cory Davis</option><option>Derek Cole</option><option>Emma Cole</option><option>James Wright</option><option>Luke Dean</option><option>Michael Torres</option><option>Naya Fox</option><option>Priya Nair</option><option>Sarah Chen</option><option>Shaquem Hill</option><option>Tina Wu</option></select>
       <div class="sep"></div>
       <div class="legend">
         <div class="leg-item"><div class="leg-dot" style="background:#3b82f6"></div>Confirmed</div>
@@ -217,201 +253,598 @@ select{font:inherit}
 
 <script>
 // ─── DATA ─────────────────────────────────────────────────────────────────────
-const COACHES=['Michael Torres','Sarah Chen','James Wright','Anthony Lee','Shaquem Hill','Tina Wu','Derek Cole','Priya Nair','Cory Davis','Naya Fox','Luke Dean','Emma Cole'];
-const TIMES_RANGE=[];
-for(let h=6;h<=20;h++){TIMES_RANGE.push(`${h>12?h-12:h}:00 ${h>=12?'PM':'AM'}`);TIMES_RANGE.push(`${h>12?h-12:h}:30 ${h>=12?'PM':'AM'}`);}
-const TIMES_RANGE_FIXED=['6:00 AM','6:30 AM','7:00 AM','7:30 AM','8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','12:00 PM','12:30 PM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM','5:00 PM','5:30 PM','6:00 PM','6:30 PM','7:00 PM','7:30 PM'];
+const COACH_ORDER=['Michael Torres','Sarah Chen','James Wright','Anthony Lee','Shaquem Hill','Tina Wu','Derek Cole','Priya Nair','Cory Davis','Naya Fox','Luke Dean','Emma Cole'];
+const COACH_LOCATION={'Naya Fox':'North Annex','Luke Dean':'North Annex'}; // all others default Main
+const COACH_SERVICES={'Michael Torres':['Swim','Basketball'],'Sarah Chen':['Swim'],'James Wright':['Swim'],'Anthony Lee':['Swim'],'Shaquem Hill':['Swim'],'Tina Wu':['Group Fitness'],'Derek Cole':['Basketball'],'Priya Nair':['Swim'],'Cory Davis':['Group Fitness'],'Naya Fox':['Swim'],'Luke Dean':['Swim'],'Emma Cole':['Swim']};
+const TIMES_RANGE_FIXED=['6:00 AM','6:30 AM','7:00 AM','7:30 AM','8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','12:00 PM','12:30 PM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM','5:00 PM','5:30 PM','6:00 PM','6:30 PM','7:00 PM','7:30 PM','8:00 PM'];
+const REQUIRED_PARTICIPANTS=2; // D4 — Required Participants setting, default 2
+const MANAGER_NAME='Dana Brooks';
+const VIOLATION_THRESHOLD=4;
+const CLIENT_VIOLATIONS={'Carlos Garcia':4};
+const FIXED_NOW=new Date(2026,8,3,10,0); // Thu Sep 3, 2026, 10:00 AM — fixed clock (§3.3)
+const PLAIN_LINE={CONFIRMED:'Booked. A session is reserved.',PENDING_PARTNER:'Waiting for a second participant.',WAITLISTED:'Full. New seat goes through the waitlist below.',AUTHORIZATION_HOLD:'Waiting on Regional Center authorization.',PAYMENT_HOLD:'Waiting on payment.',CANCELLED_EARLY:'Cancelled in time. Session returned.',CANCELLED_LATE:'Cancelled late. Session used.',NO_SHOW:'Did not attend. Session used.',COMPLETED:'Attended.',TENTATIVE:'Shown from a recurring schedule. Not reserved.'};
+const STATUS_CLASS={CONFIRMED:'b-confirmed',TENTATIVE:'b-tentative',PENDING_PARTNER:'b-semi-pending',WAITLISTED:'b-waitlisted',AUTHORIZATION_HOLD:'b-authhold',PAYMENT_HOLD:'b-paymenthold',CANCELLED_EARLY:'b-cancel-early',CANCELLED_LATE:'b-cancel-late',NO_SHOW:'b-noshow',COMPLETED:'b-completed',BREAK:'b-break',UNAVAILABLE:'b-unavailable'};
+const STATUS_FILTER_MAP={'Confirmed':'CONFIRMED','Pending Partner':'PENDING_PARTNER','Waitlisted':'WAITLISTED','Authorization Hold':'AUTHORIZATION_HOLD','Payment Hold':'PAYMENT_HOLD','Cancelled (Early)':'CANCELLED_EARLY','Cancelled (Late)':'CANCELLED_LATE','No-Show':'NO_SHOW','Completed':'COMPLETED'};
+const DATE_META={
+  '2026-09-02':{label:'Wed Sep 2, 2026',short:'Wed Sep 2'},
+  '2026-09-03':{label:'Thu Sep 3, 2026',short:'Thu Sep 3'},
+  '2026-09-04':{label:'Fri Sep 4, 2026',short:'Fri Sep 4'}
+};
+const CLIENT_POOL=['Zoe Martin','Jayden Cole','Emma Rivera','Noah Kim','Ava Patel','Mason Diaz','Ella Brooks','Devon Park','Liam Turner','Priya Malhotra','Maria Garcia','Grace Shah','Jordan Kim','Carlos Garcia','Ava Smith','Ethan Wells','Lucas Brown','Devon Ross'];
 
-const BOOKINGS=[
-  {id:'b1',coach:'Michael Torres',startSlot:4,dur:2,type:'confirmed',title:'Swim B2 / 60 min',sub:'Ava Smith',cap:'3 / 8 spots',service:'Swim',client:'Ava Smith',level:'Beginner 2',loc:'Pool Lane 8',fund:'Self Pay',bal:'5 / 8 sessions'},
-  {id:'b2',coach:'Sarah Chen',startSlot:6,dur:3,type:'confirmed',title:'Swim B1 / Group',sub:'5 / 8 spots',service:'Swim',client:'Group',level:'Beginner 1',loc:'Pool Lane 4',fund:'Various',bal:'—'},
-  {id:'b3',coach:'Michael Torres',startSlot:8,dur:1,type:'break',title:'Paid Break',sub:'30 min',service:null},
-  {id:'b4',coach:'Michael Torres',startSlot:9,dur:2,type:'tentative',title:'Tentative',sub:'Maria Garcia',service:'Swim',client:'Maria Garcia',level:'Beginner 2 · Private',loc:'Pool Lane 2',fund:'Regional Center',bal:'5 / 8 sessions'},
-  {id:'b5',coach:'James Wright',startSlot:10,dur:2,type:'confirmed',title:'Semi-Private',sub:'Liam Turner +1',cap:'2 / 3',service:'Swim',client:'Liam Turner + Emma Davis',level:'Beginner 2',loc:'Pool Lane 5',fund:'Self Pay',bal:'—'},
-  {id:'b6',coach:'Sarah Chen',startSlot:13,dur:3,type:'confirmed',title:'Swim B2 / Group',sub:'3 / 8 spots',service:'Swim',client:'Group',level:'Beginner 2',loc:'Pool Lane 10',fund:'Various',bal:'—'},
-  {id:'b7',coach:'Anthony Lee',startSlot:14,dur:2,type:'semi-pending',title:'Semi-Private',sub:'Lucas Brown / 1/3 open',service:'Swim',client:'Lucas Brown',level:'Beginner 2',loc:'Pool Lane 6',fund:'Self Pay',bal:'4 / 4 sessions'},
-  {id:'b8',coach:'Michael Torres',startSlot:16,dur:2,type:'confirmed',title:'Basketball / Carlos',sub:'Carlos Garcia',service:'Basketball',client:'Carlos Garcia',level:'Beginner',loc:'Court 1',fund:'Self Pay',bal:'2 / 4 sessions'},
-  {id:'b9',coach:'Sarah Chen',startSlot:18,dur:1,type:'break',title:'Paid Break',sub:'30 min',service:null},
-  {id:'b10',coach:'James Wright',startSlot:20,dur:2,type:'confirmed',title:'Swim B2 / FULL',sub:'8 / 8 spots',service:'Swim',client:'Group (Full)',level:'Beginner 2',loc:'Pool Lane 8',fund:'Various',bal:'—',waitlist:[{nm:'Liam Turner',fund:'Self Pay',pos:1},{nm:'Carlos Garcia',fund:'Self Pay',pos:2}]},
-  {id:'b11',coach:'Anthony Lee',startSlot:20,dur:2,type:'confirmed',title:'Private Swim',sub:'Ava Smith',service:'Swim',client:'Ava Smith',level:'Beginner 2',loc:'Pool Lane 3',fund:'Voucher',bal:'7 / 8 sessions'},
-  {id:'b12',coach:'Tina Wu',startSlot:22,dur:2,type:'confirmed',title:'Group Fitness',sub:'12 spots',service:'Fitness',client:'Group',level:'All',loc:'Studio A',fund:'Various',bal:'—'}
+// Each booking: id, coach, dateISO, startSlot(0=6:00AM,30-min units), dur(30-min units), status, service, level, client, isGroup, cap, filled, requiredParticipants, funding, balance, plus type-specific extras.
+const ALL_BOOKINGS=[
+  // ── Wed Sep 2, 2026 — past (resolved history) ──
+  {id:'b1',coach:'Naya Fox',dateISO:'2026-09-02',startSlot:4,dur:2,status:'COMPLETED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:6,funding:'Various',balance:'Varies per participant'},
+  {id:'b2',coach:'Michael Torres',dateISO:'2026-09-02',startSlot:9,dur:2,status:'COMPLETED',service:'Private Swim B2',level:'Beginner 2',client:'Maria Garcia',funding:'Regional Center',balance:'Balance: 6 / 8 sessions',resolvedNote:"Resolved occurrence of Maria's Wed/Fri recurring subscription (§3.4)."},
+  {id:'b3',coach:'Sarah Chen',dateISO:'2026-09-02',startSlot:8,dur:3,status:'COMPLETED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:8,funding:'Various',balance:'Varies per participant',participants:[{name:'Devon Park',funding:'Self Pay',attendance:'NO_SHOW'}],participantsNote:'5 additional participants — Attended (roster not itemized in seed data). Devon Park is tracked individually as a No-Show — the block stays COMPLETED at the block level (§3.2).'},
+  {id:'b4',coach:'James Wright',dateISO:'2026-09-02',startSlot:10,dur:2,status:'CANCELLED_LATE',service:'Semi-Private Swim',level:'Beginner 2',client:'Lucas Brown',requiredParticipants:REQUIRED_PARTICIPANTS,funding:'Self Pay',balance:'Balance: 4 / 6 sessions'},
+  {id:'b5',coach:'Anthony Lee',dateISO:'2026-09-02',startSlot:14,dur:2,status:'NO_SHOW',service:'Private Swim',level:'Beginner 2',client:'Jordan Kim',funding:'Regional Center',balance:'Balance: 3 / 6 sessions'},
+  {id:'b6',coach:'Michael Torres',dateISO:'2026-09-02',startSlot:16,dur:2,status:'CANCELLED_LATE',service:'Basketball',level:null,client:'Carlos Garcia',funding:'Self Pay',balance:'Balance: 1 / 4 sessions',resolvedNote:"This is Carlos's 4th consecutive late cancellation/no-show, crossing the configured threshold of 4 (§3.9)."},
+  {id:'b7',coach:'Sarah Chen',dateISO:'2026-09-02',startSlot:18,dur:1,status:'CANCELLED_EARLY',service:'Private Swim',level:'Beginner 2',client:'Ava Smith',funding:'Self Pay',balance:'Balance: 5 / 8 sessions',makeupToken:'AS-3381',resolvedNote:'Make-up token AS-3381 issued.'},
+  {id:'b8',coach:'Luke Dean',dateISO:'2026-09-02',startSlot:18,dur:1,status:'COMPLETED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:5,funding:'Various',balance:'Varies per participant'},
+
+  // ── Thu Sep 3, 2026 — "today" ──
+  {id:'b9',coach:'Michael Torres',dateISO:'2026-09-03',startSlot:4,dur:1,status:'CANCELLED_EARLY',service:'Private Swim B2',level:'Beginner 2',client:'Ethan Wells',funding:'Self Pay',balance:'Balance: 4 / 8 sessions',makeupToken:'EW-1187',resolvedNote:'Cancelled 2 days prior — outside the 24-hour window. Make-up token EW-1187 issued.'},
+  {id:'b10',coach:'Sarah Chen',dateISO:'2026-09-03',startSlot:6,dur:3,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:8,filled:5,funding:'Various',balance:'Varies per participant'},
+  {id:'b11',coach:'Michael Torres',dateISO:'2026-09-03',startSlot:8,dur:1,status:'BREAK',durationMinutes:30},
+  {id:'b12',coach:'James Wright',dateISO:'2026-09-03',startSlot:10,dur:2,status:'PENDING_PARTNER',service:'Semi-Private Swim',level:'Beginner 2',client:'Lucas Brown',requiredParticipants:REQUIRED_PARTICIPANTS,filled:1,funding:'Self Pay',balance:'Balance: 4 / 6 sessions'},
+  {id:'b13',coach:'Emma Cole',dateISO:'2026-09-03',startSlot:11,dur:1,status:'CONFIRMED',service:'Private Swim B1',level:'Beginner 1',client:'Grace Shah',funding:'Self Pay',balance:'Balance: 7 / 10 sessions'},
+  {id:'b14',coach:'Anthony Lee',dateISO:'2026-09-03',startSlot:14,dur:2,status:'AUTHORIZATION_HOLD',service:'Private Swim',level:'Beginner 2',client:'Jordan Kim',funding:'Regional Center',balance:'Balance: 3 / 6 sessions'},
+  {id:'b15',coach:'Michael Torres',dateISO:'2026-09-03',startSlot:16,dur:2,status:'CONFIRMED',service:'Basketball',level:null,client:'Carlos Garcia',funding:'Self Pay',balance:'Balance: 1 / 4 sessions'},
+  {id:'b16',coach:'Priya Nair',dateISO:'2026-09-03',startSlot:17,dur:1,status:'UNAVAILABLE',reason:'Off-site training'},
+  {id:'b17',coach:'Sarah Chen',dateISO:'2026-09-03',startSlot:18,dur:1,status:'BREAK',durationMinutes:30},
+  {id:'b18',coach:'Cory Davis',dateISO:'2026-09-03',startSlot:19,dur:2,status:'PAYMENT_HOLD',service:'Group Fitness',level:null,client:'Devon Ross',funding:'Self Pay',balance:'Balance: 6 / 10 sessions'},
+  {id:'b19',coach:'James Wright',dateISO:'2026-09-03',startSlot:20,dur:2,status:'WAITLISTED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,funding:'Various',balance:'Varies per participant',
+    participants:[
+      {name:'Zoe Martin',funding:'Self Pay',attendance:'NOT_MARKED'},
+      {name:'Jayden Cole',funding:'Voucher',attendance:'NOT_MARKED'},
+      {name:'Emma Rivera',funding:'RCEB',attendance:'NOT_MARKED'},
+      {name:'Noah Kim',funding:'Self Pay',attendance:'NOT_MARKED'},
+      {name:'Ava Patel',funding:'Self Pay',attendance:'NOT_MARKED'},
+      {name:'Mason Diaz',funding:'Voucher',attendance:'NOT_MARKED'},
+      {name:'Ella Brooks',funding:'RCEB',attendance:'NOT_MARKED'},
+      {name:'Devon Park',funding:'Self Pay',attendance:'CANCELLED_LATE'}
+    ],
+    waitlist:[
+      {pos:1,name:'Liam Turner',funding:'Self Pay',eligible:false,reason:'Not Eligible — payment method declined'},
+      {pos:2,name:'Priya Malhotra',funding:'Self Pay',eligible:true}
+    ],
+    seatOpen:{time:'9:04 AM, Sep 3'}
+  },
+  {id:'b20',coach:'Anthony Lee',dateISO:'2026-09-03',startSlot:20,dur:2,status:'CONFIRMED',service:'Private Swim',level:'Beginner 2',client:'Ava Smith',funding:'Voucher',balance:'Balance: 5 / 8 sessions'},
+  {id:'b21',coach:'Tina Wu',dateISO:'2026-09-03',startSlot:22,dur:2,status:'CONFIRMED',service:'Group Fitness',level:null,isGroup:true,cap:12,filled:12,funding:'Various',balance:'Varies per participant'},
+  {id:'b22',coach:'Naya Fox',dateISO:'2026-09-03',startSlot:15,dur:2,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:4,funding:'Various',balance:'Varies per participant'},
+  {id:'b23',coach:'Luke Dean',dateISO:'2026-09-03',startSlot:18,dur:1,status:'BREAK',durationMinutes:30},
+
+  // ── Fri Sep 4, 2026 — future ──
+  {id:'b24',coach:'Sarah Chen',dateISO:'2026-09-04',startSlot:6,dur:3,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:8,filled:4,funding:'Various',balance:'Varies per participant'},
+  {id:'b25',coach:'Michael Torres',dateISO:'2026-09-04',startSlot:8,dur:1,status:'BREAK',durationMinutes:30},
+  {id:'b26',coach:'Michael Torres',dateISO:'2026-09-04',startSlot:9,dur:2,status:'TENTATIVE',service:'Private Swim B2',level:'Beginner 2',client:'Maria Garcia',funding:'Regional Center',balance:'Balance: 6 / 8 sessions'},
+  {id:'b27',coach:'Anthony Lee',dateISO:'2026-09-04',startSlot:10,dur:2,status:'PENDING_PARTNER',service:'Semi-Private Swim',level:'Beginner 2',client:'Ella Brooks',requiredParticipants:REQUIRED_PARTICIPANTS,filled:1,funding:'RCEB',balance:'Balance: 5 / 8 sessions'},
+  {id:'b28',coach:'James Wright',dateISO:'2026-09-04',startSlot:10,dur:2,status:'CONFIRMED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,filled:3,funding:'Various',balance:'Varies per participant'},
+  {id:'b29',coach:'Sarah Chen',dateISO:'2026-09-04',startSlot:13,dur:3,status:'CONFIRMED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,filled:4,funding:'Various',balance:'Varies per participant'},
+  {id:'b30',coach:'Anthony Lee',dateISO:'2026-09-04',startSlot:14,dur:2,status:'CONFIRMED',service:'Private Swim',level:'Beginner 2',client:'Ava Smith',funding:'Self Pay',balance:'Balance: 5 / 8 sessions'},
+  {id:'b31',coach:'Michael Torres',dateISO:'2026-09-04',startSlot:16,dur:2,status:'CONFIRMED',service:'Basketball',level:null,client:'Carlos Garcia',funding:'Self Pay',balance:'Balance: 1 / 4 sessions'},
+  {id:'b32',coach:'Cory Davis',dateISO:'2026-09-04',startSlot:19,dur:2,status:'PAYMENT_HOLD',service:'Group Fitness',level:null,client:'Devon Ross',funding:'Self Pay',balance:'Balance: 6 / 10 sessions'},
+  {id:'b33',coach:'James Wright',dateISO:'2026-09-04',startSlot:20,dur:2,status:'CONFIRMED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,filled:6,funding:'Various',balance:'Varies per participant'},
+  {id:'b34',coach:'Luke Dean',dateISO:'2026-09-04',startSlot:15,dur:2,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:5,funding:'Various',balance:'Varies per participant'},
+  {id:'b35',coach:'Naya Fox',dateISO:'2026-09-04',startSlot:18,dur:1,status:'BREAK',durationMinutes:30}
 ];
 
-const DATES=['Thu Sep 2','Thu Sep 3','Fri Sep 4','Sat Sep 5'];
-let curDate=1; // index into DATES
+const STATE={
+  role:'staff',
+  curDate:new Date(2026,8,3),
+  drawerId:null,
+  panel:null, // 'cancel'|'makeup'|'late-summary'|'funding'|'reschedule'|null
+  paxSearchOpen:null,
+  skipFormKey:null,
+  grantForm:null,
+  fundingForm:null,
+  reschedForm:null,
+  waitlistMsg:null,
+  violationResolutions:{}
+};
 
-const STATE={drawer:null,filterSvc:'All Services',filterStaff:'All Staff',filterStat:'All Statuses',confirmOpen:false,paxSearchOpen:false};
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+const WEEKDAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function pad(n){return n<10?'0'+n:''+n;}
+function toISO(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
+function parseISO(iso){const [y,m,d]=iso.split('-').map(Number);return new Date(y,m-1,d);}
+function fmtShort(d){return `${WEEKDAYS[d.getDay()]} ${MONTHS[d.getMonth()]} ${d.getDate()}`;}
+function fmtLong(d){return `${fmtShort(d)}, ${d.getFullYear()}`;}
+function curISO(){return toISO(STATE.curDate);}
+function findBooking(id){return ALL_BOOKINGS.find(b=>b.id===id);}
+function getFilled(b){ if(b.participants) return b.participants.filter(p=>p.attendance!=='CANCELLED_LATE'&&p.attendance!=='CANCELLED_EARLY').length; return b.filled||0; }
+function getWaitingCount(b){ return b.waitlist?b.waitlist.length:0; }
+function serviceCategory(service){ if(!service) return null; const s=service.toLowerCase(); if(s.includes('swim')) return 'Swim'; if(s.includes('basketball')) return 'Basketball'; if(s.includes('fitness')) return 'Group Fitness'; return service; }
+function initials(name){ return name.split(' ').map(w=>w[0]).join('').toUpperCase(); }
+function genToken(name){ const ini=name.split(' ').map(w=>w[0]).join('').toUpperCase(); const num=Math.floor(1000+Math.random()*9000); return `${ini}-${num}`; }
+function nowStamp(){ return '10:04 AM, Sep 3, 2026'; }
+function ordinal(n){ const s=['th','st','nd','rd']; const v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+function fundingChip(f){ const map={RCEB:'c-warn',Voucher:'c-info','Self Pay':'c-muted','Regional Center':'c-warn'}; return `<span class="chip ${map[f]||'c-muted'}">${f||'—'}</span>`; }
+function bookingStartDate(b){ const [y,m,d]=b.dateISO.split('-').map(Number); const totalMin=6*60+b.startSlot*30; return new Date(y,m-1,d,Math.floor(totalMin/60),totalMin%60); }
+function cancelCalc(b){ const start=bookingStartDate(b); const diffMs=start-FIXED_NOW; const diffH=diffMs/3600000; const isEarly=diffH>=24; const totalMin=Math.round(diffH*60); const hh=Math.floor(totalMin/60), mm=totalMin%60; const noticeLabel = mm===0?`${hh}h`:`${hh}h ${mm}m`; return {isEarly,noticeLabel}; }
+function ensureParticipants(b){ if(!b.participants){ if(b.isGroup) b.participants=[]; else b.participants=[{name:b.client, funding:b.funding||'—', attendance: b.status==='COMPLETED'?'ATTENDED':b.status==='NO_SHOW'?'NO_SHOW':b.status==='CANCELLED_LATE'?'CANCELLED_LATE':b.status==='CANCELLED_EARLY'?'CANCELLED_EARLY':'NOT_MARKED'}]; } }
+function groupLikeAddable(b){ return !!(b.isGroup || b.requiredParticipants); }
+
+function blockContent(b){
+  if(b.status==='BREAK') return {l1:'Paid Break',l2:`${b.durationMinutes} min`,l3:''};
+  if(b.status==='UNAVAILABLE') return {l1:'Unavailable',l2:b.reason,l3:''};
+  if(b.status==='TENTATIVE') return {l1:'Tentative',l2:b.client,l3:b.service};
+  let l1=b.service, l2=b.isGroup?`Group (${getFilled(b)} participants)`:b.client, l3='', l3cls='';
+  switch(b.status){
+    case 'CONFIRMED':
+      if(b.isGroup) l3=`${getFilled(b)} / ${b.cap} spots`;
+      else if(b.requiredParticipants) l3=`${getFilled(b)} / ${b.requiredParticipants}`;
+      else l3='Confirmed. Session reserved.';
+      break;
+    case 'PENDING_PARTNER': l3=`${getFilled(b)} / ${b.requiredParticipants} — waiting for partner`; break;
+    case 'WAITLISTED': l3=`${getFilled(b)} / ${b.cap} FULL — ${getWaitingCount(b)} waiting`; break;
+    case 'AUTHORIZATION_HOLD': l3=PLAIN_LINE.AUTHORIZATION_HOLD; l3cls='ln-amber'; break;
+    case 'PAYMENT_HOLD': l3=PLAIN_LINE.PAYMENT_HOLD; l3cls='ln-red'; break;
+    case 'CANCELLED_EARLY': l3=PLAIN_LINE.CANCELLED_EARLY; l3cls='ln-green'; break;
+    case 'CANCELLED_LATE': l3=PLAIN_LINE.CANCELLED_LATE; l3cls='ln-red'; break;
+    case 'NO_SHOW': l3=PLAIN_LINE.NO_SHOW; l3cls='ln-red'; break;
+    case 'COMPLETED': l3=PLAIN_LINE.COMPLETED; l3cls='ln-slate'; break;
+  }
+  return {l1,l2,l3,l3cls};
+}
 
 // ─── RENDER ───────────────────────────────────────────────────────────────────
 function render(){
-  const svcFilter=document.getElementById('fSvc')?.value||'All Services';
-  const staffFilter=document.getElementById('fStaff')?.value||'All Staff';
-  const statFilter=document.getElementById('fStat')?.value||'All Statuses';
-  const coaches=staffFilter!=='All Staff'?[staffFilter]:COACHES;
-  const table=document.getElementById('calTable');
+  const iso=curISO();
+  const locFilter=document.getElementById('fLoc').value;
+  const svcFilter=document.getElementById('fSvc').value;
+  const lvlFilter=document.getElementById('fLvl').value;
+  const statFilter=document.getElementById('fStat').value;
+  const staffFilter=document.getElementById('fStaff').value;
 
-  // Build header row
-  let hdr='<thead><tr>';
-  hdr+=`<th class="cal-corner"></th>`;
-  coaches.forEach(c=>{
-    const cnt=BOOKINGS.filter(b=>b.coach===c&&b.type!=='break').length;
+  const visibleCoaches=COACH_ORDER.filter(c=>{
+    if(locFilter!=='All Locations'){
+      const locName=`Solar Swim — ${COACH_LOCATION[c]||'Main'}`;
+      if(locName!==locFilter) return false;
+    }
+    if(staffFilter!=='All Staff' && c!==staffFilter) return false;
+    if(svcFilter!=='All Services'){
+      if(!COACH_SERVICES[c] || !COACH_SERVICES[c].includes(svcFilter)) return false;
+    }
+    return true;
+  });
+
+  const dateBookings=ALL_BOOKINGS.filter(b=>b.dateISO===iso);
+
+  let hdr='<thead><tr><th class="cal-corner"></th>';
+  visibleCoaches.forEach(c=>{
+    const cnt=dateBookings.filter(b=>b.coach===c&&b.status!=='BREAK'&&b.status!=='UNAVAILABLE').length;
     hdr+=`<th class="coach-cell"><div class="coach-nm">${c}</div><div class="coach-cnt">${cnt} booking${cnt!==1?'s':''}</div></th>`;
   });
   hdr+='</tr></thead>';
 
-  // Build body rows
+  const skipUntil={}; visibleCoaches.forEach(c=>skipUntil[c]=0);
   let body='<tbody>';
-  TIMES_RANGE_FIXED.forEach((t,idx)=>{
-    body+=`<tr>`;
-    body+=`<td class="time-cell"><span class="time-label">${t}</span></td>`;
-    coaches.forEach(coach=>{
-      // find a booking that starts at this slot for this coach
-      const booking=BOOKINGS.find(b=>b.coach===coach&&b.startSlot===idx);
-      // check if a booking overlaps (started earlier)
-      const overlapping=BOOKINGS.find(b=>b.coach===coach&&b.startSlot<idx&&b.startSlot+b.dur>idx);
-      if(overlapping){body+=`<td class="slot-cell"></td>`;return;}
-      if(!booking){body+=`<td class="slot-cell"><div style="height:100%"></div></td>`;return;}
-
-      // apply dim if filter mismatch
-      let dim='';
-      if(svcFilter!=='All Services'&&booking.service&&!booking.service.toLowerCase().includes(svcFilter.toLowerCase())) dim=' style="opacity:0.3"';
-      if(statFilter!=='All Statuses'){
-        const match=(statFilter==='Confirmed'&&booking.type==='confirmed')||(statFilter==='Tentative'&&booking.type==='tentative')||(statFilter==='Semi-Private'&&(booking.type==='semi-pending'));
-        if(!match) dim=' style="opacity:0.3"';
+  for(let row=0; row<28; row++){
+    body+=`<tr><td class="time-cell"><span class="time-label">${TIMES_RANGE_FIXED[row]}</span></td>`;
+    visibleCoaches.forEach(coach=>{
+      if(row<skipUntil[coach]) return;
+      const coachBookings=dateBookings.filter(b=>b.coach===coach);
+      if(coachBookings.length===0){
+        if(row===0){
+          body+=`<td class="slot-cell" rowspan="28" style="padding:0"><div class="empty-col" style="height:100%;display:flex;align-items:center;justify-content:center">No bookings today</div></td>`;
+          skipUntil[coach]=28;
+        }
+        return;
       }
-
-      const h=booking.dur*52;
-      const cls=booking.type==='confirmed'?'b-confirmed':booking.type==='tentative'?'b-tentative':booking.type==='semi-pending'?'b-semi-pending':booking.type==='waitlisted'?'b-waitlisted':'b-break';
-      const clickable=booking.type!=='break';
-      const onclick=clickable?`onclick="openDrawer('${booking.id}')" onmouseenter="showTip(event,'${booking.id}')" onmouseleave="hideTip()"`:``;
-      body+=`<td class="slot-cell" rowspan="${booking.dur}">
-        <div class="block ${cls}" style="top:3px;height:${h-6}px" ${onclick}${dim}>
-          <div class="block-title">${booking.title}</div>
-          <div class="block-sub">${booking.sub}</div>
-          ${booking.cap?`<div class="block-cap">${booking.cap}</div>`:''}
+      const b=coachBookings.find(x=>x.startSlot===row);
+      if(!b){ body+=`<td class="slot-cell"></td>`; return; }
+      skipUntil[coach]=row+b.dur;
+      let dim=false;
+      if(b.status!=='BREAK'&&b.status!=='UNAVAILABLE'){
+        if(svcFilter!=='All Services' && serviceCategory(b.service)!==svcFilter) dim=true;
+        if(lvlFilter!=='All Levels' && (b.level||'Unassigned')!==lvlFilter) dim=true;
+        if(statFilter!=='All Statuses' && STATUS_FILTER_MAP[statFilter]!==b.status) dim=true;
+      } else if(statFilter!=='All Statuses'){ dim=true; }
+      const h=b.dur*56;
+      const cls=STATUS_CLASS[b.status]||'b-confirmed';
+      const clickable=b.status!=='BREAK'&&b.status!=='UNAVAILABLE';
+      const handlers=clickable?`onclick="openDrawer('${b.id}')" onmouseenter="showTip(event,'${b.id}')" onmouseleave="hideTip()"`:'';
+      const c=blockContent(b);
+      body+=`<td class="slot-cell" rowspan="${b.dur}">
+        <div class="block ${cls}" style="top:3px;height:${h-6}px${dim?';opacity:0.3':''}" ${handlers}>
+          <div class="block-title">${c.l1}</div>
+          <div class="block-sub">${c.l2}</div>
+          ${c.l3?`<div class="${c.l3cls?'block-line3-mandated '+c.l3cls:'block-cap'}">${c.l3}</div>`:''}
         </div>
       </td>`;
     });
     body+='</tr>';
-  });
+  }
   body+='</tbody>';
-  table.innerHTML=hdr+body;
-  document.getElementById('dateLbl').textContent=DATES[curDate].replace('Thu ','').replace('Fri ','').replace('Sat ','');
-  document.getElementById('pageSub').textContent=`${DATES[curDate]} · Solar Swim`;
+  document.getElementById('calTable').innerHTML=hdr+body;
+
+  const meta=DATE_META[iso];
+  document.getElementById('dateLbl').textContent=meta?meta.short:fmtShort(STATE.curDate);
+  const dp=document.getElementById('datePicker'); if(dp) dp.value=iso;
+  document.getElementById('pageSub').textContent=`${meta?meta.label:fmtLong(STATE.curDate)} / ${locFilter}`;
 }
 
 // ─── NAVIGATION ───────────────────────────────────────────────────────────────
-function navDay(d){curDate=Math.max(0,Math.min(DATES.length-1,curDate+d));render();}
-function goToday(){curDate=1;render();}
+function navDay(d){ closeDrawer(); STATE.curDate.setDate(STATE.curDate.getDate()+d); render(); }
+function goToday(){ closeDrawer(); STATE.curDate=new Date(2026,8,3); render(); }
+function onDatePicker(v){ if(!v) return; closeDrawer(); const [y,m,d]=v.split('-').map(Number); STATE.curDate=new Date(y,m-1,d); render(); }
+function setRole(v){ STATE.role=v; render(); if(STATE.drawerId) refreshDrawer(); }
 
 // ─── FILTERS ──────────────────────────────────────────────────────────────────
 function applyFilters(){render();}
 
 // ─── DRAWER ───────────────────────────────────────────────────────────────────
 function openDrawer(id){
-  const b=BOOKINGS.find(x=>x.id===id);
-  if(!b) return;
-  STATE.drawer=id;
-  STATE.confirmOpen=false;
-  STATE.paxSearchOpen=false;
-  document.getElementById('drwNm').textContent=b.client||b.sub||b.title;
-  document.getElementById('drwDt').textContent=`${DATES[curDate]} / ${TIMES_RANGE_FIXED[b.startSlot]} \u2013 ${TIMES_RANGE_FIXED[b.startSlot+b.dur]||'End'}`;
-  const sc=document.getElementById('drwStatus');
-  if(b.type==='tentative'){sc.textContent='Tentative';sc.className='chip c-warn';}
-  else if(b.type==='semi-pending'){sc.textContent='Pending Partner';sc.className='chip c-purple';}
-  else{sc.textContent='Confirmed';sc.className='chip c-ok';}
-  renderDrawerBody(b);
+  const b=findBooking(id);
+  if(!b || b.status==='BREAK' || b.status==='UNAVAILABLE') return;
+  STATE.drawerId=id; STATE.panel=null; STATE.paxSearchOpen=null; STATE.skipFormKey=null;
+  STATE.grantForm=null; STATE.fundingForm=null; STATE.reschedForm=null; STATE.waitlistMsg=null;
+  refreshDrawer();
   document.getElementById('drawer').classList.add('open');
+}
+function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); STATE.drawerId=null; }
+function reRenderAll(){ render(); if(STATE.drawerId) refreshDrawer(); }
+
+function refreshDrawer(){
+  const b=findBooking(STATE.drawerId);
+  if(!b) return;
+  renderDrawerHeader(b);
+  renderDrawerBody(b);
+  renderDrawerFooter(b);
+}
+
+const CHIP_META={CONFIRMED:['Confirmed','c-info'],PENDING_PARTNER:['Pending Partner','c-purple'],WAITLISTED:['Waitlisted','c-info'],AUTHORIZATION_HOLD:['Authorization Hold','c-warn'],PAYMENT_HOLD:['Payment Hold','c-danger'],CANCELLED_EARLY:['Cancelled — Early','c-ok'],CANCELLED_LATE:['Cancelled — Late','c-danger'],NO_SHOW:['No-Show','c-danger'],COMPLETED:['Completed','c-muted'],TENTATIVE:['Tentative','c-warn']};
+
+function renderDrawerHeader(b){
+  document.getElementById('drwNm').textContent = b.isGroup ? `${b.service} — Group (${getFilled(b)} participants)` : `${b.client} — ${b.service}`;
+  document.getElementById('drwDt').textContent = `${DATE_META[b.dateISO]?DATE_META[b.dateISO].label:fmtLong(parseISO(b.dateISO))} · ${TIMES_RANGE_FIXED[b.startSlot]} – ${TIMES_RANGE_FIXED[b.startSlot+b.dur]}`;
+  const sc=document.getElementById('drwStatus');
+  const m=CHIP_META[b.status]||['—','c-muted'];
+  sc.textContent=m[0]; sc.className='chip '+m[1];
+}
+
+function violationBannerHtml(client){
+  if(!client) return '';
+  const count=CLIENT_VIOLATIONS[client]||0;
+  if(count<VIOLATION_THRESHOLD) return '';
+  const res=STATE.violationResolutions[client];
+  if(res) return `<div class="panel-muted">Action recorded: ${res.action} — by ${res.manager}, ${res.when}.</div>`;
+  const disabled=STATE.role!=='manager';
+  const btn=(label)=>`<button class="btn btn-out btn-sm" ${disabled?'disabled':''} onclick="resolveViolation('${client}','${label}')">${label}</button>`;
+  return `<div class="panel-red"><strong>! CONSECUTIVE LATE-CANCEL / NO-SHOW</strong><br>${client} has reached ${count} of ${VIOLATION_THRESHOLD} consecutive late cancellations/no-shows — the configured threshold.
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">${btn('Notify')}${btn('Hold')}${btn('Drop')}${btn('Require Staff Review')}</div>
+    ${disabled?`<div class="small-note" style="color:#991b1b">Only a Manager can act on this — the flag is visible so you don't have to remember it.</div>`:''}
+  </div>`;
+}
+function resolveViolation(client,action){ if(STATE.role!=='manager') return; STATE.violationResolutions[client]={action,manager:MANAGER_NAME,when:nowStamp()}; refreshDrawer(); }
+
+function renderInfoGrid(b){
+  const dt=`${DATE_META[b.dateISO]?DATE_META[b.dateISO].label:fmtLong(parseISO(b.dateISO))} · ${TIMES_RANGE_FIXED[b.startSlot]} – ${TIMES_RANGE_FIXED[b.startSlot+b.dur]}`;
+  const statusLine=PLAIN_LINE[b.status]||'';
+  const statusCode=b.status==='TENTATIVE'?'Tentative (authorization pending)':b.status;
+  const rows=[
+    ['Client', b.isGroup?`Group (${getFilled(b)} participants)`:b.client],
+    ['Service', b.service],
+    ['Level', b.level||'Unassigned'],
+    ['Instructor', b.coach],
+    ['Location', `Solar Swim — ${COACH_LOCATION[b.coach]||'Main'}`],
+    ['Date / Time', dt],
+    ['Funding', b.funding||'—'],
+    ['Balance', b.balance||'—','bal'],
+    ['Status', `<div>${statusCode}</div><div class="body2-note">${statusLine}</div>${b.fundingOverrideNote?`<div class="body2-note" style="margin-top:4px">${b.fundingOverrideNote}</div>`:''}${b.resolvedNote?`<div class="body2-note" style="margin-top:4px">${b.resolvedNote}</div>`:''}`]
+  ];
+  return `<div class="det-grid">${rows.map(([l,v,cls])=>`<div class="det-row"><div class="det-l">${l}</div><div class="det-r${cls?' '+cls:''}">${v}</div></div>`).join('')}</div>`;
+}
+
+function tentativeNoteHtml(b){
+  if(b.status!=='TENTATIVE') return '';
+  return `<div class="tent-notice"><strong>Nothing reserved yet</strong>This slot is shown based on ${b.client}'s recurring subscription. It will be confirmed once Regional Center authorization is received. No record exists for this occurrence — it is recomputed every time this date is rendered (§2.3).</div>`;
+}
+
+// -- Cancellation / make-up panels (7.6, 7.7) --
+function renderCancelPanel(b){
+  const {isEarly,noticeLabel}=cancelCalc(b);
+  if(isEarly){
+    return `<div class="panel-amber"><h4>CANCEL THIS SESSION</h4>
+      <p><strong>EARLY</strong> — this session starts in ${noticeLabel}. The configured window is 24 hours.</p>
+      <div class="field-lbl">What happens:</div>
+      <ul class="policy-list">
+        <li>This session is cancelled and marked <strong>CANCELLED_EARLY</strong>.</li>
+        <li>Session returned to your balance.</li>
+        <li>A make-up token will be generated.</li>
+        <li>This does NOT count toward the late-cancellation threshold.</li>
+      </ul>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn btn-out btn-sm" onclick="keepBooking()">Keep Booking</button>
+        <button class="btn btn-sm" style="background:var(--danger);color:#fff" onclick="confirmCancel('${b.id}')">Confirm Cancellation</button>
+      </div></div>`;
+  }
+  const count=(CLIENT_VIOLATIONS[b.client]||0)+1;
+  return `<div class="panel-amber"><h4>CANCEL THIS SESSION</h4>
+    <p><strong>LATE</strong> — this session starts in ${noticeLabel}. The configured window is 24 hours.</p>
+    <div class="field-lbl">What happens:</div>
+    <ul class="policy-list">
+      <li>This session is cancelled and marked <strong>CANCELLED_LATE</strong>.</li>
+      <li>The credit is already used — it is NOT returned to the balance.</li>
+      <li>No make-up token is generated.</li>
+      <li>This counts as this client's ${ordinal(count)} consecutive late cancellation/no-show toward the threshold of ${VIOLATION_THRESHOLD}.</li>
+    </ul>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn btn-out btn-sm" onclick="keepBooking()">Keep Booking</button>
+      <button class="btn btn-sm" style="background:var(--danger);color:#fff" onclick="confirmCancel('${b.id}')">Confirm Cancellation</button>
+    </div></div>`;
+}
+function keepBooking(){ STATE.panel=null; refreshDrawer(); }
+function confirmCancel(id){
+  const b=findBooking(id);
+  const {isEarly}=cancelCalc(b);
+  if(isEarly){ b.status='CANCELLED_EARLY'; b.makeupToken=b.makeupToken||genToken(b.client); STATE.panel='makeup'; }
+  else { b.status='CANCELLED_LATE'; CLIENT_VIOLATIONS[b.client]=(CLIENT_VIOLATIONS[b.client]||0)+1; STATE.panel='late-summary'; }
+  reRenderAll();
+}
+function renderMakeupPanel(b){
+  return `<div class="panel-green"><h4>MAKE-UP TOKEN CREATED</h4>
+    <p>Token ${b.makeupToken} created for ${b.client}. This token does not expire.</p>
+    <p style="margin-top:8px">Booking Horizon: the client can see and book replacement slots for the next 7 days from today. This is a visibility window, not the token's expiration — the token itself never lapses.</p>
+    <button class="btn btn-blue btn-sm" style="margin-top:10px" onclick="location.href='booking-flow-staff.html'">Book Make-Up Session</button>
+  </div>`;
+}
+function renderLateSummary(b){
+  return `<div class="panel-muted"><p style="font-weight:600;color:var(--text-primary)">Cancelled late. Session used.</p>${grantMakeupBlockHtml(b)}</div>`;
+}
+function grantMakeupBlockHtml(b){
+  if(STATE.role!=='manager') return '';
+  if(b.manualMakeup) return `<div class="small-note" style="color:var(--success-dark)">Make-up token ${b.makeupToken} granted by ${b.manualMakeup.manager} — ${b.manualMakeup.reason}</div>`;
+  if(STATE.grantForm===b.id) return `<div style="margin-top:8px"><textarea class="textarea" id="grantReason" placeholder="Reason (required)"></textarea><button class="btn btn-out btn-sm" style="margin-top:6px;border-color:#fde68a;color:#b45309" onclick="grantMakeupAnyway('${b.id}')">Submit</button></div>`;
+  return `<button class="btn btn-out btn-sm" style="margin-top:8px;border-color:#fde68a;color:#b45309" onclick="STATE.grantForm='${b.id}';refreshDrawer()">Grant Make-Up Anyway</button>`;
+}
+function grantMakeupAnyway(id){
+  const reason=document.getElementById('grantReason')?.value.trim();
+  if(!reason) return;
+  const b=findBooking(id);
+  b.manualMakeup={reason,manager:MANAGER_NAME,when:nowStamp()};
+  b.makeupToken=b.makeupToken||genToken(b.client);
+  STATE.grantForm=null;
+  reRenderAll();
+}
+
+// -- Funding override (7.8) --
+function openFundingPanel(id){ STATE.panel='funding'; STATE.fundingForm={appliesTo:'this',funding:'',duration:'UNTIL_NEW_AUTHORIZATION',extra:'',reason:''}; refreshDrawer(); }
+function captureFundingFields(){ const f=STATE.fundingForm; if(!f) return; const fund=document.getElementById('fovFunding'); if(fund) f.funding=fund.value; const extra=document.getElementById('fovExtra'); if(extra) f.extra=extra.value; const reason=document.getElementById('fovReason'); if(reason) f.reason=reason.value; }
+function fundingDurationChange(v){ captureFundingFields(); STATE.fundingForm.duration=v; STATE.fundingForm.extra=''; refreshDrawer(); }
+function refreshApplyBtn(){ const btn=document.getElementById('fovApplyBtn'); const note=document.getElementById('fovReasonNote'); const has=(STATE.fundingForm.reason||'').trim().length>0; if(btn) btn.disabled=!has; if(note) note.style.display=has?'none':''; }
+function renderFundingPanel(b){
+  const f=STATE.fundingForm;
+  let extraField='';
+  if(f.duration==='UNTIL_DATE') extraField=`<div class="field-lbl">End Date</div><input type="date" class="s-input" id="fovExtra" value="${f.extra}">`;
+  else if(f.duration==='X_DAYS') extraField=`<div class="field-lbl">Number of Days</div><input type="number" min="1" class="s-input" id="fovExtra" value="${f.extra}">`;
+  else if(f.duration==='MANUAL') extraField=`<div class="field-lbl">Manual review note</div><textarea class="textarea" id="fovExtra">${f.extra}</textarea>`;
+  const hasReason=(f.reason||'').trim().length>0;
+  return `<div class="panel-amber"><h4>FUNDING OVERRIDE</h4>
+    <span class="chip c-warn" style="margin-bottom:8px">Override logged with your name, timestamp, and reason.</span>
+    <div class="field-lbl">Appointments affected</div>
+    <label class="radio-row"><input type="radio" name="fovScope" ${f.appliesTo==='this'?'checked':''} onchange="STATE.fundingForm.appliesTo='this'"> This appointment only</label>
+    <label class="radio-row"><input type="radio" name="fovScope" ${f.appliesTo==='recurring'?'checked':''} onchange="STATE.fundingForm.appliesTo='recurring'"> This + future recurring</label>
+    <div class="field-lbl">Funding expected</div>
+    <input class="s-input" id="fovFunding" placeholder="e.g. Regional Center — SRA11" value="${f.funding}">
+    <div class="field-lbl">Duration</div>
+    <select class="s-input" id="fovDuration" onchange="fundingDurationChange(this.value)">
+      <option value="ONE_APPOINTMENT" ${f.duration==='ONE_APPOINTMENT'?'selected':''}>One Appointment</option>
+      <option value="UNTIL_DATE" ${f.duration==='UNTIL_DATE'?'selected':''}>Until Date</option>
+      <option value="X_DAYS" ${f.duration==='X_DAYS'?'selected':''}>X Days</option>
+      <option value="UNTIL_NEW_AUTHORIZATION" ${f.duration==='UNTIL_NEW_AUTHORIZATION'?'selected':''}>Until New Authorization</option>
+      <option value="MANUAL" ${f.duration==='MANUAL'?'selected':''}>Manual</option>
+    </select>
+    ${extraField}
+    <div class="field-lbl">Reason (required)</div>
+    <textarea class="textarea" id="fovReason" oninput="STATE.fundingForm.reason=this.value;refreshApplyBtn()">${f.reason}</textarea>
+    <div class="small-note" id="fovReasonNote" style="${hasReason?'display:none':''}">Reason is required to apply an override</div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btn-out btn-sm" onclick="STATE.panel=null;STATE.fundingForm=null;refreshDrawer()">Cancel</button>
+      <button class="btn btn-blue btn-sm" id="fovApplyBtn" ${hasReason?'':'disabled'} onclick="applyFundingOverride('${b.id}')">Apply Override</button>
+    </div>
+  </div>`;
+}
+function applyFundingOverride(id){
+  captureFundingFields();
+  const f=STATE.fundingForm;
+  if(!f.reason || !f.reason.trim()) return;
+  const b=findBooking(id);
+  const durLabels={ONE_APPOINTMENT:'One Appointment',UNTIL_DATE:'Until Date',X_DAYS:'X Days',UNTIL_NEW_AUTHORIZATION:'Until New Authorization',MANUAL:'Manual'};
+  let reviewText='';
+  if(f.duration==='UNTIL_DATE'&&f.extra) reviewText=`, review by ${f.extra}`;
+  else if(f.duration==='X_DAYS'&&f.extra) reviewText=`, review in ${f.extra} days`;
+  b.fundingOverrideNote=`Funding Override active — ${durLabels[f.duration]}${reviewText}. Applied by ${MANAGER_NAME}, ${nowStamp()}.`;
+  b.status='CONFIRMED';
+  STATE.panel=null; STATE.fundingForm=null;
+  reRenderAll();
+}
+
+// -- Reschedule (7.9) --
+function openReschedule(id){ STATE.panel='reschedule'; const b=findBooking(id); STATE.reschedForm={date:b.dateISO,time:TIMES_RANGE_FIXED[b.startSlot]}; refreshDrawer(); }
+function renderReschedulePanel(b){
+  const f=STATE.reschedForm;
+  return `<div class="panel-amber"><h4>RESCHEDULE</h4>
+    <div class="field-lbl">Date</div><input type="date" class="s-input" id="reschedDate" value="${f.date}">
+    <div class="field-lbl">Time</div><select class="s-input" id="reschedTime">${TIMES_RANGE_FIXED.slice(0,28).map(t=>`<option ${t===f.time?'selected':''}>${t}</option>`).join('')}</select>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btn-out btn-sm" onclick="STATE.panel=null;refreshDrawer()">Cancel</button>
+      <button class="btn btn-blue btn-sm" onclick="submitReschedule('${b.id}')">Save</button>
+    </div></div>`;
+}
+function submitReschedule(id){
+  const b=findBooking(id);
+  const date=document.getElementById('reschedDate').value;
+  const time=document.getElementById('reschedTime').value;
+  const slot=TIMES_RANGE_FIXED.indexOf(time);
+  if(date) b.dateISO=date;
+  if(slot>=0) b.startSlot=slot;
+  STATE.panel=null;
+  reRenderAll();
+}
+
+// -- Participants (7.4) --
+function renderParticipantRow(b,p,idx){
+  const fundChip=fundingChip(p.funding);
+  let attChip, controls;
+  if(p.attendance==='CANCELLED_LATE'||p.attendance==='CANCELLED_EARLY'){
+    attChip=`<span class="chip ${p.attendance==='CANCELLED_LATE'?'c-danger':'c-ok'}">Cancelled — ${p.attendance==='CANCELLED_LATE'?'Late':'Early'}</span>`;
+    controls=`<span class="small-note">Resolved by cancellation</span>`;
+  } else if(p.attendance==='ATTENDED'){
+    attChip=`<span class="chip c-ok">Attended</span>`; controls=`<span class="small-note">Already marked — 1 session used</span>`;
+  } else if(p.attendance==='NO_SHOW'){
+    attChip=`<span class="chip c-danger">No-Show</span>`; controls=`<span class="small-note">Already marked — 1 session used</span>`;
+  } else {
+    attChip=`<span class="chip c-muted">Not Marked</span>`;
+    controls=`<button class="btn btn-out btn-sm" onclick="markAttendance('${b.id}',${idx},'ATTENDED')">Check In</button><button class="btn btn-out btn-sm" style="color:var(--danger);border-color:#fca5a5" onclick="markAttendance('${b.id}',${idx},'NO_SHOW')">No-Show</button>`;
+  }
+  return `<div class="px-row" style="flex-wrap:wrap"><div class="px-av">${initials(p.name)}</div><div class="px-nm">${p.name}</div>${fundChip}${attChip}<div style="display:flex;gap:5px;width:100%;justify-content:flex-end;margin-top:4px">${controls}</div></div>`;
+}
+function markAttendance(id,idx,state){ const b=findBooking(id); ensureParticipants(b); const p=b.participants[idx]; if(!p||p.attendance!=='NOT_MARKED') return; p.attendance=state; reRenderAll(); }
+function checkInAll(id){ const b=findBooking(id); ensureParticipants(b); b.participants.forEach(p=>{ if(p.attendance==='NOT_MARKED') p.attendance='ATTENDED'; }); reRenderAll(); }
+function allMarked(b){ ensureParticipants(b); return b.participants.length>0 && b.participants.every(p=>p.attendance!=='NOT_MARKED'); }
+function checkInSingle(id){ markAttendance(id,0,'ATTENDED'); }
+function singleResolved(b){ ensureParticipants(b); return !b.participants[0] || b.participants[0].attendance!=='NOT_MARKED'; }
+
+function renderParticipants(b){
+  ensureParticipants(b);
+  let html=`<div class="px-section"><div class="sec-lbl">Participants${b.requiredParticipants?` (${getFilled(b)} / ${b.requiredParticipants})`:''}</div>`;
+  if(b.participants.length===0){
+    html+=`<div class="body2-note">${b.filled||0} participants enrolled. Individual roster is not itemized in this prototype's seed data.</div>`;
+  } else {
+    b.participants.forEach((p,idx)=>{ html+=renderParticipantRow(b,p,idx); });
+  }
+  if(b.participantsNote) html+=`<div class="body2-note" style="margin-top:6px">${b.participantsNote}</div>`;
+  if(groupLikeAddable(b)){
+    html+=`<button class="btn btn-out btn-sm" style="width:100%;justify-content:center;margin-top:6px" onclick="togglePaxSearch('${b.id}')"><span class="ms" style="font-size:15px">add</span> Add Participant</button>`;
+    if(STATE.paxSearchOpen===b.id) html+=`<div class="px-search-wrap"><input class="s-input" id="drwPxSrch" placeholder="Search clients..." oninput="paxSearch('${b.id}',this.value)"><div class="px-dd" id="drwPxDD"></div></div>`;
+  }
+  html+='</div>';
+  return html;
+}
+function togglePaxSearch(id){ STATE.paxSearchOpen = STATE.paxSearchOpen===id?null:id; refreshDrawer(); }
+function paxSearch(id,q){
+  const b=findBooking(id); ensureParticipants(b);
+  const existing=new Set(b.participants.map(p=>p.name));
+  const res=CLIENT_POOL.filter(n=>!existing.has(n)&&n.toLowerCase().includes(q.toLowerCase())).slice(0,5);
+  const el=document.getElementById('drwPxDD'); if(!el) return;
+  el.innerHTML=res.map(n=>`<div class="px-res" onclick="addPax('${b.id}','${n}')"><span>${n}</span><span class="chip c-ok">Eligible</span></div>`).join('')||`<div style="padding:8px 11px;font-size:.78rem;color:var(--text-secondary)">No results</div>`;
+}
+function addPax(id,name){ const b=findBooking(id); ensureParticipants(b); b.participants.push({name,funding:'Self Pay',attendance:'NOT_MARKED'}); STATE.paxSearchOpen=null; reRenderAll(); }
+
+// -- Waitlist (7.5) --
+function renderWaitlistPanel(b){
+  let html=`<div class="wl-section"><div class="sec-lbl">Waitlist</div>`;
+  if(b.seatOpen){
+    html+=`<div class="panel-blue"><strong>SEAT OPENED</strong> — ${b.seatOpen.time}<br>Manager notified. A seat is open — choose who to place from the list below.</div>`;
+  } else {
+    html+=`<div class="panel-muted">Class full. No seat open right now — the list below keeps its order for the next opening.</div>`;
+  }
+  if(STATE.waitlistMsg && STATE.waitlistMsg.forId===b.id) html+=`<div class="small-note" style="color:var(--success-dark)">${STATE.waitlistMsg.text}</div>`;
+  b.waitlist.forEach((w,idx)=>{ html+=renderWaitlistRow(b,w,idx); });
+  html+=`<div class="wl-note">Waitlist is shown for all classes — full or not.</div>`;
+  html+=`<div class="small-note">No control on this panel offers automatic promotion — every promotion happens through Promote, chosen by a Manager.</div>`;
+  html+='</div>';
+  return html;
+}
+function renderWaitlistRow(b,w,idx){
+  const key=`${b.id}:${idx}`;
+  const canAct=STATE.role==='manager' && !!b.seatOpen;
+  const elig=w.eligible?`<span class="chip c-ok">Eligible</span>`:`<span class="chip c-danger">Not Eligible — ${w.reason}</span>`;
+  let row=`<div class="wl-row" style="flex-wrap:wrap"><div class="wl-pos">${w.pos}</div><div class="wl-nm">${w.name}</div>${fundingChip(w.funding)}${elig}`;
+  if(STATE.role==='manager'){
+    row+=`<div style="display:flex;gap:6px;width:100%;justify-content:flex-end;margin-top:4px">
+      <button class="btn btn-out btn-sm" ${canAct?'':'disabled'} onclick="promoteWaitlist('${b.id}',${idx})">Promote</button>
+      <button class="btn btn-out btn-sm" ${canAct?'':'disabled'} onclick="toggleSkipForm('${key}')">Skip</button>
+    </div>`;
+    if(!canAct) row+=`<div class="small-note" style="width:100%;text-align:right">No seat open right now.</div>`;
+    if(STATE.skipFormKey===key) row+=`<div style="width:100%;margin-top:6px"><input class="s-input" id="skipReasonInput" placeholder="Reason (required)"><button class="btn btn-out btn-sm" style="margin-top:5px" onclick="submitSkip('${b.id}',${idx})">Submit</button></div>`;
+  }
+  if(w.skipHistory) row+=`<div class="small-note" style="width:100%">Skipped ${w.skipHistory.when} — ${w.skipHistory.reason}</div>`;
+  row+='</div>';
+  return row;
+}
+function toggleSkipForm(key){ STATE.skipFormKey = STATE.skipFormKey===key?null:key; refreshDrawer(); }
+function submitSkip(bid,idx){
+  const val=document.getElementById('skipReasonInput')?.value?.trim();
+  if(!val) return;
+  const b=findBooking(bid);
+  b.waitlist[idx].skipHistory={when:nowStamp(),reason:val,who:MANAGER_NAME};
+  STATE.skipFormKey=null;
+  refreshDrawer();
+}
+function promoteWaitlist(bid,idx){
+  const b=findBooking(bid);
+  if(!(STATE.role==='manager' && b.seatOpen)) return;
+  ensureParticipants(b);
+  const w=b.waitlist[idx];
+  b.participants.push({name:w.name,funding:w.funding,attendance:'NOT_MARKED'});
+  b.waitlist.splice(idx,1);
+  b.seatOpen=null;
+  STATE.waitlistMsg={forId:bid,text:'Booking confirmed. Client notified.'};
+  if(b.waitlist.length===0 && getFilled(b)>=b.cap) b.status='CONFIRMED';
+  reRenderAll();
 }
 
 function renderDrawerBody(b){
-  const body=document.getElementById('drwBody');
-  const foot=document.getElementById('drwFoot');
   let html='';
-
-  // INFO GRID
-  const infoRows=[['Client',b.client||b.sub],['Service',b.title],['Level',b.level||'\u2014'],['Instructor',b.coach],['Location',b.loc||'\u2014'],['Date',DATES[curDate]],['Funding',b.fund||'\u2014'],['Balance',b.bal||'\u2014','bal'],['Status',b.type==='tentative'?'Tentative (authorization pending)':b.type==='semi-pending'?'Pending Partner':b.type==='confirmed'?'Confirmed':'Break']];
-  html+=`<div class="det-grid">${infoRows.map(([l,v,cls])=>`<div class="det-row"><div class="det-l">${l}</div><div class="det-r${cls?' '+cls:''}">${v}</div></div>`).join('')}</div>`;
-
-  // TENTATIVE NOTICE
-  if(b.type==='tentative'){
-    html+=`<div class="tent-notice"><strong>Recurring tentative slot</strong>This slot is reserved based on ${b.client}'s recurring subscription. It will be confirmed once Regional Center authorization is received.</div>`;
+  html+=violationBannerHtml(b.client);
+  html+=renderInfoGrid(b);
+  html+=tentativeNoteHtml(b);
+  if(STATE.panel==='cancel') html+=renderCancelPanel(b);
+  else if(STATE.panel==='makeup') html+=renderMakeupPanel(b);
+  else if(STATE.panel==='late-summary') html+=renderLateSummary(b);
+  else if(STATE.panel==='funding') html+=renderFundingPanel(b);
+  else if(STATE.panel==='reschedule') html+=renderReschedulePanel(b);
+  else {
+    if(b.status==='CANCELLED_EARLY') html+=renderMakeupPanel(b);
+    if(b.status==='CANCELLED_LATE') html+=renderLateSummary(b);
   }
-
-  // PARTICIPANTS (semi / group)
-  if(b.type==='semi-pending'){
-    html+=`<div class="px-section"><div class="sec-lbl">Participants (1 / 3)</div>
-      <div class="px-row"><div class="px-av">LB</div><div class="px-nm">Lucas Brown</div><span class="chip c-ok">Confirmed</span></div>
-      <button class="btn btn-out btn-sm" style="width:100%;justify-content:center;margin-top:4px" onclick="STATE.paxSearchOpen=!STATE.paxSearchOpen;renderDrawerBody(BOOKINGS.find(b=>b.id===STATE.drawer))"><span class="ms" style="font-size:15px">add</span> Add Participant</button>
-      ${STATE.paxSearchOpen?`<div class="px-search-wrap" style="margin-top:8px"><input class="s-input" placeholder="Search clients\u2026" oninput="paxSearch(this.value)" id="drwPxSrch"><div class="px-dd" id="drwPxDD"></div></div>`:''}
-    </div>`;
-  }
-  if(b.id==='b5'){
-    html+=`<div class="px-section"><div class="sec-lbl">Participants (2 / 3)</div>
-      <div class="px-row"><div class="px-av">LT</div><div class="px-nm">Liam Turner</div><span class="chip c-ok">Attended</span></div>
-      <div class="px-row"><div class="px-av">ED</div><div class="px-nm">Emma Davis</div><span class="chip c-info">Enrolled</span></div>
-    </div>`;
-  }
-  if(b.id==='b6'||b.id==='b2'||b.id==='b12'){
-    html+=`<div class="px-section"><div class="sec-lbl">Group Participants</div>
-      ${['Rachel Kim','Marcus Webb','Sofia Torres','David Nair','Priya Shah'].map(nm=>`<div class="px-row"><div class="px-av">${nm.split(' ').map(x=>x[0]).join('')}</div><div class="px-nm">${nm}</div><span class="chip c-info">Enrolled</span></div>`).join('')}
-    </div>`;
-  }
-
-  // WAITLIST
-  if(b.waitlist&&b.waitlist.length>0){
-    html+=`<div class="wl-section"><div class="sec-lbl">Waitlist</div>
-      <div class="wl-note">Waitlist is shown for all classes \u2014 full or not.</div>
-      ${b.waitlist.map(w=>`<div class="wl-row"><div class="wl-pos">${w.pos}</div><div class="wl-nm">${w.nm}</div><span class="chip c-muted" style="background:#f1f5f9;color:var(--text-secondary)">${w.fund}</span><button class="btn btn-out btn-sm" style="margin-left:6px" onclick="toast('${w.nm} promoted to booking')">Promote</button></div>`).join('')}
-    </div>`;
-  }
-
-  // INLINE CANCEL CONFIRM
-  if(STATE.confirmOpen){
-    html+=`<div class="inline-confirm"><p>Cancel this booking? This action cannot be undone.</p><div style="display:flex;gap:7px"><button class="btn btn-out btn-sm" onclick="STATE.confirmOpen=false;renderDrawerBody(BOOKINGS.find(b=>b.id===STATE.drawer))">Keep Booking</button><button class="btn btn-sm" style="background:var(--danger);color:#fff" onclick="cancelConfirm()">Yes, Cancel</button></div></div>`;
-  }
-
-  body.innerHTML=html;
-  if(STATE.paxSearchOpen) document.getElementById('drwPxSrch')?.focus();
-
-  // FOOTER ACTIONS
-  const isTent=b.type==='tentative';
-  const isBreak=b.type==='break';
-  if(isBreak){foot.innerHTML='<span style="font-size:.78rem;color:var(--text-secondary)">Break blocks have no actions.</span>';return;}
-  if(isTent){foot.innerHTML='<span style="font-size:.78rem;color:var(--text-secondary)">Tentative — awaiting RC authorization.</span>';return;}
-  foot.innerHTML=`
-    <button class="btn btn-out btn-sm" onclick="toast('Reschedule — date picker would open here')">Reschedule</button>
-    <button class="btn btn-out btn-sm" style="border-color:#fca5a5;color:var(--danger)" onclick="STATE.confirmOpen=true;renderDrawerBody(BOOKINGS.find(b=>b.id=STATE.drawer))">Cancel</button>
-    <button class="btn btn-blue btn-sm" onclick="toast('All participants marked attended')">Check In All</button>`;
+  if(!['BREAK','UNAVAILABLE','TENTATIVE'].includes(b.status)) html+=renderParticipants(b);
+  if(b.waitlist) html+=renderWaitlistPanel(b);
+  document.getElementById('drwBody').innerHTML=html;
+  if(STATE.paxSearchOpen===b.id) document.getElementById('drwPxSrch')?.focus();
 }
 
-function closeDrawer(){document.getElementById('drawer').classList.remove('open');STATE.drawer=null;}
-
-function cancelConfirm(){
-  closeDrawer();
-  toast('Booking cancelled');
+function renderDrawerFooter(b){
+  const foot=document.getElementById('drwFoot');
+  if(b.status==='BREAK'||b.status==='UNAVAILABLE'){ foot.innerHTML=`<span class="body2-note">${b.status==='BREAK'?'Break':'Unavailable'} blocks have no actions.</span>`; return; }
+  if(b.status==='TENTATIVE'){ foot.innerHTML=`<span class="body2-note">Tentative — a computed display, not a booking. No status-change actions exist here.</span>`; return; }
+  if(['CANCELLED_EARLY','CANCELLED_LATE','NO_SHOW','COMPLETED'].includes(b.status)){
+    foot.innerHTML = b.status==='CANCELLED_EARLY' ? `<button class="btn btn-blue btn-sm" onclick="location.href='booking-flow-staff.html'">Book Make-Up Session</button>` : `<span class="body2-note">No further actions — this booking is resolved.</span>`;
+    return;
+  }
+  let btns=`<button class="btn btn-out btn-sm" onclick="openReschedule('${b.id}')">Reschedule</button>`;
+  const isHold=b.status==='AUTHORIZATION_HOLD'||b.status==='PAYMENT_HOLD';
+  const groupLike=groupLikeAddable(b);
+  if(isHold){
+    btns+=`<button class="btn btn-out btn-sm" style="border-color:#fca5a5;color:var(--danger)" onclick="STATE.panel='cancel';refreshDrawer()">Cancel</button>`;
+    if(STATE.role==='manager') btns+=`<button class="btn btn-out btn-sm" onclick="openFundingPanel('${b.id}')">Funding Override</button>`;
+  } else if(groupLike){
+    const done=allMarked(b);
+    btns+=`<button class="btn btn-blue btn-sm" onclick="checkInAll('${b.id}')" ${done?'disabled':''}>Check In All</button>`;
+    if(done) btns+=`<span class="small-note">All participants already marked.</span>`;
+  } else {
+    btns+=`<button class="btn btn-out btn-sm" style="border-color:#fca5a5;color:var(--danger)" onclick="STATE.panel='cancel';refreshDrawer()">Cancel</button>`;
+    const resolved=singleResolved(b);
+    btns+=`<button class="btn btn-blue btn-sm" onclick="checkInSingle('${b.id}')" ${resolved?'disabled':''}>Check In</button>`;
+  }
+  foot.innerHTML=btns;
 }
 
-function paxSearch(q){
-  const el=document.getElementById('drwPxDD');if(!el)return;
-  const res=['Ava Smith','Carlos Garcia','Liam Turner','Lucas Brown'].filter(n=>n.toLowerCase().includes(q.toLowerCase())).slice(0,4);
-  el.innerHTML=res.map(n=>`<div class="px-res" onclick="addPax('${n}')"><span>${n}</span><span class="chip c-ok">\u2713 Eligible</span></div>`).join('')||'<div style="padding:8px 11px;font-size:.78rem;color:var(--text-secondary)">No results</div>';
-}
-
-function addPax(nm){
-  toast(nm+' added to slot');
-  STATE.paxSearchOpen=false;
-  const b=BOOKINGS.find(x=>x.id===STATE.drawer);
-  if(b) renderDrawerBody(b);
-}
-
-// ─── TOOLTIP ──────────────────────────────────────────────────────────────────
+// -- TOOLTIP --
 function showTip(e,id){
-  const b=BOOKINGS.find(x=>x.id===id);if(!b) return;
+  const b=findBooking(id); if(!b) return;
   const t=document.getElementById('tooltip');
-  t.innerHTML=`<strong>${b.client||b.sub}</strong><br>${b.title}<br>${b.level||''}<br>\U0001f464 ${b.coach}<br>\U0001f4cd ${b.loc||'\u2014'}<br>${TIMES_RANGE_FIXED[b.startSlot]}`;
+  const clientLabel=b.isGroup?`Group (${getFilled(b)} participants)`:b.client;
+  t.innerHTML=`<strong>${clientLabel}</strong><br>${b.service}<br>Level: ${b.level||'Unassigned'}<br>Instructor: ${b.coach}<br>${TIMES_RANGE_FIXED[b.startSlot]} – ${TIMES_RANGE_FIXED[b.startSlot+b.dur]}<br>Location: Solar Swim — ${COACH_LOCATION[b.coach]||'Main'}<br>${b.status}: ${PLAIN_LINE[b.status]||''}<br>Funding: ${b.funding||'—'}`;
   t.classList.remove('tt-hidden');
-  const rect=e.target.getBoundingClientRect();
+  const rect=e.currentTarget.getBoundingClientRect();
   t.style.left=Math.min(rect.left,window.innerWidth-240)+'px';
   t.style.top=(rect.top-t.offsetHeight-10)+'px';
 }
