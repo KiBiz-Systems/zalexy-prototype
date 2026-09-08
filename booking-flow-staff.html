@@ -20,6 +20,7 @@
 body{font-family:'Inter',sans-serif;background:var(--bg-default);color:var(--text-primary);font-size:14px;height:100vh;overflow:hidden}
 button{font:inherit;cursor:pointer}
 input,select,textarea{font:inherit}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px}
 .ms{font-family:'Material Symbols Rounded';font-weight:400;font-style:normal;font-size:18px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;vertical-align:middle}
 .app{display:flex;height:100vh;overflow:hidden}
 .sidebar{width:240px;flex-shrink:0;background:var(--primary-dark);display:flex;flex-direction:column}
@@ -35,7 +36,7 @@ input,select,textarea{font:inherit}
 .topbar{height:58px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;padding:0 20px;gap:10px;flex-shrink:0}
 .loc-pill{display:flex;align-items:center;gap:5px;font-size:.825rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default);border:1px solid var(--border-input);border-radius:6px;padding:5px 10px}
 .main-area{flex:1;overflow-y:auto;background:var(--bg-default)}
-.page-wrap{max-width:900px;margin:0 auto;padding:22px 22px 130px}
+.page-wrap{max-width:1180px;margin:0 auto;padding:22px 22px 130px}
 .breadcrumb{font-size:.72rem;color:var(--text-secondary);margin-bottom:4px}
 .page-h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
 .page-title{font-size:1.4rem;font-weight:700;letter-spacing:-.02em}
@@ -55,8 +56,11 @@ input,select,textarea{font:inherit}
 .s-lbl{font-size:.77rem;font-weight:600;white-space:nowrap}
 .s-lbl.done{color:var(--success-dark)}.s-lbl.act{color:var(--text-primary)}.s-lbl.fut{color:var(--text-secondary)}
 .s-line{flex:1;height:1px;background:var(--border);margin:0 6px}
+.wizard-layout{display:flex;gap:20px;align-items:flex-start}
+.wizard-main{flex:1;min-width:0}
+@media(max-width:1280px){.wizard-layout{flex-direction:column}.queue-panel{width:100%;position:static;order:-1}}
 .card{background:#fff;border-radius:var(--radius-card);box-shadow:var(--shadow-card);margin-bottom:10px;overflow:hidden}
-.card-hd{padding:14px 18px;border-bottom:1px solid var(--border)}
+.card-hd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px}
 .card-hd h3{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary)}
 .card-bd{padding:18px}
 .collapsed{display:flex;align-items:center;background:#fff;border:1px solid var(--border);border-radius:8px;padding:11px 15px;margin-bottom:8px;gap:10px}
@@ -71,24 +75,26 @@ input,select,textarea{font:inherit}
 .cl-radio{width:17px;height:17px;border-radius:50%;border:2px solid var(--border-input);flex-shrink:0;transition:all 140ms}
 .cl-radio.on{background:var(--info);border-color:var(--info);box-shadow:inset 0 0 0 3px #fff}
 .ctx-panel{margin-top:14px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.ctx-row{display:grid;grid-template-columns:155px 1fr;border-bottom:1px solid var(--border)}
+.ctx-row{display:grid;grid-template-columns:170px 1fr;border-bottom:1px solid var(--border)}
 .ctx-row:last-child{border-bottom:none}
-.ctx-lbl{padding:9px 13px;font-size:.72rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default)}
-.ctx-val{padding:9px 13px;font-size:.85rem;color:var(--text-primary)}
+.ctx-lbl{padding:10px 14px;font-size:.75rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default)}
+.ctx-val{padding:10px 14px;font-size:.875rem;color:var(--text-primary)}
 .ctx-val.bal{font-weight:700;color:var(--info-dark)}
-.chip{display:inline-flex;align-items:center;height:21px;border-radius:4px;padding:0 7px;font-size:.7rem;font-weight:600;white-space:nowrap}
-.c-ok{background:var(--success-bg);color:var(--success-dark)}.c-info{background:var(--info-bg);color:var(--info-dark)}.c-warn{background:#fef3c7;color:#b45309}.c-danger{background:#fee2e2;color:#b91c1c}.c-muted{background:#f1f5f9;color:var(--text-secondary)}.c-purple{background:#f3e8ff;color:#7c3aed}
+.chip{display:inline-flex;align-items:center;height:24px;border-radius:4px;padding:0 8px;font-size:.75rem;font-weight:600;white-space:nowrap}
+.c-ok{background:var(--success-bg);color:var(--success-dark)}.c-info{background:var(--info-bg);color:var(--info-dark)}.c-warn{background:#fef3c7;color:#b45309}.c-danger{background:#fee2e2;color:#b91c1c}.c-muted{background:#f1f5f9;color:var(--text-secondary)}
 .btn{border-radius:6px;padding:7px 14px;font-size:.85rem;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 140ms}
 .btn-blue{background:var(--info);color:#fff}.btn-blue:hover{background:var(--info-hover)}.btn-blue:disabled{opacity:.4;cursor:not-allowed}
 .btn-green{background:var(--secondary);color:#fff}.btn-green:hover{background:var(--secondary-dark)}
 .btn-out{background:#fff;color:var(--text-primary);border:1px solid var(--border-input)}.btn-out:hover{border-color:var(--primary);background:var(--hover-row)}
+.btn-out:disabled{opacity:.45;cursor:not-allowed}
 .btn-sm{padding:5px 10px;font-size:.78rem}
 .btn-amber{border-color:#fed7aa !important;color:#92400e !important}.btn-amber:hover{background:#fff7ed !important}
-.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:9px;margin-top:6px}
-.svc-card{border:1px solid var(--border);border-radius:10px;padding:14px 12px;cursor:pointer;transition:all 140ms}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:9px;margin-top:6px}
+.svc-card{border:1px solid var(--border);border-radius:10px;padding:14px 12px;cursor:pointer;transition:all 140ms;position:relative}
 .svc-card:hover:not(.inelig){border-color:var(--border-input-hover);background:var(--hover-row)}
 .svc-card.sel-svc{border:1.5px solid var(--info);background:var(--info-bg)}
-.svc-card.inelig{opacity:.5;cursor:not-allowed}
+.svc-card.inelig{opacity:.55;cursor:not-allowed}
+.svc-tag{position:absolute;top:8px;right:8px;font-size:.65rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase}
 .px-row{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:8px;padding:10px 13px;margin-bottom:7px}
 .px-av{width:30px;height:30px;border-radius:50%;background:var(--info);color:#fff;display:grid;place-items:center;font-size:.7rem;font-weight:700;flex-shrink:0}
 .px-av.sec{background:#7c3aed}
@@ -99,7 +105,7 @@ input,select,textarea{font:inherit}
 .px-res{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;cursor:pointer;border-bottom:1px solid var(--border)}
 .px-res:last-child{border-bottom:none}.px-res:hover{background:var(--hover-row)}
 .day-grid{display:flex;flex-direction:column;gap:5px;margin-top:8px}
-.d-row{display:grid;grid-template-columns:44px 1fr 1fr;align-items:center;gap:9px;border-radius:8px;padding:9px 12px}
+.d-row{display:grid;grid-template-columns:46px 1fr 1fr;align-items:center;gap:9px;border-radius:8px;padding:9px 12px}
 .d-row.chk{background:#f0fdf4;border:1px solid #bbf7d0}
 .d-row.uchk{background:var(--bg-default);border:1px solid var(--border);opacity:.6}
 .d-badge{background:var(--primary-dark);color:#fff;border-radius:5px;padding:5px 3px;font-size:.67rem;font-weight:700;text-align:center;line-height:1.3}
@@ -112,12 +118,14 @@ input,select,textarea{font:inherit}
 .b-info{background:var(--info-bg);border:1px solid #bfdbfe;color:#1e40af}
 .b-warn{background:#fef3c7;border:1px solid #fde68a;color:#92400e}
 .b-ok{background:var(--success-bg);border:1px solid #a7f3d0;color:var(--success-dark)}
+.b-danger{background:#fee2e2;border:1px solid #fecaca;color:#991b1b}
 .dg-lbl{font-size:.78rem;font-weight:700;color:var(--text-primary);margin:14px 0 7px;padding-bottom:6px;border-bottom:1px solid var(--border)}
 .slots-row{display:flex;flex-wrap:wrap;gap:9px}
 .no-slots{color:var(--text-secondary);font-size:.78rem;padding:6px 3px;font-style:italic}
-.s-card{width:205px;min-height:180px;border:1px solid var(--border);border-radius:10px;padding:11px;cursor:pointer;position:relative;transition:all 140ms;display:flex;flex-direction:column;gap:3px;background:#fff}
+.s-card{width:212px;min-height:190px;border:1px solid var(--border);border-radius:10px;padding:11px;cursor:pointer;position:relative;transition:all 140ms;display:flex;flex-direction:column;gap:3px;background:#fff}
 .s-card:hover{border-color:var(--border-input-hover);box-shadow:0 2px 8px rgba(0,0,0,.07)}
 .s-card.sel-slot{border:1.5px solid var(--info);background:var(--info-bg)}
+.s-card.blocked{opacity:.6;cursor:not-allowed}
 .s-sel-dot{position:absolute;top:7px;right:7px;width:17px;height:17px;border-radius:50%;border:2px solid var(--border-input);background:#fff;transition:all 140ms}
 .s-card.sel-slot .s-sel-dot{background:var(--info);border-color:var(--info);box-shadow:inset 0 0 0 3px #fff}
 .cap-bar-w{margin-top:auto;padding-top:5px}
@@ -125,27 +133,30 @@ input,select,textarea{font:inherit}
 .cap-fill{height:100%;border-radius:3px}
 .cap-fill.low{background:var(--success)}.cap-fill.med{background:var(--warning)}.cap-fill.full{background:var(--danger)}
 .s-btns{display:flex;gap:5px;margin-top:7px}
-.out-banner{border-radius:8px;padding:13px 17px;border-left:4px solid;margin-bottom:14px}
+.out-banner{border-radius:8px;padding:14px 18px;border-left:4px solid;margin-bottom:14px}
 .out-banner.confirmed{background:var(--success-bg);border-left-color:var(--secondary)}
 .out-banner.pending{background:#fef3c7;border-left-color:var(--warning)}
 .out-banner.waitlisted{background:var(--info-bg);border-left-color:var(--info)}
-.out-t{font-size:1rem;font-weight:700}.out-s{font-size:.78rem;margin-top:3px;opacity:.8}
+.out-banner.authhold{background:#fef3c7;border-left-color:var(--warning)}
+.out-banner.paymenthold{background:#fee2e2;border-left-color:var(--danger)}
+.out-t{font-size:1rem;font-weight:700}.out-s{font-size:.78rem;margin-top:3px;opacity:.85}
 .rev-grid{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:12px}
-.rev-row{display:grid;grid-template-columns:150px 1fr;border-bottom:1px solid var(--border)}
+.rev-row{display:grid;grid-template-columns:170px 1fr;border-bottom:1px solid var(--border)}
 .rev-row:last-child{border-bottom:none}
-.rl{padding:9px 13px;font-size:.72rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default)}
-.rv{padding:9px 13px;font-size:.85rem;color:var(--text-primary)}
-.ovr-panel{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:15px;margin-top:11px}
+.rl{padding:10px 14px;font-size:.75rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default)}
+.rv{padding:10px 14px;font-size:.875rem;color:var(--text-primary)}
+.ovr-panel{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:16px;margin-top:12px}
 .ovr-panel label{display:block;font-size:.72rem;font-weight:600;color:var(--text-secondary);margin-bottom:4px;margin-top:10px}
 .ovr-panel select,.ovr-panel textarea,.ovr-panel input{width:100%;border:1px solid var(--border-input);border-radius:6px;padding:7px 10px;font-size:.85rem;background:#fff}
 .ovr-panel textarea{resize:vertical;min-height:60px}
+.ovr-note{font-size:.75rem;color:var(--text-secondary);margin-top:6px}
 .succ-state{text-align:center;padding:56px 22px}
-.succ-icon{width:60px;height:60px;border-radius:50%;background:var(--success-bg);display:grid;place-items:center;margin:0 auto 18px;font-size:1.8rem;color:var(--success-dark);font-weight:700}
+.succ-icon{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;font-size:1.7rem}
 .succ-t{font-size:1.3rem;font-weight:700;margin-bottom:5px}
-.succ-s{font-size:.85rem;color:var(--text-secondary);margin-bottom:20px}
+.succ-s{font-size:.85rem;color:var(--text-secondary);margin-bottom:8px}
 .sf{position:fixed;bottom:0;left:240px;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:13px 22px;display:flex;justify-content:space-between;align-items:center;z-index:30}
 .sf-r{display:flex;gap:7px}
-.drawer{position:fixed;right:0;top:58px;bottom:0;width:460px;background:#fff;border-left:1px solid var(--border);box-shadow:-4px 0 16px rgba(0,0,0,.08);display:flex;flex-direction:column;z-index:50;transform:translateX(100%);transition:transform 240ms ease}
+.drawer{position:fixed;right:0;top:58px;bottom:0;width:480px;background:#fff;border-left:1px solid var(--border);box-shadow:-4px 0 16px rgba(0,0,0,.08);display:flex;flex-direction:column;z-index:50;transform:translateX(100%);transition:transform 240ms ease}
 .drawer.open{transform:translateX(0)}
 .drw-hd{padding:15px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .drw-body{flex:1;overflow-y:auto;padding:18px}
@@ -154,36 +165,58 @@ input,select,textarea{font:inherit}
 .x-btn:hover{background:var(--hover-row)}
 .fg{margin-bottom:10px}
 .fg label{display:block;font-size:.72rem;font-weight:600;color:var(--text-secondary);margin-bottom:4px}
-.fg select,.fg input{width:100%;border:1px solid var(--border-input);border-radius:6px;padding:7px 10px;font-size:.85rem;background:#fff}
+.fg select,.fg input,.fg textarea{width:100%;border:1px solid var(--border-input);border-radius:6px;padding:7px 10px;font-size:.85rem;background:#fff}
+.fg textarea{resize:vertical;min-height:56px}
 .form-r{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.toast{position:fixed;top:75px;right:22px;background:var(--primary-dark);color:#f8fafc;padding:11px 16px;border-radius:8px;font-size:.85rem;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:100;transform:translateY(-8px);opacity:0;transition:all 220ms;pointer-events:none;max-width:320px}
+.toast{position:fixed;top:75px;right:22px;background:var(--primary-dark);color:#f8fafc;padding:11px 16px;border-radius:8px;font-size:.85rem;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:100;transform:translateY(-8px);opacity:0;transition:all 220ms;pointer-events:none;max-width:340px}
 .toast.show{transform:translateY(0);opacity:1}
 .divider{height:1px;background:var(--border);margin:14px 0}
 .sec-lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);margin:12px 0 7px}
 .staff-sec{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.queue-panel{width:260px;flex-shrink:0;background:var(--bg-default);border:1px solid var(--border);border-radius:10px;padding:16px;position:sticky;top:112px}
+.qp-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);margin-bottom:8px}
+.qp-h{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);margin:12px 0 6px}
+.qp-h:first-of-type{margin-top:0}
+.qp-now{display:flex;align-items:center;gap:7px;font-weight:700;color:var(--text-primary);font-size:.85rem;padding:4px 0}
+.qp-dot{width:8px;height:8px;border-radius:50%;background:var(--info);flex-shrink:0}
+.qp-next{display:flex;align-items:center;gap:7px;color:var(--text-secondary);font-size:.82rem;padding:5px 4px;cursor:pointer;border-radius:6px;background:none;border:none;width:100%;text-align:left}
+.qp-next:hover{background:var(--hover-row)}
+.qp-ring{width:13px;height:13px;border-radius:50%;border:2px solid var(--border-input);flex-shrink:0}
+.qp-done-row{display:flex;align-items:center;gap:7px;color:var(--success-dark);font-size:.82rem;padding:4px 0}
+.qp-check{width:14px;height:14px;border-radius:50%;background:var(--success-bg);color:var(--success-dark);display:grid;place-items:center;font-size:9px;font-weight:700;flex-shrink:0}
+.qp-empty{color:var(--text-secondary);font-size:.76rem;font-style:italic}
+.px-tabs{display:flex;gap:6px;margin-bottom:10px;align-items:center}
+.px-tab{padding:7px 14px;border-radius:8px;font-size:.82rem;font-weight:600;border:1.5px solid var(--border-input);background:transparent;color:var(--text-secondary);cursor:pointer}
+.px-tab.act{background:var(--primary-dark);color:#fff;border-color:var(--primary-dark)}
+.mkt-panel{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:18px;margin:8px 0 14px}
+.mkt-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+@media(max-width:720px){.mkt-grid{grid-template-columns:1fr}}
+.mkt-card{border:1px solid var(--border);border-radius:8px;padding:14px}
+.mkt-card.disabled{opacity:.55}
+.mkt-price{font-weight:700;color:var(--info-dark);font-size:1rem;margin-top:6px}
+.mkt-std{font-size:.78rem;color:var(--text-secondary)}
+.mkt-disable-reason{font-size:.72rem;color:var(--danger);margin-top:6px}
+.buying-chip{background:var(--info-bg);color:var(--info-dark)}
+.svc-remove{background:none;border:none;color:var(--danger);font-size:.72rem;font-weight:600;cursor:pointer;margin-top:6px;padding:0}
+.wl-item{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);border-radius:8px;padding:10px 13px;margin-bottom:7px}
+.instr-empty{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 15px;font-size:.8rem;color:#991b1b;margin-top:8px}
+.dim-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;font-size:.75rem}
+.dim-ok{color:var(--success-dark)}.dim-bad{color:var(--danger);font-weight:700}
+.overlap-block{font-size:.72rem;color:var(--danger);margin-top:4px;font-weight:600}
+.overlap-note{font-size:.72rem;color:var(--text-secondary);margin-top:4px;font-style:italic}
+.gen-dates{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-top:10px;font-size:.8rem;line-height:1.6}
+.mu-rules{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin-top:8px;font-size:.78rem;color:var(--text-secondary)}
+.mu-rules div{margin-bottom:3px}
+.req-note{font-size:.72rem;color:var(--text-secondary);margin-top:4px}
 </style>
 </head>
 <body>
 <div class="app">
-<aside class="sidebar">
-  <div class="sb-logo"><div class="sb-badge">Z</div><strong>Zalexy</strong></div>
-  <nav class="sb-nav">
-    <div class="sb-section">Scheduling</div>
-    <button class="nav-item" onclick="location.href='calendar-master.html'"><span class="ms">calendar_today</span>Calendar</button>
-    <button class="nav-item active"><span class="ms">add_circle</span>New Booking</button>
-    <button class="nav-item" data-noop><span class="ms">group</span>Waitlist</button>
-    <div class="sb-section">Clients</div>
-    <button class="nav-item" data-noop><span class="ms">person</span>Profiles</button>
-    <div class="sb-section">Prototypes</div>
-    <button class="nav-item active"><span class="ms">edit_calendar</span>Staff Booking</button>
-    <button class="nav-item" onclick="location.href='booking-flow-client.html'"><span class="ms">person</span>Client Booking</button>
-    <button class="nav-item" onclick="location.href='calendar-master.html'"><span class="ms">grid_on</span>Calendar Master</button>
-  </nav>
-</aside>
+  <script src="shared-sidebar.js" data-inject="true"></script>
 <div class="main-shell">
   <div class="topbar">
     <div class="loc-pill"><span class="ms" style="font-size:15px">location_on</span>Solar Swim (PDT)</div>
-    <button class="btn btn-out btn-sm" data-noop>Michael Torres ▾</button>
+    <button class="btn btn-out btn-sm" data-noop>Michael Torres &#9662;</button>
   </div>
   <main class="main-area">
     <div class="page-wrap">
@@ -191,14 +224,14 @@ input,select,textarea{font:inherit}
         <div>
           <div class="breadcrumb">Scheduling / New Booking</div>
           <h1 class="page-title">New Booking</h1>
-          <p class="page-sub">Book a session — Private, Semi-Private, or Group</p>
+          <p class="page-sub">Private / Semi-Private / Group</p>
         </div>
         <button class="btn btn-out" onclick="history.back()">Cancel</button>
       </div>
       <div class="role-row">
         <span class="role-lbl">Demo Role:</span>
         <button class="btn btn-out btn-sm" id="rStaff" onclick="setRole('staff')">Staff</button>
-        <button class="btn btn-blue btn-sm" id="rManager" onclick="setRole('manager')">Manager ✓</button>
+        <button class="btn btn-blue btn-sm" id="rManager" onclick="setRole('manager')">Manager &#10003;</button>
         <button class="btn btn-out btn-sm" id="rFD" onclick="setRole('frontdesk')">Front Desk</button>
       </div>
       <div class="type-tabs">
@@ -207,7 +240,13 @@ input,select,textarea{font:inherit}
         <button class="t-tab" id="tabPrivate" onclick="switchType('private')">Private</button>
       </div>
       <div class="stepper" id="stepper"></div>
-      <div id="stepsArea"></div>
+      <div class="wizard-layout" id="wizardLayout">
+        <div class="wizard-main">
+          <div id="participantTabs"></div>
+          <div id="stepsArea"></div>
+        </div>
+        <div class="queue-panel" id="queuePanel" style="display:none"></div>
+      </div>
     </div>
   </main>
 </div>
@@ -215,16 +254,9 @@ input,select,textarea{font:inherit}
 
 <!-- DRAWER -->
 <div class="drawer" id="cDrawer">
-  <div class="drw-hd"><span style="font-size:.95rem;font-weight:700">Create New Class Slot</span><button class="x-btn" onclick="closeDrawer()"><span class="ms">close</span></button></div>
-  <div class="drw-body">
-    <div class="form-r"><div class="fg"><label>Service</label><select><option>Swimming</option><option>Basketball</option><option>Fitness</option></select></div><div class="fg"><label>Class Type</label><select><option>Group</option><option>Semi-Private</option><option>Private</option></select></div></div>
-    <div class="form-r"><div class="fg"><label>Level</label><select><option>Beginner 2</option><option>Beginner 1</option><option>Intermediate</option></select></div><div class="fg"><label>Instructor</label><select><option>Michael Torres</option><option>Sarah Chen</option><option>James Wright</option></select></div></div>
-    <div class="form-r"><div class="fg"><label>Date</label><input type="date" value="2026-09-14"></div><div class="fg"><label>Start Time</label><input type="time" value="12:30"></div></div>
-    <div class="form-r"><div class="fg"><label>Duration</label><select><option>30 min</option><option>45 min</option><option selected>60 min</option><option>90 min</option></select></div><div class="fg"><label>Capacity</label><input type="number" value="8" min="1"></div></div>
-    <div class="fg"><label>Resource</label><select><option>Pool Lane 8</option><option>Pool Lane 4</option><option>Pool Lane 10</option></select></div>
-    <div class="fg"><label>Notes (optional)</label><textarea style="width:100%;border:1px solid var(--border-input);border-radius:6px;padding:8px 10px;resize:vertical;min-height:56px;font-size:.85rem"></textarea></div>
-  </div>
-  <div class="drw-foot"><button class="btn btn-out" onclick="closeDrawer()">Cancel</button><button class="btn btn-blue" onclick="createAndSelect()">Create &amp; Select</button></div>
+  <div class="drw-hd"><span style="font-size:.95rem;font-weight:700" id="drwTitle">Create New Class Slot</span><button class="x-btn" onclick="closeDrawer()"><span class="ms">close</span></button></div>
+  <div class="drw-body" id="drwBody"></div>
+  <div class="drw-foot" id="drwFoot"></div>
 </div>
 
 <!-- FOOTER -->
@@ -242,253 +274,969 @@ input,select,textarea{font:inherit}
 <div class="toast" id="toast"></div>
 
 <script>
-const S={type:'group',role:'manager',step:1,client:null,pax:[],days:['MON','TUE','WED'],rec:'credits',slot:null,ovr:false,paxSearch:false,success:false,wl:false};
-const CL=[{id:'mg',nm:'Maria Garcia',rel:'Primary · Caroline Garcia household',lvl:'Swim Beginner 2',fund:'Regional Center',fs:'RCEB Pending',bal:'5 / 8 sessions',mu:1,assess:'Approved',rest:'None',init:'MG'},
-  {id:'cg',nm:'Carlos Garcia',rel:'Spouse · Caroline Garcia household',lvl:'Basketball',fund:'Self Pay',fs:'Active',bal:'2 / 4 sessions',mu:0,assess:'N/A',rest:'None',init:'CG'},
-  {id:'as',nm:'Ava Smith',rel:'Single account',lvl:'Swim Beginner 1',fund:'Voucher',fs:'Active',bal:'7 / 8 sessions',mu:0,assess:'Approved',rest:'None',init:'AS'},
-  {id:'lb',nm:'Lucas Brown',rel:'Brown Family',lvl:'Swim Unassigned',fund:'Self Pay',fs:'Active',bal:'4 / 4 sessions',mu:0,assess:'Pending',rest:'None',init:'LB'},
-  {id:'lt',nm:'Liam Turner',rel:'Turner Family',lvl:'Swim Beginner 2',fund:'Self Pay',fs:'Active',bal:'3 / 8 sessions',mu:1,assess:'Approved',rest:'None',init:'LT'}];
-const SG=[{id:'g1',day:'MON Sep 14',time:'12:30\u20131:55 PM',svc:'Group Swim',lvl:'Beginner 2',inst:'Michael Torres',loc:'Pool Lane 8',spots:3,cap:8},
-  {id:'g2',day:'MON Sep 14',time:'4:00\u20135:00 PM',svc:'Group Swim',lvl:'Beginner 2',inst:'Sarah Chen',loc:'Pool Lane 4',spots:8,cap:8},
-  {id:'g3',day:'WED Sep 16',time:'9:00\u201310:30 AM',svc:'Group Swim',lvl:'Beginner 2',inst:'Sarah Chen',loc:'Pool Lane 10',spots:6,cap:8},
-  {id:'g4',day:'WED Sep 16',time:'6:00\u20137:25 AM',svc:'Group Swim',lvl:'Beginner 2',inst:'Michael Torres',loc:'Pool Lane 2',spots:1,cap:8}];
-const SS=[{id:'s1',day:'MON Sep 14',time:'12:30\u20131:30 PM',svc:'Semi-Private Swim',lvl:'Beginner 2',inst:'Michael Torres',loc:'Pool Lane 8',px:1,max:3},
-  {id:'s2',day:'WED Sep 16',time:'9:00\u201310:00 AM',svc:'Semi-Private Swim',lvl:'Beginner 2',inst:'Sarah Chen',loc:'Pool Lane 10',px:2,max:3}];
-const SP=[{id:'p1',day:'MON Sep 14',time:'12:30\u20131:30 PM',svc:'Private Swim',lvl:'Beginner 2',inst:'Michael Torres',loc:'Pool Lane 8'},
-  {id:'p2',day:'MON Sep 14',time:'3:00\u20134:00 PM',svc:'Private Swim',lvl:'Beginner 2',inst:'James Wright',loc:'Pool Lane 6'},
-  {id:'p3',day:'WED Sep 16',time:'8:00\u20139:00 AM',svc:'Private Swim',lvl:'Beginner 2',inst:'Sarah Chen',loc:'Pool Lane 4'}];
+/* ---------- Reference data ---------- */
+const POLICY={requiredParticipants:2,source:'policy engine, this service'};
+const HORIZON_DAYS=7;
+const TODAY=new Date(2026,8,8); // Sep 8, 2026
+const CLOSURES={'2026-09-23':'Staff Training Day'};
 const AD=['MON','TUE','WED','THU','FRI','SAT','SUN'];
+const DAY_JS={MON:1,TUE:2,WED:3,THU:4,FRI:5,SAT:6,SUN:0};
 const DD={MON:'Sep 14',TUE:'Sep 15',WED:'Sep 16',THU:'Sep 17',FRI:'Sep 18',SAT:'Sep 19',SUN:'Sep 20'};
+const DATE_ISO={MON:'2026-09-14',TUE:'2026-09-15',WED:'2026-09-16',THU:'2026-09-17',FRI:'2026-09-18',SAT:'2026-09-19',SUN:'2026-09-20'};
+const PRIVATE_PRICE={30:45,60:70};
 
-function render(){renderStepper();renderSteps();renderFooter();}
+const CLIENTS={
+ mg:{id:'mg',nm:'Maria Garcia',email:'maria.garcia@email.com',phone:'555-0142',cid:'C-10231',rel:'Primary · Caroline Garcia household',lvl:'Beginner 2',fund:'Regional Center',fs:'RCEB Pending',bal:'5 / 8 sessions',balAvail:5,balTotal:8,mu:1,pkg:'8-Class Group Pack (purchased Aug 2026)',voucher:'RC Auth #RC-2291, expires Oct 31, 2026',assess:'Approved — Aug 20, 2026',rest:'None',labels:['Priority Family'],notes:'Prefers afternoon sessions.',init:'MG',female:false,paymentIssue:false},
+ cg:{id:'cg',nm:'Carlos Garcia',email:'carlos.garcia@email.com',phone:'555-0143',cid:'C-10232',rel:'Spouse · Caroline Garcia household',lvl:'Intermediate',fund:'Self Pay',fs:'Active',bal:'2 / 4 sessions',balAvail:2,balTotal:4,mu:0,pkg:'4-Class Basketball Pack',voucher:'—',assess:'N/A',rest:'None',labels:[],notes:'Card on file declined Sep 5, 2026.',init:'CG',female:false,paymentIssue:true,membership:'Family Membership Plus'},
+ as:{id:'as',nm:'Ava Smith',email:'ava.smith@email.com',phone:'555-0201',cid:'C-10233',rel:'Single account',lvl:'Beginner 1',fund:'Voucher',fs:'Active',bal:'7 / 8 sessions',balAvail:7,balTotal:8,mu:0,pkg:'8-Class Group Pack',voucher:'Voucher Active',assess:'Approved',rest:'Female instructor only',labels:[],notes:'Female instructor only.',init:'AS',female:true,paymentIssue:false},
+ lb:{id:'lb',nm:'Lucas Brown',email:'lucas.brown@email.com',phone:'555-0301',cid:'C-10234',rel:'Brown Family',lvl:'Unassigned',fund:'Self Pay',fs:'Active',bal:'4 / 4 sessions',balAvail:4,balTotal:4,mu:0,pkg:'—',voucher:'—',assess:'Pending',rest:'None',labels:[],notes:'—',init:'LB',female:false,paymentIssue:false},
+ lt:{id:'lt',nm:'Liam Turner',email:'liam.turner@email.com',phone:'555-0410',cid:'C-10235',rel:'Turner Family',lvl:'Beginner 2',fund:'Self Pay',fs:'Active',bal:'3 / 8 sessions',balAvail:3,balTotal:8,mu:1,pkg:'8-Class Pack',voucher:'—',assess:'Approved',rest:'None',labels:[],notes:'On Swim waitlist, Thu PM preferred.',init:'LT',female:false,paymentIssue:false}
+};
+const CL=Object.values(CLIENTS);
+
+const SERVICE_CATALOG={
+ mg:[{id:'swim',nm:'Swim',wet:true,status:'ok',bal:'5 / 8',balAvail:5},{id:'fit',nm:'Fitness',wet:false,status:'ok',bal:'3 / 6',balAvail:3},{id:'bb',nm:'Basketball',wet:false,status:'buy',reason:'No pack'}],
+ cg:[{id:'bb',nm:'Basketball',wet:false,status:'buy',reason:'No pack'}],
+ as:[{id:'swim',nm:'Swim',wet:true,status:'ok',bal:'7 / 8',balAvail:7}],
+ lb:[{id:'swim',nm:'Swim',wet:true,status:'hard',reason:'Assessment required'}],
+ lt:[{id:'swim',nm:'Swim',wet:true,status:'ok',bal:'3 / 8',balAvail:3}]
+};
+const MARKET={bb:{svcNm:'Basketball',block:{nm:'Basketball 5-Pack',units:5,standard:150,member:135},sub:{nm:'Basketball Monthly',units:'8 units / month',standard:89,member:79},membershipNeeded:'Family Membership Plus'}};
+
+const SG=[
+ {id:'g1',day:'MON',date:'2026-09-14',time:'12:30–1:55 PM',start:750,end:835,inst:'mt',loc:'Pool Lane 8',spots:3,cap:8},
+ {id:'g2',day:'MON',date:'2026-09-14',time:'4:00–5:00 PM',start:960,end:1020,inst:'sc',loc:'Pool Lane 4',spots:8,cap:8},
+ {id:'g3',day:'WED',date:'2026-09-16',time:'9:00–10:30 AM',start:540,end:630,inst:'sc',loc:'Pool Lane 10',spots:6,cap:8},
+ {id:'g4',day:'WED',date:'2026-09-16',time:'6:00–7:25 AM',start:360,end:445,inst:'mt',loc:'Pool Lane 2',spots:7,cap:8}
+];
+const SS=[
+ {id:'s1',day:'MON',date:'2026-09-14',time:'12:30–1:30 PM',start:750,end:810,inst:'mt',loc:'Pool Lane 8',roster:1},
+ {id:'s2',day:'WED',date:'2026-09-16',time:'9:00–10:00 AM',start:540,end:600,inst:'sc',loc:'Pool Lane 10',roster:2}
+];
+const SP=[
+ {id:'p1',day:'MON',date:'2026-09-14',time:'12:30–1:30 PM',start:750,end:810,inst:'mt',loc:'Pool Lane 8',len:60},
+ {id:'p2',day:'MON',date:'2026-09-14',time:'3:00–3:30 PM',start:900,end:930,inst:'jw',loc:'Pool Lane 6',len:30},
+ {id:'p3',day:'WED',date:'2026-09-16',time:'8:00–9:00 AM',start:480,end:540,inst:'sc',loc:'Pool Lane 4',len:60}
+];
+const INSTRUCTORS={mt:{nm:'Michael Torres',female:false,days:['MON','WED']},sc:{nm:'Sarah Chen',female:true,days:['MON','WED']},jw:{nm:'James Wright',female:false,days:['MON']}};
+const WL_SEED={matched:[{nm:'Liam Turner',wanted:'Swim Beginner 2 — wanted Thu afternoon'},{nm:'Noah Kim',wanted:'Swim Beginner 2 — wanted Thu evening'}],notMatched:[{nm:'Ava Smith',wanted:'Swim Beginner 1 — any day',reason:'level does not match'}]};
+
+const OUTCOME_META={
+ CONFIRMED:{icon:'check_circle',bg:'#d1fae5',fg:'#047857',title:'Booking Confirmed',chipClass:'c-ok',line:'Booked. A session is reserved.',bannerClass:'confirmed'},
+ PENDING_PARTNER:{icon:'hourglass_top',bg:'#fef3c7',fg:'#b45309',title:'Booked — Waiting on a Partner',chipClass:'c-warn',line:'Waiting for a second participant.',bannerClass:'pending'},
+ WAITLISTED:{icon:'list_alt',bg:'#eff6ff',fg:'#1d4ed8',title:'Added to Waitlist',chipClass:'c-info',line:'On the waitlist. Nothing reserved yet.',bannerClass:'waitlisted'},
+ AUTHORIZATION_HOLD:{icon:'hourglass_top',bg:'#fef3c7',fg:'#b45309',title:'Booked — Awaiting Authorization',chipClass:'c-warn',line:'Waiting on Regional Center authorization.',bannerClass:'authhold'},
+ PAYMENT_HOLD:{icon:'warning',bg:'#fee2e2',fg:'#b91c1c',title:'Booked — Awaiting Payment',chipClass:'c-danger',line:'Waiting on payment.',bannerClass:'paymenthold'}
+};
+
+/* ---------- State ---------- */
+let S={
+ role:'manager',type:'group',step:1,success:false,outcome:null,
+ participants:[],activePIdx:0,queue:[],queuePos:0,
+ fundingPanelOpen:false,overridesApplied:[],
+ slotReservations:{}, // slotId -> [pIdx,...]
+ marketOpenFor:null,
+ drawer:{open:false,mode:'form',svc:'Swim',ctype:'Group',level:'Beginner 2',inst:'mt',date:'2026-09-17',time:'16:00',dur:'60',cap:8,resource:'Pool Lane 4',notes:'',pulled:[],created:null}
+};
+
+/* ---------- Helpers ---------- */
+function catalogFor(clientId){return SERVICE_CATALOG[clientId]||[];}
+function sortDryWet(arr){return [...arr].sort((a,b)=>(a.wet?1:0)-(b.wet?1:0));}
+function fmtMoney(n){return '$'+Number(n).toFixed(2);}
+function pxObj(pIdx){return S.participants[pIdx];}
+function curItem(){return S.queue[S.queuePos];}
+function curSvc(){const it=curItem();if(!it)return null;return S.participants[it.pIdx].services[it.sIdx];}
+function curParticipant(){const it=curItem();if(!it)return null;return S.participants[it.pIdx];}
+function slotPool(){return S.type==='group'?SG:S.type==='semi'?SS:SP;}
+function findSlot(id){return slotPool().find(s=>s.id===id);}
+function muDetailStr(c){return c.mu>0?`${c.mu} available (Swim / ${c.lvl} / Solar Swim, no expiration, Booking Horizon ${HORIZON_DAYS} days)`:'None';}
+
+function withFocusPreserved(fn){
+  const ae=document.activeElement;
+  const id=ae&&ae.id?ae.id:null;
+  let start=null,end=null;
+  if(ae&&typeof ae.selectionStart==='number'){start=ae.selectionStart;end=ae.selectionEnd;}
+  fn();
+  if(id){
+    const el=document.getElementById(id);
+    if(el){el.focus();if(start!==null&&el.setSelectionRange){try{el.setSelectionRange(start,end);}catch(e){}}}
+  }
+}
+
+function matchInstructors(client,days){
+  const restrictFemale=client.rest==='Female instructor only';
+  let pool=Object.entries(INSTRUCTORS);
+  const afterRestrict=pool.filter(([k,i])=>!restrictFemale||i.female);
+  const afterAvail=afterRestrict.filter(([k,i])=>!days.length||days.some(d=>i.days.includes(d)));
+  return {list:afterAvail.map(([k])=>k),restrictFailed:restrictFemale&&afterRestrict.length===0,availFailed:afterRestrict.length>0&&afterAvail.length===0};
+}
+
+function generateDates(days,rec,creditsAvail,searchThrough){
+  const out=[],skipped=[];let d=new Date(TODAY);d.setDate(d.getDate()+1);
+  const maxIter=90;let iter=0;
+  const stEnd=searchThrough?new Date(searchThrough+'T00:00:00'):null;
+  while(iter<maxIter && out.length<creditsAvail){
+    iter++;
+    const iso=d.toISOString().slice(0,10);
+    const dayName=Object.keys(DAY_JS).find(k=>DAY_JS[k]===d.getDay());
+    if(days.includes(dayName)){
+      if(CLOSURES[iso]){skipped.push({date:iso,label:CLOSURES[iso]});}
+      else{
+        out.push(iso);
+        if(rec==='once')break;
+        if(rec==='date'&&stEnd&&d>stEnd)break;
+      }
+    }
+    if(rec==='date'&&stEnd&&d>stEnd)break;
+    d.setDate(d.getDate()+1);
+  }
+  let stopReason='';
+  if(rec==='once')stopReason='One time only — a single session.';
+  else if(out.length>=creditsAvail)stopReason=`${out.length} of ${creditsAvail} available credits used. Cannot extend further — this uses all remaining credits in the current package.`;
+  else if(rec==='date')stopReason='Stopped at the selected end date.';
+  return {dates:out,skipped,stopReason};
+}
+
+function fmtDateLong(iso){
+  const d=new Date(iso+'T00:00:00');
+  const wd=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+  return `${wd} ${mo} ${d.getDate()}`;
+}
+
+/* ---------- Render pipeline ---------- */
+function render(){
+  withFocusPreserved(()=>{
+    renderTypeTabs();renderRoleButtons();renderStepper();renderParticipantTabs();
+    renderQueuePanel();renderStepsArea();renderFooter();renderDrawer();
+  });
+}
+function renderTypeTabs(){
+  ['tabGroup','tabSemi','tabPrivate'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  const m={group:'tabGroup',semi:'tabSemi',private:'tabPrivate'};
+  document.getElementById(m[S.type]).classList.add('active');
+}
+function renderRoleButtons(){
+  ['rStaff','rManager','rFD'].forEach(id=>{const b=document.getElementById(id);if(b)b.className='btn btn-out btn-sm';});
+  const m={staff:'rStaff',manager:'rManager',frontdesk:'rFD'};
+  const b=document.getElementById(m[S.role]);if(b)b.className='btn btn-blue btn-sm';
+}
 function renderStepper(){
   const L=['Client','Service','Preferences','Slots','Review'];
   document.getElementById('stepper').innerHTML=L.map((l,i)=>{
-    const n=i+1,st=n<S.step?'done':n===S.step?'act':'fut',ic=st==='done'?'&#10003;':n;
+    const n=i+1,st=S.success?'done':n<S.step?'done':n===S.step?'act':'fut',ic=st==='done'?'&#10003;':n;
     return`<div class="s-item"><div class="s-dot ${st}">${ic}</div><span class="s-lbl ${st}">${l}</span>${n<5?'<div class="s-line"></div>':''}</div>`;
-  }).join('');}
-function renderSteps(){
-  let h='';
-  for(let i=1;i<S.step;i++)h+=coll(i);
-  h+=S.success?succ():active(S.step);
-  document.getElementById('stepsArea').innerHTML=h;
-  const p=document.getElementById('pSrch');if(p)p.focus();
+  }).join('');
 }
-function coll(n){
-  const sm={1:S.client?`${S.client.nm} \u00b7 ${S.client.lvl} \u00b7 ${S.client.fund}`:'',2:S.type==='semi'?`Semi-Private Swim \u00b7 ${S.pax.length} participant(s)`:'Swimming \u00b7 Beginner 2',3:`${S.days.slice(0,3).join('/')} \u00b7 ${S.rec==='credits'?'Until Credits Used':S.rec==='once'?'One Time':'Recurring'}`,4:S.slot?slotSm():''};
-  return`<div class="collapsed"><div class="chk-c">&#10003;</div><span class="coll-txt">Step ${n} \u2014 ${sm[n]}</span><button class="edit-btn" onclick="editStep(${n})">Edit</button></div>`;}
-function slotSm(){const a=S.type==='group'?SG:S.type==='semi'?SS:SP;const s=a.find(x=>x.id===S.slot);return s?`${s.day} \u00b7 ${s.time}`:''}
-function active(n){if(n===1)return step1();if(n===2)return step2();if(n===3)return step3();if(n===4)return step4();if(n===5)return step5();}
+function renderParticipantTabs(){
+  const el=document.getElementById('participantTabs');
+  if(S.participants.length<2||S.step>2||S.success){el.innerHTML='';return;}
+  el.innerHTML=`<div class="px-tabs">${S.participants.map((p,i)=>`<button class="px-tab ${i===S.activePIdx?'act':''}" onclick="switchActivePx(${i})">${p.client.nm}</button>`).join('')}
+    <button class="btn btn-out btn-sm" style="margin-left:auto;color:var(--danger);border-color:#fecaca" onclick="removeParticipant(${S.participants.length-1})">Remove ${S.participants[S.participants.length-1].client.nm}</button></div>`;
+}
+function renderQueuePanel(){
+  const el=document.getElementById('queuePanel');
+  const show=(S.step===3||S.step===4||S.step===5)&&!S.success&&S.queue.length>1;
+  if(!show){el.style.display='none';return;}
+  el.style.display='block';
+  const rows=S.queue.map((it,i)=>{
+    const p=S.participants[it.pIdx],sv=p.services[it.sIdx];
+    const svcCount=p.services.length;
+    return{i,label:`${p.client.nm} — ${sv.svcNm} (${it.sIdx+1} of ${svcCount})`,done:sv.slot!=null||sv.waitlist};
+  });
+  const now=rows[S.queuePos];
+  const next=rows.filter((r,i)=>i>S.queuePos);
+  const done=rows.filter((r,i)=>i<S.queuePos);
+  el.innerHTML=`<div class="qp-title">Schedule Queue</div>
+    <div class="qp-h">Now Scheduling</div>
+    ${now?`<div class="qp-now"><span class="qp-dot"></span>${now.label}</div>`:'<div class="qp-empty">—</div>'}
+    <div class="qp-h">Up Next</div>
+    ${next.length?next.map(r=>`<button class="qp-next" onclick="jumpQueue(${r.i})"><span class="qp-ring"></span>${r.label}</button>`).join(''):'<div class="qp-empty">Nothing queued</div>'}
+    <div class="qp-h">Done</div>
+    ${done.length?done.map(r=>`<div class="qp-done-row"><span class="qp-check">&#10003;</span>${r.label}</div>`).join(''):'<div class="qp-empty">(none yet)</div>'}`;
+}
+function renderStepsArea(){
+  let h='';
+  if(S.success){h=successBlock();document.getElementById('stepsArea').innerHTML=h;return;}
+  if(S.step>1)h+=collapse1();
+  if(S.step>2)h+=collapse2();
+  if(S.step===5){h+=collapseQueueSummary();h+=step5();}
+  else if(S.step===4){h+=queueDoneSummary();h+=step4();}
+  else if(S.step===3){h+=queueDoneSummary();h+=step3();}
+  else if(S.step===2)h+=step2();
+  else h+=step1();
+  document.getElementById('stepsArea').innerHTML=h;
+}
+function queueDoneSummary(){
+  if(S.queue.length<2||S.queuePos===0)return'';
+  const done=S.queue.slice(0,S.queuePos).map(it=>{const p=S.participants[it.pIdx],sv=p.services[it.sIdx];return`${p.client.nm} — ${sv.svcNm} scheduled`;});
+  return`<div class="collapsed"><div class="chk-c">&#10003;</div><span class="coll-txt">${done.join(' · ')}</span></div>`;
+}
+function collapseQueueSummary(){
+  if(!S.queue.length)return'';
+  const items=S.queue.map(it=>{const p=S.participants[it.pIdx],sv=p.services[it.sIdx];const s=sv.slot?findSlot(sv.slot):null;return`${p.client.nm} — ${sv.svcNm}${s?` (${DD[s.day]}, ${s.time})`:sv.waitlist?' (waitlisted)':''}`;});
+  return`<div class="collapsed"><div class="chk-c">&#10003;</div><span class="coll-txt">Preferences &amp; Slots — ${items.join(' · ')}</span><button class="edit-btn" onclick="editQueueFromStart()">Edit</button></div>`;
+}
+function collapse1(){
+  const names=S.participants.map(p=>p.client.nm).join(' + ');
+  return`<div class="collapsed"><div class="chk-c">&#10003;</div><span class="coll-txt">Step 1 — ${names}</span><button class="edit-btn" onclick="editStep(1)">Edit</button></div>`;
+}
+function collapse2(){
+  const desc=S.participants.map(p=>`${p.client.nm}: ${sortDryWet(p.services).map(s=>s.svcNm).join(', ')||'no service'}`).join(' · ');
+  return`<div class="collapsed"><div class="chk-c">&#10003;</div><span class="coll-txt">Step 2 — ${desc}</span><button class="edit-btn" onclick="editStep(2)">Edit</button></div>`;
+}
 
+/* ---------- Step 1 ---------- */
 function step1(){
   const q=(document.getElementById('cSrch')||{}).value||'';
-  const fc=CL.filter(c=>!q||c.nm.toLowerCase().includes(q.toLowerCase()));
-  return`<div class="card"><div class="card-hd"><h3>Step 1 \u2014 Select Client</h3></div><div class="card-bd">
-  <input class="s-input" id="cSrch" placeholder="Search by name, email, phone, or ID\u2026" oninput="renderSteps()" value="${q.replace(/"/g,'&quot;')}" autocomplete="off">
-  ${fc.length===0?'<p style="color:var(--text-secondary);font-size:.78rem;margin-top:10px;font-style:italic">No clients found. Check spelling or try a different identifier.</p>':''}
-  ${fc.map(c=>`<div class="cl-row ${S.client&&S.client.id===c.id?'sel':''}" onclick="selC('${c.id}')">
-    <div class="cl-radio ${S.client&&S.client.id===c.id?'on':''}"></div>
+  const qn=q.trim().toLowerCase();
+  const already=S.participants.map(p=>p.client.id);
+  const fc=qn.length<2?CL.filter(c=>!already.includes(c.id)):CL.filter(c=>!already.includes(c.id)&&(c.nm.toLowerCase().includes(qn)||c.email.toLowerCase().includes(qn)||c.phone.toLowerCase().includes(qn)||c.cid.toLowerCase().includes(qn)));
+  const primary=S.participants[0];
+  return`<div class="card"><div class="card-hd"><h3>Step 1 — Select Client</h3></div><div class="card-bd">
+  <input class="s-input" id="cSrch" placeholder="Search by name, email, phone, or ID…" oninput="render()" value="${q.replace(/"/g,'&quot;')}" autocomplete="off">
+  ${qn.length>0&&qn.length<2?'<p style="color:var(--text-secondary);font-size:.78rem;margin-top:8px">Type at least 2 characters to search.</p>':''}
+  ${qn.length>=2&&fc.length===0?'<p style="color:var(--text-secondary);font-size:.78rem;margin-top:10px;font-style:italic">No clients found. Check spelling or try a different identifier.</p>':''}
+  ${fc.map(c=>`<div class="cl-row ${primary&&primary.client.id===c.id?'sel':''}" onclick="selC('${c.id}')">
+    <div class="cl-radio ${primary&&primary.client.id===c.id?'on':''}"></div>
     <div style="flex:1"><div style="font-size:.875rem;font-weight:700">${c.nm}</div><div style="font-size:.775rem;color:var(--text-secondary);margin-top:2px">${c.rel}</div>
-      <div style="margin-top:3px"><span class="chip ${c.fs==='RCEB Pending'?'c-warn':'c-info'}">${c.fs}</span>${c.mu>0?`<span class="chip c-ok" style="margin-left:4px">${c.mu} Make-Up</span>`:''}</div>
+      <div style="margin-top:3px"><span class="chip ${c.fs==='RCEB Pending'?'c-warn':'c-info'}">${c.fund} · ${c.fs}</span>${c.mu>0?`<span class="chip c-ok" style="margin-left:4px">${c.mu} Make-Up</span>`:''}</div>
     </div><div style="font-size:.78rem;font-weight:700;color:var(--info-dark);white-space:nowrap">Balance: ${c.bal}</div>
   </div>`).join('')}
-  ${S.client?ctx(S.client):''}
-  </div></div>`;}
-
-function ctx(c){
-  const rows=[['Assessment',c.assess],['Swim Level',c.lvl],['Funding',`${c.fund} <span class="chip ${c.fs==='RCEB Pending'?'c-warn':'c-ok'}">${c.fs}</span>`],['Balance','BAL'],['Make-Up Tokens',c.mu>0?c.mu+' available':'None'],['Restrictions',c.rest]];
-  return`<div class="ctx-panel">${rows.map(([l,v])=>`<div class="ctx-row"><div class="ctx-lbl">${l}</div><div class="ctx-val${l==='Balance'?' bal':''}">${l==='Balance'?`Balance: ${c.bal}`:v}</div></div>`).join('')}</div>`;}
-
-function step2(){
-  const isSemi=S.type==='semi',isMgr=S.role==='manager',isFD=S.role==='frontdesk';
-  return`<div class="card"><div class="card-hd"><h3>Step 2 \u2014 ${isSemi?'Service &amp; Participants':'Service'}</h3></div><div class="card-bd">
-  <p style="font-size:.78rem;color:var(--text-secondary);margin-bottom:10px">Eligible services for <strong>${S.client.nm}</strong> \u00b7 ${S.client.lvl}</p>
-  <div class="svc-grid">
-    <div class="svc-card sel-svc"><div style="font-size:1.4rem;margin-bottom:7px">\U0001f3ca</div><div style="font-size:.875rem;font-weight:700">Swimming</div><div style="font-size:.72rem;color:var(--text-secondary);margin-top:3px">Beginner 2 \u00b7 Regional Center</div><div style="margin-top:5px"><span class="chip c-warn">RCEB Pending</span></div></div>
-    <div class="svc-card inelig"><div style="font-size:1.4rem;margin-bottom:7px">\U0001f3be</div><div style="font-size:.875rem;font-weight:700">Tennis</div><div style="font-size:.72rem;color:var(--danger);margin-top:3px">Level not matched</div></div>
-    <div class="svc-card inelig"><div style="font-size:1.4rem;margin-bottom:7px">\U0001f3c0</div><div style="font-size:.875rem;font-weight:700">Basketball</div><div style="font-size:.72rem;color:var(--danger);margin-top:3px">Assessment required</div></div>
-  </div>
-  ${isSemi?semiPax():''}
-  ${!isFD?`<div class="staff-sec"><div class="sec-lbl">Staff Filters</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
-      <div><label style="display:block;font-size:.72rem;font-weight:600;color:var(--text-secondary);margin-bottom:4px">Preferred Instructor</label>
-        <select style="width:100%;border:1px solid var(--border-input);border-radius:6px;padding:7px 10px;font-size:.85rem"><option>All Eligible Instructors</option><option>Michael Torres</option><option>Sarah Chen</option></select></div>
-      <div><label style="display:block;font-size:.72rem;font-weight:600;color:var(--text-secondary);margin-bottom:4px">Level Filter</label>
-        <select style="width:100%;border:1px solid var(--border-input);border-radius:6px;padding:7px 10px;font-size:.85rem"><option>Beginner 2 (auto)</option><option>Adjacent Levels</option></select></div>
-    </div>
-    ${isMgr?`<button class="btn btn-out btn-sm btn-amber" style="margin-top:8px" onclick="toast('Level/Instructor override \u2014 reason required')">Override Level / Instructor</button>`:''}
-  </div>`:''}
-  </div></div>`;}
-
-function semiPax(){
-  const ex=S.pax.filter(p=>p.id!==S.client.id);
-  return`<div class="divider"></div><div class="sec-lbl">Participants <span style="font-weight:400;color:var(--text-secondary)">(min 1 \u00b7 max 3)</span></div>
-  <div class="px-row"><div class="px-av">${S.client.init}</div><div style="flex:1"><div style="font-size:.85rem;font-weight:700">${S.client.nm}</div><div style="font-size:.72rem;color:var(--text-secondary)">Primary \u00b7 ${S.client.lvl} \u00b7 eligible</div></div></div>
-  ${ex.map(p=>`<div class="px-row"><div class="px-av sec">${p.init}</div><div style="flex:1"><div style="font-size:.85rem;font-weight:700">${p.nm}</div><div style="font-size:.72rem;color:var(--text-secondary)">${p.lvl} \u00b7 eligible</div></div><button style="background:none;border:none;color:var(--danger);font-size:.78rem;font-weight:600;cursor:pointer;margin-left:auto" onclick="remPax('${p.id}')">Remove</button></div>`).join('')}
-  ${ex.length<2?`<button class="add-px-btn" onclick="togPS()"><span class="ms" style="font-size:16px">add</span> Add Participant</button>
-  ${S.paxSearch?`<div class="px-dd-wrap"><input class="s-input" id="pSrch" placeholder="Search clients by name, email, phone\u2026" oninput="paxRes(this.value)" autocomplete="off"><div class="px-dd" id="pDD"></div></div>`:''}`:''} 
-  ${ex.length===0?`<div class="banner b-warn" style="margin-top:8px"><strong>1 participant</strong> \u2014 slot shows as <strong>PENDING PARTNER</strong> on the calendar. A second participant can be added later from the slot detail.</div>`:''}`;
+  ${!primary?'':`<button class="add-px-btn" style="margin-top:12px" onclick="addSecondParticipant()" ${S.participants.length>1?'disabled':''}><span class="ms" style="font-size:16px">group_add</span> + Add a second participant</button>`}
+  ${primary?ctx(primary.client):''}
+  </div></div>`;
+}
+function ctx(p){
+  const c=p.client;
+  const rows=[
+    ['Service',c.fund==='Regional Center'||c.fund==='Voucher'||c.fund==='Self Pay'?(SERVICE_CATALOG[c.id]?sortDryWet(SERVICE_CATALOG[c.id]).map(s=>s.nm).join(', '):'—'):'—'],
+    ['Level',c.lvl],
+    ['Package',c.pkg],
+    ['Credits (Balance)',`__BAL__${c.bal}`],
+    ['Make-Up Tokens',muDetailStr(c)],
+    ['Funding Status',`${c.fund} <span class="chip ${c.fs==='RCEB Pending'?'c-warn':'c-ok'}">${c.fs}</span>`],
+    ['Voucher / Authorization',c.voucher],
+    ['Assessment',c.assess],
+    ['Restrictions',c.rest],
+    ['Labels',c.labels.length?c.labels.map(l=>`<span class="chip c-muted">${l}</span>`).join(' '):'—'],
+    ['Client Notes',`&ldquo;${c.notes}&rdquo;`]
+  ];
+  return`<div class="ctx-panel">${rows.map(([l,v])=>`<div class="ctx-row"><div class="ctx-lbl">${l}</div><div class="ctx-val${v.toString().startsWith('__BAL__')?' bal':''}">${v.toString().startsWith('__BAL__')?`Balance: ${v.slice(6)}`:v}</div></div>`).join('')}</div>`;
 }
 
+/* ---------- Step 2 ---------- */
+function step2(){
+  const p=S.participants[S.activePIdx];
+  if(!p)return'';
+  const c=p.client;
+  if(S.type==='semi')return step2Semi(p);
+  const cat=sortDryWet(catalogFor(c.id));
+  const purchases=p.purchases||{};
+  return`<div class="card"><div class="card-hd"><h3>Step 2 — Service</h3></div><div class="card-bd">
+  <p style="font-size:.78rem;color:var(--text-secondary);margin-bottom:10px">Eligible services for <strong>${c.nm}</strong> · ${c.lvl} · up to 3 services, dry listed before wet</p>
+  <div class="svc-grid">${cat.map(sv=>svcCard(p,sv)).join('')}</div>
+  ${p.services.length?entitlementBlock(p):''}
+  ${S.type==='private'?sessionLengthBlock(p):''}
+  ${p.services.length?`<div style="font-size:.78rem;font-weight:700;margin-top:10px">Marketplace total this booking: ${fmtMoney(marketplaceTotal())}</div>`:''}
+  <div class="staff-sec">
+    <div class="sec-lbl">Staff Section</div>
+    ${instructorBlock(p)}
+  </div>
+  </div></div>`;
+}
+function svcCard(p,sv){
+  const sel=p.services.find(s=>s.svcId===sv.id);
+  const bought=(p.purchases||{})[sv.id];
+  let body='';
+  if(sv.status==='hard'){
+    const canOverride=S.role==='staff'||S.role==='manager';
+    body=`<div style="font-size:.72rem;color:var(--danger);margin-top:3px">${sv.reason}</div>${canOverride?`<button class="edit-btn" style="margin-top:5px" onclick="event.stopPropagation();overrideHardCheck('${sv.id}','${sv.reason}')">Override (recorded)</button>`:''}`;
+  }else if(sv.status==='buy'&&!bought){
+    body=`<div style="font-size:.72rem;color:var(--text-secondary);margin-top:3px">${sv.reason}</div><button class="btn btn-blue btn-sm" style="margin-top:6px" onclick="event.stopPropagation();toggleMarket(${S.activePIdx},'${sv.id}')">Buy</button>`;
+  }else{
+    body=`<div style="font-size:.72rem;color:var(--text-secondary);margin-top:3px">${bought?'':`Balance: ${sv.bal}`}</div>${bought?`<span class="chip buying-chip">Buying</span><br><button class="svc-remove" onclick="event.stopPropagation();removePurchase(${S.activePIdx},'${sv.id}')">Remove</button>`:''}`;
+  }
+  const clickable=sv.status!=='hard'&&(sv.status==='ok'||bought);
+  return`<div class="svc-card ${sel?'sel-svc':''} ${sv.status==='hard'?'inelig':''}" ${clickable?`onclick="toggleSvc(${S.activePIdx},'${sv.id}')"`:''}>
+    <span class="svc-tag">${sv.wet?'wet':'dry'}</span>
+    <div style="font-size:.875rem;font-weight:700">${sv.nm}</div>
+    ${body}
+  </div>
+  ${S.marketOpenFor===`${S.activePIdx}:${sv.id}`?marketPanel(p,sv):''}`;
+}
+function entitlementBlock(p){
+  return sortDryWet(p.services).map(sv=>{
+    const c=p.client;
+    const opts=[];
+    const cat=catalogFor(c.id).find(x=>x.id===sv.svcId);
+    opts.push({v:'package',lbl:'Package credit',bal:cat?`Balance: ${cat.bal}`:''});
+    if(c.voucher&&c.voucher!=='—')opts.push({v:'voucher',lbl:'Voucher unit',bal:''});
+    if(c.mu>0)opts.push({v:'makeup',lbl:'Make-Up token',bal:`${c.mu} available`});
+    if(!sv.source)sv.source=opts[0].v;
+    const single=opts.length===1;
+    return`<div class="divider"></div><div class="sec-lbl">Entitlement Source — ${sv.svcNm}</div>
+      ${single?`<div style="font-size:.85rem">${opts[0].lbl} ${opts[0].bal?`— ${opts[0].bal}`:''}</div>`:
+      `<div style="display:flex;gap:16px;flex-wrap:wrap">${opts.map(o=>`<label style="font-size:.85rem;display:flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="ent-${S.activePIdx}-${sv.svcId}" ${sv.source===o.v?'checked':''} onchange="setSource(${S.activePIdx},'${sv.svcId}','${o.v}')">${o.lbl} <span style="color:var(--text-secondary)">${o.bal}</span></label>`).join('')}</div>`}
+      ${sv.source==='makeup'?makeUpRules(c):''}`;
+  }).join('');
+}
+function makeUpRules(c){
+  const thru=new Date(TODAY);thru.setDate(thru.getDate()+HORIZON_DAYS);
+  return`<div class="mu-rules"><strong>Make-Up Token Rules</strong>
+    <div>Same Service Required: Yes — Swim only</div>
+    <div>Same Level Required: Yes — ${c.lvl} only</div>
+    <div>Same Location Required: Yes — Solar Swim only</div>
+    <div>Booking Horizon: ${HORIZON_DAYS} days — you can book through ${fmtDateLong(thru.toISOString().slice(0,10))} (this is the future visibility window, not the token's expiration — the token itself does not expire)</div>
+  </div>`;
+}
+function sessionLengthBlock(p){
+  const len=p.length||60;
+  const better=(PRIVATE_PRICE[60]/60)<(PRIVATE_PRICE[30]/30)?60:30;
+  return`<div class="divider"></div><div class="sec-lbl">Session Length</div>
+  <div class="rec-pills">
+    <button class="rec-p ${len===30?'act':''}" onclick="setLength(30)">30 minutes — ${fmtMoney(PRIVATE_PRICE[30])}/session</button>
+    <button class="rec-p ${len===60?'act':''}" onclick="setLength(60)">60 minutes — ${fmtMoney(PRIVATE_PRICE[60])}/session ${better===60?'<span class="chip c-ok" style="margin-left:4px">Better rate per minute</span>':''}</button>
+  </div>
+  <p class="req-note">Default follows the entitlement bought. Changing this after slots are picked clears them — you'll be asked to confirm first.</p>`;
+}
+function instructorBlock(p){
+  const c=p.client;
+  const days=(sortDryWet(p.services)[0]||{}).days||[];
+  const m=matchInstructors(c,[]);
+  const opts=m.list;
+  let empty='';
+  if(opts.length===0){
+    empty=`<div class="instr-empty">No instructor matches every requirement for this booking.
+      <div class="dim-list">
+        <span class="dim-ok">&#10003; Location</span><span class="dim-ok">&#10003; Service</span><span class="dim-ok">&#10003; Client Level</span><span class="dim-ok">&#10003; Coach Qualification</span>
+        <span class="${m.availFailed?'dim-bad':'dim-ok'}">${m.availFailed?'✗':'✓'} Availability</span>
+        <span class="${m.restrictFailed?'dim-bad':'dim-ok'}">${m.restrictFailed?'✗':'✓'} Client Restrictions</span>
+      </div>
+      Widen the days or times, or ask a manager whether a restriction can be reviewed.</div>`;
+  }
+  return`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+    <div><label style="display:block;font-size:.72rem;font-weight:600;color:var(--text-secondary);margin-bottom:4px">Preferred Instructor</label>
+      <select style="width:100%;border:1px solid var(--border-input);border-radius:6px;padding:7px 10px;font-size:.85rem" onchange="setInstrPref(this.value)">
+        <option value="any">All Qualified Instructors</option>
+        ${opts.map(k=>`<option value="${k}">${INSTRUCTORS[k].nm}</option>`).join('')}
+      </select>
+      <p class="req-note">Filters on 6 dimensions: location, service, client level, coach qualification, availability, client restrictions (manager doc §34)</p>
+    </div>
+    <div><label style="display:block;font-size:.72rem;font-weight:600;color:var(--text-secondary);margin-bottom:4px">Level Filter</label>
+      <select style="width:100%;border:1px solid var(--border-input);border-radius:6px;padding:7px 10px;font-size:.85rem" onchange="toast('Level filter set to '+this.value)">
+        <option>${c.lvl} (auto)</option><option>Adjacent Levels</option>
+      </select>
+    </div>
+  </div>${empty}`;
+}
+/* Semi-private step 2 */
+function step2Semi(p){
+  const c=p.client;
+  if(!p.services.length){
+    const cat=catalogFor(c.id).find(s=>s.wet||true);
+    p.services.push({svcId:cat?cat.id:'swim',svcNm:cat?cat.nm:'Swim',wet:true,source:null,days:['MON','WED'],times:{},rec:'credits',searchThrough:'2026-09-30',slot:null,waitlist:false,roster:[c.id]});
+  }
+  const sv=p.services[0];
+  const roster=sv.roster||[c.id];
+  const need=POLICY.requiredParticipants;
+  return`<div class="card"><div class="card-hd"><h3>Step 2 — Service &amp; Participants</h3></div><div class="card-bd">
+  <div style="display:flex;gap:16px;align-items:center;margin-bottom:8px">
+    <div><label style="display:block;font-size:.72rem;font-weight:600;color:var(--text-secondary)">Service</label><div style="font-size:.9rem;font-weight:700">${sv.svcNm}</div></div>
+    <div><label style="display:block;font-size:.72rem;font-weight:600;color:var(--text-secondary)">Level</label><div style="font-size:.9rem">${c.lvl} (auto)</div></div>
+  </div>
+  <div class="divider"></div>
+  <div class="sec-lbl">Participants</div>
+  <div style="font-size:.85rem;font-weight:700">Participants needed: ${need} <span class="req-note" style="font-weight:400">(this service's Required Participants setting — ${POLICY.source}, default 2, D4)</span></div>
+  ${roster.map((id,i)=>{const cc=CLIENTS[id];return`<div class="px-row"><div class="px-av ${i>0?'sec':''}">${cc.init}</div><div style="flex:1"><div style="font-size:.85rem;font-weight:700">${cc.nm}</div><div style="font-size:.72rem;color:var(--text-secondary)">${i===0?'Primary — auto-added':cc.lvl+' · eligible'}</div></div>${i>0?`<button style="background:none;border:none;color:var(--danger);font-size:.78rem;font-weight:600;cursor:pointer" onclick="remSemiPax('${id}')">Remove</button>`:''}</div>`;}).join('')}
+  ${roster.length<need?`<button class="add-px-btn" onclick="togSemiSearch()"><span class="ms" style="font-size:16px">add</span> Add Participant</button>
+  ${S.semiSearchOpen?`<div class="px-dd-wrap"><input class="s-input" id="pSrch" placeholder="Search clients by name, email, phone…" oninput="paxRes(this.value)" autocomplete="off"><div class="px-dd" id="pDD"></div></div>`:''}`:''}
+  ${roster.length<need?`<div class="banner b-warn">With ${roster.length} of ${need} participants this slot will show as <strong>PENDING PARTNER</strong> — "Waiting for a second participant." on the calendar. A second participant can be added later from the slot detail on the calendar.</div>`:''}
+  ${entitlementBlock(p)}
+  </div></div>`;
+}
+
+/* ---------- Marketplace ---------- */
+function marketplaceTotal(){
+  let t=0;S.participants.forEach(p=>{Object.values(p.purchases||{}).forEach(pu=>t+=pu.price);});return t;
+}
+function marketPanel(p,sv){
+  const mk=MARKET[sv.id];if(!mk)return'';
+  const c=p.client;
+  const hasMembership=c.membership===mk.membershipNeeded;
+  const scheduledCount=(p.services.find(s=>s.svcId===sv.id)?queueCountFor(S.activePIdx,sv.id):0);
+  const blockDisabled=scheduledCount>mk.block.units;
+  return`<div class="mkt-panel">
+    <div style="font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em">Buy — ${mk.svcNm} — ${c.nm}</div>
+    <div style="font-size:.8rem;color:var(--text-secondary);margin-top:2px">Reason this is needed: ${sv.reason}</div>
+    <div style="font-size:.78rem;color:var(--text-secondary);margin-top:6px">Eligible for: ${c.lvl} (${c.nm}'s level) — age/level-ineligible packages are not shown here</div>
+    <div class="mkt-grid">
+      <div class="mkt-card ${blockDisabled?'disabled':''}">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary)">Block</div>
+        <div style="font-weight:700;margin-top:4px">${mk.block.nm}</div>
+        <div style="font-size:.78rem;color:var(--text-secondary)">${mk.block.units} class units</div>
+        ${hasMembership?`<div class="mkt-price">Member price: ${fmtMoney(mk.block.member)}</div><div class="mkt-std">Standard: ${fmtMoney(mk.block.standard)}</div><div class="mkt-std">(${c.rel.split('·')[1]||'household'} holds ${mk.membershipNeeded})</div>`:`<div class="mkt-price">${fmtMoney(mk.block.standard)}</div>`}
+        <button class="btn btn-blue btn-sm" style="margin-top:8px" ${blockDisabled?'disabled':''} onclick="selectMarket(${S.activePIdx},'${sv.id}','block')">Select Block</button>
+        ${blockDisabled?`<div class="mkt-disable-reason">${scheduledCount} classes already scheduled — this pack covers only ${mk.block.units}. Remove a class first to switch.</div>`:''}
+      </div>
+      <div class="mkt-card">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary)">Subscription</div>
+        <div style="font-weight:700;margin-top:4px">${mk.sub.nm}</div>
+        <div style="font-size:.78rem;color:var(--text-secondary)">${mk.sub.units}</div>
+        ${hasMembership?`<div class="mkt-price">Member price: ${fmtMoney(mk.sub.member)}/mo</div><div class="mkt-std">Standard: ${fmtMoney(mk.sub.standard)}/mo</div>`:`<div class="mkt-price">${fmtMoney(mk.sub.standard)}/mo</div>`}
+        <button class="btn btn-blue btn-sm" style="margin-top:8px" onclick="selectMarket(${S.activePIdx},'${sv.id}','sub')">Select Subscription</button>
+      </div>
+    </div>
+    <p class="req-note">A membership would also cover this for less overall — <span style="color:var(--info);cursor:pointer" onclick="toast('Membership options are out of scope for this prototype')">See Membership Options</span></p>
+  </div>`;
+}
+function queueCountFor(pIdx,svcId){
+  return S.queue.filter(it=>it.pIdx===pIdx&&S.participants[pIdx].services[it.sIdx]&&S.participants[pIdx].services[it.sIdx].svcId===svcId&&S.participants[pIdx].services[it.sIdx].slot).length;
+}
+function toggleMarket(pIdx,svcId){S.marketOpenFor=(S.marketOpenFor===`${pIdx}:${svcId}`)?null:`${pIdx}:${svcId}`;render();}
+function selectMarket(pIdx,svcId,kind){
+  const mk=MARKET[svcId];const item=kind==='block'?mk.block:mk.sub;
+  const c=S.participants[pIdx].client;
+  const hasMembership=c.membership===mk.membershipNeeded;
+  const price=hasMembership?item.member:item.standard;
+  const p=S.participants[pIdx];p.purchases=p.purchases||{};
+  p.purchases[svcId]={kind,nm:item.nm,price};
+  S.marketOpenFor=null;
+  toast(`${item.nm} added — provisional units granted. Marked "Buying".`);
+  render();
+}
+function removePurchase(pIdx,svcId){
+  const p=S.participants[pIdx];
+  const svItem=p.services.find(s=>s.svcId===svcId);
+  const scheduled=svItem&&svItem.slot?1:0;
+  if(scheduled>0){
+    const slot=findSlot(svItem.slot);
+    const ok=confirm(`Removing this purchase will drop ${scheduled} scheduled class(es): ${slot?DD[slot.day]+' '+slot.time:'(scheduled session)'}. Continue?`);
+    if(!ok)return;
+    p.services=p.services.filter(s=>s.svcId!==svcId);
+    S.queue=S.queue.filter(it=>!(it.pIdx===pIdx&&S.participants[pIdx].services.indexOf===undefined));
+    rebuildQueuePreserving();
+  }
+  delete p.purchases[svcId];
+  render();
+}
+function rebuildQueuePreserving(){
+  const oldQueue=S.queue;const newQueue=[];
+  S.participants.forEach((p,pIdx)=>{p.services.forEach((sv,sIdx)=>newQueue.push({pIdx,sIdx}));});
+  S.queue=newQueue;
+  if(S.queuePos>=S.queue.length)S.queuePos=Math.max(0,S.queue.length-1);
+}
+
+/* ---------- Step 3 ---------- */
 function step3(){
-  const rc=S.client&&S.client.fund==='Regional Center',ps=S.type!=='group';
-  return`<div class="card"><div class="card-hd"><h3>Step 3 \u2014 Day &amp; Time Preferences</h3></div><div class="card-bd">
+  const item=curItem();if(!item)return'';
+  const p=S.participants[item.pIdx],sv=p.services[item.sIdx];
+  const c=p.client;
+  const rc=c.fund==='Regional Center',ps=S.type!=='group';
+  const multi=S.queue.length>1;
+  const gen=generateDates(sv.days,sv.rec,c.balAvail,sv.searchThrough);
+  return`<div class="card"><div class="card-hd"><h3>Step 3 — Day &amp; Time Preferences</h3></div><div class="card-bd">
+  ${multi?`<p style="font-size:.78rem;color:var(--info-dark);font-weight:600;margin-bottom:6px">Scheduling: ${c.nm} / ${sv.svcNm} (service ${item.sIdx+1} of ${p.services.length})</p>`:''}
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-    <p style="font-size:.78rem;color:var(--text-secondary)">Select days and time windows to search. Eligible instructors filtered automatically.</p>
-    <div style="display:flex;gap:5px"><button class="btn btn-out btn-sm" onclick="S.days=[];render()">Clear</button><button class="btn btn-out btn-sm" onclick="S.days=['MON','TUE','WED','THU','FRI'];render()">Weekdays</button></div>
+    <p style="font-size:.78rem;color:var(--text-secondary)">Select which days and time windows to search. Zalexy filters qualified instructors automatically.</p>
+    <div style="display:flex;gap:5px"><button class="btn btn-out btn-sm" onclick="clearDays()">Clear All</button><button class="btn btn-out btn-sm" onclick="resetTimes()">Reset Times</button></div>
   </div>
   <div class="day-grid">${AD.map(d=>{
-    const on=S.days.includes(d),cnt=SG.filter(s=>s.day.startsWith(d)).length;
+    const on=sv.days.includes(d);
+    const t=sv.times[d]||{from:'6:00 AM',to:'8:00 PM'};
     return`<div class="d-row ${on?'chk':'uchk'}">
       <div class="d-badge">${d}<br>${DD[d].split(' ')[1]}</div>
       <label class="d-label"><input type="checkbox" ${on?'checked':''} onchange="togD('${d}',this.checked)"> ${d} ${DD[d]}</label>
       <div style="display:flex;align-items:center;gap:5px">
-        <select class="t-sel"><option>6:00 AM</option><option>8:00 AM</option><option>12:00 PM</option></select>
-        <span style="font-size:.72rem;color:var(--text-secondary)">\u2013</span>
-        <select class="t-sel"><option>8:00 PM</option><option>6:00 PM</option></select>
-        ${on&&cnt>0?`<span style="font-size:.7rem;font-weight:700;color:var(--success-dark);white-space:nowrap">${cnt} slot${cnt!==1?'s':''}</span>`:''}
+        <select class="t-sel" onchange="setTime('${d}','from',this.value)"><option ${t.from==='6:00 AM'?'selected':''}>6:00 AM</option><option ${t.from==='8:00 AM'?'selected':''}>8:00 AM</option><option ${t.from==='12:00 PM'?'selected':''}>12:00 PM</option></select>
+        <span style="font-size:.72rem;color:var(--text-secondary)">–</span>
+        <select class="t-sel" onchange="setTime('${d}','to',this.value)"><option ${t.to==='8:00 PM'?'selected':''}>8:00 PM</option><option ${t.to==='6:00 PM'?'selected':''}>6:00 PM</option></select>
       </div></div>`;}).join('')}</div>
   <div class="sec-lbl" style="margin-top:14px">Recurrence</div>
-  <div class="rec-pills">${[['credits','Until Credits Used'],['weeks','Next N Weeks'],['date','Until End Date'],['once','One Time Only']].map(([v,l])=>`<button class="rec-p ${S.rec===v?'act':''}" onclick="S.rec='${v}';render()">${l}</button>`).join('')}</div>
-  <div style="display:flex;align-items:center;gap:8px;margin-top:12px"><span style="font-size:.78rem;color:var(--text-secondary)">Search through:</span><input type="date" value="2026-09-30" style="border:1px solid var(--border-input);border-radius:6px;padding:6px 10px;font-size:.85rem"></div>
-  ${rc&&ps?`<div class="banner b-info" style="margin-top:12px"><strong>\u2139 RCEB Note:</strong> Recurring selections cannot extend beyond confirmed authorization dates. The calendar shows this series as <em>tentative</em> until authorization is confirmed. No hold record is created.</div>`:''}
-  </div></div>`;}
-
-function step4(){
-  const cc=S.role!=='frontdesk';
-  const all=S.type==='group'?SG:S.type==='semi'?SS:SP;
-  const days=[...new Set(all.map(s=>s.day))];
-  return`<div class="card"><div class="card-hd"><h3>Step 4 \u2014 Available Slots</h3></div><div class="card-bd">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-    <span style="font-size:.85rem"><strong>${all.length} slots found</strong> \u00b7 Swimming \u00b7 Beginner 2</span>
-    ${cc?`<button class="btn btn-out btn-sm" onclick="openDrawer()"><span class="ms" style="font-size:15px">add</span> Create New Slot</button>`:''}
+  <div class="rec-pills">${[['credits','Until Credits Used'],['weeks','Next N Weeks'],['date','Until End Date'],['once','One Time Only']].map(([v,l])=>`<button class="rec-p ${sv.rec===v?'act':''}" onclick="setRec('${v}')">${l}</button>`).join('')}</div>
+  <div style="display:flex;align-items:center;gap:8px;margin-top:12px"><span style="font-size:.78rem;color:var(--text-secondary)">Search through:</span><input type="date" value="${sv.searchThrough}" onchange="setSearchThrough(this.value)" style="border:1px solid var(--border-input);border-radius:6px;padding:6px 10px;font-size:.85rem"></div>
+  <div class="gen-dates"><strong>Generated Dates</strong><br>
+    ${gen.dates.length?gen.dates.map(fmtDateLong).join(', '):'No dates match the current selection.'}
+    ${gen.skipped.length?`<br>Skipped — centre closure: ${gen.skipped.map(s=>`${fmtDateLong(s.date)} (${s.label})`).join(', ')}`:''}
+    ${gen.stopReason?`<br>${gen.stopReason}`:''}
   </div>
-  ${days.map(day=>`<div class="dg-lbl">${day}</div><div class="slots-row">${all.filter(s=>s.day===day).map(sCard).join('')}</div>`).join('')}
-  ${S.days.includes('TUE')?'<div class="dg-lbl">TUE Sep 15</div><p class="no-slots">No slots match your preferences for this day.</p>':''}
-  </div></div>`;}
+  ${rc&&ps?`<div class="banner b-info"><strong>&#8505; </strong>Sessions after the first will appear on the calendar as Tentative until Regional Center authorization is confirmed. Nothing is reserved for those dates yet.</div>`:''}
+  </div></div>`;
+}
+function clearDays(){curSvc().days=[];render();}
+function resetTimes(){curSvc().times={};render();}
+function togD(d,v){const sv=curSvc();if(v){if(!sv.days.includes(d))sv.days.push(d);}else{sv.days=sv.days.filter(x=>x!==d);}render();}
+function setTime(d,which,val){const sv=curSvc();sv.times[d]=sv.times[d]||{from:'6:00 AM',to:'8:00 PM'};sv.times[d][which]=val;render();}
+function setRec(v){curSvc().rec=v;render();}
+function setSearchThrough(v){curSvc().searchThrough=v;render();}
 
-function sCard(s){
-  const sel=S.slot===s.id;
+/* ---------- Step 4 ---------- */
+function step4(){
+  const item=curItem();if(!item)return'';
+  const p=S.participants[item.pIdx],sv=p.services[item.sIdx];
+  const c=p.client;
+  const cc=S.role!=='frontdesk';
+  let pool=slotPool().slice();
+  if(sv.source==='makeup'){
+    const thru=new Date(TODAY);thru.setDate(thru.getDate()+HORIZON_DAYS);
+    pool=pool.filter(s=>new Date(s.date+'T00:00:00')<=thru);
+  }
+  const chosenDays=AD.filter(d=>sv.days.includes(d));
+  const dayGroups=chosenDays.map(d=>({d,slots:pool.filter(s=>s.day===d)}));
+  const total=dayGroups.reduce((a,g)=>a+g.slots.length,0);
+  const m=matchInstructors(c,sv.days);
+  return`<div class="card"><div class="card-hd"><h3>Step 4 — Available Slots</h3></div><div class="card-bd">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+    <span style="font-size:.85rem"><strong>${total} slots found</strong> · ${sv.svcNm} · ${c.lvl} · ${chosenDays.join(', ')||'no days selected'} (from Step 3)</span>
+    ${cc?`<button class="btn btn-out btn-sm" onclick="openDrawer()"><span class="ms" style="font-size:15px">add</span> Create New Class Slot</button>`:''}
+  </div>
+  ${chosenDays.length===0?'<p class="no-slots">Select at least one day in Step 3 to see slots.</p>':''}
+  ${dayGroups.map(g=>{
+    if(m.list.length===0){
+      return`<div class="dg-lbl">${g.d} ${DD[g.d]}</div><div class="instr-empty">No instructor matches every requirement for ${DD[g.d]}.
+        <div class="dim-list"><span class="dim-ok">&#10003; Location</span><span class="dim-ok">&#10003; Service</span><span class="dim-ok">&#10003; Level</span><span class="dim-ok">&#10003; Qualification</span>
+        <span class="${m.availFailed?'dim-bad':'dim-ok'}">${m.availFailed?'✗':'✓'} Availability</span><span class="${m.restrictFailed?'dim-bad':'dim-ok'}">${m.restrictFailed?'✗':'✓'} Restrictions</span></div>
+        Widen the days or times, or ask a manager whether a restriction can be reviewed.</div>`;
+    }
+    if(!g.slots.length)return`<div class="dg-lbl">${g.d} ${DD[g.d]}</div><p class="no-slots">No slots match your preferences for ${g.d} ${DD[g.d]}.</p>`;
+    return`<div class="dg-lbl">${g.d} ${DD[g.d]}</div><div class="slots-row">${g.slots.map(s=>sCard(s,p,sv)).join('')}</div>`;
+  }).join('')}
+  </div></div>`;
+}
+function overlapCheck(p,sv,slot){
+  for(const other of p.services){
+    if(other===sv||!other.slot)continue;
+    const os=findSlot(other.slot)|| (S.type==='group'?SG:S.type==='semi'?SS:SP).find(x=>x.id===other.slot);
+    if(!os||os.date!==slot.date)continue;
+    const overlap=slot.start<os.end&&os.start<slot.end;
+    if(overlap)return{blocked:true,msg:`Overlaps your ${other.svcNm} session on ${DD[slot.day]}, ${os.time}.`};
+    const backToBack=slot.start===os.end||os.start===slot.end;
+    if(backToBack&&other.wet!==sv.wet)return{blocked:false,note:`Note: this follows straight after a ${other.svcNm} (${other.wet?'wet':'dry'}) session — you may want a change of clothes break.`};
+  }
+  return null;
+}
+function sCard(s,p,sv){
+  const sel=sv.slot===s.id;
+  const inst=INSTRUCTORS[s.inst].nm;
+  const ov=overlapCheck(p,sv,s);
+  const overlapBlocked=ov&&ov.blocked;
   if(S.type==='group'){
-    const pct=Math.round(s.spots/s.cap*100),fc=pct<60?'low':pct<90?'med':'full',full=s.spots===s.cap;
-    return`<div class="s-card ${sel?'sel-slot':''}" onclick="selS('${s.id}')"><div class="s-sel-dot"></div>
-      <div style="font-size:.78rem;font-weight:700">${s.time}</div><div style="font-size:.875rem;font-weight:700;margin-top:2px">${s.svc}</div>
-      <div style="font-size:.72rem;color:var(--text-secondary)">(${s.lvl})</div>
-      <div style="font-size:.72rem;color:var(--text-secondary);margin-top:1px">\U0001f464 ${s.inst}</div>
-      <div style="font-size:.72rem;color:var(--text-secondary)">\U0001f4cd ${s.loc}</div>
+    const pct=Math.round(s.spots/s.cap*100),fc=pct<60?'low':pct<100?'med':'full',full=s.spots>=s.cap;
+    const existingRes=(S.slotReservations[s.id]||[]).filter(pi=>pi!==p===false);
+    return`<div class="s-card ${sel?'sel-slot':''} ${overlapBlocked?'blocked':''}" onclick="${overlapBlocked?'':`selS('${s.id}')`}"><div class="s-sel-dot"></div>
+      <div style="font-size:.78rem;font-weight:700">${s.time}</div><div style="font-size:.875rem;font-weight:700;margin-top:2px">Group ${sv.svcNm}</div>
+      <div style="font-size:.72rem;color:var(--text-secondary)">(${p.client.lvl})</div>
+      <div style="font-size:.72rem;color:var(--text-secondary);margin-top:1px">Instructor: ${inst}</div>
+      <div style="font-size:.72rem;color:var(--text-secondary)">Location: ${s.loc}</div>
       <div class="cap-bar-w"><div class="cap-bar"><div class="cap-fill ${fc}" style="width:${pct}%"></div></div>
-        <div style="font-size:.68rem;color:var(--text-secondary);margin-top:3px">${full?'Class is full':`${s.cap-s.spots} / ${s.cap} spots`}</div></div>
-      <div class="s-btns">${!full?`<button class="btn btn-blue btn-sm" onclick="event.stopPropagation();doBook('${s.id}')">Book</button>`:''}<button class="btn btn-out btn-sm" onclick="event.stopPropagation();doWL('${s.id}')">${full?'Waitlist only':'Waitlist'}</button></div>
+        <div style="font-size:.68rem;color:var(--text-secondary);margin-top:3px">${s.spots} booked / ${s.cap} spots ${full?'<span class="chip c-danger" style="margin-left:4px">Full</span>':''}</div></div>
+      ${overlapBlocked?`<div class="overlap-block">${ov.msg}</div>`:ov&&ov.note?`<div class="overlap-note">${ov.note}</div>`:''}
+      ${S.blockedMsg&&S.blockedMsg.slot===s.id?`<div class="overlap-block">${S.blockedMsg.msg}</div>`:''}
+      <div class="s-btns">${!full?`<button class="btn btn-blue btn-sm" ${overlapBlocked?'disabled':''} onclick="event.stopPropagation();chooseSlot('${s.id}',false)">Book</button>`:''}<button class="btn btn-out btn-sm" ${overlapBlocked?'disabled':''} onclick="event.stopPropagation();chooseSlot('${s.id}',true)">${full?'Waitlist only':'Waitlist'}</button></div>
     </div>`;
   }else if(S.type==='semi'){
-    const pend=s.px<2;
+    const roster=sv.roster||[p.client.id];
+    const need=POLICY.requiredParticipants;
+    const pend=roster.length<need;
     return`<div class="s-card ${sel?'sel-slot':''}" onclick="selS('${s.id}')"><div class="s-sel-dot"></div>
-      <div style="font-size:.78rem;font-weight:700">${s.time}</div><div style="font-size:.875rem;font-weight:700;margin-top:2px">${s.svc}</div>
-      <div style="font-size:.72rem;color:var(--text-secondary)">(${s.lvl})</div>
-      <div style="font-size:.72rem;color:var(--text-secondary);margin-top:1px">\U0001f464 ${s.inst}</div>
-      <div style="font-size:.72rem;color:var(--text-secondary)">\U0001f4cd ${s.loc}</div>
-      <div style="margin-top:auto;padding-top:7px"><span class="chip ${pend?'c-warn':'c-ok'}">${s.px}/${s.max} \u00b7 ${pend?'PENDING PARTNER':'CONFIRMED'}</span></div>
-      <div class="s-btns"><button class="btn btn-blue btn-sm" onclick="event.stopPropagation();doBook('${s.id}')">Join Slot</button><button class="btn btn-out btn-sm" onclick="event.stopPropagation();doWL('${s.id}')">Waitlist</button></div>
+      <div style="font-size:.78rem;font-weight:700">${s.time}</div><div style="font-size:.875rem;font-weight:700;margin-top:2px">Semi-Private ${sv.svcNm}</div>
+      <div style="font-size:.72rem;color:var(--text-secondary)">(${p.client.lvl})</div>
+      <div style="font-size:.72rem;color:var(--text-secondary);margin-top:1px">Instructor: ${inst}</div>
+      <div style="font-size:.72rem;color:var(--text-secondary)">Location: ${s.loc}</div>
+      <div style="margin-top:auto;padding-top:7px"><span class="chip ${pend?'c-warn':'c-ok'}">${roster.length} / ${need} · ${pend?'PENDING PARTNER':'CONFIRMED'}</span>
+        <div class="req-note">Required Participants: ${need} (${POLICY.source})</div></div>
+      <div class="s-btns"><button class="btn btn-blue btn-sm" onclick="event.stopPropagation();chooseSlot('${s.id}',false)">Book</button><button class="btn btn-out btn-sm" onclick="event.stopPropagation();chooseSlot('${s.id}',true)">Waitlist</button></div>
     </div>`;
   }else{
-    return`<div class="s-card ${sel?'sel-slot':''}" onclick="doBook('${s.id}')"><div class="s-sel-dot"></div>
-      <div style="font-size:.78rem;font-weight:700">${s.time}</div><div style="font-size:.875rem;font-weight:700;margin-top:2px">${s.svc}</div>
-      <div style="font-size:.72rem;color:var(--text-secondary)">(${s.lvl})</div>
-      <div style="font-size:.9rem;font-weight:700;margin-top:4px">\U0001f464 ${s.inst}</div>
-      <div style="font-size:.72rem;color:var(--text-secondary)">\U0001f4cd ${s.loc}</div>
-      <div class="s-btns" style="margin-top:auto"><button class="btn btn-blue btn-sm" onclick="event.stopPropagation();doBook('${s.id}')">Book</button><button class="btn btn-out btn-sm" onclick="event.stopPropagation();doWL('${s.id}')">Waitlist</button></div>
-    </div>`;}
+    return`<div class="s-card ${sel?'sel-slot':''} ${overlapBlocked?'blocked':''}" onclick="${overlapBlocked?'':`selS('${s.id}')`}"><div class="s-sel-dot"></div>
+      <div style="font-size:.72rem;font-weight:700;position:absolute;top:8px;left:8px;color:var(--text-secondary)">${s.len} min</div>
+      <div style="font-size:.78rem;font-weight:700;margin-top:10px">${s.time}</div><div style="font-size:.875rem;font-weight:700;margin-top:2px">Private ${sv.svcNm}</div>
+      <div style="font-size:.72rem;color:var(--text-secondary)">(${p.client.lvl})</div>
+      <div style="font-size:1rem;font-weight:700;margin-top:4px">${inst}</div>
+      <div style="font-size:.72rem;color:var(--text-secondary)">Location: ${s.loc}</div>
+      ${overlapBlocked?`<div class="overlap-block">${ov.msg}</div>`:ov&&ov.note?`<div class="overlap-note">${ov.note}</div>`:''}
+      <div class="s-btns" style="margin-top:auto"><button class="btn btn-blue btn-sm" ${overlapBlocked?'disabled':''} onclick="event.stopPropagation();chooseSlot('${s.id}',false)">Book</button><button class="btn btn-out btn-sm" ${overlapBlocked?'disabled':''} onclick="event.stopPropagation();chooseSlot('${s.id}',true)">Waitlist</button></div>
+    </div>`;
+  }
 }
+function jointBlocked(slotId,pIdx){
+  const s=findSlot(slotId);if(!s||S.type!=='group')return null;
+  const open=s.cap-s.spots;
+  const reservedOthers=(S.slotReservations[slotId]||[]).filter(pi=>pi!==pIdx).length;
+  if(reservedOthers+1>open){
+    return`Only ${open} spot${open===1?'':'s'} left in this class — ${reservedOthers+1} participants need a spot here. Move one participant to a different slot, or join the waitlist for the second.`;
+  }
+  return null;
+}
+function chooseSlot(slotId,waitlisted){
+  const item=curItem();const p=S.participants[item.pIdx],sv=p.services[item.sIdx];
+  const ov=overlapCheck(p,sv,findSlot(slotId));
+  if(ov&&ov.blocked){toast(ov.msg);return;}
+  if(!waitlisted){
+    const block=jointBlocked(slotId,item.pIdx);
+    if(block){S.blockedMsg={slot:slotId,msg:block};render();return;}
+  }
+  S.blockedMsg=null;
+  sv.slot=slotId;sv.waitlist=waitlisted;
+  S.slotReservations[slotId]=S.slotReservations[slotId]||[];
+  if(!S.slotReservations[slotId].includes(item.pIdx))S.slotReservations[slotId].push(item.pIdx);
+  advanceQueue();
+}
+function selS(id){ // click on card body selects without booking (semi/private convenience) — routes to Book
+  chooseSlot(id,false);
+}
+function advanceQueue(){
+  if(S.queuePos<S.queue.length-1){S.queuePos++;S.step=3;}
+  else{S.step=5;}
+  render();
+}
+function jumpQueue(i){S.queuePos=i;S.step=3;render();}
 
+/* ---------- Step 5 ---------- */
+function resolveOutcome(item){
+  const p=S.participants[item.pIdx],sv=p.services[item.sIdx],c=p.client;
+  if(sv.waitlist)return'WAITLISTED';
+  if(c.paymentIssue&&c.fund==='Self Pay')return'PAYMENT_HOLD';
+  if(c.fund==='Regional Center'&&(S.type==='private'||S.type==='semi')&&sv.rec==='once')return'AUTHORIZATION_HOLD';
+  if(S.type==='semi'){const roster=sv.roster||[c.id];if(roster.length<POLICY.requiredParticipants)return'PENDING_PARTNER';}
+  return'CONFIRMED';
+}
+function entitlementLabel(sv,outcome){
+  if(outcome==='WAITLISTED')return'No credit reserved — credit reserved only when promoted off waitlist.';
+  if(sv.source==='makeup')return'Make-Up token — 1 consumed on confirm. 0 remaining.';
+  if(sv.source==='voucher')return'Voucher unit — reserve 1 unit on confirm.';
+  return'Package credit — reserve 1 session on confirm ("1 session reserved — not used yet").';
+}
 function step5(){
-  const all=S.type==='group'?SG:S.type==='semi'?SS:SP;
-  const sl=all.find(s=>s.id===S.slot);
-  const rc=S.client.fund==='Regional Center',ps=S.type!=='group';
-  const onePax=S.type==='semi'&&S.pax.filter(p=>p.id!==S.client.id).length===0;
-  let out,oc,os;
-  if(S.wl){out='WAITLISTED';oc='waitlisted';os='No credit reserved \u2014 reserved when promoted off waitlist.';}
-  else if(onePax){out='PENDING PARTNER';oc='pending';os='Held for 1 participant. Credit reserved when minimum is met.';}
-  else{out='CONFIRMED';oc='confirmed';os='All eligibility checks passed. Entitlement reserved on confirm.';}
-  const rows=[['Client',S.client.nm],['Service',`${S.type==='group'?'Group':S.type==='semi'?'Semi-Private':'Private'} Swimming \u00b7 Beginner 2`],
-    sl?['Instructor',sl.inst]:null,sl?['Date / Time',`${sl.day} \u00b7 ${sl.time}`]:null,
-    sl?['Location',`Solar Swim \u00b7 ${sl.loc}`]:null,
-    ['Recurrence',S.rec==='credits'?'Until Credits Used (Mon & Wed)':'One time only'],
-    ['Funding',S.client.fund],['Entitlement',S.wl?'No credit reserved until promoted':'Reserve 1 session on confirm']
-  ].filter(Boolean);
-  return`<div class="card"><div class="card-hd"><h3>Step 5 \u2014 Review &amp; Confirm</h3></div><div class="card-bd">
-  <div class="out-banner ${oc}"><div class="out-t">${out}</div><div class="out-s">${os}</div></div>
+  const item=S.queue[0];if(!item)return'';
+  const p=S.participants[item.pIdx],sv=p.services[item.sIdx],c=p.client;
+  S.outcome=resolveOutcome(item);
+  const meta=OUTCOME_META[S.outcome];
+  const s=sv.slot?findSlot(sv.slot):null;
+  const rc=c.fund==='Regional Center',ps=S.type!=='group';
+  const rows=[
+    ['Client',c.nm],
+    ['Service',`${S.type==='group'?'Group':S.type==='semi'?'Semi-Private':'Private'} ${sv.svcNm} · ${c.lvl}`],
+    ['Instructor',s?INSTRUCTORS[s.inst].nm:'—'],
+    ['Date / Time',s?`${DD[s.day]} · ${s.time}`:'—'],
+    ['Location',s?`Solar Swim · ${s.loc}`:'—'],
+    ['Recurrence',recurrenceLabel(sv)],
+    ['Funding',c.fund],
+    ['Entitlement',entitlementLabel(sv,S.outcome)],
+    ['Status',`${S.outcome} — "${meta.line}"`]
+  ];
+  const multiRows=S.queue.length>1?S.queue.map(it=>{
+    const pp=S.participants[it.pIdx],ss=pp.services[it.sIdx],slt=ss.slot?findSlot(ss.slot):null;
+    const buying=(pp.purchases||{})[ss.svcId];
+    return`${pp.client.nm} — ${ss.svcNm} (${slt?`${DD[slt.day]} ${slt.time}`:ss.waitlist?'Waitlisted':'—'}) — ${buying?`Buying (${buying.nm}, provisional)`:entitlementLabel(ss,resolveOutcome(it)).split(' —')[0]}`;
+  }).join('<br>'):'';
+  const purchaseRows=[];
+  S.participants.forEach(pp=>{Object.values(pp.purchases||{}).forEach(pu=>purchaseRows.push(`${pu.nm} — ${pp.client.nm} — ${fmtMoney(pu.price)}`));});
+  return`<div class="card"><div class="card-hd"><h3>Step 5 — Review &amp; Confirm</h3></div><div class="card-bd">
+  <div class="out-banner ${meta.bannerClass}"><div class="out-t">${S.outcome}</div><div class="out-s">${meta.line}</div></div>
   <div class="sec-lbl">Booking Details</div>
   <div class="rev-grid">${rows.map(([l,v])=>`<div class="rev-row"><div class="rl">${l}</div><div class="rv">${v}</div></div>`).join('')}</div>
-  ${rc&&ps?`<div class="banner b-info"><strong>\u2139 Calendar note:</strong> This recurring series appears as <em>tentative</em> on the calendar until RC authorization is confirmed. No hold record is created.</div>`:''}
-  ${S.role==='manager'?`<div class="sec-lbl" style="margin-top:14px">Manager Overrides</div>
-    <div style="display:flex;gap:7px;flex-wrap:wrap">
-      <button class="btn btn-out btn-amber" onclick="S.ovr=!S.ovr;render()">Funding Override</button>
-      <button class="btn btn-out btn-amber" onclick="S.ovr=!S.ovr;render()">Capacity Override</button>
-    </div>
-    ${S.ovr?`<div class="ovr-panel"><div style="margin-bottom:8px"><span class="chip c-warn">\u26a0 Override logged with your name, timestamp, and reason</span></div>
-      <label>Override Scope</label><select><option>One Appointment</option><option>Until Date</option><option>Until New Authorization</option></select>
-      <label>End Date</label><input type="date">
-      <label>Reason (required)</label><textarea placeholder="Stored in audit log\u2026"></textarea>
-    </div>`:''}`:''} 
-  </div></div>`;}
+  ${S.queue.length>1?`<div class="sec-lbl">Multi-Participant / Multi-Service Summary</div><div class="rev-grid"><div class="rev-row" style="grid-template-columns:1fr"><div class="rv" style="grid-column:1/-1">${multiRows}</div></div></div>`:''}
+  ${purchaseRows.length?`<div class="sec-lbl">Marketplace Purchases</div><div class="rev-grid"><div class="rev-row" style="grid-template-columns:1fr"><div class="rv">${purchaseRows.join('<br>')}</div></div></div><div style="font-size:.78rem;font-weight:700">Marketplace total this booking: ${fmtMoney(marketplaceTotal())}</div>`:''}
+  ${S.overridesApplied.length?`<div class="sec-lbl">Overrides Applied</div><div class="rev-grid"><div class="rev-row" style="grid-template-columns:1fr"><div class="rv">${S.overridesApplied.map(o=>o.text).join('<br>')}</div></div></div>`:''}
+  ${rc&&ps?`<div class="banner b-info"><strong>&#8505; </strong>Sessions after the first will appear on the calendar as Tentative until RC authorization is confirmed. Nothing is reserved for those dates yet.</div>`:''}
+  ${S.role==='manager'?`<div class="sec-lbl" style="margin-top:14px">Manager Only</div>
+    <button class="btn btn-out btn-amber" onclick="toggleFundingPanel()">Funding Override</button>
+    ${S.fundingPanelOpen?fundingPanel():''}`:''}
+  </div></div>`;
+}
+function recurrenceLabel(sv){
+  const gen=generateDates(sv.days,sv.rec,curClientBal(),sv.searchThrough);
+  const labels={credits:'Until Credits Used',weeks:'Next N Weeks',date:'Until End Date',once:'One Time Only'};
+  return`${labels[sv.rec]} (${sv.days.join(' / ')||'no days'}) — ${gen.dates.length} date${gen.dates.length===1?'':'s'}${gen.skipped.length?`, ${gen.skipped.length} closure skipped (see Step 3)`:''}`;
+}
+function curClientBal(){const item=S.queue[0];return item?S.participants[item.pIdx].client.balAvail:1;}
 
-function succ(){
-  const t=S.type==='group'?'Group':S.type==='semi'?'Semi-Private':'Private';
+/* ---------- Funding Override panel ---------- */
+let ovrState={mode:'ONE_APPOINTMENT',end:'',days:'',note:'',affected:'this',expected:'',review:'',reason:''};
+function toggleFundingPanel(){S.fundingPanelOpen=!S.fundingPanelOpen;render();}
+function fundingPanel(){
+  const now=new Date();
+  const appliedBy=S.role==='manager'?'Jordan Lee (Manager)':'';
+  return`<div class="ovr-panel">
+    <div class="chip c-warn">Override logged with your name, timestamp, and reason</div>
+    <div style="font-size:.78rem;color:var(--text-secondary);margin-top:8px">Applied by: <strong>${appliedBy}</strong> (auto-captured, not editable) — ${now.toLocaleString()}</div>
+    <label>Duration Mode</label>
+    <select onchange="ovrState.mode=this.value;render()">
+      <option value="ONE_APPOINTMENT" ${ovrState.mode==='ONE_APPOINTMENT'?'selected':''}>One Appointment</option>
+      <option value="UNTIL_DATE" ${ovrState.mode==='UNTIL_DATE'?'selected':''}>Until Date</option>
+      <option value="X_DAYS" ${ovrState.mode==='X_DAYS'?'selected':''}>X Days</option>
+      <option value="UNTIL_NEW_AUTHORIZATION" ${ovrState.mode==='UNTIL_NEW_AUTHORIZATION'?'selected':''}>Until New Authorization</option>
+      <option value="MANUAL" ${ovrState.mode==='MANUAL'?'selected':''}>Manual</option>
+    </select>
+    ${ovrState.mode==='UNTIL_DATE'?`<label>End Date</label><input type="date" onchange="ovrState.end=this.value" value="${ovrState.end}">`:''}
+    ${ovrState.mode==='X_DAYS'?`<label>Number of Days</label><input type="number" min="1" onchange="ovrState.days=this.value" value="${ovrState.days}">`:''}
+    ${ovrState.mode==='UNTIL_NEW_AUTHORIZATION'?`<p class="ovr-note">Active until a new Regional Center authorization is recorded.</p>`:''}
+    ${ovrState.mode==='MANUAL'?`<label>Manual Review Note</label><textarea onchange="ovrState.note=this.value">${ovrState.note}</textarea>`:''}
+    <label>Appointments Affected</label>
+    <div style="display:flex;gap:14px;font-size:.85rem;margin-top:2px">
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="ovraff" ${ovrState.affected==='this'?'checked':''} onchange="ovrState.affected='this'">This appointment only</label>
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="ovraff" ${ovrState.affected==='series'?'checked':''} onchange="ovrState.affected='series'">This + recurring series</label>
+    </div>
+    <label>Funding Expected</label><input type="text" placeholder="e.g. RC authorization renewal expected within 30 days" onchange="ovrState.expected=this.value" value="${ovrState.expected}">
+    <label>Expiration / Review Date (always required)</label><input type="date" onchange="ovrState.review=this.value" value="${ovrState.review}">
+    <label>Reason (required)</label><textarea onchange="ovrState.reason=this.value">${ovrState.reason}</textarea>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+      <button class="btn btn-out" onclick="S.fundingPanelOpen=false;render()">Cancel</button>
+      <button class="btn btn-blue" onclick="applyOverride()">Apply Override</button>
+    </div>
+  </div>`;
+}
+function applyOverride(){
+  if(!ovrState.reason||!ovrState.review){toast('Reason and Expiration/Review Date are required.');return;}
+  const modeLabel={ONE_APPOINTMENT:'One Appointment',UNTIL_DATE:`Until ${ovrState.end||'(date)'}`,X_DAYS:`${ovrState.days||'?'} Days`,UNTIL_NEW_AUTHORIZATION:'Until New Authorization',MANUAL:'Manual Review'}[ovrState.mode];
+  S.overridesApplied.push({text:`Funding Override — ${modeLabel} — applied by Jordan Lee, Manager — "${ovrState.reason}" (review by ${ovrState.review})`});
+  S.fundingPanelOpen=false;
+  toast('Funding Override applied and logged.');
+  render();
+}
+function overrideHardCheck(svcId,reason){
+  const r=prompt(`Override "${reason}"? Enter a reason (recorded):`);
+  if(!r)return;
+  const c=S.participants[S.activePIdx].client;
+  const cat=catalogFor(c.id).find(s=>s.id===svcId);
+  if(cat)cat.status='ok';
+  S.overridesApplied.push({text:`Check overridden (${reason}) by staff — "${r}"`});
+  toast('Override recorded.');
+  render();
+}
+
+/* ---------- Success ---------- */
+function successBlock(){
+  const item=S.queue[0];const p=S.participants[item.pIdx],sv=p.services[item.sIdx];
+  const meta=OUTCOME_META[S.outcome];
+  const s=sv.slot?findSlot(sv.slot):null;
   return`<div class="card"><div class="card-bd"><div class="succ-state">
-    <div class="succ-icon">\u2713</div>
-    <div class="succ-t">Booking Confirmed</div>
-    <div class="succ-s">${S.client.nm} \u00b7 ${t} Swimming \u00b7 Mon Sep 14 \u00b7 12:30 PM</div>
-    <div style="margin-bottom:18px"><span class="chip c-ok" style="font-size:.85rem;height:26px;padding:0 12px">CONFIRMED</span></div>
-    <div style="display:flex;gap:9px;justify-content:center">
+    <div class="succ-icon" style="background:${meta.bg};color:${meta.fg}"><span class="ms" style="font-size:1.7rem">${meta.icon}</span></div>
+    <div class="succ-t">${meta.title}</div>
+    <div class="succ-s">${p.client.nm} · ${sv.svcNm} ${s?`· ${DD[s.day]} · ${s.time}`:''}</div>
+    <div style="margin-bottom:6px">Status: <span class="chip ${meta.chipClass}">${S.outcome}</span></div>
+    <div class="succ-s">${meta.line}</div>
+    <div style="display:flex;gap:9px;justify-content:center;margin-top:14px">
       <button class="btn btn-out" onclick="location.href='calendar-master.html'">Back to Calendar</button>
       <button class="btn btn-blue" onclick="bookAgain()">Book Another Client</button>
     </div>
-  </div></div></div>`;}
+  </div></div></div>`;
+}
 
+/* ---------- Footer ---------- */
 function renderFooter(){
-  const tm={1:S.client?`${S.client.nm} selected`:'Select a client to begin',2:'Select service',3:'Set day & time preferences',4:S.slot?'Slot selected \u2014 proceed to review':'Select an available slot',5:S.wl?`${S.client?.nm} \u00b7 Joining waitlist`:`${S.client?.nm} \u00b7 Review booking`};
+  const tm={1:S.participants.length?`${S.participants.map(p=>p.client.nm).join(' + ')} selected`:'Select a client to begin',
+    2:'Select service(s)',3:'Set day & time preferences',
+    4:curSvc()&&curSvc().slot?'Slot selected — proceed':'Select an available slot',
+    5:S.outcome==='WAITLISTED'?'Review — will join waitlist':'Review booking'};
   document.getElementById('sfTitle').textContent=S.success?'Booking complete':tm[S.step]||'';
-  document.getElementById('sfSub').textContent=S.role==='manager'?'Manager view \u2014 override controls available':S.role==='staff'?'Staff view':'Front Desk view';
+  document.getElementById('sfSub').textContent=S.role==='manager'?'Manager view — Funding Override available':S.role==='staff'?'Staff view':'Front Desk view';
   const bb=document.getElementById('backBtn'),nb=document.getElementById('nextBtn');
   bb.style.display=S.step>1&&!S.success?'inline-flex':'none';
-  if(S.success){nb.style.display='none';return;}nb.style.display='inline-flex';
-  nb.disabled=(S.step===1&&!S.client)||(S.step===4&&!S.slot);
-  nb.textContent=S.step===5?(S.wl?'Join Waitlist':'Confirm Booking'):S.step===4&&!S.slot?'Select a Slot \u2192':'Next Step \u2192';
-  nb.className=`btn ${S.step===5?'btn-green':'btn-blue'}`;}
+  if(S.success){nb.style.display='none';return;}
+  nb.style.display='inline-flex';
+  let disabled=false;
+  if(S.step===1)disabled=S.participants.length===0;
+  else if(S.step===2){const p=S.participants[S.activePIdx];disabled=!p||p.services.length===0;}
+  else if(S.step===4){const sv=curSvc();disabled=!sv||(!sv.slot&&!sv.waitlist);}
+  nb.disabled=disabled;
+  nb.textContent=S.step===5?(S.outcome==='WAITLISTED'?'Join Waitlist':'Confirm Booking'):S.step===4&&disabled?'Select a Slot →':S.step===2?'Next: Preferences →':'Next Step →';
+  nb.className=`btn ${S.step===5?'btn-green':'btn-blue'}`;
+}
 
-function selC(id){S.client=CL.find(c=>c.id===id);S.pax=[{...S.client}];render();}
-function switchType(t){
-  if(S.step>1){toast('Switching type resets slot selection. Steps 2\u20135 reset.');S.step=Math.min(S.step,2);}
-  S.type=t;S.slot=null;S.pax=S.client?[{...S.client}]:[];S.paxSearch=false;S.wl=false;
-  ['tabGroup','tabSemi','tabPrivate'].forEach(id=>document.getElementById(id)?.classList.remove('active'));
-  const m={group:'tabGroup',semi:'tabSemi',private:'tabPrivate'};
-  document.getElementById(m[t])?.classList.add('active');render();}
-function setRole(r){
-  S.role=r;['rStaff','rManager','rFD'].forEach(id=>{const b=document.getElementById(id);if(b)b.className='btn btn-out btn-sm';});
-  const m={staff:'rStaff',manager:'rManager',frontdesk:'rFD'};
-  const b=document.getElementById(m[r]);if(b)b.className='btn btn-blue btn-sm';render();}
-function goNext(){if(S.step===5){S.success=true;render();return;}S.step=Math.min(5,S.step+1);render();}
-function goBack(){S.step=Math.max(1,S.step-1);S.success=false;render();}
-function editStep(n){S.step=n;S.success=false;render();}
-function selS(id){S.slot=id;render();}
-function doBook(id){S.slot=id;S.wl=false;S.step=5;render();}
-function doWL(id){S.slot=id;S.wl=true;S.step=5;render();}
-function togD(d,v){if(v){if(!S.days.includes(d))S.days.push(d);}else{S.days=S.days.filter(x=>x!==d);}render();}
-function togPS(){S.paxSearch=!S.paxSearch;render();}
+/* ---------- Drawer (Create Slot + Waitlist Match) ---------- */
+function openDrawer(){S.drawer.open=true;S.drawer.mode='form';render();}
+function closeDrawer(){S.drawer.open=false;render();}
+function renderDrawer(){
+  const d=document.getElementById('cDrawer');
+  d.classList.toggle('open',S.drawer.open);
+  if(!S.drawer.open)return;
+  const title=document.getElementById('drwTitle');
+  const body=document.getElementById('drwBody');
+  const foot=document.getElementById('drwFoot');
+  if(S.drawer.mode==='form'){
+    title.textContent='Create New Class Slot';
+    body.innerHTML=`
+      <div class="form-r"><div class="fg"><label>Service</label><select id="dSvc" onchange="S.drawer.svc=this.value">
+        <option ${S.drawer.svc==='Swim'?'selected':''}>Swim</option><option ${S.drawer.svc==='Basketball'?'selected':''}>Basketball</option><option ${S.drawer.svc==='Fitness'?'selected':''}>Fitness</option></select></div>
+      <div class="fg"><label>Class Type</label><select id="dType" onchange="S.drawer.ctype=this.value">
+        <option ${S.drawer.ctype==='Group'?'selected':''}>Group</option><option ${S.drawer.ctype==='Semi-Private'?'selected':''}>Semi-Private</option><option ${S.drawer.ctype==='Private'?'selected':''}>Private</option></select></div></div>
+      <div class="form-r"><div class="fg"><label>Level</label><select id="dLevel" onchange="S.drawer.level=this.value">
+        <option ${S.drawer.level==='Beginner 2'?'selected':''}>Beginner 2</option><option ${S.drawer.level==='Beginner 1'?'selected':''}>Beginner 1</option><option ${S.drawer.level==='Intermediate'?'selected':''}>Intermediate</option></select></div>
+      <div class="fg"><label>Instructor</label><select id="dInst" onchange="S.drawer.inst=this.value">
+        <option value="mt" ${S.drawer.inst==='mt'?'selected':''}>Michael Torres</option><option value="sc" ${S.drawer.inst==='sc'?'selected':''}>Sarah Chen</option><option value="jw" ${S.drawer.inst==='jw'?'selected':''}>James Wright</option></select></div></div>
+      <div class="form-r"><div class="fg"><label>Date</label><input id="dDate" type="date" value="${S.drawer.date}" onchange="S.drawer.date=this.value"></div>
+      <div class="fg"><label>Start Time</label><input id="dTime" type="time" value="${S.drawer.time}" onchange="S.drawer.time=this.value"></div></div>
+      <div class="form-r"><div class="fg"><label>Duration</label><select id="dDur" onchange="S.drawer.dur=this.value">
+        <option value="30" ${S.drawer.dur==='30'?'selected':''}>30 min</option><option value="45" ${S.drawer.dur==='45'?'selected':''}>45 min</option><option value="60" ${S.drawer.dur==='60'?'selected':''}>60 min</option><option value="90" ${S.drawer.dur==='90'?'selected':''}>90 min</option></select></div>
+      ${S.drawer.ctype!=='Private'?`<div class="fg"><label>Capacity</label><input id="dCap" type="number" min="1" value="${S.drawer.cap}" onchange="S.drawer.cap=this.value"></div>`:''}</div>
+      <div class="fg"><label>Resource</label><select id="dRes" onchange="S.drawer.resource=this.value">
+        <option ${S.drawer.resource==='Pool Lane 8'?'selected':''}>Pool Lane 8</option><option ${S.drawer.resource==='Pool Lane 4'?'selected':''}>Pool Lane 4</option><option ${S.drawer.resource==='Pool Lane 10'?'selected':''}>Pool Lane 10</option></select></div>
+      <div class="fg"><label>Notes (optional)</label><textarea id="dNotes" onchange="S.drawer.notes=this.value">${S.drawer.notes}</textarea></div>`;
+    foot.innerHTML=`<button class="btn btn-out" onclick="closeDrawer()">Cancel</button><button class="btn btn-blue" onclick="createAndSearchWaitlist()">Create &amp; Search Waitlist</button>`;
+  }else{
+    title.textContent='Waitlist Matches';
+    const c=S.drawer.created;
+    body.innerHTML=`<div class="banner b-ok" style="margin-top:0"><strong>New Class Created</strong> — ${c.svc}, ${c.level}<br>${c.date} at ${c.time} — ${c.resource}</div>
+      <div class="sec-lbl">Matching Waitlist Entries (${WL_SEED.matched.length-S.drawer.pulled.length} found) — same service, same level, compatible age group, compatible day and time</div>
+      ${WL_SEED.matched.filter(m=>!S.drawer.pulled.includes(m.nm)).map(m=>`<div class="wl-item"><div><div style="font-weight:700;font-size:.85rem">${m.nm}</div><div style="font-size:.75rem;color:var(--text-secondary)">${m.wanted}</div></div><button class="btn btn-blue btn-sm" onclick="pullIn('${m.nm}')">Pull In</button></div>`).join('')}
+      ${S.drawer.pulled.length?`<div class="banner b-ok">Pulled in: ${S.drawer.pulled.join(', ')} — ran normal eligibility checks, confirmed.</div>`:''}
+      <div class="sec-lbl">Not Matched (${WL_SEED.notMatched.length}) — shown for transparency</div>
+      ${WL_SEED.notMatched.map(m=>`<div class="wl-item"><div><div style="font-weight:700;font-size:.85rem">${m.nm}</div><div style="font-size:.75rem;color:var(--text-secondary)">${m.wanted}</div></div><span class="chip c-muted">${m.reason}</span></div>`).join('')}`;
+    foot.innerHTML=`<button class="btn btn-blue" onclick="closeSelectSlot()">Close — Select This Slot</button>`;
+  }
+}
+function createAndSearchWaitlist(){
+  const d=S.drawer;
+  const wd=new Date(d.date+'T00:00:00');
+  const dayName=Object.keys(DAY_JS).find(k=>DAY_JS[k]===wd.getDay())||'MON';
+  const hh=parseInt(d.time.split(':')[0],10),mm=parseInt(d.time.split(':')[1],10);
+  const start=hh*60+mm,dur=parseInt(d.dur,10),end=start+dur;
+  const timeStr=formatTimeRange(start,end);
+  const newSlot={id:'newslot'+Date.now(),day:dayName,date:d.date,time:timeStr,start,end,inst:d.inst,loc:d.resource,spots:0,cap:parseInt(d.cap||8,10),len:dur};
+  const pool=d.ctype==='Group'?SG:d.ctype==='Semi-Private'?SS:SP;
+  if(d.ctype==='Semi-Private')newSlot.roster=0;
+  pool.push(newSlot);
+  S.drawer.newSlotId=newSlot.id;
+  S.drawer.created={svc:`${d.ctype} ${d.svc}`,level:d.level,date:fmtDateLong(d.date),time:timeStr,resource:d.resource};
+  S.drawer.mode='waitlist';
+  toast('Class created — confirmed immediately, no minimum enrolment (D2). Searching waitlist…');
+  render();
+}
+function formatTimeRange(start,end){
+  function fmt(m){let h=Math.floor(m/60),mi=m%60;const ap=h>=12?'PM':'AM';h=h%12;if(h===0)h=12;return `${h}:${mi.toString().padStart(2,'0')} ${ap}`;}
+  return `${fmt(start)}–${fmt(end)}`;
+}
+function pullIn(nm){S.drawer.pulled.push(nm);toast(`${nm} ran through eligibility checks — added, confirmed.`);render();}
+function closeSelectSlot(){
+  const item=curItem();
+  if(item){
+    const p=S.participants[item.pIdx],sv=p.services[item.sIdx];
+    sv.slot=S.drawer.newSlotId;sv.waitlist=false;
+  }
+  S.drawer.open=false;S.drawer.mode='form';
+  advanceQueue();
+}
+
+/* ---------- Participants / clients ---------- */
+function newParticipant(client){return{client,services:[],purchases:{}};}
+function selC(id){
+  const c=CLIENTS[id];
+  if(S.participants.length===0)S.participants.push(newParticipant(c));
+  else S.participants[0]=newParticipant(c);
+  S.activePIdx=0;render();
+}
+function addSecondParticipant(){
+  if(S.participants.length<1){toast('Select a primary client first.');return;}
+  if(S.participants.length>1)return;
+  document.getElementById('cSrch')&&(document.getElementById('cSrch').value='');
+  S.addingSecond=true;
+  const remaining=CL.filter(c=>c.id!==S.participants[0].client.id);
+  const nm=remaining[1]||remaining[0];
+  S.participants.push(newParticipant(nm));
+  toast(`${nm.nm} added as second participant. Use the tabs in Step 2 to schedule independently.`);
+  render();
+}
+function removeParticipant(i){
+  const nm=S.participants[i].client.nm;
+  const hasScheduled=S.participants[i].services.some(s=>s.slot);
+  if(hasScheduled){
+    const ok=confirm(`${nm} has scheduled classes. Removing will drop them. Continue?`);
+    if(!ok)return;
+  }
+  S.participants.splice(i,1);
+  S.activePIdx=0;
+  rebuildQueuePreserving();
+  render();
+}
+function switchActivePx(i){S.activePIdx=i;render();}
+
+/* ---------- Step 2 handlers ---------- */
+function toggleSvc(pIdx,svcId){
+  const p=S.participants[pIdx];
+  const cat=catalogFor(p.client.id).find(s=>s.id===svcId);
+  const idx=p.services.findIndex(s=>s.svcId===svcId);
+  if(idx>=0){p.services.splice(idx,1);}
+  else{
+    if(p.services.length>=3){toast('Up to 3 services per participant.');return;}
+    p.services.push({svcId,svcNm:cat.nm,wet:cat.wet,source:null,instr:'any',days:['MON','WED'],times:{},rec:'credits',searchThrough:'2026-09-30',slot:null,waitlist:false,length:60});
+  }
+  render();
+}
+function setSource(pIdx,svcId,src){const sv=S.participants[pIdx].services.find(s=>s.svcId===svcId);if(sv)sv.source=src;render();}
+function setInstrPref(v){const p=S.participants[S.activePIdx];p.services.forEach(s=>s.instr=v);render();}
+function setLength(len){
+  const p=S.participants[S.activePIdx];
+  const anyPicked=p.services.some(s=>s.slot);
+  if(anyPicked){
+    const n=p.services.filter(s=>s.slot).length;
+    const ok=confirm(`Changing session length will clear your ${n} selected session(s). Continue?`);
+    if(!ok)return;
+    p.services.forEach(s=>{s.slot=null;s.waitlist=false;});
+  }
+  p.length=len;render();
+}
+function togSemiSearch(){S.semiSearchOpen=!S.semiSearchOpen;render();}
 function paxRes(q){
   const el=document.getElementById('pDD');if(!el)return;
-  if(!q){el.innerHTML='';return;}
-  const res=CL.filter(c=>c.id!==S.client.id&&!S.pax.find(p=>p.id===c.id)&&c.nm.toLowerCase().includes(q.toLowerCase())).slice(0,5);
-  el.innerHTML=res.map(c=>{const ok=c.lvl.includes('Swim');return`<div class="px-res" onclick="addPax('${c.id}')"><div><div style="font-size:.85rem;font-weight:700">${c.nm}</div><div style="font-size:.72rem;color:var(--text-secondary)">${c.lvl}</div></div><span class="chip ${ok?'c-ok':'c-danger'}">${ok?'\u2713 Eligible':'\u2717 Level mismatch'}</span></div>`;}).join('')||'<div style="padding:9px 13px;font-size:.78rem;color:var(--text-secondary)">No results</div>';}
-function addPax(id){const c=CL.find(x=>x.id===id);if(c&&!S.pax.find(p=>p.id===id))S.pax.push({...c});S.paxSearch=false;render();}
-function remPax(id){S.pax=S.pax.filter(p=>p.id!==id);render();}
-function bookAgain(){S.client=null;S.step=1;S.slot=null;S.success=false;S.pax=[];S.wl=false;render();}
-function openDrawer(){document.getElementById('cDrawer').classList.add('open');}
-function closeDrawer(){document.getElementById('cDrawer').classList.remove('open');}
-function createAndSelect(){closeDrawer();toast('New class slot created & selected');S.slot='g1';render();}
-function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+  if(!q||q.trim().length<2){el.innerHTML='';return;}
+  const p=S.participants[S.activePIdx];
+  const sv=p.services[0];
+  const roster=sv.roster||[p.client.id];
+  const res=CL.filter(c=>!roster.includes(c.id)&&(c.nm.toLowerCase().includes(q.toLowerCase())||c.email.toLowerCase().includes(q.toLowerCase())||c.phone.includes(q))).slice(0,5);
+  el.innerHTML=res.map(c=>{const ok=c.lvl===p.client.lvl;return`<div class="px-res" onclick="addSemiPax('${c.id}')"><div><div style="font-size:.85rem;font-weight:700">${c.nm}</div><div style="font-size:.72rem;color:var(--text-secondary)">${c.lvl}</div></div><span class="chip ${ok?'c-ok':'c-danger'}">${ok?'✓ Eligible':'✗ Level mismatch'}</span></div>`;}).join('')||'<div style="padding:9px 13px;font-size:.78rem;color:var(--text-secondary)">No results</div>';
+}
+function addSemiPax(id){
+  const p=S.participants[S.activePIdx];const sv=p.services[0];
+  sv.roster=sv.roster||[p.client.id];
+  if(!sv.roster.includes(id))sv.roster.push(id);
+  S.semiSearchOpen=false;render();
+}
+function remSemiPax(id){const p=S.participants[S.activePIdx];const sv=p.services[0];sv.roster=(sv.roster||[]).filter(x=>x!==id);render();}
+
+/* ---------- Navigation ---------- */
+function switchType(t){
+  if(S.step>1){
+    const ok=confirm('Switching type resets your slot selection. Continue?');
+    if(!ok)return;
+  }
+  S.type=t;S.step=Math.min(S.step,2);S.queue=[];S.queuePos=0;S.slotReservations={};S.marketOpenFor=null;
+  S.participants.forEach(p=>{p.services=[];});
+  render();
+}
+function setRole(r){S.role=r;render();}
+function goNext(){
+  if(S.step===1){S.step=2;render();return;}
+  if(S.step===2){
+    if(S.participants.length>1&&S.activePIdx===0){S.activePIdx=1;render();return;} // ensure 2nd participant also configures services
+    buildQueueAndAdvance();return;
+  }
+  if(S.step===5){confirmBooking();return;}
+  S.step=Math.min(5,S.step+1);render();
+}
+function buildQueueAndAdvance(){
+  S.queue=[];
+  S.participants.forEach((p,pIdx)=>{p.services.forEach((sv,sIdx)=>S.queue.push({pIdx,sIdx}));});
+  if(!S.queue.length){toast('Select at least one service.');return;}
+  S.queuePos=0;S.step=3;render();
+}
+function goBack(){
+  if(S.step===3&&S.queuePos>0){S.queuePos--;S.step=4;render();return;}
+  if(S.step===5){S.step=4;render();return;}
+  S.step=Math.max(1,S.step-1);render();
+}
+function editStep(n){S.step=n;render();}
+function editQueueFromStart(){S.queuePos=0;S.step=3;render();}
+function confirmBooking(){S.success=true;render();}
+function bookAgain(){
+  S={role:S.role,type:'group',step:1,success:false,outcome:null,participants:[],activePIdx:0,queue:[],queuePos:0,fundingPanelOpen:false,overridesApplied:[],slotReservations:{},marketOpenFor:null,drawer:{open:false,mode:'form',svc:'Swim',ctype:'Group',level:'Beginner 2',inst:'mt',date:'2026-09-17',time:'16:00',dur:'60',cap:8,resource:'Pool Lane 4',notes:'',pulled:[],created:null}};
+  ['tabGroup','tabSemi','tabPrivate'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  render();
+}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(window._toastT);window._toastT=setTimeout(()=>t.classList.remove('show'),3200);}
+
 render();
 </script>
 </body>
 </html>
-

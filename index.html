@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<script src="shared-sidebar.js"></script>
 <style>
 :root{
   --primary:#334155; --primary-light:#475569; --primary-dark:#1e293b;
@@ -71,47 +72,7 @@ h1{font-size:2rem;font-weight:700;letter-spacing:-.02em;margin:0 0 8px;}
 </head>
 <body>
 <div class="app">
-  <aside class="sidebar">
-    <div class="logo">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-        <rect width="28" height="28" rx="7" fill="#3b82f6"/>
-        <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span>ZALEXY</span>
-    </div>
-    <nav class="nav" aria-label="Primary">
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">point_of_sale</span>Point of Sale</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">groups</span>Leads</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">account_circle</span>Accounts</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Profiles</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">receipt_long</span>Transactions</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">request_quote</span>Invoices</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Staff</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">event</span>Scheduling</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">settings</span>Settings</a>
-      <div class="nav-section">Prototypes</div>
-      <a class="nav-item active" href="index.html"><span class="material-symbols-rounded">grid_view</span>Prototype Gallery</a>
-      <a class="nav-item" href="admin-intake-form-builder.html"><span class="material-symbols-rounded">dynamic_form</span>Admin: Intake &amp; Builder</a>
-      <a class="nav-item" href="admin-settings-policy-engine.html"><span class="material-symbols-rounded">admin_panel_settings</span>Admin: Policy Engine Settings</a>
-      <a class="nav-item" href="profile-intake-tab.html"><span class="material-symbols-rounded">badge</span>Profile: Intake Tab</a>
-      <a class="nav-item" href="profile-overview-tab.html"><span class="material-symbols-rounded">contact_page</span>Profile: Details Tab</a>
-      <a class="nav-item" href="portal-profile-tab.html"><span class="material-symbols-rounded">family_restroom</span>Portal: My Account</a>
-      <div class="nav-section">Billing Module</div>
-      <a class="nav-item" href="billing-dashboard.html"><span class="material-symbols-rounded">space_dashboard</span>Billing Dashboard</a>
-      <a class="nav-item" href="billing-upcoming-billings.html"><span class="material-symbols-rounded">event_upcoming</span>Upcoming Billings</a>
-      <a class="nav-item" href="billing-failed-payments.html"><span class="material-symbols-rounded">error</span>Failed Payments</a>
-      <a class="nav-item" href="billing-member-billing.html"><span class="material-symbols-rounded">groups</span>Member Billing</a>
-      <a class="nav-item" href="billing-module-settings.html"><span class="material-symbols-rounded">settings</span>Module Settings</a>
-      <div class="nav-section">Scheduling</div>
-      <a class="nav-item" href="calendar-master.html"><span class="material-symbols-rounded">calendar_today</span>Calendar Master</a>
-      <a class="nav-item" href="booking-flow-staff.html"><span class="material-symbols-rounded">edit_calendar</span>Staff Booking Flow</a>
-      <a class="nav-item" href="booking-flow-client.html"><span class="material-symbols-rounded">person</span>Client Booking Flow</a>
-      <div class="nav-section">Funding</div>
-      <a class="nav-item" href="rc-authorizations.html"><span class="material-symbols-rounded">assured_workload</span>Regional Center</a>
-      <a class="nav-item" href="voucher-management.html"><span class="material-symbols-rounded">confirmation_number</span>Voucher Management</a>
-    </nav>
-    <div class="sidebar-foot">Prototype build · not production</div>
-  </aside>
+  <script src="shared-sidebar.js" data-inject="true"></script>
 
   <main class="main">
     <div class="page">
@@ -236,7 +197,7 @@ h1{font-size:2rem;font-weight:700;letter-spacing:-.02em;margin:0 0 8px;}
         </div>
         <div class="card">
           <span class="tag">Billing</span>
-          <h4>Billing: Module Settings</h4>
+          <h4>Billing: Admin Setup</h4>
           <p>The policy framework the billing engine obeys — batch windows, cron schedules,
             retry rules, proration method, and per-event notifications. Adds the scope
             hierarchy the shipped screen lacks: every setting resolves Location → Service →

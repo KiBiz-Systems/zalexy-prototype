@@ -53,6 +53,10 @@ button,select,input,textarea{font-family:inherit;}
 /* ---------- Main ---------- */
 .main{flex:1;display:flex;flex-direction:column;background:var(--bg-default);overflow:hidden;}
 .content{flex:1;overflow-y:auto;}
+.topbar{flex:0 0 64px;height:64px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:0 24px;}
+.loc-pill{display:flex;align-items:center;gap:5px;font-size:.825rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default);border:1px solid var(--border-input);border-radius:6px;padding:5px 10px;}
+.user-btn{display:inline-flex;align-items:center;gap:5px;background:#fff;color:var(--text-primary);border:1px solid var(--border-input);border-radius:6px;padding:4px 9px;font-size:.75rem;font-weight:600;cursor:pointer;}
+.user-btn:hover{border-color:var(--border-input-hover);background:var(--action-hover);}
 .page{max-width:1440px;margin:0 auto;padding:24px 24px 72px;}
 .crumb{font-size:.8rem;color:var(--text-secondary);margin:0;}
 .crumb a{color:var(--text-secondary);text-decoration:none;}
@@ -276,41 +280,13 @@ button,select,input,textarea{font-family:inherit;}
 </head>
 <body>
 <div class="app">
-  <aside class="sidebar">
-    <a class="logo" href="index.html">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-        <rect width="28" height="28" rx="7" fill="#3b82f6"/>
-        <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span>ZALEXY</span>
-    </a>
-    <nav class="nav" aria-label="Primary">
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">point_of_sale</span>Point of Sale</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">groups</span>Leads</a>
-      <a class="nav-item active" aria-current="page"><span class="material-symbols-rounded">account_circle</span>Accounts</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Profiles</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">receipt_long</span>Transactions</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">request_quote</span>Invoices</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Staff</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">event</span>Scheduling</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">settings</span>Settings</a>
-      <div class="nav-section">Prototypes</div>
-      <a class="nav-item" href="index.html"><span class="material-symbols-rounded">grid_view</span>Prototype Gallery</a>
-      <a class="nav-item" href="admin-intake-form-builder.html"><span class="material-symbols-rounded">dynamic_form</span>Admin: Intake &amp; Builder</a>
-      <a class="nav-item" href="admin-settings-policy-engine.html"><span class="material-symbols-rounded">admin_panel_settings</span>Admin: Policy Engine Settings</a>
-      <a class="nav-item" href="profile-intake-tab.html"><span class="material-symbols-rounded">badge</span>Profile: Intake Tab</a>
-      <a class="nav-item active" href="profile-overview-tab.html"><span class="material-symbols-rounded">contact_page</span>Profile: Details Tab</a>
-      <a class="nav-item" href="portal-profile-tab.html"><span class="material-symbols-rounded">family_restroom</span>Portal: My Account</a>
-      <div class="nav-section">Billing Module</div>
-      <a class="nav-item" href="billing-dashboard.html"><span class="material-symbols-rounded">space_dashboard</span>Billing Dashboard</a>
-      <a class="nav-item" href="billing-upcoming-billings.html"><span class="material-symbols-rounded">event_upcoming</span>Upcoming Billings</a>
-      <a class="nav-item" href="billing-failed-payments.html"><span class="material-symbols-rounded">error</span>Failed Payments</a>
-      <a class="nav-item" href="billing-member-billing.html"><span class="material-symbols-rounded">groups</span>Member Billing</a>
-      <a class="nav-item" href="billing-module-settings.html"><span class="material-symbols-rounded">settings</span>Module Settings</a>
-    </nav>
-  </aside>
+  <script src="shared-sidebar.js" data-inject="true"></script>
 
   <main class="main">
+    <div class="topbar">
+      <div class="loc-pill"><span class="material-symbols-rounded" style="font-size:15px">location_on</span>Solar Swim (PDT)</div>
+      <button class="user-btn" data-noop>Michael Torres ▾</button>
+    </div>
     <div class="content">
       <div class="page" id="pageRoot"></div>
     </div>

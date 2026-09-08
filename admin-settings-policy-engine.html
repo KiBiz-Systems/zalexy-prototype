@@ -138,7 +138,45 @@
       flex-direction: column;
       overflow-y: auto;
     }
-    
+
+    .topbar {
+      flex: 0 0 64px;
+      height: 64px;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+      padding: 0 24px;
+    }
+    .loc-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .825rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--bg-default);
+      border: 1px solid var(--border-input);
+      border-radius: 6px;
+      padding: 5px 10px;
+    }
+    .user-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #fff;
+      color: var(--text-primary);
+      border: 1px solid var(--border-input);
+      border-radius: 6px;
+      padding: 4px 9px;
+      font-size: .75rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .user-btn:hover { border-color: var(--border-input-hover); background: var(--action-hover); }
+
     /* Header */
     .page-header {
       padding: 24px 32px;
@@ -371,23 +409,15 @@
 <body>
 
   <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <span class="material-symbols-rounded">pool</span> Zalexy
-    </div>
-    <div class="sidebar-nav">
-      <a href="index.html" class="nav-item">
-        <span class="material-symbols-rounded">home</span> Gallery
-      </a>
-      <a href="#" class="nav-item active">
-        <span class="material-symbols-rounded">settings</span> Settings
-      </a>
-    </div>
-  </aside>
+  <script src="shared-sidebar.js" data-inject="true"></script>
 
   <!-- Main Area -->
   <main class="main-area">
-    
+    <div class="topbar">
+      <div class="loc-pill"><span class="material-symbols-rounded" style="font-size:15px">location_on</span>Solar Swim (PDT)</div>
+      <button class="user-btn" data-noop>Michael Torres ▾</button>
+    </div>
+
     <!-- Page Header -->
     <div class="page-header">
       <div>
@@ -418,7 +448,11 @@
         <span class="breadcrumbs-arrow">›</span>
         <select class="input" id="ctxFunding" onchange="updateContext()">
           <option value="All Funding Types">All Funding Types</option>
+          <option value="Self Pay">Self Pay</option>
           <option value="Regional Center">Regional Center</option>
+          <option value="Voucher">Voucher</option>
+          <option value="Insurance">Insurance</option>
+          <option value="Other">Other</option>
         </select>
         <span class="breadcrumbs-arrow">›</span>
         <select class="input" id="ctxClass" onchange="updateContext()">
@@ -458,9 +492,9 @@
           <div id="tab-service" class="panel-body active">
             <div class="panel-header" style="margin: -24px -24px 24px; padding: 24px;">
               <h4 style="margin-bottom: 4px;">Service & Capacity</h4>
-              <div class="body2">Rules for class limits, semi-private, and ghost holds.</div>
+              <div class="body2">Rules for class limits, semi-private group size, and waitlist behavior.</div>
             </div>
-            
+
             <div class="field-group">
               <div class="field-group-title">
                 CAPACITY RULES
@@ -476,18 +510,12 @@
                   <option value="Explicit">Explicit</option>
                 </select>
               </div>
-              <div class="form-row">
-                <div class="form-label">Minimum Enrollment</div>
-                <div class="form-input-wrap">
-                  <input type="number" class="input field-val" id="f-min-enroll" value="3">
-                </div>
-                <select class="input field-override" data-target="f-min-enroll" onchange="handleOverrideChange(this)">
-                  <option value="Inherited">Inherited</option>
-                  <option value="Explicit" selected>Explicit</option>
-                </select>
+              <div class="info-box">
+                <span class="material-symbols-rounded">info</span>
+                <div>Changes how many seats the calendar and staff booking screen show as available for this class. A scheduled group class is confirmed regardless of headcount.</div>
               </div>
             </div>
-            
+
             <div class="field-group">
               <div class="field-group-title">SEMI-PRIVATE</div>
               <div class="form-row">
@@ -500,23 +528,36 @@
                   <option value="Explicit">Explicit</option>
                 </select>
               </div>
+              <div class="info-box">
+                <span class="material-symbols-rounded">info</span>
+                <div>Authoritative source of the semi-private group size — the staff booking flow and the calendar capacity chips (e.g. 1&nbsp;/&nbsp;2, 2&nbsp;/&nbsp;2) read this value by name. Changing it here changes the capacity-chip denominator and the PENDING PARTNER threshold on both of those screens.</div>
+              </div>
             </div>
-            
+
             <div class="field-group">
-              <div class="field-group-title">GHOST HOLDS</div>
+              <div class="field-group-title">WAITLIST</div>
               <div class="form-row">
-                <div class="form-label">Hold Duration (Days)</div>
+                <div class="form-label">Waitlist Mode</div>
                 <div class="form-input-wrap">
-                  <input type="number" class="input field-val" id="f-ghost-dur" value="14" disabled>
+                  <select class="input field-val" id="f-waitlist-mode" disabled>
+                    <option value="Manager Approval" selected>Manager Approval</option>
+                    <option value="Auto-Enroll" disabled>Auto-Enroll (later feature — not V1)</option>
+                  </select>
                 </div>
-                <select class="input field-override" data-target="f-ghost-dur" onchange="handleOverrideChange(this)">
-                  <option value="Inherited">Inherited</option>
+                <select class="input field-override" data-target="f-waitlist-mode" onchange="handleOverrideChange(this)">
+                  <option value="Inherited" selected>Inherited</option>
                   <option value="Explicit">Explicit</option>
                 </select>
               </div>
+              <div class="form-row">
+                <div class="form-label">Auto-Enroll</div>
+                <div class="form-input-wrap">
+                  <span class="chip locked">Later feature — not V1, not selectable</span>
+                </div>
+              </div>
               <div class="info-box">
                 <span class="material-symbols-rounded">info</span>
-                <div>Ghost holds strictly reserve a seat (FULL_BLOCK) for their duration.</div>
+                <div>A full class is never over-filled automatically, including by a manager. A seat that opens after a cancellation goes to whichever waitlisted client the manager selects — never to an automatic pick.</div>
               </div>
             </div>
           </div>
@@ -527,70 +568,261 @@
               <h4 style="margin-bottom: 4px;">Scheduling & Attendance</h4>
               <div class="body2">Cancellation, no-shows, and make-up policies.</div>
             </div>
-            
+
+            <div class="info-box" style="margin-top: 0; margin-bottom: 24px;">
+              <span class="material-symbols-rounded">info</span>
+              <div>Cancellation rules below apply to the funding type selected in the Context Selector — Self Pay, Regional Center, Voucher, Insurance, and Other each hold their own set.</div>
+            </div>
+
             <div class="field-group">
-              <div class="field-group-title">CANCELLATIONS</div>
+              <div class="field-group-title">
+                <span>CANCELLATION POLICY (<span id="cancel-policy-label">Self Pay</span>)</span>
+                <button class="btn" style="padding: 2px 8px; font-size: 0.75rem; min-height: 24px;">Reset</button>
+              </div>
               <div class="form-row">
-                <div class="form-label">Early Cancel Window</div>
+                <div class="form-label">Early Cancellation Window</div>
                 <div class="form-input-wrap">
-                  <select class="input field-val" id="f-cancel-win" disabled>
+                  <select class="input field-val" id="f-cancel-window" disabled>
                     <option value="24 Hours">24 Hours</option>
                     <option value="48 Hours">48 Hours</option>
                   </select>
                 </div>
-                <select class="input field-override" data-target="f-cancel-win" onchange="handleOverrideChange(this)">
-                  <option value="Inherited">Inherited</option>
+                <select class="input field-override" data-target="f-cancel-window" onchange="handleOverrideChange(this)">
+                  <option value="Inherited" selected>Inherited</option>
                   <option value="Explicit">Explicit</option>
                 </select>
               </div>
               <div class="form-row">
-                <div class="form-label">Consecutive No-Show Limit</div>
+                <div class="form-label">Early Cancel Credit Rule</div>
                 <div class="form-input-wrap">
-                  <input type="number" class="input field-val" id="f-noshow-limit" value="2">
+                  <select class="input field-val" id="f-cancel-early-rule">
+                    <option value="Return to Balance">Return to Balance</option>
+                    <option value="Session Consumed">Session Consumed</option>
+                  </select>
                 </div>
-                <select class="input field-override" data-target="f-noshow-limit" onchange="handleOverrideChange(this)">
+              </div>
+              <div class="form-row">
+                <div class="form-label">Late Cancel Credit Rule</div>
+                <div class="form-input-wrap">
+                  <select class="input field-val" id="f-cancel-late-rule">
+                    <option value="Session Consumed">Session Consumed</option>
+                    <option value="Return to Balance">Return to Balance</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">No-Show Credit Rule</div>
+                <div class="form-input-wrap">
+                  <select class="input field-val" id="f-cancel-noshow-rule">
+                    <option value="Session Consumed">Session Consumed</option>
+                    <option value="Return to Balance">Return to Balance</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Make-Up Generation</div>
+                <div class="form-input-wrap">
+                  <select class="input field-val" id="f-cancel-makeup-gen">
+                    <option value="On Valid Early Cancel">On Valid Early Cancel</option>
+                    <option value="Never">Never</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Violation Threshold</div>
+                <div class="form-input-wrap">
+                  <input type="number" class="input field-val" id="f-cancel-violation" value="3">
+                </div>
+                <select class="input field-override" data-target="f-cancel-violation" onchange="handleOverrideChange(this)">
                   <option value="Inherited">Inherited</option>
                   <option value="Explicit" selected>Explicit</option>
                 </select>
               </div>
               <div class="form-row">
-                <div class="form-label">No-Show Action</div>
+                <div class="form-label">Account Hold / Drop Action</div>
                 <div class="form-input-wrap">
-                  <select class="input field-val" id="f-noshow-action">
-                    <option value="Notify Manager">Notify Manager</option>
+                  <select class="input field-val" id="f-cancel-hold-action">
                     <option value="Hold Account">Hold Account</option>
+                    <option value="Drop Account">Drop Account</option>
                   </select>
                 </div>
-                <!-- Action follows limit explicitly for this mockup -->
+              </div>
+              <div class="info-box">
+                <span class="material-symbols-rounded">info</span>
+                <div>Sets what a client's cancellation costs them, based on when they cancel and which funding type they're booked under.</div>
               </div>
             </div>
-            
+
             <div class="field-group">
-              <div class="field-group-title">MAKE-UP TOKENS (Service-Bound)</div>
+              <div class="field-group-title">CONSECUTIVE LATE CANCEL / NO-SHOW RULE</div>
               <div class="form-row">
-                <div class="form-label">Enable Make-Ups</div>
+                <div class="form-label">Enabled</div>
                 <div class="form-input-wrap" style="display: flex; gap: 16px; align-items: center; height: 36px;">
                   <label style="display:flex; gap:6px; align-items:center;">
-                    <input type="radio" name="mk_enable" checked> Yes
+                    <input type="radio" name="clc_enabled" checked onchange="markUnsaved()"> Yes
                   </label>
                   <label style="display:flex; gap:6px; align-items:center;">
-                    <input type="radio" name="mk_enable"> No
+                    <input type="radio" name="clc_enabled" onchange="markUnsaved()"> No
                   </label>
                 </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Threshold</div>
+                <div class="form-input-wrap">
+                  <input type="number" class="input field-val" id="f-clc-threshold" value="3">
+                </div>
+                <select class="input field-override" data-target="f-clc-threshold" onchange="handleOverrideChange(this)">
+                  <option value="Inherited">Inherited</option>
+                  <option value="Explicit" selected>Explicit</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Action</div>
+                <div class="form-input-wrap">
+                  <select class="input field-val" id="f-clc-action">
+                    <option value="Notify Manager" selected>Notify Manager</option>
+                    <option value="Hold Account">Hold Account</option>
+                    <option value="Drop">Drop</option>
+                    <option value="Require Staff Review">Require Staff Review</option>
+                  </select>
+                </div>
+              </div>
+              <div class="body2" style="margin-bottom: 8px;">Options: Notify, Hold, Drop, Require Staff Review.</div>
+              <div class="info-box">
+                <span class="material-symbols-rounded">info</span>
+                <div>Sets what happens to a client's account after they repeat a pattern of late cancels or no-shows.</div>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-group-title">MAKE-UP POLICY (Service-Bound)</div>
+              <div class="form-row">
+                <div class="form-label">Enabled</div>
+                <div class="form-input-wrap" style="display: flex; gap: 16px; align-items: center; height: 36px;">
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="radio" name="mkp_enabled" checked onchange="markUnsaved()"> Yes
+                  </label>
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="radio" name="mkp_enabled" onchange="markUnsaved()"> No
+                  </label>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Applicable Funding Types</div>
+                <div class="form-input-wrap">
+                  <select class="input field-val" id="f-mkp-funding">
+                    <option value="All Funding Types">All Funding Types</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Applicable Services</div>
+                <div class="form-input-wrap">
+                  <select class="input field-val" id="f-mkp-services">
+                    <option value="Swim">Swim</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Applicable Class Types</div>
+                <div class="form-input-wrap">
+                  <select class="input field-val" id="f-mkp-class-types">
+                    <option value="All Class Types">All Class Types</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Trigger Event</div>
+                <div class="form-input-wrap">
+                  <select class="input field-val" id="f-mkp-trigger">
+                    <option value="Valid Early Cancellation">Valid Early Cancellation</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Tokens Generated</div>
+                <div class="form-input-wrap">
+                  <input type="number" class="input field-val" id="f-mkp-tokens" value="1">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Token Expiration</div>
+                <div class="form-input-wrap">
+                  <select class="input field-val" id="f-mkp-token-exp" disabled>
+                    <option value="30 Days" selected>30 Days</option>
+                    <option value="60 Days">60 Days</option>
+                  </select>
+                </div>
+                <select class="input field-override" data-target="f-mkp-token-exp" onchange="handleOverrideChange(this)">
+                  <option value="Inherited" selected>Inherited</option>
+                  <option value="Explicit">Explicit</option>
+                </select>
               </div>
               <div class="form-row">
                 <div class="form-label">Booking Horizon (Days)</div>
                 <div class="form-input-wrap">
-                  <input type="number" class="input field-val" id="f-makeup-horiz" value="14">
+                  <input type="number" class="input field-val" id="f-mkp-horizon" value="7">
                 </div>
-                <select class="input field-override" data-target="f-makeup-horiz" onchange="handleOverrideChange(this)">
+                <select class="input field-override" data-target="f-mkp-horizon" onchange="handleOverrideChange(this)">
                   <option value="Inherited">Inherited</option>
                   <option value="Explicit" selected>Explicit</option>
                 </select>
               </div>
+              <div class="form-row">
+                <div class="form-label">Same Service Required</div>
+                <div class="form-input-wrap" style="display: flex; gap: 16px; align-items: center; height: 36px;">
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="radio" name="mkp_same_service" checked onchange="markUnsaved()"> Yes
+                  </label>
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="radio" name="mkp_same_service" onchange="markUnsaved()"> No
+                  </label>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Same Level Required</div>
+                <div class="form-input-wrap" style="display: flex; gap: 16px; align-items: center; height: 36px;">
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="radio" name="mkp_same_level" checked onchange="markUnsaved()"> Yes
+                  </label>
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="radio" name="mkp_same_level" onchange="markUnsaved()"> No
+                  </label>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Same Location Required</div>
+                <div class="form-input-wrap" style="display: flex; gap: 16px; align-items: center; height: 36px;">
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="radio" name="mkp_same_location" onchange="markUnsaved()"> Yes
+                  </label>
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="radio" name="mkp_same_location" checked onchange="markUnsaved()"> No
+                  </label>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Allowed Class Types</div>
+                <div class="form-input-wrap">
+                  <select class="input field-val" id="f-mkp-allowed-class-types">
+                    <option value="All Class Types">All Class Types</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Staff Override</div>
+                <div class="form-input-wrap" style="display: flex; gap: 16px; align-items: center; height: 36px;">
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="radio" name="mkp_staff_override" onchange="markUnsaved()"> Yes
+                  </label>
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="radio" name="mkp_staff_override" checked onchange="markUnsaved()"> No
+                  </label>
+                </div>
+              </div>
               <div class="info-box">
                 <span class="material-symbols-rounded">info</span>
-                <div>Tokens generated are bound exclusively to the service they originated from.</div>
+                <div>Token Expiration and Booking Horizon are different settings: Token Expiration is when the make-up token itself dies. Booking Horizon is how far ahead a make-up may still be booked. A valid early cancellation generates the token; tokens are bound exclusively to the service they originated from.</div>
               </div>
             </div>
           </div>
@@ -599,9 +831,9 @@
           <div id="tab-funding" class="panel-body">
             <div class="panel-header" style="margin: -24px -24px 24px; padding: 24px;">
               <h4 style="margin-bottom: 4px;">Funding Rules</h4>
-              <div class="body2">Specific handling for Vouchers and Regional Center.</div>
+              <div class="body2">Specific handling for Vouchers, Regional Center, and funding overrides.</div>
             </div>
-            
+
             <div class="field-group">
               <div class="field-group-title">HOMESCHOOL VOUCHERS</div>
               <div class="form-row">
@@ -623,7 +855,37 @@
                 <div>Proration dynamically calculates on unit updation.</div>
               </div>
             </div>
-            
+
+            <div class="field-group">
+              <div class="field-group-title">VOUCHER MAKE-UP</div>
+              <div class="form-row">
+                <div class="form-label">Voucher Clients Eligible for Makeup</div>
+                <div class="form-input-wrap" style="display: flex; gap: 16px; align-items: center; height: 36px;">
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="radio" name="vmu_eligible" checked onchange="toggleVoucherMakeupMode(this)"> Yes
+                  </label>
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="radio" name="vmu_eligible" onchange="toggleVoucherMakeupMode(this)"> No
+                  </label>
+                </div>
+              </div>
+              <div class="form-row" id="row-vmu-mode">
+                <div class="form-label">Mode</div>
+                <div class="form-input-wrap" style="width: 260px;">
+                  <select class="input field-val" id="f-vmu-mode">
+                    <option value="Use Original Entitlement" selected>Use Original Entitlement</option>
+                    <option value="Consume New Voucher Unit">Consume New Voucher Unit</option>
+                    <option value="Create Separate Make-Up Token">Create Separate Make-Up Token</option>
+                  </select>
+                </div>
+              </div>
+              <div class="body2" style="margin-bottom: 8px;">Options: Use Original Entitlement, Consume New Voucher Unit, Create Separate Make-Up Token.</div>
+              <div class="info-box">
+                <span class="material-symbols-rounded">info</span>
+                <div>Sets what a voucher client's make-up session draws against — their existing authorization, a new voucher unit, or a separate token. Configurable per funding provider / service.</div>
+              </div>
+            </div>
+
             <div class="field-group">
               <div class="field-group-title">REGIONAL CENTER (5th Week)</div>
               <div class="form-row">
@@ -638,6 +900,41 @@
                   <option value="Inherited">Inherited</option>
                   <option value="Explicit" selected>Explicit</option>
                 </select>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-group-title">FUNDING OVERRIDE</div>
+              <div class="form-row">
+                <div class="form-label">Allowed Roles</div>
+                <div class="form-input-wrap" style="display: flex; gap: 16px; align-items: center; height: 36px; width: auto;">
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="checkbox" id="f-fo-role-billing" checked onchange="markUnsaved()"> Billing Admin
+                  </label>
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="checkbox" id="f-fo-role-manager" checked onchange="markUnsaved()"> Manager
+                  </label>
+                  <label style="display:flex; gap:6px; align-items:center;">
+                    <input type="checkbox" id="f-fo-role-superadmin" checked onchange="markUnsaved()"> Super Admin
+                  </label>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-label">Override Duration</div>
+                <div class="form-input-wrap" style="width: 260px;">
+                  <select class="input field-val" id="f-fo-duration">
+                    <option value="One Appointment">One Appointment</option>
+                    <option value="Until Date">Until Date</option>
+                    <option value="X Days">X Days</option>
+                    <option value="Until New Authorization" selected>Until New Authorization</option>
+                    <option value="Manual">Manual</option>
+                  </select>
+                </div>
+              </div>
+              <div class="body2" style="margin-bottom: 8px;">Options: One Appointment, Until Date, X Days, Until New Authorization, Manual.</div>
+              <div class="info-box">
+                <span class="material-symbols-rounded">info</span>
+                <div>Sets who can temporarily bill a client under a different funding source than their record shows, and how long that override stands before it reverts.</div>
               </div>
             </div>
           </div>
@@ -663,13 +960,27 @@
       },
       fields: {
         'f-max-cap': { inheritedVal: '5', val: '5', mode: 'Inherited' },
-        'f-min-enroll': { inheritedVal: '2', val: '3', mode: 'Explicit' },
         'f-semi-parts': { inheritedVal: '2', val: '2', mode: 'Inherited' },
-        'f-ghost-dur': { inheritedVal: '14', val: '14', mode: 'Inherited' },
-        'f-cancel-win': { inheritedVal: '24 Hours', val: '24 Hours', mode: 'Inherited' },
-        'f-noshow-limit': { inheritedVal: '3', val: '2', mode: 'Explicit' },
-        'f-makeup-horiz': { inheritedVal: '7', val: '14', mode: 'Explicit' },
+        'f-waitlist-mode': { inheritedVal: 'Manager Approval', val: 'Manager Approval', mode: 'Inherited' },
+        'f-cancel-window': { inheritedVal: '24 Hours', val: '24 Hours', mode: 'Inherited' },
+        'f-cancel-violation': { inheritedVal: '3', val: '3', mode: 'Explicit' },
+        'f-clc-threshold': { inheritedVal: '3', val: '3', mode: 'Explicit' },
+        'f-mkp-token-exp': { inheritedVal: '30 Days', val: '30 Days', mode: 'Inherited' },
+        'f-mkp-horizon': { inheritedVal: '7', val: '7', mode: 'Explicit' },
         'f-5th-action': { inheritedVal: 'Skip 5th Week', val: 'Bill as Self-Pay', mode: 'Explicit' }
+      },
+      // Baseline cancellation-policy values. Only Self Pay carries an explicit
+      // Violation Threshold override in the seed data; every other funding type
+      // shows the same underlying values but tagged Inherited (nothing explicit
+      // has been set for it yet).
+      cancellationBaseline: {
+        window: '24 Hours',
+        earlyRule: 'Return to Balance',
+        lateRule: 'Session Consumed',
+        noShowRule: 'Session Consumed',
+        makeupGen: 'On Valid Early Cancel',
+        violationThreshold: '3',
+        holdAction: 'Hold Account'
       }
     };
     
@@ -725,16 +1036,63 @@
       if (s === 'All Services') {
         // Reset tabs overrides UI
         document.querySelectorAll('.tab-btn.has-override').forEach(el => el.classList.remove('has-override'));
-        
+
         // Reset inputs to inherited state just for demo visually
         document.querySelectorAll('.field-override').forEach(sel => {
           sel.value = 'Inherited';
           handleOverrideChange(sel);
         });
       }
+      renderCancellationPolicy();
       markUnsaved();
     }
-    
+
+    // Cancellation Policy is configurable per funding type. Self Pay carries the
+    // seed's explicit Violation Threshold override; every other funding type
+    // (including the "All Funding Types" default) shows the same baseline
+    // values but tagged Inherited, since none has an explicit override set.
+    function renderCancellationPolicy() {
+      const funding = document.getElementById('ctxFunding').value;
+      const label = (funding === 'All Funding Types') ? 'Self Pay' : funding;
+      document.getElementById('cancel-policy-label').innerText = label;
+
+      const base = state.cancellationBaseline;
+      document.getElementById('f-cancel-early-rule').value = base.earlyRule;
+      document.getElementById('f-cancel-late-rule').value = base.lateRule;
+      document.getElementById('f-cancel-noshow-rule').value = base.noShowRule;
+      document.getElementById('f-cancel-makeup-gen').value = base.makeupGen;
+      document.getElementById('f-cancel-hold-action').value = base.holdAction;
+
+      // Window: always Inherited in the seed data, regardless of funding type.
+      state.fields['f-cancel-window'].inheritedVal = base.window;
+      state.fields['f-cancel-window'].val = base.window;
+      const windowOverrideSel = document.querySelector('.field-override[data-target="f-cancel-window"]');
+      windowOverrideSel.value = 'Inherited';
+      handleOverrideChange(windowOverrideSel);
+
+      // Violation Threshold: Explicit for Self Pay (the seeded funding type),
+      // Inherited (same underlying value) for every other funding type.
+      state.fields['f-cancel-violation'].inheritedVal = base.violationThreshold;
+      const violationOverrideSel = document.querySelector('.field-override[data-target="f-cancel-violation"]');
+      if (label === 'Self Pay') {
+        state.fields['f-cancel-violation'].val = base.violationThreshold;
+        violationOverrideSel.value = 'Explicit';
+      } else {
+        violationOverrideSel.value = 'Inherited';
+      }
+      handleOverrideChange(violationOverrideSel);
+    }
+
+    // Voucher Make-Up mode only applies when voucher clients are eligible.
+    function toggleVoucherMakeupMode() {
+      const yesChecked = document.querySelectorAll('input[name="vmu_eligible"]')[0].checked;
+      const row = document.getElementById('row-vmu-mode');
+      const select = document.getElementById('f-vmu-mode');
+      row.style.opacity = yesChecked ? '1' : '0.5';
+      select.disabled = !yesChecked;
+      markUnsaved();
+    }
+
     function resetContext() {
       document.getElementById('ctxLocation').value = 'All Locations';
       document.getElementById('ctxService').value = 'All Services';
@@ -742,13 +1100,16 @@
       document.getElementById('ctxClass').value = 'All Class Types';
       updateContext();
     }
-    
+
     // Bind change events to all inputs to mark unsaved
     document.querySelectorAll('.field-val').forEach(input => {
       input.addEventListener('input', () => markUnsaved());
       input.addEventListener('change', () => markUnsaved());
     });
-    
+
+    // Render the Cancellation Policy group for the initial funding context.
+    renderCancellationPolicy();
+
   </script>
 </body>
 </html>

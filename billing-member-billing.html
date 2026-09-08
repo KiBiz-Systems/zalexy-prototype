@@ -64,6 +64,9 @@ body{margin:0;font-family:"Inter","Roboto","Helvetica","Arial",sans-serif;color:
 .icon-btn:hover{background:var(--action-hover);}
 .icon-btn .dot{position:absolute;top:6px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--danger);}
 .avatar-32{width:32px;height:32px;border-radius:50%;background:#d1fae5;color:var(--success-dark);font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.loc-pill{display:flex;align-items:center;gap:5px;font-size:.825rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default);border:1px solid var(--border-input);border-radius:6px;padding:5px 10px;}
+.user-btn{display:inline-flex;align-items:center;gap:5px;background:#fff;color:var(--text-primary);border:1px solid var(--border-input);border-radius:6px;padding:4px 9px;font-size:.75rem;font-weight:600;cursor:pointer;}
+.user-btn:hover{border-color:var(--border-input-hover);background:var(--action-hover);}
 
 /* ---------- Page ---------- */
 .page{flex:1;overflow-y:auto;padding:24px;}
@@ -171,40 +174,7 @@ tbody tr:hover .chevron{color:var(--text-primary);}
 </head>
 <body>
 <div class="app">
-  <aside class="sidebar">
-    <div class="logo">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-        <rect width="28" height="28" rx="7" fill="#3b82f6"/>
-        <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span>ZALEXY</span>
-    </div>
-    <nav class="nav" aria-label="Primary">
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">point_of_sale</span>Point of Sale</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">groups</span>Leads</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">account_circle</span>Accounts</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Profiles</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">receipt_long</span>Transactions</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">request_quote</span>Invoices</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Staff</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">event</span>Scheduling</a>
-      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">settings</span>Settings</a>
-      <div class="nav-section">Prototypes</div>
-      <a class="nav-item" href="index.html"><span class="material-symbols-rounded">grid_view</span>Prototype Gallery</a>
-      <a class="nav-item" href="admin-intake-form-builder.html"><span class="material-symbols-rounded">dynamic_form</span>Admin: Intake &amp; Builder</a>
-      <a class="nav-item" href="admin-settings-policy-engine.html"><span class="material-symbols-rounded">admin_panel_settings</span>Admin: Policy Engine Settings</a>
-      <a class="nav-item" href="profile-intake-tab.html"><span class="material-symbols-rounded">badge</span>Profile: Intake Tab</a>
-      <a class="nav-item" href="profile-overview-tab.html"><span class="material-symbols-rounded">contact_page</span>Profile: Details Tab</a>
-      <a class="nav-item" href="portal-profile-tab.html"><span class="material-symbols-rounded">family_restroom</span>Portal: My Account</a>
-      <div class="nav-section">Billing Module</div>
-      <a class="nav-item" href="billing-dashboard.html"><span class="material-symbols-rounded">space_dashboard</span>Billing Dashboard</a>
-      <a class="nav-item" href="billing-upcoming-billings.html"><span class="material-symbols-rounded">event_upcoming</span>Upcoming Billings</a>
-      <a class="nav-item" href="billing-failed-payments.html"><span class="material-symbols-rounded">error</span>Failed Payments</a>
-      <a class="nav-item active" href="billing-member-billing.html"><span class="material-symbols-rounded">groups</span>Member Billing</a>
-      <a class="nav-item" href="billing-module-settings.html"><span class="material-symbols-rounded">settings</span>Module Settings</a>
-    </nav>
-    <div class="sidebar-foot">Prototype build · not production</div>
-  </aside>
+  <script src="shared-sidebar.js" data-inject="true"></script>
 
   <main class="main">
     <div class="topbar">
@@ -213,8 +183,9 @@ tbody tr:hover .chevron{color:var(--text-primary);}
         <input type="text" data-noop placeholder="Search members, batches…" aria-label="Global search">
       </div>
       <div class="topbar-spacer"></div>
+      <div class="loc-pill"><span class="material-symbols-rounded" style="font-size:15px">location_on</span>Solar Swim (PDT)</div>
       <button class="icon-btn" data-noop aria-label="Notifications"><span class="material-symbols-rounded">notifications</span><span class="dot"></span></button>
-      <div class="avatar-32">PS</div>
+      <button class="user-btn" data-noop>Michael Torres ▾</button>
     </div>
 
     <div class="page">

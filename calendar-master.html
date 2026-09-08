@@ -142,22 +142,7 @@ select{font:inherit}
 </head>
 <body>
 <div class="app">
-<aside class="sidebar">
-  <div class="sb-logo"><div class="sb-badge">Z</div><strong>Zalexy</strong></div>
-  <nav class="sb-nav">
-    <div class="sb-section">Scheduling</div>
-    <button class="nav-item active"><span class="ms">calendar_today</span>Calendar</button>
-    <button class="nav-item" onclick="location.href='booking-flow-staff.html'"><span class="ms">add_circle</span>New Booking</button>
-    <button class="nav-item" data-noop><span class="ms">group</span>Waitlist</button>
-    <button class="nav-item" data-noop><span class="ms">event_busy</span>Cancellations</button>
-    <div class="sb-section">Clients</div>
-    <button class="nav-item" data-noop><span class="ms">person</span>Profiles</button>
-    <div class="sb-section">Prototypes</div>
-    <button class="nav-item" onclick="location.href='booking-flow-staff.html'"><span class="ms">edit_calendar</span>Staff Booking</button>
-    <button class="nav-item" onclick="location.href='booking-flow-client.html'"><span class="ms">person</span>Client Booking</button>
-    <button class="nav-item active"><span class="ms">grid_on</span>Calendar Master</button>
-  </nav>
-</aside>
+  <script src="shared-sidebar.js" data-inject="true"></script>
 
 <div class="main-shell">
   <div class="topbar">
