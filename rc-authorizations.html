@@ -1,0 +1,1243 @@
+<!--
+  Zalexy Prototype — Regional Center Authorizations
+  Spec:   ai-workspace/prototypes/staff/rc-authorizations.md
+  Design: ai-workspace/prototypes/_shared/design-system.md
+  Static prototype. Not production code. No app dependencies.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regional Center Authorizations — Zalexy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{
+  --primary:#334155; --primary-light:#475569; --primary-dark:#1e293b;
+  --secondary:#10b981; --secondary-light:#34d399; --secondary-dark:#059669;
+  --success:#10b981; --success-bg:#d1fae5; --success-dark:#047857;
+  --info:#3b82f6; --info-bg:#eff6ff; --info-dark:#1d4ed8; --info-hover:#2563eb;
+  --bg-default:#f8fafc; --bg-paper:#ffffff;
+  --text-primary:#0f172a; --text-secondary:#64748b;
+  --border:#f1f5f9; --border-input:#cbd5e1; --border-input-hover:#94a3b8;
+  --hover-row:#f1f5f9; --action-hover:rgba(71,85,105,0.04); --action-selected:rgba(71,85,105,0.08);
+  --danger:#ef4444; --warning:#f59e0b;
+  --radius-card:10px; --radius-base:8px; --radius-control:6px; --radius-chip:4px;
+  --shadow-card:0 2px 4px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-1:0 1px 3px rgba(0,0,0,0.05);
+  --shadow-appbar:0 1px 1px rgba(51,65,85,0.03);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:"Inter","Roboto","Helvetica","Arial",sans-serif;color:var(--text-primary);background:var(--bg-default);}
+button,input,select,textarea{font-family:inherit;}
+h1,h2,h3,h4,h5,h6,p{margin:0;}
+.h1{font-size:2rem;font-weight:700;letter-spacing:-0.02em;}
+.h2{font-size:1.75rem;font-weight:600;letter-spacing:-0.01em;}
+.h3{font-size:1.5rem;font-weight:600;}
+.h4{font-size:1.25rem;font-weight:600;}
+.h5{font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;}
+.h6{font-size:.875rem;font-weight:600;}
+.body1{font-size:.875rem;font-weight:400;line-height:1.6;color:var(--text-primary);}
+.body2{font-size:.8rem;font-weight:400;line-height:1.5;color:var(--text-secondary);}
+.muted{color:var(--text-secondary);}
+a{color:var(--info-dark);}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px;}
+
+.app-shell{display:flex;height:100vh;overflow:hidden;}
+
+/* Sidebar */
+.sidebar{width:240px;flex-shrink:0;background:var(--primary-dark);color:#f8fafc;display:flex;flex-direction:column;overflow-y:auto;}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:20px 16px;}
+.sidebar-logo a{display:flex;align-items:center;gap:10px;text-decoration:none;color:#f8fafc;}
+.sidebar-logo .mark{width:28px;height:28px;flex-shrink:0;}
+.sidebar-logo .name{font-weight:700;font-size:1.05rem;color:#f8fafc;}
+.nav-list{list-style:none;margin:0;padding:8px;}
+.nav-item, .nav-link{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-base);color:#f8fafc;font-size:.9rem;font-weight:500;text-decoration:none;cursor:pointer;background:none;border:none;width:100%;text-align:left;}
+.nav-link .material-symbols-rounded{font-size:20px;min-width:20px;color:rgba(248,250,252,0.7);}
+.nav-link:hover{background:rgba(248,250,252,0.08);}
+.nav-link.active{background:rgba(248,250,252,0.14);}
+.nav-link.active .material-symbols-rounded{color:#f8fafc;}
+.nav-group-children{list-style:none;margin:2px 0 4px 0;padding:0 0 0 30px;}
+.nav-group-children .nav-link{font-size:.85rem;padding:7px 10px;}
+
+/* Main */
+.main{flex:1;min-width:0;overflow-y:auto;background:var(--bg-default);}
+.page{max-width:1440px;margin:0 auto;padding:24px;}
+.breadcrumb{margin-bottom:8px;}
+.breadcrumb a{color:var(--text-secondary);text-decoration:none;}
+.breadcrumb a:hover{text-decoration:underline;}
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;flex-wrap:wrap;}
+.page-header .titles{min-width:280px;}
+.page-header .subtitle{margin-top:4px;}
+.header-actions{display:flex;gap:12px;flex-wrap:wrap;}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:8px 16px;border-radius:var(--radius-control);font-weight:600;font-size:.875rem;text-transform:none;box-shadow:none;border:1px solid transparent;cursor:pointer;white-space:nowrap;}
+.btn-primary{background:var(--info);color:#fff;}
+.btn-primary:hover{background:var(--info-hover);}
+.btn-primary:disabled{background:#93c5fd;cursor:not-allowed;}
+.btn-secondary{background:var(--secondary);color:#fff;}
+.btn-secondary:hover{background:var(--secondary-dark);}
+.btn-outlined{background:#fff;color:var(--text-primary);border:1px solid var(--border-input);}
+.btn-outlined:hover{border-color:var(--primary);background:var(--action-hover);}
+.btn-outlined:disabled{color:var(--text-secondary);cursor:not-allowed;background:#fff;}
+.btn-outlined-danger{background:#fff;color:var(--danger);border:1px solid #fecaca;}
+.btn-outlined-danger:hover{background:#fef2f2;}
+.btn-sm{height:28px;padding:4px 10px;font-size:.8rem;}
+.link-btn{background:none;border:none;padding:0;color:var(--info-dark);font-weight:600;font-size:.875rem;cursor:pointer;text-decoration:underline;}
+.icon-btn{background:none;border:none;cursor:pointer;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-control);color:var(--text-secondary);}
+.icon-btn:hover{background:var(--action-hover);}
+
+/* Inputs */
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:.75rem;font-weight:600;color:var(--text-secondary);}
+.field label .req{color:var(--danger);font-weight:700;font-size:1.2em;margin-left:2px;}
+.input, select.input, textarea.input{height:36px;padding:8px 12px;font-size:.875rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);}
+textarea.input{height:auto;resize:vertical;}
+.input:hover{border-color:var(--border-input-hover);}
+.input:focus{border-color:var(--primary);outline:none;}
+.input:disabled{background:#f8fafc;color:var(--text-secondary);cursor:not-allowed;}
+
+/* Card */
+.card{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);border:none;}
+
+/* KPI */
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:20px;}
+.kpi-tile{padding:16px 20px;text-align:left;border:1px solid transparent;cursor:pointer;}
+.kpi-tile .kpi-label{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);}
+.kpi-tile .kpi-value{font-size:1.75rem;font-weight:700;color:var(--text-primary);margin-top:4px;}
+.kpi-tile.active{border:1.5px solid var(--info);background:var(--info-bg);}
+
+/* Filter bar */
+.filter-bar{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.filter-bar .search-input{width:320px;max-width:100%;}
+.filter-bar select.input{width:150px;}
+.filter-bar .spacer{flex:1;}
+
+/* Table */
+.table-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:1100px;}
+th{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);padding:12px 16px;border-bottom:1px solid var(--border);background:transparent;text-align:left;white-space:nowrap;}
+td{font-size:.875rem;padding:16px;border-bottom:1px solid var(--border);color:var(--text-primary);vertical-align:top;}
+tbody tr{cursor:pointer;}
+tbody tr:hover{background:var(--hover-row);}
+tbody tr:last-child td{border-bottom:0;}
+.client-name{font-weight:600;}
+.client-sub{font-size:.8rem;color:var(--text-secondary);margin-top:2px;}
+.auth-provider{font-size:.75rem;color:var(--text-secondary);margin-top:2px;}
+.units-value{font-weight:700;color:#1d4ed8;}
+.table-caption{padding:12px 20px;font-size:.8rem;color:var(--text-secondary);}
+.empty-state{padding:48px;text-align:center;}
+.empty-state .material-symbols-rounded{font-size:32px;color:var(--text-secondary);}
+.empty-state p{margin:12px 0 16px 0;color:var(--text-secondary);}
+
+/* Chips */
+.chip{height:24px;border-radius:var(--radius-chip);font-size:.75rem;font-weight:600;padding:0 8px;display:inline-flex;align-items:center;white-space:nowrap;}
+.chip-success{background:var(--success-bg);color:var(--success-dark);}
+.chip-info{background:var(--info-bg);color:var(--info-dark);}
+.chip-warning{background:#fef3c7;color:#b45309;}
+.chip-danger{background:#fee2e2;color:#b91c1c;}
+.chip-muted{background:#f1f5f9;color:var(--text-secondary);}
+.status-cell{display:flex;flex-direction:column;gap:4px;align-items:flex-start;}
+
+/* Backdrop */
+.backdrop{position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:40;}
+
+/* Drawer */
+.drawer{position:fixed;top:0;right:0;bottom:0;width:520px;max-width:100%;background:#fff;border-radius:16px 0 0 16px;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);z-index:41;display:flex;flex-direction:column;}
+.drawer-body{flex:1;overflow-y:auto;padding:0 24px;}
+.drawer-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.drawer-section{padding:20px 0;border-bottom:1px solid var(--border);}
+.drawer-section:last-child{border-bottom:none;}
+.override-banner{margin:16px 0 0 0;background:#fef3c7;border-left:3px solid var(--warning);padding:12px 16px;border-radius:var(--radius-base);}
+.override-banner-title{display:flex;justify-content:space-between;align-items:center;font-weight:600;margin-bottom:8px;}
+.override-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;font-size:.8rem;}
+.override-grid .k{color:var(--text-secondary);font-weight:600;}
+.metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:20px 0;border-bottom:1px solid var(--border);}
+.metric-row .metric-label{font-size:.8rem;color:var(--text-secondary);}
+.metric-row .metric-value{font-size:1.25rem;font-weight:700;margin-top:2px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-grid.full{grid-column:1 / -1;}
+.kv{display:flex;flex-direction:column;gap:2px;}
+.kv .k{font-size:.75rem;font-weight:600;color:var(--text-secondary);}
+.kv .v{font-size:.875rem;}
+.sub-panel{background:var(--bg-default);padding:16px;border-radius:var(--radius-base);}
+.sub-panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.875rem;}
+.formula-line{margin-top:10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;color:var(--text-primary);}
+.ghost-hold-row{padding:12px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.ghost-hold-row:last-child{border-bottom:none;}
+.ghost-hold-when{font-weight:600;font-size:.875rem;}
+.ghost-hold-detail{font-size:.8rem;color:var(--text-secondary);}
+.ghost-hold-expiry{font-size:.8rem;color:var(--text-secondary);margin-top:2px;}
+.section-title-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.activity-item{padding:10px 0;border-bottom:1px solid var(--border);}
+.activity-item:last-child{border-bottom:none;}
+.activity-title{font-weight:600;font-size:.875rem;}
+.activity-detail{font-size:.8rem;color:var(--text-secondary);}
+.drawer-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:12px;}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;}
+.modal{background:#fff;border-radius:var(--radius-card);box-shadow:0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.1);max-width:560px;width:92%;max-height:88vh;display:flex;flex-direction:column;}
+.modal.wide{max-width:720px;}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.modal-body{padding:20px 24px;overflow-y:auto;}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:12px;}
+.radio-group{display:flex;flex-direction:column;gap:8px;}
+.radio-option{display:flex;align-items:center;gap:8px;font-size:.875rem;}
+
+/* Import overlay */
+.import-overlay{position:absolute;inset:0;background:var(--bg-default);z-index:30;display:flex;flex-direction:column;overflow-y:auto;}
+.import-header{padding:20px 24px;border-bottom:1px solid var(--border);background:#fff;display:flex;justify-content:space-between;align-items:flex-start;}
+.import-stepper{display:flex;gap:24px;padding:16px 24px;background:#fff;border-bottom:1px solid var(--border);}
+.import-step{display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:600;color:var(--text-secondary);padding-bottom:8px;border-bottom:2px solid transparent;}
+.import-step.done{color:var(--success-dark);}
+.import-step.active{color:var(--info);border-bottom-color:var(--info);}
+.import-body{padding:24px;flex:1;}
+.banner{padding:12px 16px;border-radius:var(--radius-base);font-size:.875rem;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.banner-info{background:var(--info-bg);color:var(--info-dark);}
+.banner-success{background:var(--success-bg);color:var(--success-dark);}
+.banner-warning{background:#fef3c7;color:#b45309;}
+.result-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:16px;}
+.result-tile{padding:14px 16px;}
+.result-tile .rt-label{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);}
+.result-tile .rt-value{font-size:1.5rem;font-weight:700;margin-top:4px;}
+.segmented{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.import-footer{padding:16px 24px;background:#fff;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.summary-panel{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 20px;margin-bottom:16px;}
+.summary-panel .sk{color:var(--text-secondary);font-size:.875rem;}
+.summary-panel .sv{font-weight:700;font-size:.875rem;}
+.checkbox-row{display:flex;align-items:center;gap:8px;margin:16px 0;font-size:.875rem;}
+
+@media (max-width:1024px){
+  .kpi-strip{grid-template-columns:repeat(2,1fr);}
+  .form-grid{grid-template-columns:1fr;}
+  .metric-row{grid-template-columns:repeat(2,1fr);}
+  .result-tiles{grid-template-columns:repeat(2,1fr);}
+  .drawer{width:100%;border-radius:0;}
+}
+</style>
+</head>
+<body>
+<div id="app-root"></div>
+<script>
+(function(){
+  "use strict";
+
+  var TODAY_LABEL = "Fri, Apr 17, 2026";
+
+  function esc(s){
+    if(s===null||s===undefined) return "";
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  var STATUS_META = {
+    PENDING:{label:"Authorization Pending", chip:"chip-warning"},
+    AUTHORIZED:{label:"Authorized", chip:"chip-success"},
+    EXPIRING:{label:"Expiring", chip:"chip-warning"},
+    EXPIRED:{label:"Expired", chip:"chip-danger"}
+  };
+
+  var KPI_DEFS = [
+    {key:"PENDING", label:"Pending", value:"21"},
+    {key:"AUTHORIZED", label:"Authorized", value:"164"},
+    {key:"EXPIRING", label:"Expiring 30 Days", value:"18"},
+    {key:"GHOST_HOLDS", label:"Ghost Holds", value:"13"},
+    {key:"BALANCES_DUE", label:"Balances Due", value:"$18,420"}
+  ];
+
+  var authorizations = [
+    {
+      id:1, client:"Maria Garcia", caseManager:"Jordan Lee", caseManagerEmail:"jordan.lee@rceb.example.org",
+      uci:"RC-883401", authId:"AUTH-928472", provider:"RCEB", code:"SRA11", service:"Swim", subtype:"Private",
+      periodStart:"Apr 1", periodEnd:"Dec 31", authorized:32, used:6, reserved:2, holdsCount:4, balance:420,
+      status:"PENDING", prorated:true, subtypeLimit:"1, override allowed",
+      sourceDoc:"RCEB-AUTH-APR2026.csv · row 12", sourceBatch:"IMP-0417", sourceImportDate:"Apr 2, 2026",
+      proration:{method:"SCHEDULED_OCCURRENCES", monthlyUnits:8, remainingSessions:3, firstPeriodUnits:3, rounding:"ROUND_DOWN", formula:"firstPeriodUnits = remainingScheduledSessions → 3"},
+      override:{active:true, role:"Manager", who:"Rosanna Perez", when:"Apr 14, 2026 · 09:12", reason:"Authorization renewal in progress with RCEB", appointments:"4 future occurrences kept confirmed", fundingExpected:"Yes — replacement AUTH pending", duration:"UNTIL_NEW_AUTHORIZATION"},
+      ghostHolds:[
+        {when:"Tue Apr 21 · 4:00 PM", detail:"Semi-Private Swim · Lane 3", expires:"Expires Apr 24 (14-day hold)", policy:"FULL_BLOCK"},
+        {when:"Tue Apr 28 · 4:00 PM", detail:"Semi-Private Swim · Lane 3", expires:"Expires May 1 (14-day hold)", policy:"FULL_BLOCK"},
+        {when:"Tue May 5 · 4:00 PM", detail:"Semi-Private Swim · Lane 3", expires:"Expires May 8 (14-day hold)", policy:"FULL_BLOCK"},
+        {when:"Tue May 12 · 4:00 PM", detail:"Semi-Private Swim · Lane 3", expires:"Expires May 15 (14-day hold)", policy:"FULL_BLOCK"}
+      ],
+      onExpiry:"Remain Pending",
+      recurring:{when:"Tuesdays · 4:00 PM", note:"4 future occurrences tentatively saved. Individual occurrences may be overridden by staff."},
+      settlement:{invoice:"INV-RC-2219", balance:420, note:"Authorized client remains eligible while payment is outstanding."},
+      activity:[
+        {date:"Apr 14", title:"Override applied", detail:"Rosanna Perez — renewal in progress"},
+        {date:"Apr 2", title:"Imported update", detail:"End date changed from Nov 30 to Dec 31"},
+        {date:"Mar 3", title:"Ghost hold created", detail:"Tue 4:00 PM, expires Mar 17"},
+        {date:"Mar 1", title:"Authorization created", detail:"Imported from RCEB-AUTH-MAR2026.csv"}
+      ]
+    },
+    {
+      id:2, client:"Aiden Bell", caseManager:"T. Moore", caseManagerEmail:"t.moore@rceb.example.org",
+      uci:"RC-441987", authId:"AUTH-552010", provider:"RCEB", code:"SRA9", service:"Swim", subtype:"Group",
+      periodStart:"Jan 1", periodEnd:"Dec 31", authorized:20, used:8, reserved:0, holdsCount:0, balance:180,
+      status:"AUTHORIZED", prorated:false, subtypeLimit:"3, no override",
+      sourceDoc:"RCEB-AUTH-JAN2026.csv · row 4", sourceBatch:"IMP-0392", sourceImportDate:"Jan 3, 2026",
+      proration:{method:"NONE"},
+      override:{active:false},
+      ghostHolds:[], onExpiry:"—",
+      recurring:{when:"—", note:"No recurring preference set."},
+      settlement:{invoice:"INV-RC-1140", balance:180, note:"Authorized client remains eligible while payment is outstanding."},
+      activity:[{date:"Jan 3", title:"Authorization created", detail:"Imported from RCEB-AUTH-JAN2026.csv"}]
+    },
+    {
+      id:3, client:"Diego Garcia", caseManager:"Jordan Lee", caseManagerEmail:"jordan.lee@rceb.example.org",
+      uci:"RC-227731", authId:"AUTH-771204", provider:"RCEB", code:"SRA11", service:"Swim", subtype:"Semi-Private",
+      periodStart:"Feb 1", periodEnd:"Apr 30", authorized:24, used:21, reserved:1, holdsCount:0, balance:0,
+      status:"EXPIRING", prorated:false, subtypeLimit:"2, no override",
+      sourceDoc:"RCEB-AUTH-FEB2026.csv · row 7", sourceBatch:"IMP-0401", sourceImportDate:"Feb 2, 2026",
+      proration:{method:"NONE"},
+      override:{active:false},
+      ghostHolds:[], onExpiry:"—",
+      recurring:{when:"—", note:"No recurring preference set."},
+      settlement:{invoice:null, balance:0, note:"No balance due."},
+      activity:[
+        {date:"Apr 17", title:"Expiry approaching", detail:"Authorization ends in 13 days"},
+        {date:"Feb 2", title:"Authorization created", detail:"Imported from RCEB-AUTH-FEB2026.csv"}
+      ]
+    },
+    {
+      id:4, client:"Sofia Nunez", caseManager:"P. Adeyemi", caseManagerEmail:"p.adeyemi@ggrc.example.org",
+      uci:"RC-665521", authId:"AUTH-330918", provider:"GGRC", code:"SRA14", service:"Swim", subtype:"Group",
+      periodStart:"Mar 1", periodEnd:"Jun 30", authorized:16, used:4, reserved:2, holdsCount:3, balance:95,
+      status:"PENDING", prorated:true, subtypeLimit:"4, no override",
+      sourceDoc:"GGRC-AUTH-MAR2026.csv · row 9", sourceBatch:"IMP-0405", sourceImportDate:"Mar 2, 2026",
+      proration:{method:"CALENDAR_DAYS", monthlyUnits:8, daysRemaining:15, daysInMonth:30, firstPeriodUnits:4, rounding:"ROUND_DOWN", formula:"8 × 15 / 30 = 4 (ROUND_DOWN)"},
+      override:{active:false},
+      ghostHolds:[
+        {when:"Wed Apr 22 · 5:00 PM", detail:"Group Swim · Pool B", expires:"Expires Apr 25 (14-day hold)", policy:"TEMPORARY_OCCURRENCE_USE"},
+        {when:"Wed Apr 29 · 5:00 PM", detail:"Group Swim · Pool B", expires:"Expires May 2 (14-day hold)", policy:"TEMPORARY_OCCURRENCE_USE"},
+        {when:"Wed May 6 · 5:00 PM", detail:"Group Swim · Pool B", expires:"Expires May 9 (14-day hold)", policy:"TEMPORARY_OCCURRENCE_USE"}
+      ],
+      onExpiry:"Override",
+      recurring:{when:"Wednesdays · 5:00 PM", note:"3 future occurrences tentatively saved. Individual occurrences may be overridden by staff."},
+      settlement:{invoice:"INV-RC-1876", balance:95, note:"Authorized client remains eligible while payment is outstanding."},
+      activity:[{date:"Mar 2", title:"Authorization created", detail:"Imported from GGRC-AUTH-MAR2026.csv"}]
+    },
+    {
+      id:5, client:"Liam Donnelly", caseManager:"T. Moore", caseManagerEmail:"t.moore@rceb.example.org",
+      uci:"RC-118220", authId:"AUTH-118845", provider:"SARC", code:"SRA9", service:"Swim", subtype:"Private",
+      periodStart:"Oct 1", periodEnd:"Mar 31", authorized:28, used:28, reserved:0, holdsCount:6, balance:640,
+      status:"EXPIRED", prorated:false, subtypeLimit:"1, no override",
+      sourceDoc:"SARC-AUTH-OCT2025.csv · row 2", sourceBatch:"IMP-0350", sourceImportDate:"Oct 2, 2025",
+      proration:{method:"NONE"},
+      override:{active:false},
+      ghostHolds:[
+        {when:"Mon Feb 23 · 3:00 PM", detail:"Private Swim · Lane 1", expires:"Expired Mar 9", policy:"FULL_BLOCK"},
+        {when:"Mon Mar 2 · 3:00 PM", detail:"Private Swim · Lane 1", expires:"Expired Mar 16", policy:"FULL_BLOCK"},
+        {when:"Mon Mar 9 · 3:00 PM", detail:"Private Swim · Lane 1", expires:"Expired Mar 23", policy:"FULL_BLOCK"},
+        {when:"Mon Mar 16 · 3:00 PM", detail:"Private Swim · Lane 1", expires:"Expired Mar 30", policy:"FULL_BLOCK"},
+        {when:"Mon Mar 23 · 3:00 PM", detail:"Private Swim · Lane 1", expires:"Expired Apr 6", policy:"FULL_BLOCK"},
+        {when:"Mon Mar 30 · 3:00 PM", detail:"Private Swim · Lane 1", expires:"Expired Apr 13", policy:"FULL_BLOCK"}
+      ],
+      onExpiry:"Remain Pending",
+      recurring:{when:"Mondays · 3:00 PM", note:"Occurrences held pending renewal decision (holds awaiting renewal)."},
+      settlement:{invoice:"INV-RC-0892", balance:640, note:"Authorized client remains eligible while payment is outstanding."},
+      activity:[
+        {date:"Mar 31", title:"Authorization expired", detail:"Renewal not yet received from SARC"},
+        {date:"Oct 2", title:"Authorization created", detail:"Imported from SARC-AUTH-OCT2025.csv"}
+      ]
+    },
+    {
+      id:6, client:"Amara Okafor", caseManager:"R. Villanueva", caseManagerEmail:"r.villanueva@rceb.example.org",
+      uci:"RC-990102", authId:"AUTH-905513", provider:"RCEB", code:"SRA11", service:"Swim", subtype:"Semi-Private",
+      periodStart:"Apr 1", periodEnd:"Sep 30", authorized:30, used:0, reserved:4, holdsCount:0, balance:0,
+      status:"AUTHORIZED", prorated:false, subtypeLimit:"2, no override",
+      sourceDoc:"RCEB-AUTH-APR2026.csv · row 20", sourceBatch:"IMP-0417", sourceImportDate:"Apr 2, 2026",
+      proration:{method:"NONE"},
+      override:{active:false},
+      ghostHolds:[], onExpiry:"—",
+      recurring:{when:"—", note:"No recurring preference set."},
+      settlement:{invoice:null, balance:0, note:"No balance due."},
+      activity:[{date:"Apr 2", title:"Authorization created", detail:"Imported from RCEB-AUTH-APR2026.csv"}]
+    }
+  ];
+
+  var importRows = [
+    {sourceRow:12, clientMatch:"Maria Garcia — exact external ID match", existingRecord:"AUTH-928472 · End Sep 30", importedValue:"AUTH-928472 · End Dec 31", difference:"End Date Changed", proposed:"Changed — Review", category:"Changed", decisionType:"select", options:["Accept Update","Skip"], decisionValue:null, needsReview:true},
+    {sourceRow:13, clientMatch:"Carlos Garcia — exact member ID match", existingRecord:"—", importedValue:"AUTH-664120 · SRA9", difference:"New", proposed:"New — Add", category:"New", decisionType:"select", options:["Accept Add","Skip"], decisionValue:null, needsReview:true},
+    {sourceRow:14, clientMatch:"Unmatched — name similar to “Jamie Hall”", existingRecord:"—", importedValue:"AUTH-880431 · SRA11", difference:"Client Match Required", proposed:"Unknown Client — Needs Review", category:"NeedsReview", decisionType:"button", decisionValue:null, needsReview:true},
+    {sourceRow:15, clientMatch:"Aiden Bell", existingRecord:"AUTH-552010", importedValue:"AUTH-552010", difference:"No Change", proposed:"Existing — Skip", category:"Existing", decisionType:"disabledSelect", decisionValue:"Skip", needsReview:false},
+    {sourceRow:16, clientMatch:"Sofia Nunez", existingRecord:"AUTH-330918", importedValue:"AUTH-330918 · Units 16 → 24", difference:"Units Changed", proposed:"Changed — Review", category:"Changed", decisionType:"select", options:["Accept Update","Skip"], decisionValue:null, needsReview:true},
+    {sourceRow:17, clientMatch:"(blank client column)", existingRecord:"—", importedValue:"AUTH-000000", difference:"Missing required field: Client", proposed:"Invalid — Error", category:"Error", decisionType:"text", text:"Cannot import", needsReview:false}
+  ];
+
+  var mapColumns = [
+    {csv:"ClientName", sample:"Maria Garcia", field:"Client", required:"Yes"},
+    {csv:"AuthorizationNumber", sample:"AUTH-928472", field:"Authorization ID", required:"Yes"},
+    {csv:"ServiceCode", sample:"SRA11", field:"Service Code", required:"Yes"},
+    {csv:"StartDate", sample:"04/01/2026", field:"Start Date", required:"Yes"},
+    {csv:"EndDate", sample:"12/31/2026", field:"End Date", required:"Yes"},
+    {csv:"Units", sample:"32", field:"Authorized Units", required:"No"},
+    {csv:"CaseManager", sample:"Jordan Lee", field:"Case Manager", required:"No"}
+  ];
+
+  var state = {
+    search:"", filterStatus:"", filterProvider:"", filterService:"", filterExpiry:"",
+    activeTile:null,
+    drawerOpen:false, drawerAuthId:null, drawerScrollTo:null,
+    overrideModalOpen:false, overrideModalMode:"apply",
+    overrideForm:{role:"Billing Admin", reason:"", appointments:"This appointment only", funding:"Yes", duration:"", untilDate:"", days:"", reviewDate:""},
+    addModalOpen:false,
+    addForm:{client:"Maria Garcia", authId:"", provider:"", code:"", serviceSubtype:"", start:"", end:"", units:"", proration:"", rounding:"", caseManager:"", caseManagerEmail:"", notes:""},
+    importOpen:false, importStep:1, importSegment:"All",
+    matchModalOpen:false, matchSelected:null,
+    approveChecked:false,
+    successBanner:null,
+    nextAuthSeq:7
+  };
+
+  function findAuth(id){
+    for(var i=0;i<authorizations.length;i++){ if(authorizations[i].id===id) return authorizations[i]; }
+    return null;
+  }
+
+  function filteredAuths(){
+    return authorizations.filter(function(a){
+      if(state.activeTile==="PENDING" && a.status!=="PENDING") return false;
+      if(state.activeTile==="AUTHORIZED" && a.status!=="AUTHORIZED") return false;
+      if(state.activeTile==="EXPIRING" && a.status!=="EXPIRING") return false;
+      if(state.activeTile==="GHOST_HOLDS" && !(a.holdsCount>0)) return false;
+      if(state.activeTile==="BALANCES_DUE" && !(a.balance>0)) return false;
+      if(state.filterStatus && a.status!==state.filterStatus) return false;
+      if(state.filterProvider && a.provider!==state.filterProvider) return false;
+      if(state.filterService && (a.service+" / "+a.subtype)!==state.filterService) return false;
+      if(state.filterExpiry==="EXPIRING_SOON" && a.status!=="EXPIRING") return false;
+      if(state.filterExpiry==="EXPIRED_ONLY" && a.status!=="EXPIRED") return false;
+      if(state.filterExpiry==="NOT_EXPIRING" && (a.status==="EXPIRING"||a.status==="EXPIRED")) return false;
+      var q = state.search.trim().toLowerCase();
+      if(q){
+        var hay = (a.client+" "+a.authId+" "+a.code+" "+a.caseManager).toLowerCase();
+        if(hay.indexOf(q)===-1) return false;
+      }
+      return true;
+    });
+  }
+
+  function hasActiveFilters(){
+    return !!(state.search || state.filterStatus || state.filterProvider || state.filterService || state.filterExpiry || state.activeTile);
+  }
+
+  /* ---------- render pieces ---------- */
+
+  function kpiStripHtml(){
+    return '<div class="kpi-strip">' + KPI_DEFS.map(function(k){
+      var active = state.activeTile===k.key ? " active" : "";
+      return '<button type="button" class="card kpi-tile'+active+'" data-action="toggle-tile" data-tile="'+k.key+'">'+
+        '<div class="kpi-label">'+esc(k.label)+'</div>'+
+        '<div class="kpi-value">'+esc(k.value)+'</div>'+
+      '</button>';
+    }).join("") + '</div>';
+  }
+
+  function selectOptionsHtml(options, current){
+    return options.map(function(o){
+      var val = typeof o==="object"?o.value:o;
+      var label = typeof o==="object"?o.label:o;
+      var sel = (val===current) ? " selected" : "";
+      return '<option value="'+esc(val)+'"'+sel+'>'+esc(label)+'</option>';
+    }).join("");
+  }
+
+  function filterBarHtml(){
+    var clearDisabled = hasActiveFilters() ? "" : " disabled";
+    return '<div class="filter-bar">'+
+      '<div class="field" style="gap:0;"><label for="searchInput" style="position:absolute;left:-9999px;">Search</label>'+
+      '<input class="input search-input" type="text" id="searchInput" data-action="search-input" placeholder="Search client, authorization #, service code, case manager" value="'+esc(state.search)+'"></div>'+
+      '<select class="input" id="filterStatus" data-action="filter-status">'+
+        '<option value="">All Statuses</option>'+
+        selectOptionsHtml([{value:"PENDING",label:"Authorization Pending"},{value:"AUTHORIZED",label:"Authorized"},{value:"EXPIRING",label:"Expiring"},{value:"EXPIRED",label:"Expired"}], state.filterStatus)+
+      '</select>'+
+      '<select class="input" id="filterProvider" data-action="filter-provider">'+
+        '<option value="">All Providers</option>'+
+        selectOptionsHtml(["RCEB","GGRC","SARC"], state.filterProvider)+
+      '</select>'+
+      '<select class="input" id="filterService" data-action="filter-service">'+
+        '<option value="">All Services</option>'+
+        selectOptionsHtml(["Swim / Private","Swim / Semi-Private","Swim / Group"], state.filterService)+
+      '</select>'+
+      '<select class="input" id="filterExpiry" data-action="filter-expiry">'+
+        '<option value="">All Expiry</option>'+
+        selectOptionsHtml([{value:"EXPIRING_SOON",label:"Expiring ≤ 30 Days"},{value:"EXPIRED_ONLY",label:"Expired"},{value:"NOT_EXPIRING",label:"Not Expiring"}], state.filterExpiry)+
+      '</select>'+
+      '<div class="spacer"></div>'+
+      '<button type="button" class="btn btn-outlined" data-action="clear-filters"'+clearDisabled+'>Clear filters</button>'+
+    '</div>';
+  }
+
+  function unitsCellHtml(a){
+    var prorated = a.prorated ? ' <span class="chip chip-muted">Prorated</span>' : "";
+    return '<span class="units-value">'+a.used+' / '+a.authorized+' units</span>'+prorated;
+  }
+
+  function holdsCellHtml(a){
+    if(a.holdsCount>0){
+      return '<button type="button" class="link-btn" data-action="open-drawer-holds" data-id="'+a.id+'">'+a.holdsCount+'</button>';
+    }
+    return '<span class="muted">—</span>';
+  }
+
+  function balanceCellHtml(a){
+    if(a.balance>0) return '$'+a.balance;
+    return '<span class="muted">—</span>';
+  }
+
+  function statusCellHtml(a){
+    var meta = STATUS_META[a.status];
+    var html = '<div class="status-cell"><span class="chip '+meta.chip+'">'+esc(meta.label)+'</span>';
+    if(a.override && a.override.active){
+      html += '<span class="chip chip-warning">Override</span>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function tableHtml(){
+    var rows = filteredAuths();
+    var caption = hasActiveFilters()
+      ? "Showing "+rows.length+" of 203 · filtered"
+      : "Showing 6 of 203 authorizations";
+
+    var body;
+    if(rows.length===0){
+      body = '<div class="empty-state">'+
+        '<span class="material-symbols-rounded">filter_alt_off</span>'+
+        '<p>No authorizations match these filters.</p>'+
+        '<button type="button" class="btn btn-outlined" data-action="clear-filters">Clear filters</button>'+
+      '</div>';
+    } else {
+      body = '<div class="table-scroll"><table><thead><tr>'+
+        '<th>Client</th><th>Authorization #</th><th>Code</th><th>Service / Subtype</th>'+
+        '<th>Period</th><th>Units</th><th>Holds</th><th>Balance</th><th>Status</th><th></th>'+
+        '</tr></thead><tbody>'+
+        rows.map(function(a){
+          return '<tr data-action="open-drawer" data-id="'+a.id+'">'+
+            '<td><div class="client-name">'+esc(a.client)+'</div><div class="client-sub">Case Manager: '+esc(a.caseManager)+'</div></td>'+
+            '<td>'+esc(a.authId)+'<div class="auth-provider">'+esc(a.provider)+'</div></td>'+
+            '<td>'+esc(a.code)+'</td>'+
+            '<td>'+esc(a.service)+' / '+esc(a.subtype)+'</td>'+
+            '<td>'+esc(a.periodStart)+' – '+esc(a.periodEnd)+'</td>'+
+            '<td>'+unitsCellHtml(a)+'</td>'+
+            '<td>'+holdsCellHtml(a)+'</td>'+
+            '<td>'+balanceCellHtml(a)+'</td>'+
+            '<td>'+statusCellHtml(a)+'</td>'+
+            '<td><button type="button" class="btn btn-outlined btn-sm" data-action="open-drawer" data-id="'+a.id+'">Open</button></td>'+
+          '</tr>';
+        }).join("") +
+      '</tbody></table></div>';
+    }
+
+    return '<div class="card">'+
+      filterBarHtml()+
+      body+
+      '<div class="table-caption">'+esc(caption)+'</div>'+
+    '</div>';
+  }
+
+  function overrideBannerHtml(a){
+    if(!a.override || !a.override.active) return "";
+    var o = a.override;
+    return '<div class="override-banner">'+
+      '<div class="override-banner-title"><span>Override active — '+esc(o.role)+'</span>'+
+      '<button type="button" class="btn btn-outlined-danger btn-sm" data-action="remove-override">Remove override</button></div>'+
+      '<div class="override-grid">'+
+        '<div><span class="k">Who:</span> '+esc(o.who)+'</div>'+
+        '<div><span class="k">When:</span> '+esc(o.when)+'</div>'+
+        '<div><span class="k">Reason:</span> '+esc(o.reason)+'</div>'+
+        '<div><span class="k">Appointments:</span> '+esc(o.appointments)+'</div>'+
+        '<div><span class="k">Funding expected:</span> '+esc(o.fundingExpected)+'</div>'+
+        '<div><span class="k">Duration:</span> '+esc(o.duration)+'</div>'+
+      '</div>'+
+    '</div>';
+  }
+
+  function prorationSectionHtml(a){
+    var p = a.proration;
+    if(!p || p.method==="NONE"){
+      return '<div class="drawer-section"><div class="h5 muted" style="margin-bottom:8px;">Proration</div>'+
+        '<div class="body2">No proration — full monthly units authorized.</div></div>';
+    }
+    var rows = '<div>Method</div><div>'+esc(p.method)+'</div>'+
+      '<div>Monthly units</div><div>'+esc(p.monthlyUnits)+'</div>';
+    if(p.method==="SCHEDULED_OCCURRENCES"){
+      rows += '<div>Remaining sessions</div><div>'+esc(p.remainingSessions)+'</div>';
+    } else if(p.method==="CALENDAR_DAYS"){
+      rows += '<div>Days remaining</div><div>'+esc(p.daysRemaining)+'</div>'+
+        '<div>Days in month</div><div>'+esc(p.daysInMonth)+'</div>';
+    }
+    rows += '<div>First-period units</div><div>'+esc(p.firstPeriodUnits)+'</div>'+
+      '<div>Rounding</div><div>'+esc(p.rounding)+'</div>';
+    return '<div class="drawer-section"><div class="h5 muted" style="margin-bottom:8px;">Proration</div>'+
+      '<div class="sub-panel"><div class="sub-panel-grid">'+rows+'</div>'+
+      '<div class="formula-line">'+esc(p.formula)+'</div></div></div>';
+  }
+
+  function ghostHoldsSectionHtml(a){
+    var list = a.ghostHolds.map(function(h){
+      return '<div class="ghost-hold-row">'+
+        '<div><div class="ghost-hold-when">'+esc(h.when)+'</div><div class="ghost-hold-detail">'+esc(h.detail)+'</div>'+
+        '<div class="ghost-hold-expiry">'+esc(h.expires)+'</div></div>'+
+        '<span class="chip chip-muted">'+esc(h.policy)+'</span>'+
+      '</div>';
+    }).join("");
+    if(a.ghostHolds.length===0){
+      list = '<div class="body2">No ghost holds for this authorization.</div>';
+    }
+    return '<div class="drawer-section" id="ghost-holds">'+
+      '<div class="section-title-row"><span class="h5">Ghost Holds</span><span class="chip chip-muted">'+a.ghostHolds.length+'</span></div>'+
+      list+
+      (a.ghostHolds.length>0 ? '<div class="body2" style="margin-top:8px;">On expiry: '+esc(a.onExpiry)+'</div>' : '')+
+    '</div>';
+  }
+
+  function drawerHtml(){
+    if(!state.drawerOpen) return "";
+    var a = findAuth(state.drawerAuthId);
+    if(!a) return "";
+    var meta = STATUS_META[a.status];
+    var available = a.authorized - a.used - a.reserved;
+    var overrideBtnLabel = (a.override && a.override.active) ? "Edit Override" : "Apply Override";
+    var settlementBlock = a.settlement.invoice
+      ? '<button type="button" class="link-btn" data-noop>Invoice '+esc(a.settlement.invoice)+'</button> — $'+a.settlement.balance+' balance due<div class="body2" style="margin-top:6px;">'+esc(a.settlement.note)+'</div>'
+      : '<div class="body2">'+esc(a.settlement.note)+'</div>';
+
+    return '<div class="backdrop" data-action="close-drawer"></div>'+
+      '<div class="drawer" role="dialog" aria-modal="true">'+
+        '<div class="drawer-header">'+
+          '<div>'+
+            '<div class="h5 muted">Funding Authorization</div>'+
+            '<div class="h4" style="margin-top:4px;">'+esc(a.authId)+' — '+esc(a.client)+'</div>'+
+            '<div class="body2" style="margin-top:4px;">'+esc(a.provider)+' · '+esc(a.service)+' '+esc(a.subtype)+' · '+esc(a.code)+' · '+esc(a.periodStart)+' – '+esc(a.periodEnd)+'</div>'+
+          '</div>'+
+          '<div style="display:flex;align-items:center;gap:12px;">'+
+            '<span class="chip '+meta.chip+'">'+esc(meta.label)+'</span>'+
+            '<button type="button" class="icon-btn" data-action="close-drawer" aria-label="Close"><span class="material-symbols-rounded">close</span></button>'+
+          '</div>'+
+        '</div>'+
+        '<div class="drawer-body">'+
+          overrideBannerHtml(a)+
+          '<div class="metric-row">'+
+            '<div><div class="metric-label">Authorized</div><div class="metric-value">'+a.authorized+'</div></div>'+
+            '<div><div class="metric-label">Reserved</div><div class="metric-value">'+a.reserved+'</div></div>'+
+            '<div><div class="metric-label">Used</div><div class="metric-value">'+a.used+'</div></div>'+
+            '<div><div class="metric-label">Available</div><div class="metric-value">'+available+'</div></div>'+
+          '</div>'+
+          '<div class="drawer-section"><div class="h5 muted" style="margin-bottom:12px;">Authorization</div>'+
+            '<div class="form-grid">'+
+              '<div class="kv"><span class="k">Case Manager</span><span class="v">'+esc(a.caseManager)+'</span></div>'+
+              '<div class="kv"><span class="k">Case Manager Email</span><span class="v">'+esc(a.caseManagerEmail)+'</span></div>'+
+              '<div class="kv"><span class="k">UCI / Client ID</span><span class="v">'+esc(a.uci)+'</span></div>'+
+              '<div class="kv"><span class="k">Funding Provider</span><span class="v">'+esc(a.provider)+'</span></div>'+
+              '<div class="kv"><span class="k">Service Code</span><span class="v">'+esc(a.code)+'</span></div>'+
+              '<div class="kv"><span class="k">Class Subtype Limit</span><span class="v">'+esc(a.subtypeLimit)+'</span></div>'+
+              '<div class="kv"><span class="k">Status</span><span class="v">'+esc(meta.label)+'</span></div>'+
+              '<div class="kv"><span class="k">Source Document</span><span class="v">'+
+                (a.sourceDoc
+                  ? '<button type="button" class="link-btn" data-noop><span class="material-symbols-rounded" style="font-size:16px;vertical-align:text-bottom;">description</span> '+esc(a.sourceDoc)+'</button>'+
+                    '<div class="body2" style="margin-top:2px;">Imported '+esc(a.sourceImportDate)+' · batch '+esc(a.sourceBatch)+'</div>'
+                  : '<span class="muted">—</span>')+
+              '</span></div>'+
+            '</div>'+
+          '</div>'+
+          prorationSectionHtml(a)+
+          ghostHoldsSectionHtml(a)+
+          '<div class="drawer-section"><div class="h5 muted" style="margin-bottom:8px;">Recurring Preference</div>'+
+            '<div class="h6">'+esc(a.recurring.when)+'</div>'+
+            '<div class="body2" style="margin-top:4px;">'+esc(a.recurring.note)+'</div>'+
+          '</div>'+
+          '<div class="drawer-section"><div class="h5 muted" style="margin-bottom:8px;">Settlement</div>'+
+            settlementBlock+
+            '<div class="body2" style="margin-top:10px;">Fifth-week coverage: Make-Up Token → Self Pay → Skip <span class="chip chip-muted" style="margin-left:6px;">Location setting</span></div>'+
+          '</div>'+
+          '<div class="drawer-section"><div class="h5 muted" style="margin-bottom:8px;">Activity</div>'+
+            a.activity.map(function(item){
+              return '<div class="activity-item"><div class="activity-title">'+esc(item.date)+' · '+esc(item.title)+'</div>'+
+                '<div class="activity-detail">'+esc(item.detail)+'</div></div>';
+            }).join("")+
+          '</div>'+
+        '</div>'+
+        '<div class="drawer-footer">'+
+          '<button type="button" class="btn btn-outlined" data-action="close-drawer">Close</button>'+
+          '<button type="button" class="btn btn-outlined" data-action="open-override-modal" data-mode="'+((a.override&&a.override.active)?"edit":"apply")+'">'+overrideBtnLabel+'</button>'+
+          '<button type="button" class="btn btn-primary" data-noop>Edit</button>'+
+        '</div>'+
+      '</div>';
+  }
+
+  function overrideModalHtml(){
+    if(!state.overrideModalOpen) return "";
+    var f = state.overrideForm;
+    var durationOptions = ["ONE_APPOINTMENT","UNTIL_DATE","X_DAYS","UNTIL_NEW_AUTHORIZATION","MANUAL"];
+    var submitDisabled = (!f.reason.trim() || !f.duration) ? " disabled" : "";
+    return '<div class="modal-overlay" data-action="close-override-modal">'+
+      '<div class="modal" role="dialog" aria-modal="true" onclick="event.stopPropagation()">'+
+        '<div class="modal-header"><div><div class="h4">Apply Funding Override</div>'+
+          '<div class="body2" style="margin-top:4px;">Keeps bookings confirmed while funding is unresolved.</div></div>'+
+          '<button type="button" class="icon-btn" data-action="close-override-modal" aria-label="Close"><span class="material-symbols-rounded">close</span></button>'+
+        '</div>'+
+        '<div class="modal-body">'+
+          '<div class="form-grid">'+
+            '<div class="field"><label for="ovRole">Authorising role</label>'+
+              '<select class="input" id="ovRole" data-action="ov-role">'+selectOptionsHtml(["Billing Admin","Manager","Super Admin"], f.role)+'</select></div>'+
+            '<div class="field"><label for="ovDuration">Duration</label>'+
+              '<select class="input" id="ovDuration" data-action="ov-duration"><option value="">Select duration…</option>'+selectOptionsHtml(durationOptions, f.duration)+'</select></div>'+
+            '<div class="field form-grid full"><label for="ovReason">Reason <span class="req">*</span></label>'+
+              '<textarea class="input" id="ovReason" rows="3" data-action="ov-reason">'+esc(f.reason)+'</textarea></div>'+
+            '<div class="field"><label>Appointments affected</label><div class="radio-group">'+
+              ["This appointment only","All future occurrences","Selected occurrences"].map(function(opt){
+                var checked = f.appointments===opt ? " checked" : "";
+                return '<label class="radio-option"><input type="radio" name="ovAppointments" value="'+esc(opt)+'" data-action="ov-appointments"'+checked+'> '+esc(opt)+'</label>';
+              }).join("")+
+            '</div></div>'+
+            '<div class="field"><label>Funding expected</label><div class="radio-group">'+
+              ["Yes","No"].map(function(opt){
+                var checked = f.funding===opt ? " checked" : "";
+                return '<label class="radio-option"><input type="radio" name="ovFunding" value="'+esc(opt)+'" data-action="ov-funding"'+checked+'> '+esc(opt)+'</label>';
+              }).join("")+
+            '</div></div>'+
+            (f.duration==="UNTIL_DATE" ? '<div class="field"><label for="ovUntilDate">Until date</label><input class="input" type="date" id="ovUntilDate" data-action="ov-until-date" value="'+esc(f.untilDate)+'"></div>' : '')+
+            (f.duration==="X_DAYS" ? '<div class="field"><label for="ovDays">Days</label><input class="input" type="number" min="1" id="ovDays" data-action="ov-days" value="'+esc(f.days)+'"></div>' : '')+
+            '<div class="field"><label for="ovReviewDate">Review date</label><input class="input" type="date" id="ovReviewDate" data-action="ov-review-date" value="'+esc(f.reviewDate)+'"></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="modal-footer">'+
+          '<button type="button" class="btn btn-outlined" data-action="close-override-modal">Cancel</button>'+
+          '<button type="button" class="btn btn-primary" data-action="submit-override"'+submitDisabled+'>Apply Override</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
+
+  function addModalHtml(){
+    if(!state.addModalOpen) return "";
+    var f = state.addForm;
+    var createDisabled = (!f.client.trim() || !f.authId.trim() || !f.start) ? " disabled" : "";
+    var showRounding = (f.proration==="CALENDAR_DAYS" || f.proration==="WEEKLY");
+    return '<div class="modal-overlay" data-action="close-add-modal">'+
+      '<div class="modal wide" role="dialog" aria-modal="true" onclick="event.stopPropagation()">'+
+        '<div class="modal-header"><div><div class="h4">Add Regional Center Authorization</div></div>'+
+          '<button type="button" class="icon-btn" data-action="close-add-modal" aria-label="Close"><span class="material-symbols-rounded">close</span></button>'+
+        '</div>'+
+        '<div class="modal-body"><div class="form-grid">'+
+          '<div class="field"><label for="addClient">Client</label><select class="input" id="addClient" data-action="add-client">'+selectOptionsHtml(["Maria Garcia","Aiden Bell","Diego Garcia","Sofia Nunez","Liam Donnelly","Amara Okafor"], f.client)+'</select></div>'+
+          '<div class="field"><label for="addAuthId">Authorization #</label><input class="input" id="addAuthId" data-action="add-authid" value="'+esc(f.authId)+'"></div>'+
+          '<div class="field"><label for="addProvider">Funding Provider</label><select class="input" id="addProvider" data-action="add-provider"><option value="">Select…</option>'+selectOptionsHtml(["RCEB","GGRC","SARC"], f.provider)+'</select></div>'+
+          '<div class="field"><label for="addCode">Service Code</label><input class="input" id="addCode" data-action="add-code" value="'+esc(f.code)+'"></div>'+
+          '<div class="field"><label for="addServiceSubtype">Service / Subtype</label><select class="input" id="addServiceSubtype" data-action="add-service-subtype"><option value="">Select…</option>'+selectOptionsHtml(["Swim / Private","Swim / Semi-Private","Swim / Group"], f.serviceSubtype)+'</select></div>'+
+          '<div class="field"><label for="addStart">Start</label><input class="input" type="date" id="addStart" data-action="add-start" value="'+esc(f.start)+'"></div>'+
+          '<div class="field"><label for="addEnd">End</label><input class="input" type="date" id="addEnd" data-action="add-end" value="'+esc(f.end)+'"></div>'+
+          '<div class="field"><label for="addUnits">Authorized Units</label><input class="input" type="number" min="0" id="addUnits" data-action="add-units" value="'+esc(f.units)+'"></div>'+
+          '<div class="field"><label for="addProration">Proration</label><select class="input" id="addProration" data-action="add-proration"><option value="">Select…</option>'+selectOptionsHtml(["SCHEDULED_OCCURRENCES","CALENDAR_DAYS","WEEKLY","MANUAL","NONE"], f.proration)+'</select></div>'+
+          (showRounding ? '<div class="field"><label for="addRounding">Rounding</label><select class="input" id="addRounding" data-action="add-rounding"><option value="">Select…</option>'+selectOptionsHtml(["ROUND_DOWN","ROUND_UP","NEAREST","ALLOW_DECIMAL"], f.rounding)+'</select></div>' : '')+
+          '<div class="field"><label for="addCaseManager">Case Manager</label><input class="input" id="addCaseManager" data-action="add-case-manager" value="'+esc(f.caseManager)+'"></div>'+
+          '<div class="field"><label for="addCaseManagerEmail">Case Manager Email</label><input class="input" type="email" id="addCaseManagerEmail" data-action="add-case-manager-email" value="'+esc(f.caseManagerEmail)+'"></div>'+
+          '<div class="field form-grid full"><label for="addNotes">Notes</label><textarea class="input" id="addNotes" rows="3" data-action="add-notes">'+esc(f.notes)+'</textarea></div>'+
+        '</div></div>'+
+        '<div class="modal-footer">'+
+          '<button type="button" class="btn btn-outlined" data-action="close-add-modal">Cancel</button>'+
+          '<button type="button" class="btn btn-primary" data-action="submit-add"'+createDisabled+'>Create Authorization</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
+
+  function matchModalHtml(){
+    if(!state.matchModalOpen) return "";
+    var candidates = ["Jamie Hall (Profile #4482)","Jaime Hall (Profile #7719)","Create new profile"];
+    var confirmDisabled = state.matchSelected ? "" : " disabled";
+    return '<div class="modal-overlay" data-action="close-match-modal">'+
+      '<div class="modal" role="dialog" aria-modal="true" onclick="event.stopPropagation()">'+
+        '<div class="modal-header"><div class="h4">Match Client</div>'+
+          '<button type="button" class="icon-btn" data-action="close-match-modal" aria-label="Close"><span class="material-symbols-rounded">close</span></button>'+
+        '</div>'+
+        '<div class="modal-body"><div class="radio-group">'+
+          candidates.map(function(c){
+            var checked = state.matchSelected===c ? " checked" : "";
+            return '<label class="radio-option"><input type="radio" name="matchCandidate" value="'+esc(c)+'" data-action="select-candidate"'+checked+'> '+esc(c)+'</label>';
+          }).join("")+
+        '</div></div>'+
+        '<div class="modal-footer">'+
+          '<button type="button" class="btn btn-outlined" data-action="close-match-modal">Cancel</button>'+
+          '<button type="button" class="btn btn-primary" data-action="confirm-match"'+confirmDisabled+'>Confirm match</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
+
+  function importStepperHtml(){
+    var steps = ["Upload","Map & Parse","Review & Resolve","Approve & Apply"];
+    return '<div class="import-stepper">'+steps.map(function(label, idx){
+      var n = idx+1;
+      var cls = n<state.importStep ? "done" : (n===state.importStep ? "active" : "");
+      var marker = n<state.importStep ? "✓" : String(n);
+      return '<div class="import-step '+cls+'">'+marker+' '+esc(label)+'</div>';
+    }).join("")+'</div>';
+  }
+
+  function importStep1Html(){
+    return '<div class="banner banner-info">CSV preferred, PDF fallback. The uploaded source file is retained in the import audit record.</div>'+
+      '<div class="form-grid">'+
+        '<div class="field"><label for="impType">Import Type</label><select class="input" id="impType" data-noop><option>Regional Center Authorization</option></select></div>'+
+        '<div class="field"><label for="impLocation">Location</label><select class="input" id="impLocation" data-noop><option>Solar Swim and Gym</option></select></div>'+
+        '<div class="field"><label for="impProvider">Provider</label><select class="input" id="impProvider" data-noop><option>RCEB</option></select></div>'+
+        '<div class="field"><label for="impFile">CSV File</label><input class="input" type="file" id="impFile" data-noop></div>'+
+      '</div>';
+  }
+
+  function importStep2Html(){
+    return '<div class="banner banner-success">6 columns automatically matched. Review mapping before validation.</div>'+
+      '<div class="table-scroll"><table><thead><tr><th>CSV Column</th><th>Sample</th><th>Zalexy Field</th><th>Required</th><th>Status</th></tr></thead><tbody>'+
+      mapColumns.map(function(c){
+        return '<tr><td>'+esc(c.csv)+'</td><td>'+esc(c.sample)+'</td><td><select class="input" data-noop><option>'+esc(c.field)+'</option></select></td><td>'+esc(c.required)+'</td><td><span class="chip chip-success">Matched</span></td></tr>';
+      }).join("")+
+      '</tbody></table></div>';
+  }
+
+  function importStep3Html(){
+    var resolvedCount = importRows.filter(function(r){ return r.needsReview && r.decisionValue!==null; }).length;
+    var totalNeeds = importRows.filter(function(r){ return r.needsReview; }).length;
+    var segments = ["All","New","Changed","Existing","NeedsReview","Error"];
+    var segmentLabels = {All:"All", New:"New", Changed:"Changed", Existing:"Existing", NeedsReview:"Needs Review", Error:"Error"};
+    var visibleRows = importRows.filter(function(r){
+      return state.importSegment==="All" || r.category===state.importSegment;
+    });
+
+    var tiles = [
+      {label:"Rows", value:128}, {label:"New", value:24}, {label:"Changed", value:12},
+      {label:"Existing", value:88}, {label:"Needs Review", value:4}
+    ];
+
+    return '<div class="result-tiles">'+tiles.map(function(t){
+        return '<div class="card result-tile"><div class="rt-label">'+esc(t.label)+'</div><div class="rt-value">'+t.value+'</div></div>';
+      }).join("")+'</div>'+
+      '<div class="segmented">'+segments.map(function(s){
+        var cls = state.importSegment===s ? "btn-primary" : "btn-outlined";
+        return '<button type="button" class="btn '+cls+' btn-sm" data-action="import-segment" data-segment="'+s+'">'+esc(segmentLabels[s])+'</button>';
+      }).join("")+'</div>'+
+      '<div class="table-scroll"><table><thead><tr><th>Source Row</th><th>Client Match</th><th>Existing Record</th><th>Imported Value</th><th>Difference</th><th>Proposed</th><th>Decision</th></tr></thead><tbody>'+
+      visibleRows.map(function(r){
+        var decisionCell;
+        if(r.decisionType==="select"){
+          decisionCell = '<select class="input" data-action="import-decision" data-row="'+r.sourceRow+'"><option value="">Choose…</option>'+selectOptionsHtml(r.options, r.decisionValue)+'</select>';
+        } else if(r.decisionType==="disabledSelect"){
+          decisionCell = '<select class="input" disabled><option>Skip</option></select><div class="body2">Duplicate — will not be added</div>';
+        } else if(r.decisionType==="button"){
+          decisionCell = r.decisionValue
+            ? '<span class="chip chip-success">Accept Add</span>'
+            : '<button type="button" class="btn btn-outlined btn-sm" data-action="open-match-modal" data-row="'+r.sourceRow+'">Match Client</button>';
+        } else {
+          decisionCell = '<span class="muted">'+esc(r.text)+'</span>';
+        }
+        return '<tr><td>#'+r.sourceRow+'</td><td>'+esc(r.clientMatch)+'</td><td>'+esc(r.existingRecord)+'</td><td>'+esc(r.importedValue)+'</td><td>'+esc(r.difference)+'</td><td>'+esc(r.proposed)+'</td><td>'+decisionCell+'</td></tr>';
+      }).join("")+
+      '</tbody></table></div>'+
+      '<input type="hidden" id="reviewResolvedCaption" value="'+resolvedCount+' of '+totalNeeds+' rows needing review resolved">';
+  }
+
+  function importStep4Html(){
+    return '<div class="summary-panel card">'+
+        '<div class="sk">Will add</div><div class="sv">24 authorizations</div>'+
+        '<div class="sk">Will update</div><div class="sv">12 authorizations</div>'+
+        '<div class="sk">Will skip</div><div class="sv">88 duplicates</div>'+
+        '<div class="sk">Held for review</div><div class="sv">0</div>'+
+      '</div>'+
+      '<div class="banner banner-warning">Applying writes to live authorizations. Ghost holds on affected clients will be recalculated.</div>'+
+      '<div class="checkbox-row"><input type="checkbox" id="approveCheckbox" data-action="approve-checkbox"'+(state.approveChecked?" checked":"")+'>'+
+        '<label for="approveCheckbox">I have reviewed all 36 changes</label></div>';
+  }
+
+  function importOverlayHtml(){
+    if(!state.importOpen) return "";
+    var resolvedCount = importRows.filter(function(r){ return r.needsReview && r.decisionValue!==null; }).length;
+    var totalNeeds = importRows.filter(function(r){ return r.needsReview; }).length;
+    var body, footer;
+
+    if(state.importStep===1){
+      body = importStep1Html();
+      footer = '<div></div><button type="button" class="btn btn-primary" data-action="import-goto" data-step="2">Upload &amp; Continue</button>';
+    } else if(state.importStep===2){
+      body = importStep2Html();
+      footer = '<button type="button" class="btn btn-outlined" data-action="import-goto" data-step="1">Back</button>'+
+        '<button type="button" class="btn btn-primary" data-action="import-goto" data-step="3">Validate &amp; Review</button>';
+    } else if(state.importStep===3){
+      body = importStep3Html();
+      var continueDisabled = (resolvedCount<totalNeeds) ? " disabled" : "";
+      footer = '<div style="display:flex;align-items:center;gap:16px;">'+
+          '<span class="body2">'+resolvedCount+' of '+totalNeeds+' rows needing review resolved</span>'+
+          '<button type="button" class="btn btn-outlined" data-noop>Save Review</button>'+
+        '</div>'+
+        '<button type="button" class="btn btn-primary" data-action="import-goto" data-step="4"'+continueDisabled+'>Continue to Approval</button>';
+    } else {
+      body = importStep4Html();
+      var applyDisabled = state.approveChecked ? "" : " disabled";
+      footer = '<button type="button" class="btn btn-outlined" data-action="import-goto" data-step="3">Back</button>'+
+        '<button type="button" class="btn btn-primary" data-action="apply-import"'+applyDisabled+'>Apply Import</button>';
+    }
+
+    return '<div class="import-overlay">'+
+      '<div class="import-header"><div><div class="h4">Funding CSV Import</div>'+
+        '<div class="body2" style="margin-top:4px;">Regional Center batch · one import = one location and provider.</div></div>'+
+        '<button type="button" class="icon-btn" data-action="close-import" aria-label="Close"><span class="material-symbols-rounded">close</span></button>'+
+      '</div>'+
+      importStepperHtml()+
+      '<div class="import-body">'+body+'</div>'+
+      '<div class="import-footer">'+footer+'</div>'+
+      matchModalHtml()+
+    '</div>';
+  }
+
+  function successBannerHtml(){
+    if(!state.successBanner) return "";
+    return '<div class="banner banner-success" style="margin-bottom:16px;"><span>'+esc(state.successBanner)+'</span>'+
+      '<button type="button" class="icon-btn" data-action="dismiss-banner" aria-label="Dismiss"><span class="material-symbols-rounded">close</span></button></div>';
+  }
+
+  function sidebarHtml(){
+    function link(icon, label, href, active, noop){
+      return '<li><a class="nav-link'+(active?" active":"")+'" href="'+href+'"'+(noop?' data-noop':'')+'>'+
+        '<span class="material-symbols-rounded">'+icon+'</span><span>'+label+'</span></a></li>';
+    }
+    return '<nav class="sidebar">'+
+      '<div class="sidebar-logo"><a href="index.html">'+
+        '<svg class="mark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="6" fill="#3b82f6"/><path d="M7 12l3.5 3.5L17 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'+
+        '<span class="name">Zalexy</span></a></div>'+
+      '<ul class="nav-list">'+
+        link("point_of_sale","Point of Sale","#", false, true)+
+        link("groups","Leads","#", false, true)+
+        link("account_circle","Accounts","index.html", false)+
+        link("badge","Profiles","#", false, true)+
+        link("receipt_long","Transactions","#", false, true)+
+        link("request_quote","Invoices","#", false, true)+
+        link("engineering","Staff","#", false, true)+
+        '<li><a class="nav-link" href="#" data-noop><span class="material-symbols-rounded">calendar_month</span><span>Scheduling</span></a>'+
+          '<ul class="nav-group-children">'+
+            '<li><a class="nav-link" href="#" data-noop><span class="material-symbols-rounded">payments</span><span>Funding</span></a>'+
+              '<ul class="nav-group-children">'+
+                link("verified","Regional Center","#", true, true)+
+                link("confirmation_number","Vouchers","voucher-management.html", false)+
+              '</ul>'+
+            '</li>'+
+          '</ul>'+
+        '</li>'+
+        link("settings","Settings","#", false, true)+
+      '</ul>'+
+    '</nav>';
+  }
+
+  function pageHeaderHtml(){
+    return '<div class="breadcrumb body2"><a href="index.html">Accounts</a> › Funding › Regional Center</div>'+
+      '<div class="page-header">'+
+        '<div class="titles"><div class="h2">Regional Center Authorizations</div>'+
+          '<div class="body2 subtitle">Authorization lifecycle, ghost holds, proration and settlement.</div></div>'+
+        '<div class="header-actions">'+
+          '<button type="button" class="btn btn-primary" data-action="open-import"><span class="material-symbols-rounded" style="font-size:18px;">upload</span> Import CSV</button>'+
+          '<button type="button" class="btn btn-outlined" data-action="open-add-modal"><span class="material-symbols-rounded" style="font-size:18px;">add</span> Add Authorization</button>'+
+        '</div>'+
+      '</div>';
+  }
+
+  function buildApp(){
+    return '<div class="app-shell">'+
+      sidebarHtml()+
+      '<main class="main" style="position:relative;">'+
+        '<div class="page">'+
+          pageHeaderHtml()+
+          successBannerHtml()+
+          kpiStripHtml()+
+          tableHtml()+
+        '</div>'+
+        importOverlayHtml()+
+      '</main>'+
+      drawerHtml()+
+      overrideModalHtml()+
+      addModalHtml()+
+    '</div>';
+  }
+
+  /* ---------- render with focus preservation ---------- */
+
+  function render(){
+    var root = document.getElementById("app-root");
+    var active = document.activeElement;
+    var activeId = (active && active.id) ? active.id : null;
+    var selStart = null, selEnd = null;
+    if(active && (typeof active.selectionStart === "number")){
+      selStart = active.selectionStart; selEnd = active.selectionEnd;
+    }
+    root.innerHTML = buildApp();
+    if(state.drawerOpen && state.drawerScrollTo){
+      var target = document.getElementById(state.drawerScrollTo);
+      if(target && target.scrollIntoView){ target.scrollIntoView({block:"start"}); }
+      state.drawerScrollTo = null;
+    }
+    if(activeId){
+      var el = document.getElementById(activeId);
+      if(el){
+        el.focus();
+        if(selStart!==null && el.setSelectionRange){
+          try{ el.setSelectionRange(selStart, selEnd); }catch(e){}
+        }
+      }
+    }
+  }
+
+  /* ---------- event delegation ---------- */
+
+  function onClick(e){
+    var el = e.target.closest("[data-action]");
+    if(!el) return;
+    if(el.hasAttribute("data-noop")){ return; }
+    var action = el.getAttribute("data-action");
+
+    switch(action){
+      case "toggle-tile": {
+        var tile = el.getAttribute("data-tile");
+        state.activeTile = (state.activeTile===tile) ? null : tile;
+        render();
+        break;
+      }
+      case "clear-filters": {
+        if(el.disabled) return;
+        state.search=""; state.filterStatus=""; state.filterProvider=""; state.filterService=""; state.filterExpiry=""; state.activeTile=null;
+        render();
+        break;
+      }
+      case "open-drawer": {
+        var id = parseInt(el.getAttribute("data-id"),10);
+        state.drawerOpen = true; state.drawerAuthId = id; state.drawerScrollTo = null;
+        render();
+        break;
+      }
+      case "open-drawer-holds": {
+        e.stopPropagation();
+        var id2 = parseInt(el.getAttribute("data-id"),10);
+        state.drawerOpen = true; state.drawerAuthId = id2; state.drawerScrollTo = "ghost-holds";
+        render();
+        break;
+      }
+      case "close-drawer": {
+        state.drawerOpen = false; state.drawerAuthId = null; state.drawerScrollTo = null;
+        render();
+        break;
+      }
+      case "open-override-modal": {
+        var mode = el.getAttribute("data-mode");
+        state.overrideModalMode = mode;
+        var a = findAuth(state.drawerAuthId);
+        if(mode==="edit" && a && a.override && a.override.active){
+          var apptMap = "All future occurrences";
+          var fundMap = a.override.fundingExpected && a.override.fundingExpected.indexOf("No")===0 ? "No" : "Yes";
+          state.overrideForm = {
+            role: a.override.role, reason: a.override.reason, appointments: apptMap,
+            funding: fundMap, duration: a.override.duration, untilDate:"", days:"", reviewDate:""
+          };
+        } else {
+          state.overrideForm = {role:"Billing Admin", reason:"", appointments:"This appointment only", funding:"Yes", duration:"", untilDate:"", days:"", reviewDate:""};
+        }
+        state.overrideModalOpen = true;
+        render();
+        break;
+      }
+      case "close-override-modal": {
+        state.overrideModalOpen = false;
+        render();
+        break;
+      }
+      case "submit-override": {
+        if(el.disabled) return;
+        var f = state.overrideForm;
+        var a2 = findAuth(state.drawerAuthId);
+        if(a2){
+          var durationText = f.duration;
+          if(f.duration==="UNTIL_DATE" && f.untilDate) durationText = "UNTIL_DATE (until "+f.untilDate+")";
+          if(f.duration==="X_DAYS" && f.days) durationText = "X_DAYS ("+f.days+" days)";
+          a2.override = {
+            active:true, role:f.role, who:"Staff User", when: TODAY_LABEL,
+            reason: f.reason, appointments: f.appointments, fundingExpected: f.funding, duration: durationText
+          };
+          a2.status = a2.status; // status unaffected; override chip renders in addition
+        }
+        state.overrideModalOpen = false;
+        render();
+        break;
+      }
+      case "remove-override": {
+        var a3 = findAuth(state.drawerAuthId);
+        if(a3) a3.override = {active:false};
+        render();
+        break;
+      }
+      case "open-add-modal": {
+        state.addForm = {client:"Maria Garcia", authId:"", provider:"", code:"", serviceSubtype:"", start:"", end:"", units:"", proration:"", rounding:"", caseManager:"", caseManagerEmail:"", notes:""};
+        state.addModalOpen = true;
+        render();
+        break;
+      }
+      case "close-add-modal": {
+        state.addModalOpen = false;
+        render();
+        break;
+      }
+      case "submit-add": {
+        if(el.disabled) return;
+        var af = state.addForm;
+        var parts = (af.serviceSubtype||"Swim / Private").split(" / ");
+        var newAuth = {
+          id: state.nextAuthSeq++, client: af.client, caseManager: af.caseManager||"—", caseManagerEmail: af.caseManagerEmail||"—",
+          uci:"—", authId: af.authId, provider: af.provider||"RCEB", code: af.code||"—",
+          service: parts[0]||"Swim", subtype: parts[1]||"Private",
+          periodStart: af.start||"—", periodEnd: af.end||"—",
+          authorized: parseInt(af.units,10)||0, used:0, reserved:0, holdsCount:0, balance:0,
+          status:"PENDING", prorated:false, subtypeLimit:"—",
+          sourceDoc:null, sourceBatch:null, sourceImportDate:null,
+          proration:{method: af.proration||"NONE"},
+          override:{active:false},
+          ghostHolds:[], onExpiry:"—",
+          recurring:{when:"—", note:"No recurring preference set."},
+          settlement:{invoice:null, balance:0, note:"No balance due."},
+          activity:[{date:"Apr 17", title:"Authorization created", detail:"Added manually by staff"}]
+        };
+        authorizations.push(newAuth);
+        state.addModalOpen = false;
+        render();
+        break;
+      }
+      case "open-import": {
+        state.importOpen = true; state.importStep = 1; state.importSegment = "All";
+        render();
+        break;
+      }
+      case "close-import": {
+        state.importOpen = false;
+        render();
+        break;
+      }
+      case "import-goto": {
+        if(el.disabled) return;
+        var step = parseInt(el.getAttribute("data-step"),10);
+        state.importStep = step;
+        render();
+        break;
+      }
+      case "import-segment": {
+        state.importSegment = el.getAttribute("data-segment");
+        render();
+        break;
+      }
+      case "open-match-modal": {
+        state.matchModalOpen = true; state.matchSelected = null;
+        render();
+        break;
+      }
+      case "close-match-modal": {
+        state.matchModalOpen = false;
+        render();
+        break;
+      }
+      case "confirm-match": {
+        if(el.disabled) return;
+        for(var i=0;i<importRows.length;i++){
+          if(importRows[i].sourceRow===14){ importRows[i].decisionValue = "Accept Add"; }
+        }
+        state.matchModalOpen = false;
+        render();
+        break;
+      }
+      case "apply-import": {
+        if(el.disabled) return;
+        state.importOpen = false;
+        state.successBanner = "Import IMP-0418 applied — 24 added, 12 updated, 88 skipped.";
+        render();
+        break;
+      }
+      case "dismiss-banner": {
+        state.successBanner = null;
+        render();
+        break;
+      }
+      default: break;
+    }
+  }
+
+  function onChangeOrInput(e){
+    var el = e.target;
+    var action = el.getAttribute && el.getAttribute("data-action");
+    if(!action) return;
+
+    switch(action){
+      case "search-input": state.search = el.value; render(); break;
+      case "filter-status": state.filterStatus = el.value; render(); break;
+      case "filter-provider": state.filterProvider = el.value; render(); break;
+      case "filter-service": state.filterService = el.value; render(); break;
+      case "filter-expiry": state.filterExpiry = el.value; render(); break;
+
+      case "ov-role": state.overrideForm.role = el.value; render(); break;
+      case "ov-duration": state.overrideForm.duration = el.value; render(); break;
+      case "ov-reason": state.overrideForm.reason = el.value; render(); break;
+      case "ov-appointments": state.overrideForm.appointments = el.value; render(); break;
+      case "ov-funding": state.overrideForm.funding = el.value; render(); break;
+      case "ov-until-date": state.overrideForm.untilDate = el.value; render(); break;
+      case "ov-days": state.overrideForm.days = el.value; render(); break;
+      case "ov-review-date": state.overrideForm.reviewDate = el.value; render(); break;
+
+      case "add-client": state.addForm.client = el.value; render(); break;
+      case "add-authid": state.addForm.authId = el.value; render(); break;
+      case "add-provider": state.addForm.provider = el.value; render(); break;
+      case "add-code": state.addForm.code = el.value; render(); break;
+      case "add-service-subtype": state.addForm.serviceSubtype = el.value; render(); break;
+      case "add-start": state.addForm.start = el.value; render(); break;
+      case "add-end": state.addForm.end = el.value; render(); break;
+      case "add-units": state.addForm.units = el.value; render(); break;
+      case "add-proration": state.addForm.proration = el.value; render(); break;
+      case "add-rounding": state.addForm.rounding = el.value; render(); break;
+      case "add-case-manager": state.addForm.caseManager = el.value; render(); break;
+      case "add-case-manager-email": state.addForm.caseManagerEmail = el.value; render(); break;
+      case "add-notes": state.addForm.notes = el.value; render(); break;
+
+      case "import-decision": {
+        var row = parseInt(el.getAttribute("data-row"),10);
+        for(var i=0;i<importRows.length;i++){
+          if(importRows[i].sourceRow===row){ importRows[i].decisionValue = el.value || null; }
+        }
+        render();
+        break;
+      }
+      case "select-candidate": state.matchSelected = el.value; render(); break;
+      case "approve-checkbox": state.approveChecked = el.checked; render(); break;
+
+      default: break;
+    }
+  }
+
+  function onKeydown(e){
+    if(e.key==="Escape"){
+      if(state.matchModalOpen){ state.matchModalOpen = false; render(); return; }
+      if(state.overrideModalOpen){ state.overrideModalOpen = false; render(); return; }
+      if(state.addModalOpen){ state.addModalOpen = false; render(); return; }
+      if(state.drawerOpen){ state.drawerOpen = false; state.drawerAuthId = null; render(); return; }
+    }
+  }
+
+  document.addEventListener("click", onClick);
+  document.addEventListener("change", onChangeOrInput);
+  document.addEventListener("input", function(e){
+    var action = e.target.getAttribute && e.target.getAttribute("data-action");
+    if(action==="search-input" || action==="ov-reason"){ onChangeOrInput(e); }
+  });
+  document.addEventListener("keydown", onKeydown);
+
+  render();
+})();
+</script>
+</body>
+</html>

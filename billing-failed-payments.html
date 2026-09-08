@@ -1,0 +1,812 @@
+<!--
+  Zalexy Prototype — Billing: Failed Payments
+  Spec:   ai-workspace/prototypes/billing/billing-failed-payments.md
+  Design: ai-workspace/prototypes/_shared/design-system.md
+  Static prototype. Not production code. No app dependencies.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zalexy — Failed Payments</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{
+  --primary:#334155; --primary-light:#475569; --primary-dark:#1e293b;
+  --secondary:#10b981; --secondary-light:#34d399; --secondary-dark:#059669;
+  --success:#10b981; --success-bg:#d1fae5; --success-dark:#047857;
+  --info:#3b82f6; --info-bg:#eff6ff; --info-dark:#1d4ed8; --info-hover:#2563eb;
+  --bg-default:#f8fafc; --bg-paper:#ffffff;
+  --text-primary:#0f172a; --text-secondary:#64748b;
+  --border:#f1f5f9; --border-input:#cbd5e1; --border-input-hover:#94a3b8;
+  --hover-row:#f1f5f9; --action-hover:rgba(71,85,105,.04); --action-selected:rgba(71,85,105,.08);
+  --danger:#ef4444; --warning:#f59e0b;
+  --radius-card:10px; --radius-base:8px; --radius-control:6px; --radius-chip:4px;
+  --shadow-card:0 2px 4px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.03);
+  --shadow-1:0 1px 3px rgba(0,0,0,.05);
+  --shadow-appbar:0 1px 1px rgba(51,65,85,.03);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Inter","Roboto","Helvetica","Arial",sans-serif;color:var(--text-primary);}
+button,input,select,textarea{font-family:inherit;}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px;}
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* ---------- Sidebar (copied verbatim from out/index.html, Billing Module section appended) ---------- */
+.sidebar{width:240px;flex:0 0 240px;background:var(--primary-dark);color:#f8fafc;display:flex;flex-direction:column;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:10px;padding:20px 20px 16px;}
+.logo svg{flex:0 0 auto;}
+.logo span{font-weight:700;font-size:1.05rem;letter-spacing:.02em;}
+.nav{padding:8px 12px;display:flex;flex-direction:column;gap:2px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-base);color:#f8fafc;font-size:.9rem;font-weight:500;text-decoration:none;cursor:pointer;}
+.nav-item .material-symbols-rounded{font-size:20px;min-width:24px;color:rgba(248,250,252,.7);}
+.nav-item.disabled{opacity:.42;cursor:not-allowed;}
+.nav-item:not(.disabled):hover{background:rgba(248,250,252,.08);}
+.nav-item.active{background:rgba(248,250,252,.14);}
+.nav-item.active .material-symbols-rounded{color:#f8fafc;}
+.nav-section{margin:16px 12px 6px;font-size:.7rem;font-weight:700;letter-spacing:.08em;color:rgba(248,250,252,.45);text-transform:uppercase;}
+.sidebar-foot{padding:14px 20px;font-size:.7rem;color:rgba(248,250,252,.4);border-top:1px solid rgba(248,250,252,.08);}
+
+/* ---------- Main ---------- */
+.main{flex:1;background:var(--bg-default);overflow-y:auto;}
+.topbar{height:64px;background:#fff;box-shadow:var(--shadow-appbar);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:5;}
+.search{position:relative;width:320px;}
+.search .material-symbols-rounded{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--text-secondary);}
+.search input{width:100%;height:36px;padding:8px 12px 8px 34px;font-size:.875rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;}
+.search input:hover{border-color:var(--border-input-hover);}
+.search input:focus{border-color:var(--primary);outline:none;}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.icon-btn{position:relative;width:36px;height:36px;border:none;background:transparent;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);}
+.icon-btn:hover{background:var(--action-hover);}
+.icon-btn .dot{position:absolute;top:6px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--danger);}
+.avatar-pf{width:32px;height:32px;border-radius:50%;background:#d1fae5;color:var(--success-dark);font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+.page{padding:24px;}
+.page-header{margin-bottom:24px;}
+.page-header h1{font-size:1.75rem;font-weight:600;letter-spacing:-.01em;margin:0 0 4px;}
+.page-header p{font-size:.8rem;font-weight:400;color:var(--text-secondary);margin:0;}
+
+/* ---------- Banner ---------- */
+.banner{display:flex;align-items:flex-start;gap:10px;background:#fee2e2;border-radius:var(--radius-base);padding:12px 16px;font-size:.875rem;font-weight:400;color:#b91c1c;margin-bottom:24px;}
+.banner .material-symbols-rounded.err{font-size:20px;color:#b91c1c;flex:0 0 auto;}
+.banner .banner-text{flex:1;}
+.banner .banner-close{margin-left:auto;background:none;border:none;color:#b91c1c;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;flex:0 0 auto;}
+.banner .banner-close:hover{background:rgba(185,28,28,.1);}
+
+/* ---------- Card / tab strip / table ---------- */
+.card{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);border:none;overflow:hidden;}
+.tabstrip{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid #e2e8f0;background:#f8fafc;}
+.tab{position:relative;font-size:.82rem;font-weight:600;color:var(--text-secondary);text-transform:none;min-height:40px;padding:8px 12px;background:transparent;border:none;cursor:pointer;}
+.tab:hover{color:var(--text-primary);}
+.tab.selected{color:#3b82f6;}
+.tab.selected::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;background:#3b82f6;border-radius:3px 3px 0 0;}
+
+.table-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:900px;}
+th{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);padding:12px 16px;border-bottom:1px solid var(--border);background:transparent;text-align:left;white-space:nowrap;}
+th.num,td.num{text-align:right;}
+td{font-size:.875rem;padding:16px;border-bottom:1px solid var(--border);color:var(--text-primary);vertical-align:top;}
+tr:hover{background:var(--hover-row);}
+tr:last-child td{border-bottom:0;}
+.tabular{font-variant-numeric:tabular-nums;}
+
+.member-cell{display:flex;align-items:center;gap:10px;}
+.avatar{width:32px;height:32px;border-radius:50%;background:#fee2e2;color:#b91c1c;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.member-name{font-size:.875rem;font-weight:600;}
+.member-id{font-size:.75rem;font-weight:400;color:var(--text-secondary);}
+
+.batch-link{font-size:.8rem;font-weight:600;color:var(--info-dark);font-variant-numeric:tabular-nums;cursor:default;}
+
+.chip{height:24px;border-radius:var(--radius-chip);font-size:.75rem;font-weight:600;padding:0 8px;display:inline-flex;align-items:center;}
+.chip-danger{background:#fee2e2;color:#b91c1c;}
+.chip-warning{background:#fef3c7;color:#b45309;}
+.chip-success{background:#d1fae5;color:#047857;}
+.chip-muted{background:#f1f5f9;color:var(--text-secondary);}
+
+.error-code{font-size:.7rem;font-weight:500;color:var(--text-secondary);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.02em;margin-top:4px;}
+.error-time{font-size:.7rem;font-weight:400;color:var(--text-secondary);margin-top:2px;}
+
+.attempts{display:flex;align-items:center;gap:4px;}
+.attempts .material-symbols-rounded{font-size:16px;color:var(--danger);}
+.attempts .cur{color:var(--text-primary);font-weight:600;}
+.attempts .sep,.attempts .max{color:var(--text-secondary);font-weight:400;}
+
+.amount{font-weight:600;color:var(--text-primary);}
+
+.next-retry .date{font-size:.875rem;font-weight:600;color:var(--text-primary);}
+.next-retry .rel{font-size:.7rem;font-weight:400;color:var(--text-secondary);margin-top:2px;}
+
+.card-on-file{font-size:.8rem;font-weight:400;color:var(--text-primary);}
+
+.resolution-note{font-size:.7rem;font-weight:400;color:var(--text-secondary);margin-top:4px;}
+.resolved-by-system{color:var(--text-secondary);font-style:italic;}
+
+.btn{display:inline-flex;align-items:center;gap:6px;justify-content:center;border-radius:var(--radius-control);padding:0 12px;height:32px;font-weight:600;font-size:.8rem;cursor:pointer;text-decoration:none;box-shadow:none;border:none;}
+.btn-outline{background:#fff;color:var(--text-primary);border:1px solid var(--border);}
+.btn-outline:hover{border-color:var(--primary);background:var(--action-hover);}
+.btn-outline-danger{background:#fff;color:var(--danger);border:1px solid #fecaca;}
+.btn-outline-danger:hover{background:#fee2e2;border-color:var(--danger);}
+.btn-primary{background:var(--info);color:#fff;padding:8px 16px;height:auto;}
+.btn-primary:hover{background:var(--info-hover);}
+.btn-secondary{background:var(--secondary);color:#fff;padding:8px 16px;height:auto;}
+.btn-secondary:hover{background:var(--secondary-dark);}
+.btn-secondary[disabled],.btn-secondary[aria-disabled="true"]{opacity:.5;cursor:not-allowed;}
+.row-actions{display:flex;gap:8px;align-items:center;}
+.icon-square{width:32px;height:32px;padding:0;flex:0 0 auto;}
+
+.menu-wrap{position:relative;display:inline-block;}
+.overflow-menu{position:absolute;top:36px;right:0;background:var(--bg-paper);border-radius:var(--radius-base);box-shadow:0 20px 25px -5px rgba(0,0,0,.1);min-width:200px;z-index:20;padding:6px 0;}
+.overflow-menu button{display:block;width:100%;text-align:left;background:none;border:none;font-size:.8rem;font-weight:500;padding:10px 14px;cursor:pointer;color:var(--text-primary);}
+.overflow-menu button:hover{background:var(--hover-row);}
+
+.table-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;font-size:.8rem;font-weight:400;color:var(--text-secondary);}
+.pagination{display:flex;gap:4px;}
+.pagination button{width:28px;height:28px;border-radius:var(--radius-control);border:1px solid var(--border);background:#fff;color:var(--text-secondary);font-size:.8rem;cursor:pointer;}
+.pagination button.active{background:var(--primary-dark);color:#fff;border-color:var(--primary-dark);}
+.pagination button:hover:not(.active){background:var(--action-hover);}
+
+/* ---------- Modal ---------- */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:50;}
+.modal{background:#fff;border-radius:var(--radius-card);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);width:560px;max-width:calc(100vw - 48px);max-height:calc(100vh - 48px);overflow-y:auto;}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 24px 0;}
+.modal-header h4{font-size:1.25rem;font-weight:600;margin:0 0 6px;}
+.modal-header p{font-size:.8rem;font-weight:400;color:var(--text-secondary);margin:0;max-width:460px;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text-secondary);font-size:20px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.modal-close:hover{background:var(--action-hover);}
+.modal-body{padding:20px 24px;}
+.warning-strip{display:flex;gap:8px;align-items:flex-start;background:#fef3c7;border-radius:var(--radius-base);padding:10px 12px;font-size:.8rem;font-weight:400;color:#b45309;margin-bottom:20px;}
+.warning-strip .material-symbols-rounded{font-size:16px;color:#b45309;flex:0 0 auto;}
+.summary-grid{display:grid;grid-template-columns:140px 1fr;row-gap:10px;margin-bottom:20px;}
+.summary-grid .label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);}
+.summary-grid .value{font-size:.875rem;font-weight:400;color:var(--text-primary);}
+.summary-grid .value.amount-val{font-weight:700;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:.75rem;font-weight:600;color:var(--text-secondary);margin-bottom:6px;}
+.field label .req{color:var(--danger);font-weight:700;font-size:1.2em;margin-left:2px;}
+.field select,.field textarea{width:100%;padding:8px 12px;font-size:.875rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;}
+.field select{height:36px;}
+.field textarea{height:auto;resize:vertical;}
+.field select:hover,.field textarea:hover{border-color:var(--border-input-hover);}
+.field select:focus,.field textarea:focus{border-color:var(--primary);outline:none;}
+.modal-footer{display:flex;justify-content:flex-end;align-items:center;gap:12px;padding:0 24px 20px;flex-wrap:wrap;}
+.helper-disabled{width:100%;text-align:right;font-size:.75rem;font-weight:400;color:var(--text-secondary);margin-top:-6px;margin-bottom:12px;}
+
+@media (max-width:1024px){
+  .search{width:220px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect width="28" height="28" rx="7" fill="#3b82f6"/>
+        <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>ZALEXY</span>
+    </div>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">point_of_sale</span>Point of Sale</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">groups</span>Leads</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">account_circle</span>Accounts</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Profiles</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">receipt_long</span>Transactions</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">request_quote</span>Invoices</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Staff</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">event</span>Scheduling</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">settings</span>Settings</a>
+      <div class="nav-section">Prototypes</div>
+      <a class="nav-item" href="index.html"><span class="material-symbols-rounded">grid_view</span>Prototype Gallery</a>
+      <a class="nav-item" href="admin-intake-form-builder.html"><span class="material-symbols-rounded">dynamic_form</span>Admin: Intake &amp; Builder</a>
+      <a class="nav-item" href="admin-settings-policy-engine.html"><span class="material-symbols-rounded">admin_panel_settings</span>Admin: Policy Engine Settings</a>
+      <a class="nav-item" href="profile-intake-tab.html"><span class="material-symbols-rounded">badge</span>Profile: Intake Tab</a>
+      <a class="nav-item" href="profile-overview-tab.html"><span class="material-symbols-rounded">contact_page</span>Profile: Details Tab</a>
+      <a class="nav-item" href="portal-profile-tab.html"><span class="material-symbols-rounded">family_restroom</span>Portal: My Account</a>
+      <div class="nav-section">Billing Module</div>
+      <a class="nav-item" href="billing-dashboard.html"><span class="material-symbols-rounded">space_dashboard</span>Billing Dashboard</a>
+      <a class="nav-item" href="billing-upcoming-billings.html"><span class="material-symbols-rounded">event_upcoming</span>Upcoming Billings</a>
+      <a class="nav-item active" href="billing-failed-payments.html"><span class="material-symbols-rounded">error</span>Failed Payments</a>
+      <a class="nav-item" href="billing-member-billing.html"><span class="material-symbols-rounded">groups</span>Member Billing</a>
+      <a class="nav-item" href="billing-module-settings.html"><span class="material-symbols-rounded">settings</span>Module Settings</a>
+    </nav>
+    <div class="sidebar-foot">Prototype build · not production</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="search">
+        <span class="material-symbols-rounded">search</span>
+        <input type="text" placeholder="Search members, batches…" data-noop aria-label="Search members, batches">
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" data-noop aria-label="Notifications"><span class="material-symbols-rounded">notifications</span><span class="dot"></span></button>
+        <div class="avatar-pf">PS</div>
+      </div>
+    </div>
+
+    <div class="page">
+      <div class="page-header">
+        <h1>Failed Payments</h1>
+        <p>Solar Swim · Fri 17 Apr 2026 · America/Los_Angeles</p>
+      </div>
+
+      <div id="bannerHost"></div>
+
+      <div class="card">
+        <div class="tabstrip" role="tablist" aria-label="Failed payment views">
+          <button class="tab" id="tab-flagged" role="tab" data-tab="flagged"></button>
+          <button class="tab" id="tab-retry-queue" role="tab" data-tab="retry-queue"></button>
+          <button class="tab" id="tab-resolved" role="tab" data-tab="resolved"></button>
+        </div>
+        <div class="table-scroll">
+          <table id="dataTable"></table>
+        </div>
+        <div class="table-footer" id="tableFooter"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="modalHost"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  var ERROR_INFO = {
+    DO_NOT_HONOR:      {reason:'Card Declined',        variant:'danger'},
+    NSF:               {reason:'Insufficient Funds',   variant:'danger'},
+    EXPIRED_CARD:      {reason:'Expired Card',          variant:'danger'},
+    INVALID_CARD:      {reason:'Invalid Card Number',   variant:'danger'},
+    PROCESSING_ERROR:  {reason:'Processing Error',      variant:'warning'},
+    BATCH_CRASH:       {reason:'Batch Crashed',         variant:'warning'}
+  };
+
+  function money(n){
+    return '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  var state = {
+    activeTab: 'flagged',
+    bannerVisible: true,
+    openMenu: null,
+    modal: null,
+    lastFocusedEl: null,
+    flagged: [
+      {id:'raj-kumar',      name:'Raj Kumar',      memId:'MEM-1055', initials:'RK', membership:'Annual Premium',   batch:'B-2026-0417', amount:149.00, attemptCur:2, attemptMax:2, errorCode:'DO_NOT_HONOR',     time:'Fri 17 Apr, 06:12', card:'Visa •••• 4242',       cardExp:'08/2027'},
+      {id:'maria-johnson',  name:'Maria Johnson',  memId:'MEM-1033', initials:'MJ', membership:'Annual Premium',   batch:'B-2026-0417', amount:149.00, attemptCur:2, attemptMax:2, errorCode:'NSF',              time:'Fri 17 Apr, 06:14', card:'Mastercard •••• 8813', cardExp:'11/2028'},
+      {id:'brian-garcia',   name:'Brian Garcia',   memId:'MEM-1020', initials:'BG', membership:'Monthly Standard', batch:'B-2026-0417', amount:29.99,  attemptCur:2, attemptMax:2, errorCode:'EXPIRED_CARD',     time:'Fri 17 Apr, 06:15', card:'Visa •••• 1907',       cardExp:'02/2026'},
+      {id:'sofia-ramos',    name:'Sofia Ramos',    memId:'MEM-1077', initials:'SR', membership:'Monthly Standard', batch:'B-2026-0417', amount:29.99,  attemptCur:2, attemptMax:2, errorCode:'INVALID_CARD',    time:'Fri 17 Apr, 06:17', card:'Amex •••• 3005',       cardExp:'05/2027'},
+      {id:'wes-turner',     name:'Wes Turner',     memId:'MEM-1119', initials:'WT', membership:'Annual Premium',   batch:'B-2026-0417', amount:149.00, attemptCur:2, attemptMax:2, errorCode:'DO_NOT_HONOR',     time:'Fri 17 Apr, 06:19', card:'Visa •••• 6621',       cardExp:'09/2026'}
+    ],
+    flaggedTotal: 5,
+    retryQueue: [
+      {id:'lisa-park',    name:'Lisa Park',    memId:'MEM-1061', initials:'LP', membership:'Monthly Standard', batch:'B-2026-0417', amount:29.99,  attemptCur:1, attemptMax:2, errorCode:'DO_NOT_HONOR',    time:'Fri 17 Apr, 06:21', card:'Visa •••• 4321',       cardExp:'07/2027', nextRetryDate:'Mon 20 Apr, 06:00', nextRetryRel:'in 3 days'},
+      {id:'omar-haddad',  name:'Omar Haddad',  memId:'MEM-1083', initials:'OH', membership:'Monthly Standard', batch:'B-2026-0417', amount:29.99,  attemptCur:1, attemptMax:2, errorCode:'NSF',             time:'Fri 17 Apr, 06:23', card:'Mastercard •••• 5566', cardExp:'03/2028', nextRetryDate:'Mon 20 Apr, 06:00', nextRetryRel:'in 3 days'},
+      {id:'grace-kim',    name:'Grace Kim',    memId:'MEM-1129', initials:'GK', membership:'Annual Premium',   batch:'B-2026-0416', amount:149.00, attemptCur:1, attemptMax:2, errorCode:'PROCESSING_ERROR',time:'Thu 16 Apr, 06:08', card:'Visa •••• 9080',       cardExp:'12/2027', nextRetryDate:'Mon 20 Apr, 06:00', nextRetryRel:'in 3 days'},
+      {id:'victor-osei',  name:'Victor Osei',  memId:'MEM-1136', initials:'VO', membership:'Monthly Standard', batch:'B-2026-0416', amount:29.99,  attemptCur:1, attemptMax:2, errorCode:'EXPIRED_CARD',    time:'Thu 16 Apr, 06:11', card:'Amex •••• 7744',       cardExp:'06/2027', nextRetryDate:'Mon 20 Apr, 06:00', nextRetryRel:'in 3 days'}
+    ],
+    retryTotal: 9,
+    resolved: [
+      {id:'elena-vasquez',  name:'Elena Vasquez',  memId:'MEM-1011', initials:'EV', batch:'B-2026-0415', amount:149.00, attemptCur:3, attemptMax:2, resolution:'Retry succeeded', note:'Manual retry after member called the bank',            resolvedBy:'Priya Sharma', resolvedOn:'Wed 15 Apr, 11:02'},
+      {id:'marcus-webb',    name:'Marcus Webb',    memId:'MEM-1044', initials:'MW', batch:'B-2026-0415', amount:29.99,  attemptCur:2, attemptMax:2, resolution:'Card updated',    note:'Member replaced expired Visa via update link',           resolvedBy:'System',       resolvedOn:'Wed 15 Apr, 16:40'},
+      {id:'dana-whitfield', name:'Dana Whitfield', memId:'MEM-1067', initials:'DW', batch:'B-2026-0415', amount:149.00, attemptCur:2, attemptMax:2, resolution:'Paid by check',   note:'Check #40188 received at front desk',                     resolvedBy:'Priya Sharma', resolvedOn:'Thu 16 Apr, 09:15'},
+      {id:'kofi-mensah',    name:'Kofi Mensah',    memId:'MEM-1073', initials:'KM', batch:'B-2026-0416', amount:29.99,  attemptCur:2, attemptMax:2, resolution:'Written off',     note:'Membership cancelled mid-cycle; balance waived by manager', resolvedBy:'Priya Sharma', resolvedOn:'Thu 16 Apr, 14:28'}
+    ],
+    resolvedTotal:18
+  };
+
+  var TAB_LABELS = {flagged:'Flagged for Review', 'retry-queue':'Retry Queue', resolved:'Resolved'};
+  var TAB_HASH = {flagged:'#flagged', 'retry-queue':'#retry-queue', resolved:'#resolved'};
+
+  function findRow(list, id){
+    for (var i=0;i<list.length;i++){ if (list[i].id===id) return list[i]; }
+    return null;
+  }
+
+  // ---------------- Rendering ----------------
+
+  function render(){
+    renderBanner();
+    renderTabs();
+    renderTable();
+    renderFooter();
+    renderModal();
+  }
+
+  function renderBanner(){
+    var host = document.getElementById('bannerHost');
+    if (!state.bannerVisible){ host.innerHTML=''; return; }
+    var count = state.flagged.length;
+    var total = state.flagged.reduce(function(sum,r){ return sum + r.amount; }, 0);
+    host.innerHTML =
+      '<div class="banner">'+
+        '<span class="material-symbols-rounded err">error</span>'+
+        '<div class="banner-text"><strong>'+count+' payments</strong> have exceeded the maximum retry limit (2 attempts) and are awaiting staff review. <strong>'+money(total)+'</strong> at risk.</div>'+
+        '<button class="banner-close" id="bannerClose" aria-label="Dismiss">✕</button>'+
+      '</div>';
+    document.getElementById('bannerClose').addEventListener('click', function(){
+      state.bannerVisible = false;
+      render();
+    });
+  }
+
+  function renderTabs(){
+    var flaggedTab = document.getElementById('tab-flagged');
+    var retryTab = document.getElementById('tab-retry-queue');
+    var resolvedTab = document.getElementById('tab-resolved');
+    flaggedTab.textContent = 'Flagged for Review ('+state.flaggedTotal+')';
+    retryTab.textContent = 'Retry Queue ('+state.retryTotal+')';
+    resolvedTab.textContent = 'Resolved ('+state.resolvedTotal+')';
+
+    [ [flaggedTab,'flagged'], [retryTab,'retry-queue'], [resolvedTab,'resolved'] ].forEach(function(pair){
+      var el = pair[0], key = pair[1];
+      var selected = state.activeTab === key;
+      el.classList.toggle('selected', selected);
+      el.setAttribute('aria-selected', selected ? 'true' : 'false');
+      el.onclick = function(){
+        state.activeTab = key;
+        state.openMenu = null;
+        history.replaceState(null, '', TAB_HASH[key]);
+        render();
+      };
+    });
+  }
+
+  function attemptsCell(cur, max, showIcon){
+    var icon = (showIcon && cur === max) ? '<span class="material-symbols-rounded">block</span>' : '';
+    return '<div class="attempts">'+icon+'<span class="cur">'+cur+'</span><span class="sep"> / </span><span class="max">'+max+'</span></div>';
+  }
+
+  function lastErrorCell(row){
+    var info = ERROR_INFO[row.errorCode];
+    var chipClass = info.variant === 'warning' ? 'chip-warning' : 'chip-danger';
+    return '<span class="chip '+chipClass+'">'+info.reason+'</span>'+
+           '<div class="error-code">'+row.errorCode+'</div>'+
+           '<div class="error-time">'+row.time+'</div>';
+  }
+
+  function memberCell(row){
+    return '<div class="member-cell"><div class="avatar">'+row.initials+'</div>'+
+           '<div><div class="member-name">'+row.name+'</div><div class="member-id tabular">'+row.memId+'</div></div></div>';
+  }
+
+  function batchCell(row){
+    return '<span class="batch-link" data-noop tabindex="0">'+row.batch+'</span>';
+  }
+
+  function renderTable(){
+    var table = document.getElementById('dataTable');
+    if (state.activeTab === 'flagged'){
+      table.innerHTML =
+        '<thead><tr>'+
+          '<th style="width:200px">Member</th>'+
+          '<th style="width:130px">Batch</th>'+
+          '<th class="num" style="width:100px">Amount</th>'+
+          '<th style="width:90px">Attempts</th>'+
+          '<th style="width:200px">Last Error</th>'+
+          '<th style="width:130px">Card on File</th>'+
+          '<th style="width:230px">Actions</th>'+
+        '</tr></thead><tbody></tbody>';
+      var tbody = table.querySelector('tbody');
+      state.flagged.forEach(function(row){
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>'+memberCell(row)+'</td>'+
+          '<td>'+batchCell(row)+'</td>'+
+          '<td class="num amount tabular">'+money(row.amount)+'</td>'+
+          '<td>'+attemptsCell(row.attemptCur, row.attemptMax, true)+'</td>'+
+          '<td>'+lastErrorCell(row)+'</td>'+
+          '<td class="card-on-file">'+row.card+'</td>'+
+          '<td>'+
+            '<div class="row-actions">'+
+              '<button class="btn btn-outline" data-action="retry" data-id="'+row.id+'">Manual Retry</button>'+
+              '<button class="btn btn-outline" data-action="resolve" data-id="'+row.id+'">Resolve</button>'+
+              '<span class="menu-wrap">'+
+                '<button class="btn btn-outline icon-square" data-action="menu" data-id="'+row.id+'" aria-haspopup="true" aria-expanded="'+(state.openMenu===row.id ? 'true':'false')+'" aria-label="More actions"><span class="material-symbols-rounded" style="font-size:18px;">more_vert</span></button>'+
+                (state.openMenu===row.id ? overflowMenu(row) : '')+
+              '</span>'+
+            '</div>'+
+          '</td>';
+        tbody.appendChild(tr);
+      });
+    } else if (state.activeTab === 'retry-queue'){
+      table.innerHTML =
+        '<thead><tr>'+
+          '<th style="width:200px">Member</th>'+
+          '<th style="width:130px">Batch</th>'+
+          '<th class="num" style="width:100px">Amount</th>'+
+          '<th style="width:90px">Attempt</th>'+
+          '<th style="width:200px">Last Error</th>'+
+          '<th style="width:160px">Next Retry</th>'+
+          '<th style="width:200px">Actions</th>'+
+        '</tr></thead><tbody></tbody>';
+      var tbody2 = table.querySelector('tbody');
+      state.retryQueue.forEach(function(row){
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>'+memberCell(row)+'</td>'+
+          '<td>'+batchCell(row)+'</td>'+
+          '<td class="num amount tabular">'+money(row.amount)+'</td>'+
+          '<td>'+attemptsCell(row.attemptCur, row.attemptMax, false)+'</td>'+
+          '<td>'+lastErrorCell(row)+'</td>'+
+          '<td class="next-retry"><div class="date">'+row.nextRetryDate+'</div><div class="rel">'+row.nextRetryRel+'</div></td>'+
+          '<td>'+
+            '<div class="row-actions">'+
+              '<button class="btn btn-outline" data-action="retry-now" data-id="'+row.id+'">Retry Now</button>'+
+              '<button class="btn btn-outline-danger" data-action="cancel-retry" data-id="'+row.id+'">Cancel Retry</button>'+
+            '</div>'+
+          '</td>';
+        tbody2.appendChild(tr);
+      });
+    } else {
+      table.innerHTML =
+        '<thead><tr>'+
+          '<th style="width:200px">Member</th>'+
+          '<th style="width:130px">Batch</th>'+
+          '<th class="num" style="width:100px">Amount</th>'+
+          '<th style="width:90px">Attempts</th>'+
+          '<th style="width:210px">Resolution</th>'+
+          '<th style="width:150px">Resolved By</th>'+
+          '<th style="width:150px">Resolved On</th>'+
+        '</tr></thead><tbody></tbody>';
+      var tbody3 = table.querySelector('tbody');
+      state.resolved.forEach(function(row){
+        var tr = document.createElement('tr');
+        var byHtml = row.resolvedBy === 'System' ? '<span class="resolved-by-system">System</span>' : row.resolvedBy;
+        tr.innerHTML =
+          '<td>'+memberCell(row)+'</td>'+
+          '<td>'+batchCell(row)+'</td>'+
+          '<td class="num amount tabular">'+money(row.amount)+'</td>'+
+          '<td>'+attemptsCell(row.attemptCur, row.attemptMax, false)+'</td>'+
+          '<td><span class="chip chip-success">'+row.resolution+'</span><div class="resolution-note">'+row.note+'</div></td>'+
+          '<td>'+byHtml+'</td>'+
+          '<td>'+row.resolvedOn+'</td>';
+        tbody3.appendChild(tr);
+      });
+    }
+
+    // wire row action buttons
+    table.querySelectorAll('[data-action]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var action = btn.getAttribute('data-action');
+        var id = btn.getAttribute('data-id');
+        handleAction(action, id, btn);
+      });
+    });
+    table.querySelectorAll('[data-menu-action]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var action = btn.getAttribute('data-menu-action');
+        var id = btn.getAttribute('data-id');
+        if (action === 'view-billing'){
+          window.location.href = 'billing-member-billing.html';
+        }
+        // send-update-link / place-hold are data-noop
+        state.openMenu = null;
+        render();
+      });
+    });
+  }
+
+  function overflowMenu(row){
+    return '<div class="overflow-menu" role="menu">'+
+      '<button role="menuitem" data-noop data-menu-action="send-link" data-id="'+row.id+'">Send payment update link</button>'+
+      '<button role="menuitem" data-noop data-menu-action="place-hold" data-id="'+row.id+'">Place billing hold</button>'+
+      '<button role="menuitem" data-menu-action="view-billing" data-id="'+row.id+'">View member billing</button>'+
+    '</div>';
+  }
+
+  function renderFooter(){
+    var footer = document.getElementById('tableFooter');
+    if (state.activeTab === 'flagged'){
+      footer.innerHTML = '<span>Showing 1–'+state.flagged.length+' of '+state.flagged.length+'</span>';
+    } else if (state.activeTab === 'retry-queue'){
+      footer.innerHTML = '<span>Showing 1–'+state.retryQueue.length+' of '+state.retryTotal+'</span>'+
+        '<div class="pagination"><button class="active">1</button><button data-noop>2</button><button data-noop>3</button></div>';
+    } else {
+      footer.innerHTML = '<span>Showing 1–'+state.resolved.length+' of '+state.resolvedTotal+'</span>'+
+        '<div class="pagination"><button class="active">1</button><button data-noop>2</button><button data-noop>3</button><button data-noop>4</button><button data-noop>5</button></div>';
+    }
+  }
+
+  // ---------------- Actions ----------------
+
+  function handleAction(action, id, btnEl){
+    if (action === 'menu'){
+      state.openMenu = (state.openMenu === id) ? null : id;
+      render();
+      return;
+    }
+    if (action === 'retry'){
+      var row = findRow(state.flagged, id);
+      openRetryModal(row, 'flagged', btnEl);
+      return;
+    }
+    if (action === 'retry-now'){
+      var row2 = findRow(state.retryQueue, id);
+      openRetryModal(row2, 'retry-queue', btnEl);
+      return;
+    }
+    if (action === 'resolve'){
+      var row3 = findRow(state.flagged, id);
+      openResolveModal(row3, btnEl);
+      return;
+    }
+    if (action === 'cancel-retry'){
+      cancelRetry(id);
+      return;
+    }
+  }
+
+  function openRetryModal(row, originTab, btnEl){
+    state.lastFocusedEl = btnEl;
+    state.modal = {type:'retry', originTab:originTab, row:row, note:''};
+    render();
+  }
+
+  function openResolveModal(row, btnEl){
+    state.lastFocusedEl = btnEl;
+    state.modal = {type:'resolve', row:row, resolution:'', note:''};
+    render();
+  }
+
+  function closeModal(){
+    var toFocus = state.lastFocusedEl;
+    state.modal = null;
+    state.lastFocusedEl = null;
+    render();
+    if (toFocus && document.body.contains(toFocus)) toFocus.focus();
+  }
+
+  function todayResolvedOn(){ return 'Fri 17 Apr, 09:40'; }
+
+  function confirmRetry(){
+    var m = state.modal;
+    var row = m.row;
+    var list = m.originTab === 'flagged' ? state.flagged : state.retryQueue;
+    var idx = list.indexOf(row);
+    if (idx > -1) list.splice(idx, 1);
+    if (m.originTab === 'flagged'){ state.flaggedTotal--; } else { state.retryTotal--; }
+
+    var resolvedRow = {
+      id: row.id, name: row.name, memId: row.memId, initials: row.initials,
+      batch: row.batch, amount: row.amount,
+      attemptCur: row.attemptCur + 1, attemptMax: row.attemptMax,
+      resolution: 'Retry succeeded',
+      note: (m.note && m.note.trim()) ? m.note.trim() : 'Manual retry confirmed by staff.',
+      resolvedBy: 'Priya Sharma',
+      resolvedOn: todayResolvedOn()
+    };
+    state.resolved.unshift(resolvedRow);
+    state.resolvedTotal++;
+    closeModal();
+  }
+
+  var RESOLUTION_LABELS = ['Card updated by member','Paid by check','Paid by cash','Written off','Membership cancelled'];
+
+  function confirmResolve(){
+    var m = state.modal;
+    if (!(m.resolution && m.note && m.note.trim())) return;
+    var row = m.row;
+    var idx = state.flagged.indexOf(row);
+    if (idx > -1) state.flagged.splice(idx, 1);
+    state.flaggedTotal--;
+
+    var resolvedRow = {
+      id: row.id, name: row.name, memId: row.memId, initials: row.initials,
+      batch: row.batch, amount: row.amount,
+      attemptCur: row.attemptCur, attemptMax: row.attemptMax,
+      resolution: m.resolution,
+      note: m.note.trim(),
+      resolvedBy: 'Priya Sharma',
+      resolvedOn: todayResolvedOn()
+    };
+    state.resolved.unshift(resolvedRow);
+    state.resolvedTotal++;
+    closeModal();
+  }
+
+  function cancelRetry(id){
+    var row = findRow(state.retryQueue, id);
+    if (!row) return;
+    var idx = state.retryQueue.indexOf(row);
+    state.retryQueue.splice(idx, 1);
+    state.retryTotal--;
+    state.flagged.push({
+      id: row.id, name: row.name, memId: row.memId, initials: row.initials,
+      membership: row.membership, batch: row.batch, amount: row.amount,
+      attemptCur: row.attemptCur, attemptMax: row.attemptMax,
+      errorCode: row.errorCode, time: row.time, card: row.card, cardExp: row.cardExp
+    });
+    state.flaggedTotal++;
+    render();
+  }
+
+  // ---------------- Modal rendering ----------------
+
+  function renderModal(){
+    var host = document.getElementById('modalHost');
+    if (!state.modal){ host.innerHTML=''; return; }
+    var m = state.modal;
+    if (m.type === 'retry'){
+      host.innerHTML = retryModalHtml(m);
+    } else {
+      host.innerHTML = resolveModalHtml(m);
+    }
+    wireModal();
+  }
+
+  function retryModalHtml(m){
+    var row = m.row;
+    var info = ERROR_INFO[row.errorCode];
+    var warningText = m.originTab === 'flagged'
+      ? 'This member has already failed '+row.attemptCur+' of '+row.attemptMax+' automatic attempts. A third decline may incur a gateway fee.'
+      : 'This runs the retry now instead of waiting for Mon 20 Apr, 06:00.';
+    return '<div class="modal-backdrop" id="modalBackdrop">'+
+      '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">'+
+        '<div class="modal-header">'+
+          '<div><h4 id="modalTitle">Retry payment for '+row.name+'?</h4>'+
+          '<p>This charges the stored card immediately through Cayan. It cannot be undone from this screen.</p></div>'+
+          '<button class="modal-close" id="modalCloseBtn" aria-label="Close">✕</button>'+
+        '</div>'+
+        '<div class="modal-body">'+
+          '<div class="warning-strip"><span class="material-symbols-rounded">warning</span><span>'+warningText+'</span></div>'+
+          '<div class="summary-grid">'+
+            '<div class="label">Member</div><div class="value">'+row.name+' · '+row.memId+'</div>'+
+            '<div class="label">Membership</div><div class="value">'+row.membership+'</div>'+
+            '<div class="label">Amount</div><div class="value amount-val">'+money(row.amount)+'</div>'+
+            '<div class="label">Card on File</div><div class="value">'+row.card+' · exp '+row.cardExp+'</div>'+
+            '<div class="label">Previous Attempts</div><div class="value">'+row.attemptCur+' of '+row.attemptMax+' · last '+row.time+'</div>'+
+            '<div class="label">Last Error</div><div class="value">'+info.reason+' ('+row.errorCode+')</div>'+
+          '</div>'+
+          '<div class="field">'+
+            '<label for="retryNote">Note (optional)</label>'+
+            '<textarea id="retryNote" rows="3" placeholder="Why are you retrying now? Visible in the activity log.">'+(m.note||'')+'</textarea>'+
+          '</div>'+
+        '</div>'+
+        '<div class="modal-footer">'+
+          '<button class="btn btn-outline" id="modalCancelBtn">Cancel</button>'+
+          '<button class="btn btn-secondary" id="modalConfirmBtn">Charge '+money(row.amount)+' now</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
+
+  function resolveModalHtml(m){
+    var row = m.row;
+    var valid = !!(m.resolution && m.note && m.note.trim());
+    var options = RESOLUTION_LABELS.map(function(label){
+      var sel = m.resolution === label ? ' selected' : '';
+      return '<option value="'+label+'"'+sel+'>'+label+'</option>';
+    }).join('');
+    return '<div class="modal-backdrop" id="modalBackdrop">'+
+      '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">'+
+        '<div class="modal-header">'+
+          '<div><h4 id="modalTitle">Resolve '+row.name+"'s failed payment</h4>"+
+          '<p>This closes the case without charging a card. The invoice stays on record.</p></div>'+
+          '<button class="modal-close" id="modalCloseBtn" aria-label="Close">✕</button>'+
+        '</div>'+
+        '<div class="modal-body">'+
+          '<div class="field">'+
+            '<label for="resolutionSelect">Resolution<span class="req">*</span></label>'+
+            '<select id="resolutionSelect">'+
+              '<option value="" disabled'+(m.resolution?'':' selected')+'>Select a resolution…</option>'+
+              options+
+            '</select>'+
+          '</div>'+
+          '<div class="field">'+
+            '<label for="resolutionNote">Note<span class="req">*</span></label>'+
+            '<textarea id="resolutionNote" rows="3" placeholder="Check number, cash receipt id, or the reason for the write-off.">'+(m.note||'')+'</textarea>'+
+          '</div>'+
+        '</div>'+
+        (valid ? '' : '<div class="helper-disabled">Both a resolution and a note are required.</div>')+
+        '<div class="modal-footer">'+
+          '<button class="btn btn-outline" id="modalCancelBtn">Cancel</button>'+
+          '<button class="btn btn-secondary" id="modalConfirmBtn" '+(valid?'':'disabled aria-disabled="true"')+'>Resolve</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
+
+  function wireModal(){
+    var backdrop = document.getElementById('modalBackdrop');
+    var closeBtn = document.getElementById('modalCloseBtn');
+    var cancelBtn = document.getElementById('modalCancelBtn');
+    var confirmBtn = document.getElementById('modalConfirmBtn');
+
+    backdrop.addEventListener('mousedown', function(e){
+      if (e.target === backdrop) closeModal();
+    });
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    var m = state.modal;
+    if (m.type === 'retry'){
+      var noteEl = document.getElementById('retryNote');
+      noteEl.addEventListener('input', function(){ state.modal.note = noteEl.value; });
+      confirmBtn.addEventListener('click', confirmRetry);
+    } else {
+      var selectEl = document.getElementById('resolutionSelect');
+      var noteEl2 = document.getElementById('resolutionNote');
+      selectEl.addEventListener('change', function(){
+        state.modal.resolution = selectEl.value;
+        render();
+      });
+      noteEl2.addEventListener('input', function(){
+        state.modal.note = noteEl2.value;
+        var confirmNow = document.getElementById('modalConfirmBtn');
+        var valid = !!(state.modal.resolution && state.modal.note && state.modal.note.trim());
+        if (valid !== !confirmNow.disabled){
+          render();
+        }
+      });
+      confirmBtn.addEventListener('click', confirmResolve);
+    }
+
+    // focus first control
+    var focusables = getFocusable(document.querySelector('.modal'));
+    if (focusables.length) focusables[0].focus();
+  }
+
+  function getFocusable(container){
+    return Array.prototype.slice.call(
+      container.querySelectorAll('button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+    ).filter(function(el){ return el.offsetParent !== null; });
+  }
+
+  // ---------------- Global listeners ----------------
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape'){
+      if (state.modal){ closeModal(); return; }
+      if (state.openMenu){ state.openMenu = null; render(); return; }
+    }
+    if (e.key === 'Tab' && state.modal){
+      var modalEl = document.querySelector('.modal');
+      if (!modalEl) return;
+      var focusables = getFocusable(modalEl);
+      if (!focusables.length) return;
+      var first = focusables[0], last = focusables[focusables.length-1];
+      if (e.shiftKey && document.activeElement === first){
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last){
+        e.preventDefault(); first.focus();
+      }
+    }
+  });
+
+  document.addEventListener('click', function(e){
+    if (state.openMenu){
+      var wrap = e.target.closest ? e.target.closest('.menu-wrap') : null;
+      if (!wrap){
+        state.openMenu = null;
+        render();
+      }
+    }
+  });
+
+  // ---------------- Init / deep-link ----------------
+
+  function initTab(){
+    if (window.location.hash === '#retry-queue'){
+      state.activeTab = 'retry-queue';
+    } else if (window.location.hash === '#resolved'){
+      state.activeTab = 'resolved';
+    } else {
+      state.activeTab = 'flagged';
+    }
+  }
+
+  initTab();
+  render();
+})();
+</script>
+</body>
+</html>

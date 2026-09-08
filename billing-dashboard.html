@@ -1,0 +1,421 @@
+<!--
+  Zalexy Prototype — Billing Dashboard
+  Spec:   ai-workspace/prototypes/billing/billing-dashboard.md
+  Design: ai-workspace/prototypes/_shared/design-system.md
+  Static prototype. Not production code. No app dependencies.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zalexy — Billing Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{
+  --primary:#334155; --primary-light:#475569; --primary-dark:#1e293b;
+  --secondary:#10b981; --secondary-dark:#059669;
+  --success:#10b981; --success-bg:#d1fae5; --success-dark:#047857;
+  --info:#3b82f6; --info-bg:#eff6ff; --info-dark:#1d4ed8; --info-hover:#2563eb;
+  --bg-default:#f8fafc; --bg-paper:#ffffff;
+  --text-primary:#0f172a; --text-secondary:#64748b;
+  --border:#f1f5f9; --border-input:#cbd5e1; --border-input-hover:#94a3b8;
+  --hover-row:#f1f5f9; --action-hover:rgba(71,85,105,.04); --action-selected:rgba(71,85,105,.08);
+  --danger:#ef4444; --warning:#f59e0b;
+  --radius-card:10px; --radius-base:8px; --radius-control:6px; --radius-chip:4px;
+  --shadow-card:0 2px 4px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.03);
+  --shadow-1:0 1px 3px rgba(0,0,0,.05);
+  --shadow-appbar:0 1px 1px rgba(51,65,85,.03);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Inter","Roboto","Helvetica","Arial",sans-serif;color:var(--text-primary);}
+button,input{font-family:inherit;}
+.app{display:flex;height:100vh;overflow:hidden;}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px;}
+
+/* ---------- Sidebar (copied from out/index.html, Billing Module section appended) ---------- */
+.sidebar{width:240px;flex:0 0 240px;background:var(--primary-dark);color:#f8fafc;display:flex;flex-direction:column;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:10px;padding:20px 20px 16px;text-decoration:none;color:inherit;}
+.logo svg{flex:0 0 auto;}
+.logo span{font-weight:700;font-size:1.05rem;letter-spacing:.02em;}
+.nav{padding:8px 12px;display:flex;flex-direction:column;gap:2px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-base);color:#f8fafc;font-size:.9rem;font-weight:500;text-decoration:none;cursor:pointer;}
+.nav-item .material-symbols-rounded{font-size:20px;min-width:24px;color:rgba(248,250,252,.7);}
+.nav-item.disabled{opacity:.42;cursor:not-allowed;}
+.nav-item:not(.disabled):hover{background:rgba(248,250,252,.08);}
+.nav-item.active{background:rgba(248,250,252,.14);}
+.nav-item.active .material-symbols-rounded{color:#f8fafc;}
+.nav-section{margin:16px 12px 6px;font-size:.7rem;font-weight:700;letter-spacing:.08em;color:rgba(248,250,252,.45);text-transform:uppercase;}
+.sidebar-foot{padding:14px 20px;font-size:.7rem;color:rgba(248,250,252,.4);border-top:1px solid rgba(248,250,252,.08);}
+
+/* ---------- Main ---------- */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg-default);}
+.topbar{flex:0 0 64px;height:64px;background:#fff;box-shadow:var(--shadow-appbar);display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
+.search{position:relative;width:320px;}
+.search .material-symbols-rounded{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--text-secondary);}
+.search input{width:100%;height:36px;padding:8px 12px 8px 34px;font-size:14px;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);}
+.search input:hover{border-color:var(--border-input-hover);}
+.search input:focus{border-color:var(--primary);outline:none;}
+.top-actions{display:flex;align-items:center;gap:16px;}
+.icon-btn{position:relative;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;color:var(--text-secondary);box-shadow:none;}
+.icon-btn:hover{background:var(--action-hover);}
+.icon-btn .dot{position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--danger);}
+.avatar{width:32px;height:32px;border-radius:50%;background:#d1fae5;color:var(--success-dark);font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+.content{flex:1;overflow-y:auto;padding:24px;}
+.page-header{margin-bottom:20px;}
+.page-header h1{font-size:1.75rem;font-weight:600;letter-spacing:-.01em;margin:0 0 4px;}
+.page-header .subtitle{font-size:.8rem;font-weight:400;color:var(--text-secondary);margin:0;}
+
+/* ---------- Banner ---------- */
+.banner{display:flex;align-items:center;gap:10px;background:#fef3c7;border-radius:var(--radius-base);padding:12px 16px;font-size:.875rem;color:#b45309;margin-bottom:24px;}
+.banner .material-symbols-rounded{color:#b45309;font-size:20px;}
+.banner-text{flex:1;}
+.banner-link{background:none;border:none;color:#b45309;font-weight:600;text-decoration:underline;cursor:pointer;font-size:.875rem;padding:0;box-shadow:none;}
+.banner-close{background:none;border:none;color:#b45309;cursor:pointer;display:flex;align-items:center;padding:2px;border-radius:4px;box-shadow:none;}
+.banner-close .material-symbols-rounded{font-size:24px;}
+
+/* ---------- KPI strip ---------- */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px;}
+@media (max-width:1400px){.kpi-grid{grid-template-columns:repeat(3,1fr);}}
+@media (max-width:1024px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
+.kpi-tile{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:20px;display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;cursor:default;border:none;text-align:left;font:inherit;}
+.kpi-tile.clickable{cursor:pointer;}
+.kpi-tile.clickable:hover{box-shadow:var(--shadow-1);}
+.kpi-icon{width:40px;height:40px;border-radius:var(--radius-base);display:flex;align-items:center;justify-content:center;margin-bottom:4px;}
+.kpi-icon .material-symbols-rounded{font-size:20px;}
+.kpi-label{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);}
+.kpi-value{font-size:1.75rem;font-weight:700;color:var(--text-primary);letter-spacing:-.02em;font-variant-numeric:tabular-nums;}
+.kpi-foot{font-size:.75rem;font-weight:400;}
+
+/* ---------- Body row ---------- */
+.body-row{display:flex;gap:24px;align-items:flex-start;}
+.col-left{flex:1 1 0;min-width:0;}
+.col-right{flex:0 0 360px;display:flex;flex-direction:column;gap:24px;}
+@media (max-width:1024px){.body-row{flex-direction:column;} .col-right{flex:1 1 auto;width:100%;}}
+
+.card{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);}
+.card-head{display:flex;justify-content:space-between;align-items:center;padding:20px 24px 12px;}
+.card-head h4{font-size:1.25rem;font-weight:600;margin:0;display:flex;align-items:center;gap:8px;}
+.card-head h4 .material-symbols-rounded{font-size:22px;}
+
+.btn-outline{background:#fff;color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-control);padding:8px 16px;font-weight:600;font-size:.875rem;cursor:pointer;box-shadow:none;}
+.btn-outline:hover{border-color:var(--primary);background:var(--action-hover);}
+
+/* ---------- Table ---------- */
+table{width:100%;border-collapse:collapse;}
+th{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);padding:12px 16px;border-bottom:1px solid var(--border);text-align:left;background:transparent;}
+td{font-size:.875rem;padding:16px;border-bottom:1px solid var(--border);color:var(--text-primary);}
+tbody tr:hover td{background:var(--hover-row);}
+tbody tr:last-child td{border-bottom:0;}
+th.right,td.right{text-align:right;}
+.tabular{font-variant-numeric:tabular-nums;}
+.batch-id{font-weight:600;font-variant-numeric:tabular-nums;}
+
+.chip{height:24px;border-radius:var(--radius-chip);font-size:.75rem;font-weight:600;padding:0 8px;display:inline-flex;align-items:center;}
+.chip-success{background:var(--success-bg);color:var(--success-dark);}
+.chip-info{background:var(--info-bg);color:var(--info-dark);}
+.chip-warning{background:#fef3c7;color:#b45309;}
+.chip-muted{background:#f1f5f9;color:var(--text-secondary);}
+.chip-danger{background:#fee2e2;color:#b91c1c;}
+
+.progress-wrap{display:flex;align-items:center;gap:8px;}
+.progress-track{flex:1;height:6px;border-radius:var(--radius-chip);background:#f1f5f9;overflow:hidden;}
+.progress-fill{height:100%;border-radius:var(--radius-chip);}
+.progress-pct{font-size:.75rem;font-weight:600;color:var(--text-secondary);min-width:38px;text-align:right;}
+
+/* ---------- Needs Attention ---------- */
+.na-row{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;font-size:.875rem;cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left;box-shadow:none;font:inherit;}
+a.na-row,button.na-row{display:flex;}
+.na-row:last-of-type{border-bottom:0;}
+.na-row:hover{background:var(--hover-row);}
+.na-row.dimmed{opacity:.55;cursor:default;}
+.na-row.dimmed:hover{background:none;}
+.na-left{display:flex;align-items:center;gap:10px;}
+.na-right{display:flex;align-items:center;}
+.na-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;}
+.na-count{font-size:1rem;font-weight:700;}
+.na-phase-chip{background:#f1f5f9;color:var(--text-secondary);font-size:.75rem;font-weight:600;padding:0 8px;height:24px;border-radius:var(--radius-chip);display:inline-flex;align-items:center;margin-right:12px;}
+.na-footer{padding:16px 20px 20px;}
+
+.btn-primary-block{display:flex;align-items:center;justify-content:center;width:100%;height:40px;background:var(--info);color:#fff;border:none;border-radius:var(--radius-control);font-size:.875rem;font-weight:600;text-decoration:none;box-shadow:none;}
+.btn-primary-block:hover{background:var(--info-hover);}
+.btn-outline-block{display:flex;align-items:center;justify-content:center;width:100%;height:40px;background:#fff;color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-control);font-size:.875rem;font-weight:600;text-decoration:none;box-shadow:none;}
+.btn-outline-block:hover{border-color:var(--primary);background:var(--action-hover);}
+
+/* ---------- Next Scheduled Batch ---------- */
+.next-batch{padding:20px;display:flex;flex-direction:column;gap:16px;}
+.next-batch-head{display:flex;align-items:center;gap:8px;font-size:1.25rem;font-weight:600;color:var(--text-primary);}
+.next-batch-head .material-symbols-rounded{color:var(--text-secondary);font-size:20px;}
+.next-batch-center{text-align:center;}
+.next-batch-date{font-size:1.75rem;font-weight:700;color:var(--info-dark);letter-spacing:-.02em;}
+.next-batch-time{font-size:.8rem;color:var(--text-secondary);margin-top:2px;}
+.next-batch-stats{display:flex;border-top:1px solid var(--border);margin-top:14px;}
+.next-batch-stat{flex:1;text-align:center;padding:12px 0 2px;}
+.next-batch-stat + .next-batch-stat{border-left:1px solid var(--border);}
+.next-batch-stat-value{font-size:1.25rem;font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums;}
+.next-batch-stat-label{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);margin-top:2px;}
+.skip-notice{display:flex;align-items:flex-start;gap:8px;background:var(--info-bg);border-radius:var(--radius-base);padding:10px 12px;font-size:.75rem;color:var(--info-dark);}
+.skip-notice .material-symbols-rounded{font-size:16px;flex:0 0 auto;margin-top:1px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <a class="logo" href="index.html">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect width="28" height="28" rx="7" fill="#3b82f6"/>
+        <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>ZALEXY</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">point_of_sale</span>Point of Sale</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">groups</span>Leads</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">account_circle</span>Accounts</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Profiles</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">receipt_long</span>Transactions</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">request_quote</span>Invoices</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Staff</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">event</span>Scheduling</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">settings</span>Settings</a>
+      <div class="nav-section">Prototypes</div>
+      <a class="nav-item" href="index.html"><span class="material-symbols-rounded">grid_view</span>Prototype Gallery</a>
+      <a class="nav-item" href="admin-intake-form-builder.html"><span class="material-symbols-rounded">dynamic_form</span>Admin: Intake &amp; Builder</a>
+      <a class="nav-item" href="admin-settings-policy-engine.html"><span class="material-symbols-rounded">admin_panel_settings</span>Admin: Policy Engine Settings</a>
+      <a class="nav-item" href="profile-intake-tab.html"><span class="material-symbols-rounded">badge</span>Profile: Intake Tab</a>
+      <a class="nav-item" href="profile-overview-tab.html"><span class="material-symbols-rounded">contact_page</span>Profile: Details Tab</a>
+      <a class="nav-item" href="portal-profile-tab.html"><span class="material-symbols-rounded">family_restroom</span>Portal: My Account</a>
+      <div class="nav-section">Billing Module</div>
+      <a class="nav-item active" href="billing-dashboard.html"><span class="material-symbols-rounded">space_dashboard</span>Billing Dashboard</a>
+      <a class="nav-item" href="billing-upcoming-billings.html"><span class="material-symbols-rounded">event_upcoming</span>Upcoming Billings</a>
+      <a class="nav-item" href="billing-failed-payments.html"><span class="material-symbols-rounded">error</span>Failed Payments</a>
+      <a class="nav-item" href="billing-member-billing.html"><span class="material-symbols-rounded">groups</span>Member Billing</a>
+      <a class="nav-item" href="billing-module-settings.html"><span class="material-symbols-rounded">settings</span>Module Settings</a>
+    </nav>
+    <div class="sidebar-foot">Prototype build · not production</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="search">
+        <span class="material-symbols-rounded">search</span>
+        <input type="text" placeholder="Search members, batches…" data-noop aria-label="Search members, batches">
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" data-noop aria-label="Notifications"><span class="material-symbols-rounded">notifications</span><span class="dot"></span></button>
+        <div class="avatar" aria-hidden="true">PS</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-header">
+        <h1>Billing Dashboard</h1>
+        <p class="subtitle">Solar Swim · Fri 17 Apr 2026 · America/Los_Angeles</p>
+      </div>
+
+      <div class="banner" id="banner">
+        <span class="material-symbols-rounded" aria-hidden="true">warning</span>
+        <span class="banner-text">23 members have arrears from 100% discount memberships awaiting backlog billing.</span>
+        <button class="banner-link" data-noop type="button">Review Now</button>
+        <button class="banner-close" id="bannerClose" type="button" aria-label="Dismiss banner"><span class="material-symbols-rounded">close</span></button>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-tile">
+          <div class="kpi-icon" style="background:var(--info-bg);"><span class="material-symbols-rounded" style="color:var(--info-dark);">payments</span></div>
+          <div class="kpi-label">Collected This Month</div>
+          <div class="kpi-value">$48,260.00</div>
+          <div class="kpi-foot" style="color:var(--text-secondary);">342 paid invoices · Apr 1–17</div>
+        </div>
+        <div class="kpi-tile">
+          <div class="kpi-icon" style="background:var(--success-bg);"><span class="material-symbols-rounded" style="color:var(--success-dark);">check_circle</span></div>
+          <div class="kpi-label">Successful Charges</div>
+          <div class="kpi-value">342</div>
+          <div class="kpi-foot" style="color:var(--text-secondary);">out of 356 processed</div>
+        </div>
+        <a class="kpi-tile clickable" href="billing-failed-payments.html">
+          <div class="kpi-icon" style="background:#fee2e2;"><span class="material-symbols-rounded" style="color:#b91c1c;">error</span></div>
+          <div class="kpi-label">Failed Payments</div>
+          <div class="kpi-value">5</div>
+          <div class="kpi-foot" style="color:#b91c1c;">Requires staff review</div>
+        </a>
+        <a class="kpi-tile clickable" href="billing-upcoming-billings.html">
+          <div class="kpi-icon" style="background:#fef3c7;"><span class="material-symbols-rounded" style="color:#b45309;">schedule</span></div>
+          <div class="kpi-label">Upcoming Charges</div>
+          <div class="kpi-value">89</div>
+          <div class="kpi-foot" style="color:var(--text-secondary);">Next run: Mon 20 Apr, 06:00</div>
+        </a>
+        <a class="kpi-tile clickable" href="billing-failed-payments.html#retry-queue">
+          <div class="kpi-icon" style="background:var(--info-bg);"><span class="material-symbols-rounded" style="color:var(--info-dark);">autorenew</span></div>
+          <div class="kpi-label">Retry Queue</div>
+          <div class="kpi-value">9</div>
+          <div class="kpi-foot" style="color:var(--text-secondary);">2nd attempt pending</div>
+        </a>
+      </div>
+
+      <div class="body-row">
+        <div class="col-left">
+          <div class="card">
+            <div class="card-head">
+              <h4><span class="material-symbols-rounded" style="color:var(--info-dark);">layers</span>Recent Batches</h4>
+              <button class="btn-outline" data-noop type="button">View All</button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:160px;">Batch ID</th>
+                  <th style="width:110px;">Type</th>
+                  <th style="width:180px;">Scheduled</th>
+                  <th class="right" style="width:90px;">Members</th>
+                  <th style="width:200px;">Progress</th>
+                  <th style="width:130px;">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="batch-id">B-2026-0417</td>
+                  <td><span class="chip chip-info">Recurring</span></td>
+                  <td>Fri 17 Apr, 06:00</td>
+                  <td class="right tabular">89</td>
+                  <td>
+                    <div class="progress-wrap">
+                      <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--success);"></div></div>
+                      <span class="progress-pct">100%</span>
+                    </div>
+                  </td>
+                  <td><span class="chip chip-success">Completed</span></td>
+                </tr>
+                <tr>
+                  <td class="batch-id">B-2026-0416-BL</td>
+                  <td><span class="chip chip-warning">Backlog</span></td>
+                  <td>Thu 16 Apr, 14:00</td>
+                  <td class="right tabular">23</td>
+                  <td>
+                    <div class="progress-wrap">
+                      <div class="progress-track"><div class="progress-fill" style="width:65%;background:var(--info);"></div></div>
+                      <span class="progress-pct">65%</span>
+                    </div>
+                  </td>
+                  <td><span class="chip chip-info">Processing</span></td>
+                </tr>
+                <tr>
+                  <td class="batch-id">B-2026-0416</td>
+                  <td><span class="chip chip-info">Recurring</span></td>
+                  <td>Thu 16 Apr, 06:00</td>
+                  <td class="right tabular">93</td>
+                  <td>
+                    <div class="progress-wrap">
+                      <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--success);"></div></div>
+                      <span class="progress-pct">100%</span>
+                    </div>
+                  </td>
+                  <td><span class="chip chip-success">Completed</span></td>
+                </tr>
+                <tr>
+                  <td class="batch-id">B-2026-0415</td>
+                  <td><span class="chip chip-info">Recurring</span></td>
+                  <td>Wed 15 Apr, 06:00</td>
+                  <td class="right tabular">87</td>
+                  <td>
+                    <div class="progress-wrap">
+                      <div class="progress-track"><div class="progress-fill" style="width:95%;background:var(--warning);"></div></div>
+                      <span class="progress-pct">95%</span>
+                    </div>
+                  </td>
+                  <td><span class="chip chip-warning">Partial</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="col-right">
+          <div class="card">
+            <div class="card-head">
+              <h4><span class="material-symbols-rounded" style="color:var(--danger);">error</span>Needs Attention</h4>
+            </div>
+            <div>
+              <a class="na-row" href="billing-failed-payments.html">
+                <span class="na-left"><span class="na-dot" style="background:var(--danger);"></span>Failed (max retries)</span>
+                <span class="na-right"><span class="na-count" style="color:#b91c1c;">5</span></span>
+              </a>
+              <a class="na-row" href="billing-failed-payments.html#retry-queue">
+                <span class="na-left"><span class="na-dot" style="background:var(--warning);"></span>Retry pending</span>
+                <span class="na-right"><span class="na-count" style="color:#b45309;">9</span></span>
+              </a>
+              <button class="na-row" data-noop type="button">
+                <span class="na-left"><span class="na-dot" style="background:var(--warning);"></span>Arrears backlog</span>
+                <span class="na-right"><span class="na-count" style="color:#b45309;">23</span></span>
+              </button>
+              <div class="na-row dimmed">
+                <span class="na-left"><span class="na-dot" style="background:#cbd5e1;"></span>Authorization Pending</span>
+                <span class="na-right"><span class="na-phase-chip">Phase 8</span><span class="na-count" style="color:var(--text-secondary);">—</span></span>
+              </div>
+              <div class="na-row dimmed">
+                <span class="na-left"><span class="na-dot" style="background:#cbd5e1;"></span>Voucher Expiring</span>
+                <span class="na-right"><span class="na-phase-chip">Phase 8</span><span class="na-count" style="color:var(--text-secondary);">—</span></span>
+              </div>
+              <div class="na-row dimmed">
+                <span class="na-left"><span class="na-dot" style="background:#cbd5e1;"></span>Funding Holds</span>
+                <span class="na-right"><span class="na-phase-chip">Phase 8</span><span class="na-count" style="color:var(--text-secondary);">—</span></span>
+              </div>
+            </div>
+            <div class="na-footer">
+              <a class="btn-primary-block" href="billing-failed-payments.html">Review Failed Payments</a>
+            </div>
+          </div>
+
+          <div class="card next-batch">
+            <div class="next-batch-head"><span class="material-symbols-rounded">schedule</span>Next Scheduled Batch</div>
+            <div class="next-batch-center">
+              <div class="next-batch-date">Mon 20 Apr</div>
+              <div class="next-batch-time">Monday, 06:00 AM</div>
+              <div class="next-batch-stats">
+                <div class="next-batch-stat">
+                  <div class="next-batch-stat-value">89</div>
+                  <div class="next-batch-stat-label">Members</div>
+                </div>
+                <div class="next-batch-stat">
+                  <div class="next-batch-stat-value">$12,430.00</div>
+                  <div class="next-batch-stat-label">Est. Amount</div>
+                </div>
+              </div>
+            </div>
+            <div class="skip-notice">
+              <span class="material-symbols-rounded" aria-hidden="true">info</span>
+              <span><strong>Sat 18 and Sun 19 Apr skipped</strong> — weekend processing is disabled in Module Settings → Batch Execution.</span>
+            </div>
+            <a class="btn-outline-block" href="billing-upcoming-billings.html">Preview Billings</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Single state object — the whole screen re-renders from this on every change.
+  var state = {
+    bannerDismissed: false
+  };
+
+  function render() {
+    var banner = document.getElementById('banner');
+    if (banner) {
+      banner.style.display = state.bannerDismissed ? 'none' : 'flex';
+    }
+  }
+
+  document.getElementById('bannerClose').addEventListener('click', function () {
+    state.bannerDismissed = true;
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,698 @@
+<!--
+  Zalexy Prototype — Billing: Member Billing
+  Spec:   ai-workspace/prototypes/billing/billing-member-billing.md
+  Design: ai-workspace/prototypes/_shared/design-system.md
+  Static prototype. Not production code. No app dependencies.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zalexy — Member Billing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{
+  --primary:#334155; --primary-light:#475569; --primary-dark:#1e293b;
+  --secondary:#10b981; --secondary-light:#34d399; --secondary-dark:#059669;
+  --success:#10b981; --success-bg:#d1fae5; --success-dark:#047857;
+  --info:#3b82f6; --info-bg:#eff6ff; --info-dark:#1d4ed8; --info-hover:#2563eb;
+  --bg-default:#f8fafc; --bg-paper:#ffffff;
+  --text-primary:#0f172a; --text-secondary:#64748b;
+  --border:#f1f5f9; --border-input:#cbd5e1; --border-input-hover:#94a3b8;
+  --hover-row:#f1f5f9; --action-hover:rgba(71,85,105,.04); --action-selected:rgba(71,85,105,.08);
+  --danger:#ef4444; --warning:#f59e0b;
+  --radius-card:10px; --radius-base:8px; --radius-control:6px; --radius-chip:4px;
+  --shadow-card:0 2px 4px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.03);
+  --shadow-1:0 1px 3px rgba(0,0,0,.05);
+  --shadow-appbar:0 1px 1px rgba(51,65,85,.03);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Inter","Roboto","Helvetica","Arial",sans-serif;color:var(--text-primary);}
+.app{display:flex;height:100vh;overflow:hidden;}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px;}
+.tabular{font-variant-numeric:tabular-nums;}
+
+/* ---------- Sidebar ---------- */
+.sidebar{width:240px;flex:0 0 240px;background:var(--primary-dark);color:#f8fafc;display:flex;flex-direction:column;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:10px;padding:20px 20px 16px;}
+.logo svg{flex:0 0 auto;}
+.logo span{font-weight:700;font-size:1.05rem;letter-spacing:.02em;}
+.nav{padding:8px 12px;display:flex;flex-direction:column;gap:2px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-base);color:#f8fafc;font-size:.9rem;font-weight:500;text-decoration:none;cursor:pointer;}
+.nav-item .material-symbols-rounded{font-size:20px;min-width:24px;color:rgba(248,250,252,.7);}
+.nav-item.disabled{opacity:.42;cursor:not-allowed;}
+.nav-item:not(.disabled):hover{background:rgba(248,250,252,.08);}
+.nav-item.active{background:rgba(248,250,252,.14);}
+.nav-item.active .material-symbols-rounded{color:#f8fafc;}
+.nav-section{margin:16px 12px 6px;font-size:.7rem;font-weight:700;letter-spacing:.08em;color:rgba(248,250,252,.45);text-transform:uppercase;}
+.sidebar-foot{padding:14px 20px;font-size:.7rem;color:rgba(248,250,252,.4);border-top:1px solid rgba(248,250,252,.08);}
+
+/* ---------- Main / Topbar ---------- */
+.main{flex:1;display:flex;flex-direction:column;background:var(--bg-default);height:100vh;overflow:hidden;}
+.topbar{height:64px;flex:0 0 64px;background:#fff;box-shadow:var(--shadow-appbar);display:flex;align-items:center;gap:16px;padding:0 24px;}
+.topbar-search{position:relative;width:320px;}
+.topbar-search input{width:100%;height:36px;padding:8px 12px 8px 36px;font-size:.875rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;font-family:inherit;}
+.topbar-search input:hover{border-color:var(--border-input-hover);}
+.topbar-search input:focus{border-color:var(--primary);outline:none;}
+.topbar-search .material-symbols-rounded{position:absolute;left:9px;top:8px;font-size:18px;color:var(--text-secondary);}
+.topbar-spacer{flex:1;}
+.icon-btn{position:relative;width:36px;height:36px;border-radius:50%;border:none;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);}
+.icon-btn:hover{background:var(--action-hover);}
+.icon-btn .dot{position:absolute;top:6px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--danger);}
+.avatar-32{width:32px;height:32px;border-radius:50%;background:#d1fae5;color:var(--success-dark);font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+/* ---------- Page ---------- */
+.page{flex:1;overflow-y:auto;padding:24px;}
+.page-header{margin-bottom:20px;}
+h1.page-title{font-size:1.75rem;font-weight:600;letter-spacing:-.01em;margin:0 0 4px;color:var(--text-primary);}
+.page-subtitle{font-size:.8rem;font-weight:400;color:var(--text-secondary);margin:0;}
+
+.card{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);border:none;}
+
+/* ---------- Toolbar ---------- */
+.toolbar{display:flex;gap:12px;align-items:center;padding:20px 24px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.search-wrap{position:relative;width:280px;}
+.search-wrap input{width:100%;height:36px;padding:8px 12px 8px 34px;font-size:.875rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;font-family:inherit;}
+.search-wrap input:hover{border-color:var(--border-input-hover);}
+.search-wrap input:focus{border-color:var(--primary);outline:none;}
+.search-wrap .material-symbols-rounded{position:absolute;left:9px;top:8px;font-size:18px;color:var(--text-secondary);}
+select.filter-select{width:170px;height:36px;padding:8px 12px;font-size:.875rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);font-family:inherit;}
+select.filter-select:hover{border-color:var(--border-input-hover);}
+select.filter-select:focus{border-color:var(--primary);outline:none;}
+.btn{display:inline-flex;align-items:center;gap:6px;justify-content:center;border:none;border-radius:var(--radius-control);padding:8px 16px;font-weight:600;font-size:.875rem;cursor:pointer;box-shadow:none;font-family:inherit;text-decoration:none;}
+.btn .material-symbols-rounded{font-size:18px;}
+.btn-outline{background:#fff;color:var(--text-primary);border:1px solid var(--border-input);}
+.btn-outline:hover{border-color:var(--primary);background:var(--action-hover);}
+.btn-export{margin-left:auto;}
+
+/* ---------- Table ---------- */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:1000px;}
+th{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);padding:12px 16px;border-bottom:1px solid var(--border);background:transparent;text-align:left;}
+th.col-chevron{width:44px;}
+td{font-size:.875rem;padding:16px;border-bottom:1px solid var(--border);color:var(--text-primary);vertical-align:middle;}
+tbody tr{cursor:pointer;}
+tbody tr:hover{background:var(--hover-row);}
+tbody tr:last-child td{border-bottom:0;}
+tbody tr:hover .chevron{color:var(--text-primary);}
+.col-member{display:flex;align-items:center;gap:12px;}
+.avatar{width:32px;height:32px;border-radius:50%;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.member-name{font-size:.875rem;font-weight:600;color:var(--text-primary);}
+.member-id{font-size:.75rem;font-weight:400;color:var(--text-secondary);}
+.membership-plan{font-size:.875rem;color:var(--text-primary);}
+.membership-price{font-size:.75rem;font-weight:400;color:var(--text-secondary);}
+.date-cell{font-size:.875rem;color:var(--text-primary);}
+.date-never{color:var(--text-secondary);font-style:italic;}
+.date-dash{color:var(--text-secondary);}
+.chevron{color:var(--text-secondary);font-size:20px;}
+.col-chevron-cell{text-align:right;}
+
+/* ---------- Chips ---------- */
+.chip{height:24px;border-radius:var(--radius-chip);font-size:.75rem;font-weight:600;padding:0 8px;display:inline-flex;align-items:center;white-space:nowrap;}
+.chip-success{background:var(--success-bg);color:var(--success-dark);}
+.chip-info{background:var(--info-bg);color:var(--info-dark);}
+.chip-warning{background:#fef3c7;color:#b45309;}
+.chip-danger{background:#fee2e2;color:#b91c1c;}
+.chip-muted{background:#f1f5f9;color:var(--text-secondary);}
+
+/* ---------- Empty state ---------- */
+.empty-cell{padding:48px 24px;text-align:center;}
+.empty-icon{font-size:40px;color:#cbd5e1;}
+.empty-title{font-size:.875rem;font-weight:600;color:var(--text-primary);margin:12px 0 4px;}
+.empty-sub{font-size:.8rem;font-weight:400;color:var(--text-secondary);margin:0 0 16px;}
+
+/* ---------- Footer ---------- */
+.footer{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;border-top:1px solid var(--border);}
+.footer-count{font-size:.8rem;font-weight:400;color:var(--text-secondary);}
+.pagination{display:flex;gap:6px;}
+.page-btn{width:32px;height:32px;border-radius:var(--radius-control);font-size:.8rem;font-weight:600;border:1px solid var(--border);background:#fff;color:var(--text-primary);cursor:pointer;font-family:inherit;}
+.page-btn:hover{background:var(--hover-row);}
+.page-btn.active{background:var(--primary-dark);color:#fff;border-color:var(--primary-dark);}
+
+/* ---------- Drawer ---------- */
+.drawer-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);opacity:0;pointer-events:none;transition:opacity .22s ease;z-index:40;}
+.drawer-backdrop.open{opacity:1;pointer-events:auto;}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:420px;background:var(--bg-paper);box-shadow:-8px 0 24px rgba(0,0,0,.10);display:flex;flex-direction:column;overflow-y:auto;transform:translateX(100%);transition:transform .22s ease;z-index:41;}
+.drawer.open{transform:translateX(0);}
+@media (max-width:1024px){.drawer{width:100%;}}
+.drawer-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start;position:relative;flex:0 0 auto;}
+.drawer-avatar{width:40px;height:40px;border-radius:50%;font-size:.9rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.drawer-title{font-size:1.25rem;font-weight:600;color:var(--text-primary);margin:0;}
+.drawer-id{font-size:.8rem;font-weight:400;color:var(--text-secondary);margin:2px 0 8px;}
+.drawer-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:none;background:transparent;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.drawer-close:hover{background:var(--action-hover);}
+.drawer-section{padding:20px 24px;border-bottom:1px solid var(--border);}
+.drawer-eyebrow{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);margin:0 0 14px;}
+.kv-grid{display:grid;grid-template-columns:130px 1fr;row-gap:10px;}
+.kv-label{font-size:.75rem;font-weight:600;color:var(--text-secondary);}
+.kv-value{font-size:.875rem;font-weight:400;color:var(--text-primary);}
+.kv-value.danger{color:var(--danger);font-weight:600;}
+.kv-note{font-size:.75rem;color:var(--text-secondary);}
+.activity-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.activity-row:last-child{border-bottom:0;}
+.activity-date{font-size:.75rem;font-weight:400;color:var(--text-secondary);min-width:120px;}
+.activity-batch{font-size:.75rem;font-weight:600;color:var(--info-dark);min-width:110px;background:none;border:none;font-family:inherit;text-align:left;cursor:pointer;padding:0;}
+.activity-amount{font-size:.8rem;font-weight:600;text-align:right;flex:1;}
+.drawer-footer{position:sticky;bottom:0;padding:16px 24px;border-top:1px solid var(--border);background:var(--bg-paper);display:flex;flex-direction:column;gap:8px;margin-top:auto;}
+.drawer-btn{width:100%;height:36px;border-radius:var(--radius-control);font-size:.875rem;font-weight:600;background:#fff;border:1px solid var(--border-input);color:var(--text-primary);cursor:pointer;font-family:inherit;}
+.drawer-btn:hover{border-color:var(--primary);background:var(--action-hover);}
+.drawer-btn.hold{color:var(--danger);border-color:#fecaca;}
+.drawer-btn.hold:hover{background:#fee2e2;}
+.drawer-btn.release{color:var(--secondary-dark);border-color:#a7f3d0;}
+.drawer-btn.release:hover{background:#d1fae5;}
+.drawer-btn:disabled{opacity:.5;cursor:not-allowed;}
+.drawer-btn:disabled:hover{background:#fff;border-color:var(--border-input);}
+.drawer-helper{font-size:.75rem;font-weight:400;color:var(--text-secondary);margin-top:-4px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect width="28" height="28" rx="7" fill="#3b82f6"/>
+        <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>ZALEXY</span>
+    </div>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">point_of_sale</span>Point of Sale</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">groups</span>Leads</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">account_circle</span>Accounts</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Profiles</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">receipt_long</span>Transactions</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">request_quote</span>Invoices</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Staff</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">event</span>Scheduling</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">settings</span>Settings</a>
+      <div class="nav-section">Prototypes</div>
+      <a class="nav-item" href="index.html"><span class="material-symbols-rounded">grid_view</span>Prototype Gallery</a>
+      <a class="nav-item" href="admin-intake-form-builder.html"><span class="material-symbols-rounded">dynamic_form</span>Admin: Intake &amp; Builder</a>
+      <a class="nav-item" href="admin-settings-policy-engine.html"><span class="material-symbols-rounded">admin_panel_settings</span>Admin: Policy Engine Settings</a>
+      <a class="nav-item" href="profile-intake-tab.html"><span class="material-symbols-rounded">badge</span>Profile: Intake Tab</a>
+      <a class="nav-item" href="profile-overview-tab.html"><span class="material-symbols-rounded">contact_page</span>Profile: Details Tab</a>
+      <a class="nav-item" href="portal-profile-tab.html"><span class="material-symbols-rounded">family_restroom</span>Portal: My Account</a>
+      <div class="nav-section">Billing Module</div>
+      <a class="nav-item" href="billing-dashboard.html"><span class="material-symbols-rounded">space_dashboard</span>Billing Dashboard</a>
+      <a class="nav-item" href="billing-upcoming-billings.html"><span class="material-symbols-rounded">event_upcoming</span>Upcoming Billings</a>
+      <a class="nav-item" href="billing-failed-payments.html"><span class="material-symbols-rounded">error</span>Failed Payments</a>
+      <a class="nav-item active" href="billing-member-billing.html"><span class="material-symbols-rounded">groups</span>Member Billing</a>
+      <a class="nav-item" href="billing-module-settings.html"><span class="material-symbols-rounded">settings</span>Module Settings</a>
+    </nav>
+    <div class="sidebar-foot">Prototype build · not production</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-search">
+        <span class="material-symbols-rounded" aria-hidden="true">search</span>
+        <input type="text" data-noop placeholder="Search members, batches…" aria-label="Global search">
+      </div>
+      <div class="topbar-spacer"></div>
+      <button class="icon-btn" data-noop aria-label="Notifications"><span class="material-symbols-rounded">notifications</span><span class="dot"></span></button>
+      <div class="avatar-32">PS</div>
+    </div>
+
+    <div class="page">
+      <div class="page-header">
+        <h1 class="page-title">Member Billing</h1>
+        <p class="page-subtitle">Solar Swim · Fri 17 Apr 2026 · America/Los_Angeles · <span id="subtitleCount">312 members</span></p>
+      </div>
+
+      <div class="card">
+        <div class="toolbar">
+          <div class="search-wrap">
+            <span class="material-symbols-rounded" aria-hidden="true">search</span>
+            <input type="text" id="searchInput" placeholder="Search by name or ID…" aria-label="Search by name or ID">
+          </div>
+          <select class="filter-select" id="planSelect" aria-label="Filter by plan">
+            <option value="">All Plans</option>
+            <option value="Monthly Standard">Monthly Standard</option>
+            <option value="Annual Premium">Annual Premium</option>
+          </select>
+          <select class="filter-select" id="statusSelect" aria-label="Filter by status">
+            <option value="">All Statuses</option>
+            <option value="Current">Current</option>
+            <option value="Prorated">Prorated</option>
+            <option value="In Arrears">In Arrears</option>
+            <option value="Failed">Failed</option>
+            <option value="On Hold">On Hold</option>
+          </select>
+          <button class="btn btn-outline btn-export" id="exportBtn" data-noop>
+            <span class="material-symbols-rounded" aria-hidden="true">download</span>Export
+          </button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Membership</th>
+                <th>Contract Start</th>
+                <th>Last Billed</th>
+                <th>Next Billing Date</th>
+                <th>Status</th>
+                <th class="col-chevron" aria-hidden="true"></th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="footer">
+          <span class="footer-count" id="footerText"></span>
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="drawer-backdrop" id="backdrop"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-label="Member billing detail" aria-hidden="true">
+  <div id="drawerContent"></div>
+</aside>
+
+<script>
+(function(){
+  "use strict";
+
+  var STATUS_CHIP = {
+    "Current":"chip-success",
+    "Prorated":"chip-info",
+    "In Arrears":"chip-warning",
+    "Failed":"chip-danger",
+    "On Hold":"chip-muted"
+  };
+  var AVATAR_TINT = {
+    "Current":{bg:"#eff6ff",fg:"#1d4ed8"},
+    "Prorated":{bg:"#eff6ff",fg:"#1d4ed8"},
+    "In Arrears":{bg:"#fef3c7",fg:"#b45309"},
+    "Failed":{bg:"#fee2e2",fg:"#b91c1c"},
+    "On Hold":{bg:"#f1f5f9",fg:"#64748b"}
+  };
+  var OUTCOME_CHIP = {
+    "Paid":"chip-success",
+    "Declined":"chip-danger",
+    "Voided":"chip-muted",
+    "Retry scheduled":"chip-info"
+  };
+
+  var seed = [
+    { id:"MEM-1042", name:"John Dawson", initials:"JD", plan:"Annual Premium", price:"$149.00 / year",
+      contractStart:"Sat 20 Apr 2024", lastBilled:"Sun 20 Apr 2025", nextBilling:"Mon 20 Apr 2026", status:"Current" },
+    { id:"MEM-1092", name:"Tom Perez", initials:"TP", plan:"Monthly Standard", price:"$29.99 / month",
+      contractStart:"Sun 12 Apr 2026", lastBilled:"Never", nextBilling:"Mon 20 Apr 2026", status:"Prorated" },
+    { id:"MEM-1088", name:"Karen Nguyen", initials:"KN", plan:"Monthly Standard", price:"$29.99 / month",
+      contractStart:"Sun 20 Apr 2025", lastBilled:"Fri 20 Mar 2026", nextBilling:"Mon 20 Apr 2026", status:"Current" },
+    { id:"MEM-1104", name:"Andre Bell", initials:"AB", plan:"Monthly Standard", price:"$29.99 / month",
+      contractStart:"Mon 6 Apr 2026", lastBilled:"Never", nextBilling:"—", status:"On Hold" },
+    { id:"MEM-2011", name:"Priya Sharma", initials:"PS", plan:"Annual Premium", price:"$149.00 / year",
+      contractStart:"Sat 10 Jan 2026", lastBilled:"Never", nextBilling:"—", status:"In Arrears" },
+    { id:"MEM-1055", name:"Raj Kumar", initials:"RK", plan:"Annual Premium", price:"$149.00 / year",
+      contractStart:"Thu 17 Apr 2025", lastBilled:"Thu 17 Apr 2025", nextBilling:"—", status:"Failed" }
+  ];
+
+  var drawerData = {
+    "MEM-1042": {
+      membership:{plan:"Annual Premium",price:"$149.00 / year",contractStart:"Sat 20 Apr 2024",term:"12 months, auto-renew",anchor:"Contract start date"},
+      schedule:{lastSuccessful:"Sun 20 Apr 2025",nextScheduled:"Mon 20 Apr 2026",nextNote:"",cycle:"Annual",cyclesBilled:"2"},
+      payment:{card:"Visa •••• 4477",expires:"11 / 2028",added:"Sat 20 Apr 2024"},
+      activity:[
+        {date:"Sun 20 Apr 2025",batch:"B-2025-0420",amount:"$149.00",outcome:"Paid"},
+        {date:"Sat 20 Apr 2024",batch:"B-2024-0420",amount:"$149.00",outcome:"Paid"}
+      ]
+    },
+    "MEM-1092": {
+      membership:{plan:"Monthly Standard",price:"$29.99 / month",contractStart:"Sun 12 Apr 2026",term:"Month to month",anchor:"Contract start date"},
+      schedule:{lastSuccessful:"Never",nextScheduled:"Mon 20 Apr 2026",nextNote:"",cycle:"Monthly",cyclesBilled:"0"},
+      payment:{card:"Mastercard •••• 5100",expires:"01 / 2029",added:"Sun 12 Apr 2026"},
+      activity:[
+        {date:"Mon 20 Apr, 06:00",batch:"B-2026-0420",amount:"$48.98",outcome:"Retry scheduled"}
+      ]
+    },
+    "MEM-1088": {
+      membership:{plan:"Monthly Standard",price:"$29.99 / month",contractStart:"Sun 20 Apr 2025",term:"Month to month",anchor:"Contract start date"},
+      schedule:{lastSuccessful:"Fri 20 Mar 2026",nextScheduled:"Mon 20 Apr 2026",nextNote:"",cycle:"Monthly",cyclesBilled:"12"},
+      payment:{card:"Visa •••• 8821",expires:"05 / 2027",added:"Sun 20 Apr 2025"},
+      activity:[
+        {date:"Fri 20 Mar 2026",batch:"B-2026-0320",amount:"$29.99",outcome:"Paid"},
+        {date:"Fri 20 Feb 2026",batch:"B-2026-0220",amount:"$29.99",outcome:"Paid"}
+      ]
+    },
+    "MEM-1104": {
+      membership:{plan:"Monthly Standard",price:"$29.99 / month",contractStart:"Mon 6 Apr 2026",term:"Month to month",anchor:"Contract start date"},
+      schedule:{lastSuccessful:"Never",nextScheduled:"—",nextNote:"(billing hold)",cycle:"Monthly",cyclesBilled:"0"},
+      payment:null,
+      activity:[
+        {date:"Tue 14 Apr, 10:22",batch:"—",amount:"—",outcome:"Voided"},
+        {date:"Mon 6 Apr, 09:03",batch:"—",amount:"—",outcome:"Voided"}
+      ]
+    },
+    "MEM-2011": {
+      membership:{plan:"Annual Premium",price:"$149.00 / year",contractStart:"Sat 10 Jan 2026",term:"12 months, auto-renew",anchor:"Contract start date"},
+      schedule:{lastSuccessful:"Never",nextScheduled:"—",nextNote:"(in arrears)",cycle:"Annual",cyclesBilled:"0"},
+      payment:{card:"Visa •••• 3390",expires:"02 / 2026",added:"Sat 10 Jan 2026"},
+      activity:[
+        {date:"Sat 10 Jan 2026",batch:"—",amount:"—",outcome:"Voided"}
+      ]
+    },
+    "MEM-1055": {
+      membership:{plan:"Annual Premium",price:"$149.00 / year",contractStart:"Thu 17 Apr 2025",term:"12 months, auto-renew",anchor:"Contract start date"},
+      schedule:{lastSuccessful:"Thu 17 Apr 2025",nextScheduled:"—",nextNote:"(retries exhausted)",cycle:"Annual",cyclesBilled:"1 of 2"},
+      payment:{card:"Visa •••• 4242",expires:"08 / 2027",added:"Thu 17 Apr 2025"},
+      activity:[
+        {date:"Fri 17 Apr, 06:12",batch:"B-2026-0417",amount:"$149.00",outcome:"Declined"},
+        {date:"Fri 17 Apr, 06:05",batch:"B-2026-0417",amount:"$149.00",outcome:"Declined"},
+        {date:"Thu 17 Apr 2025",batch:"B-2025-0417",amount:"$149.00",outcome:"Paid"},
+        {date:"Thu 17 Apr 2025",batch:"—",amount:"$25.00",outcome:"Paid"}
+      ]
+    }
+  };
+
+  var POP_BY_STATUS = {"Current":264,"Prorated":13,"In Arrears":23,"Failed":5,"On Hold":7};
+  var POP_BY_PLAN = {"Monthly Standard":194,"Annual Premium":118};
+  var POP_COMBO = {"Annual Premium|Current":91};
+  var POP_SEARCH = {"raj":1,"mem-10":4};
+  var TOTAL_POP = 312;
+  var PAGE_SIZE = 10;
+
+  var state = { search:"", plan:"", status:"", page:1, drawerMemberId:null };
+  var lastFocusedRow = null;
+
+  var tbody = document.getElementById("tbody");
+  var footerText = document.getElementById("footerText");
+  var pagination = document.getElementById("pagination");
+  var subtitleCount = document.getElementById("subtitleCount");
+  var searchInput = document.getElementById("searchInput");
+  var planSelect = document.getElementById("planSelect");
+  var statusSelect = document.getElementById("statusSelect");
+  var exportBtn = document.getElementById("exportBtn");
+  var drawer = document.getElementById("drawer");
+  var backdrop = document.getElementById("backdrop");
+  var drawerContent = document.getElementById("drawerContent");
+
+  function matchesFilters(row){
+    var s = state.search.trim().toLowerCase();
+    if(s){
+      var hay = (row.name + " " + row.id).toLowerCase();
+      if(hay.indexOf(s) === -1) return false;
+    }
+    if(state.plan && row.plan !== state.plan) return false;
+    if(state.status && row.status !== state.status) return false;
+    return true;
+  }
+
+  function computePopulationTotal(searchLower, plan, status){
+    if(searchLower){
+      if(POP_SEARCH.hasOwnProperty(searchLower)) return POP_SEARCH[searchLower];
+      if(plan && status){
+        var key = plan + "|" + status;
+        if(POP_COMBO.hasOwnProperty(key)) return POP_COMBO[key];
+        return Math.round(POP_BY_PLAN[plan] * POP_BY_STATUS[status] / TOTAL_POP);
+      }
+      if(status) return POP_BY_STATUS[status];
+      if(plan) return POP_BY_PLAN[plan];
+      return TOTAL_POP;
+    }
+    if(plan && status){
+      var key2 = plan + "|" + status;
+      if(POP_COMBO.hasOwnProperty(key2)) return POP_COMBO[key2];
+      return Math.round(POP_BY_PLAN[plan] * POP_BY_STATUS[status] / TOTAL_POP);
+    }
+    if(status) return POP_BY_STATUS[status];
+    if(plan) return POP_BY_PLAN[plan];
+    return TOTAL_POP;
+  }
+
+  function pluralize(n, word){
+    return n === 1 ? ("1 " + word) : (n + " " + word + "s");
+  }
+
+  function dateCellHtml(value){
+    if(value === "Never") return '<span class="date-never">Never</span>';
+    if(value === "—") return '<span class="date-dash">—</span>';
+    return value;
+  }
+
+  function renderRow(row){
+    var tint = AVATAR_TINT[row.status];
+    var chipClass = STATUS_CHIP[row.status];
+    var tr = document.createElement("tr");
+    tr.dataset.memberId = row.id;
+    tr.innerHTML =
+      '<td><div class="col-member">' +
+        '<div class="avatar" style="background:' + tint.bg + ';color:' + tint.fg + ';">' + row.initials + '</div>' +
+        '<div><div class="member-name">' + row.name + '</div><div class="member-id tabular">' + row.id + '</div></div>' +
+      '</div></td>' +
+      '<td><div class="membership-plan">' + row.plan + '</div><div class="membership-price">' + row.price + '</div></td>' +
+      '<td class="date-cell">' + row.contractStart + '</td>' +
+      '<td class="date-cell">' + dateCellHtml(row.lastBilled) + '</td>' +
+      '<td class="date-cell">' + dateCellHtml(row.nextBilling) + '</td>' +
+      '<td><span class="chip ' + chipClass + '">' + row.status + '</span></td>' +
+      '<td class="col-chevron-cell"><span class="material-symbols-rounded chevron">chevron_right</span></td>';
+    tr.addEventListener("click", function(e){ openDrawer(row.id, tr); });
+    return tr;
+  }
+
+  function render(){
+    var visible = seed.filter(matchesFilters);
+
+    tbody.innerHTML = "";
+
+    if(visible.length === 0){
+      var tr = document.createElement("tr");
+      var td = document.createElement("td");
+      td.colSpan = 7;
+      td.className = "empty-cell";
+      td.innerHTML =
+        '<span class="material-symbols-rounded empty-icon" aria-hidden="true">search_off</span>' +
+        '<p class="empty-title">No members match these filters</p>' +
+        '<p class="empty-sub">Try a different plan or status, or clear the search.</p>' +
+        '<button class="btn btn-outline" id="clearFiltersBtn">Clear filters</button>';
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      document.getElementById("clearFiltersBtn").addEventListener("click", clearFilters);
+
+      footerText.textContent = "Showing 0 of " + TOTAL_POP + " members";
+      subtitleCount.textContent = pluralize(TOTAL_POP, "member");
+      pagination.innerHTML = "";
+      return;
+    }
+
+    visible.forEach(function(row){ tbody.appendChild(renderRow(row)); });
+
+    var searchLower = state.search.trim().toLowerCase();
+    var total = computePopulationTotal(searchLower, state.plan || null, state.status || null);
+
+    footerText.textContent = "Showing 1–" + visible.length + " of " + total + " members";
+    subtitleCount.textContent = pluralize(total, "member");
+
+    if(total > PAGE_SIZE){
+      pagination.innerHTML =
+        '<button class="page-btn active">1</button>' +
+        '<button class="page-btn" data-noop>2</button>' +
+        '<button class="page-btn" data-noop>3</button>';
+    } else {
+      pagination.innerHTML = "";
+    }
+  }
+
+  function clearFilters(){
+    state.search = "";
+    state.plan = "";
+    state.status = "";
+    state.page = 1;
+    searchInput.value = "";
+    planSelect.value = "";
+    statusSelect.value = "";
+    render();
+  }
+
+  searchInput.addEventListener("input", function(){
+    state.search = searchInput.value;
+    state.page = 1;
+    render();
+  });
+  planSelect.addEventListener("change", function(){
+    state.plan = planSelect.value;
+    state.page = 1;
+    render();
+  });
+  statusSelect.addEventListener("change", function(){
+    state.status = statusSelect.value;
+    state.page = 1;
+    render();
+  });
+  exportBtn.addEventListener("click", function(){ /* data-noop */ });
+
+  /* ---------------- Drawer ---------------- */
+
+  function actionButtonsHtml(row){
+    var status = row.status;
+    if(status === "Current" || status === "Prorated"){
+      return '<button class="drawer-btn" data-noop>Charge Now</button>' +
+             '<button class="drawer-btn hold" data-noop>Place Billing Hold</button>';
+    }
+    if(status === "In Arrears"){
+      return '<button class="drawer-btn" data-noop>Bill Arrears Now</button>' +
+             '<button class="drawer-btn hold" data-noop>Place Billing Hold</button>';
+    }
+    if(status === "Failed"){
+      return '<button class="drawer-btn" data-noop>Retry Payment</button>' +
+             '<button class="drawer-btn" id="viewInFailedBtn">View in Failed Payments</button>' +
+             '<button class="drawer-btn hold" data-noop>Place Billing Hold</button>';
+    }
+    if(status === "On Hold"){
+      return '<button class="drawer-btn release" data-noop>Release Billing Hold</button>' +
+             '<button class="drawer-btn" id="chargeNowDisabledBtn" disabled aria-disabled="true">Charge Now</button>' +
+             '<p class="drawer-helper">Release the billing hold before charging this member.</p>';
+    }
+    return "";
+  }
+
+  function activityRowsHtml(activity){
+    return activity.map(function(a){
+      var chip = OUTCOME_CHIP[a.outcome] || "chip-muted";
+      return '<div class="activity-row">' +
+        '<span class="activity-date">' + a.date + '</span>' +
+        '<button class="activity-batch" data-noop>' + a.batch + '</button>' +
+        '<span class="activity-amount tabular">' + a.amount + '</span>' +
+        '<span class="chip ' + chip + '">' + a.outcome + '</span>' +
+      '</div>';
+    }).join("");
+  }
+
+  function renderDrawerContent(memberId){
+    var row = seed.filter(function(r){ return r.id === memberId; })[0];
+    var data = drawerData[memberId];
+    if(!row || !data) return;
+
+    var tint = AVATAR_TINT[row.status];
+    var chipClass = STATUS_CHIP[row.status];
+    var m = data.membership, s = data.schedule, p = data.payment;
+
+    var paymentSection;
+    if(p){
+      paymentSection =
+        '<div class="kv-grid">' +
+          '<div class="kv-label">Card</div><div class="kv-value">' + p.card + '</div>' +
+          '<div class="kv-label">Expires</div><div class="kv-value tabular">' + p.expires + '</div>' +
+          '<div class="kv-label">Added</div><div class="kv-value">' + p.added + '</div>' +
+        '</div>';
+    } else {
+      paymentSection =
+        '<div class="kv-grid">' +
+          '<div class="kv-label">Card</div><div class="kv-value danger">No card on file</div>' +
+        '</div>';
+    }
+
+    var nextScheduledHtml = s.nextScheduled === "—"
+      ? '<span class="date-dash">—</span>' + (s.nextNote ? '  <span class="kv-note">' + s.nextNote + '</span>' : '')
+      : s.nextScheduled;
+
+    drawerContent.innerHTML =
+      '<div class="drawer-header">' +
+        '<div class="drawer-avatar" style="background:' + tint.bg + ';color:' + tint.fg + ';">' + row.initials + '</div>' +
+        '<div>' +
+          '<p class="drawer-title">' + row.name + '</p>' +
+          '<p class="drawer-id tabular">' + row.id + '</p>' +
+          '<span class="chip ' + chipClass + '">' + row.status + '</span>' +
+        '</div>' +
+        '<button class="drawer-close" id="drawerCloseBtn" aria-label="Close">' +
+          '<span class="material-symbols-rounded">close</span>' +
+        '</button>' +
+      '</div>' +
+      '<div class="drawer-section">' +
+        '<p class="drawer-eyebrow">Membership</p>' +
+        '<div class="kv-grid">' +
+          '<div class="kv-label">Plan</div><div class="kv-value">' + m.plan + '</div>' +
+          '<div class="kv-label">Price</div><div class="kv-value tabular">' + m.price + '</div>' +
+          '<div class="kv-label">Contract start</div><div class="kv-value">' + m.contractStart + '</div>' +
+          '<div class="kv-label">Term</div><div class="kv-value">' + m.term + '</div>' +
+          '<div class="kv-label">Billing anchor</div><div class="kv-value">' + m.anchor + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="drawer-section">' +
+        '<p class="drawer-eyebrow">Billing Schedule</p>' +
+        '<div class="kv-grid">' +
+          '<div class="kv-label">Last successful</div><div class="kv-value">' + dateCellHtml(s.lastSuccessful) + '</div>' +
+          '<div class="kv-label">Next scheduled</div><div class="kv-value">' + nextScheduledHtml + '</div>' +
+          '<div class="kv-label">Cycle</div><div class="kv-value">' + s.cycle + '</div>' +
+          '<div class="kv-label">Cycles billed</div><div class="kv-value">' + s.cyclesBilled + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="drawer-section">' +
+        '<p class="drawer-eyebrow">Payment Method</p>' +
+        paymentSection +
+      '</div>' +
+      '<div class="drawer-section">' +
+        '<p class="drawer-eyebrow">Recent Billing Activity</p>' +
+        activityRowsHtml(data.activity) +
+      '</div>' +
+      '<div class="drawer-footer">' +
+        actionButtonsHtml(row) +
+      '</div>';
+
+    document.getElementById("drawerCloseBtn").addEventListener("click", closeDrawer);
+    var viewInFailedBtn = document.getElementById("viewInFailedBtn");
+    if(viewInFailedBtn){
+      viewInFailedBtn.addEventListener("click", function(){
+        window.location.href = "billing-failed-payments.html";
+      });
+    }
+    var chargeDisabled = document.getElementById("chargeNowDisabledBtn");
+    if(chargeDisabled){
+      chargeDisabled.addEventListener("click", function(e){ e.preventDefault(); });
+    }
+  }
+
+  function openDrawer(memberId, triggerEl){
+    if(triggerEl) lastFocusedRow = triggerEl;
+    state.drawerMemberId = memberId;
+    renderDrawerContent(memberId);
+    drawer.classList.add("open");
+    drawer.setAttribute("aria-hidden", "false");
+    backdrop.classList.add("open");
+    var closeBtn = document.getElementById("drawerCloseBtn");
+    if(closeBtn) closeBtn.focus();
+  }
+
+  function closeDrawer(){
+    drawer.classList.remove("open");
+    drawer.setAttribute("aria-hidden", "true");
+    backdrop.classList.remove("open");
+    state.drawerMemberId = null;
+    if(lastFocusedRow) lastFocusedRow.focus();
+  }
+
+  backdrop.addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && drawer.classList.contains("open")){
+      closeDrawer();
+    }
+    if(e.key === "Tab" && drawer.classList.contains("open")){
+      var focusable = drawer.querySelectorAll('button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if(focusable.length === 0) return;
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if(e.shiftKey && document.activeElement === first){
+        e.preventDefault();
+        last.focus();
+      } else if(!e.shiftKey && document.activeElement === last){
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

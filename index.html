@@ -92,9 +92,23 @@ h1{font-size:2rem;font-weight:700;letter-spacing:-.02em;margin:0 0 8px;}
       <div class="nav-section">Prototypes</div>
       <a class="nav-item active" href="index.html"><span class="material-symbols-rounded">grid_view</span>Prototype Gallery</a>
       <a class="nav-item" href="admin-intake-form-builder.html"><span class="material-symbols-rounded">dynamic_form</span>Admin: Intake &amp; Builder</a>
+      <a class="nav-item" href="admin-settings-policy-engine.html"><span class="material-symbols-rounded">admin_panel_settings</span>Admin: Policy Engine Settings</a>
       <a class="nav-item" href="profile-intake-tab.html"><span class="material-symbols-rounded">badge</span>Profile: Intake Tab</a>
       <a class="nav-item" href="profile-overview-tab.html"><span class="material-symbols-rounded">contact_page</span>Profile: Details Tab</a>
       <a class="nav-item" href="portal-profile-tab.html"><span class="material-symbols-rounded">family_restroom</span>Portal: My Account</a>
+      <div class="nav-section">Billing Module</div>
+      <a class="nav-item" href="billing-dashboard.html"><span class="material-symbols-rounded">space_dashboard</span>Billing Dashboard</a>
+      <a class="nav-item" href="billing-upcoming-billings.html"><span class="material-symbols-rounded">event_upcoming</span>Upcoming Billings</a>
+      <a class="nav-item" href="billing-failed-payments.html"><span class="material-symbols-rounded">error</span>Failed Payments</a>
+      <a class="nav-item" href="billing-member-billing.html"><span class="material-symbols-rounded">groups</span>Member Billing</a>
+      <a class="nav-item" href="billing-module-settings.html"><span class="material-symbols-rounded">settings</span>Module Settings</a>
+      <div class="nav-section">Scheduling</div>
+      <a class="nav-item" href="calendar-master.html"><span class="material-symbols-rounded">calendar_today</span>Calendar Master</a>
+      <a class="nav-item" href="booking-flow-staff.html"><span class="material-symbols-rounded">edit_calendar</span>Staff Booking Flow</a>
+      <a class="nav-item" href="booking-flow-client.html"><span class="material-symbols-rounded">person</span>Client Booking Flow</a>
+      <div class="nav-section">Funding</div>
+      <a class="nav-item" href="rc-authorizations.html"><span class="material-symbols-rounded">assured_workload</span>Regional Center</a>
+      <a class="nav-item" href="voucher-management.html"><span class="material-symbols-rounded">confirmation_number</span>Voucher Management</a>
     </nav>
     <div class="sidebar-foot">Prototype build · not production</div>
   </aside>
@@ -116,6 +130,13 @@ h1{font-size:2rem;font-weight:700;letter-spacing:-.02em;margin:0 0 8px;}
             from the same shared library, with a client-facing live preview.</p>
           <span class="meta">PRD §7–§19, §24 · Phase 3 — Dynamic Intake</span>
           <a class="btn btn-primary" href="admin-intake-form-builder.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag">Admin</span>
+          <h4>Policy Engine Settings</h4>
+          <p>Configure hierarchical business rules for locations, services, and funding. Allows setting rule overrides for group capacities, make-up policies, ghost holds, and funding behaviors based on a 4-level inheritance model.</p>
+          <span class="meta">PRD §2, §36–46 · Phase 1 — Policy / Settings Framework</span>
+          <a class="btn btn-primary" href="admin-settings-policy-engine.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
         </div>
         <div class="card">
           <span class="tag">Staff</span>
@@ -147,6 +168,103 @@ h1{font-size:2rem;font-weight:700;letter-spacing:-.02em;margin:0 0 8px;}
             raw documents, override controls) never rendered.</p>
           <span class="meta">PRD §3, §4–§6, §26–28, §43–56 &middot; Phase 2 &mdash; Client Portal</span>
           <a class="btn btn-primary" href="portal-profile-tab.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag">Billing</span>
+          <h4>Billing: Dashboard</h4>
+          <p>The billing admin's morning screen — did last night's run go through, and what
+            needs a human today. An exception dashboard, not a revenue report: five KPI
+            tiles, recent batches, and a Needs Attention panel carrying all of PRD §82
+            including the Phase-8 funding rows, which show an em-dash rather than a false
+            zero. The Next Scheduled Batch card demonstrates the weekend-skip rule.</p>
+          <span class="meta">PRD §82, §60–§62 · Phase 11 — Self-Pay Automation</span>
+          <a class="btn btn-primary" href="billing-dashboard.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag">Billing</span>
+          <h4>Billing: Upcoming Billings</h4>
+          <p>A dry-run preview of the next scheduled batch, read before it charges anyone.
+            Shows both sides of every gate — the 89 who will be billed with their proration
+            broken into line items, and the 7 excluded, each with the rule that dropped them
+            and the amount not charged. Answering "why isn't member X in this run?" is the
+            reason the screen exists.</p>
+          <span class="meta">PRD §60, §47 Proration · Phase 11 — Self-Pay Automation</span>
+          <a class="btn btn-primary" href="billing-upcoming-billings.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag">Billing</span>
+          <h4>Billing: Failed Payments</h4>
+          <p>The queue where money that did not arrive waits for a person. Three tabs with
+            three distinct column sets — retries exhausted, retries pending, and closed
+            cases. Every failure states what broke, the gateway code, when, and which batch.
+            The only screen that moves money, so a manual retry is confirmed in a modal that
+            names the amount.</p>
+          <span class="meta">PRD §60–§62, §61 Retry Policy · Phase 11 — Self-Pay Automation</span>
+          <a class="btn btn-primary" href="billing-failed-payments.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag">Billing</span>
+          <h4>Billing: Member Billing</h4>
+          <p>The per-member view — what the front desk opens when someone phones asking
+            "was I charged?". A live-filtered roster over 312 members with a slide-over
+            drill-in showing plan, schedule, card and charge history. Date columns hold
+            dates only; billing state lives in the status chip, never in a date cell.</p>
+          <span class="meta">PRD §60–§63, §69–§70 · Phase 11 — Self-Pay Automation</span>
+          <a class="btn btn-primary" href="billing-member-billing.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag">Staff</span>
+          <h4>Funding: Regional Center Authorizations</h4>
+          <p>The Billing Admin's control screen for Regional Center funding. Every KPI tile
+            filters the table it counts; an authorization under override says so on the row
+            and opens with a banner naming who overrode it, why, and until when. Ghost holds
+            are listed per occurrence with an expiry and an occupancy policy, and the
+            proration panel shows the arithmetic that produced the first-period units.</p>
+          <span class="meta">PRD §43–§47, §59, §64, §79 · Phase 8 — Regional Center / Voucher</span>
+          <a class="btn btn-primary" href="rc-authorizations.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag">Staff</span>
+          <h4>Funding: Voucher Management</h4>
+          <p>Homeschool and vendor vouchers end to end. Pending vouchers are approved or
+            rejected from the row; the drawer carries a full entitlement ledger rather than
+            four totals, so a reservation, a consumption and a correction each show their
+            own line. Household-shared vouchers name who spent each unit, and an expired
+            voucher renders the funding-hold chain with the bookings it stranded.</p>
+          <span class="meta">PRD §26–§27, §48–§59, §80 · Phase 8 — Regional Center / Voucher</span>
+          <a class="btn btn-primary" href="voucher-management.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag">Billing</span>
+          <h4>Billing: Module Settings</h4>
+          <p>The policy framework the billing engine obeys — batch windows, cron schedules,
+            retry rules, proration method, and per-event notifications. Adds the scope
+            hierarchy the shipped screen lacks: every setting resolves Location → Service →
+            Funding Type → Class Type and shows whether its value is inherited or
+            overridden here. A redesign of a screen that already exists.</p>
+          <span class="meta">PRD §2, §47, §61–§66, §73 · Phase 1 — Policy / Settings Framework</span>
+          <a class="btn btn-primary" href="billing-module-settings.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag" style="background:#d1fae5;color:#047857">Scheduling · Staff</span>
+          <h4>Calendar Master Schedule</h4>
+          <p>The staff pivot grid — coaches as columns, time slots as rows, both axes sticky. Filter by service, level, status, or a single coach. Click any block to open a booking detail drawer with participant list, waitlist, and inline cancel. Tentative recurring slots appear without creating ghost hold records.</p>
+          <span class="meta">Scheduling PRD · Phase — Scheduling Module</span>
+          <a class="btn btn-primary" href="calendar-master.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag" style="background:#d1fae5;color:#047857">Scheduling · Staff</span>
+          <h4>Staff / Manager Booking Flow</h4>
+          <p>A dedicated 5-step booking wizard for Group, Semi-Private and Private sessions. Role switcher (Manager / Staff / Front Desk) gates override controls. Semi-private includes inline participant search. Every slot shows Book and Waitlist. Manager gets a funding/capacity override panel with audit log fields.</p>
+          <span class="meta">Scheduling PRD · Phase — Scheduling Module</span>
+          <a class="btn btn-primary" href="booking-flow-staff.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag" style="background:#eff6ff;color:#1d4ed8">Scheduling · Client</span>
+          <h4>Client Portal Booking Flow</h4>
+          <p>A consumer-grade 5-step booking wizard. Household member picker first, then service, day/time preferences and slot selection. Semi-private lets clients add a family member or skip — the slot stays Pending Partner until confirmed. Outcome uses plain language ("Ready to confirm!" / "You're on the Waitlist").</p>
+          <span class="meta">Scheduling PRD · Phase — Scheduling Module</span>
+          <a class="btn btn-primary" href="booking-flow-client.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
         </div>
         <div class="card-placeholder">
           <span class="material-symbols-rounded">hourglass_top</span>

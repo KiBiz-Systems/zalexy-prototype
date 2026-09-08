@@ -1,0 +1,449 @@
+<!--
+  Zalexy Prototype — Calendar Master Schedule (Staff Pivot View)
+  Spec:   ai-workspace/prototypes/staff/calendar-master.md
+  Design: ai-workspace/prototypes/_shared/design-system.md
+  Static prototype. Not production code. No app dependencies.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Zalexy — Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{--primary:#334155;--primary-dark:#1e293b;--info:#3b82f6;--info-bg:#eff6ff;--info-dark:#1d4ed8;--success:#10b981;--success-bg:#d1fae5;--success-dark:#047857;--warning:#f59e0b;--danger:#ef4444;--text-primary:#0f172a;--text-secondary:#64748b;--border:#f1f5f9;--border-input:#cbd5e1;--bg-default:#f8fafc;--radius-card:10px;--radius-base:8px;--shadow-card:0 2px 4px rgba(0,0,0,0.02),0 1px 2px rgba(0,0,0,0.03)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg-default);color:var(--text-primary);font-size:14px;height:100vh;overflow:hidden}
+button{font:inherit;cursor:pointer}
+select{font:inherit}
+.ms{font-family:'Material Symbols Rounded';font-weight:400;font-style:normal;font-size:18px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;vertical-align:middle}
+/* SHELL */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:240px;flex-shrink:0;background:var(--primary-dark);display:flex;flex-direction:column}
+.sb-logo{height:58px;display:flex;align-items:center;gap:10px;padding:0 18px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-badge{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#3b82f6,#10b981);display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px}
+.sb-logo strong{color:#f8fafc;font-size:16px;font-weight:700}
+.sb-nav{flex:1;overflow-y:auto;padding:10px 8px}
+.sb-section{font-size:.68rem;font-weight:700;color:rgba(248,250,252,.35);text-transform:uppercase;letter-spacing:.08em;padding:10px 12px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 12px;border-radius:7px;color:rgba(248,250,252,.65);font-size:.85rem;font-weight:500;cursor:pointer;border:none;background:transparent;width:100%;text-align:left;margin-bottom:1px;transition:background 120ms}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#f8fafc}
+.nav-item.active{background:rgba(59,130,246,.2);color:#93c5fd}
+.main-shell{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:58px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;padding:0 20px;gap:10px;flex-shrink:0}
+.loc-pill{display:flex;align-items:center;gap:5px;font-size:.825rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default);border:1px solid var(--border-input);border-radius:6px;padding:5px 10px}
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:16px 16px 0}
+/* PAGE HEADER */
+.page-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}
+.page-hd-l{}
+.breadcrumb{font-size:.72rem;color:var(--text-secondary);margin-bottom:3px}
+.page-title{font-size:1.2rem;font-weight:700;letter-spacing:-.01em}
+.page-sub{font-size:.8rem;color:var(--text-secondary);margin-top:2px}
+.page-hd-r{display:flex;gap:7px}
+/* FILTER BAR */
+.filter-bar{background:#fff;border:1px solid var(--border);border-radius:var(--radius-card);padding:10px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-shrink:0}
+.filter-bar select{border:1px solid var(--border-input);border-radius:6px;padding:5px 8px;font-size:.78rem;background:#fff;color:var(--text-primary);cursor:pointer;outline:none}
+.date-nav{display:flex;align-items:center;gap:6px}
+.date-lbl{font-size:.9rem;font-weight:700;color:var(--text-primary);white-space:nowrap;min-width:140px;text-align:center}
+.legend{display:flex;align-items:center;gap:8px;margin-left:auto}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:.7rem;color:var(--text-secondary);font-weight:600}
+.leg-dot{width:10px;height:10px;border-radius:2px}
+.sep{width:1px;height:20px;background:var(--border)}
+/* BUTTONS */
+.btn{border-radius:6px;padding:6px 12px;font-size:.82rem;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 140ms}
+.btn-blue{background:var(--info);color:#fff}.btn-blue:hover{background:#2563eb}
+.btn-out{background:#fff;color:var(--text-primary);border:1px solid var(--border-input)}.btn-out:hover{border-color:#64748b;background:var(--bg-default)}
+.btn-sm{padding:4px 9px;font-size:.75rem}
+/* CALENDAR GRID CONTAINER */
+.cal-wrap{flex:1;overflow:hidden;background:#fff;border-radius:var(--radius-card);border:1px solid var(--border);box-shadow:var(--shadow-card);position:relative}
+.cal-scroll{width:100%;height:100%;overflow:auto;position:relative}
+/* STICKY TABLE */
+.cal-table{border-collapse:collapse;table-layout:fixed;min-width:100%}
+/* CORNER CELL */
+.cal-corner{width:76px;min-width:76px;background:#f0f4f8;border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;position:sticky;left:0;top:0;z-index:30}
+/* TIME COLUMN CELLS */
+.time-cell{width:76px;min-width:76px;height:52px;background:#f8fafc;border-right:1px solid #e2e8f0;border-bottom:1px solid #f1f5f9;position:sticky;left:0;z-index:10;vertical-align:middle;padding:0 8px;white-space:nowrap}
+.time-label{font-size:.72rem;font-weight:600;color:var(--text-secondary)}
+/* COACH HEADER CELLS */
+.coach-cell{min-width:195px;width:195px;background:#f8fafc;border-right:1px solid #f1f5f9;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:9;padding:10px 12px;vertical-align:middle}
+.coach-nm{font-size:.8rem;font-weight:700;color:var(--text-primary)}
+.coach-cnt{font-size:.7rem;color:var(--text-secondary);margin-top:2px}
+/* SLOT CELLS */
+.slot-cell{min-width:195px;width:195px;height:52px;border-right:1px solid #f1f5f9;border-bottom:1px solid #f8fafc;vertical-align:top;padding:2px;position:relative}
+/* BOOKING BLOCKS */
+.block{border-radius:5px;padding:4px 7px;cursor:pointer;border-left:3px solid;overflow:hidden;position:absolute;left:3px;right:3px;transition:box-shadow 140ms;font-size:.72rem;z-index:5}
+.block:hover{box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.block-title{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3}
+.block-sub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#374151;line-height:1.3;margin-top:1px}
+.block-cap{font-size:.65rem;color:#6b7280;margin-top:2px}
+/* BLOCK TYPES */
+.b-confirmed{background:#eff6ff;border-left-color:#3b82f6}
+.b-tentative{background:#fef3c7;border-left-color:#f59e0b}
+.b-semi-pending{background:#f3e8ff;border-left-color:#7c3aed}
+.b-waitlisted{background:#eff6ff;border-left-style:dashed;border-left-color:#3b82f6}
+.b-break{background:#f1f5f9;border-left-color:#94a3b8;cursor:default}
+/* EMPTY COLUMN */
+.empty-col{text-align:center;vertical-align:middle;color:var(--text-secondary);font-size:.78rem;font-style:italic;padding:20px 8px;border:1px dashed var(--border);border-radius:6px;margin:4px}
+/* CHIP */
+.chip{display:inline-flex;align-items:center;height:20px;border-radius:3px;padding:0 6px;font-size:.67rem;font-weight:600;white-space:nowrap}
+.c-ok{background:var(--success-bg);color:var(--success-dark)}.c-info{background:var(--info-bg);color:var(--info-dark)}.c-warn{background:#fef3c7;color:#b45309}.c-danger{background:#fee2e2;color:#b91c1c}.c-purple{background:#f3e8ff;color:#7c3aed}
+/* TOOLTIP */
+.tooltip{position:fixed;background:#1e293b;color:#f8fafc;border-radius:8px;padding:10px 13px;font-size:.75rem;width:220px;pointer-events:none;z-index:200;box-shadow:0 4px 14px rgba(0,0,0,.2);line-height:1.5}
+.tooltip::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #1e293b}
+.tt-hidden{display:none}
+/* DRAWER */
+.drawer{position:absolute;right:0;top:0;bottom:0;width:400px;background:#fff;border-left:1px solid var(--border);box-shadow:-4px 0 16px rgba(0,0,0,.08);display:flex;flex-direction:column;z-index:40;transform:translateX(100%);transition:transform 240ms ease}
+.drawer.open{transform:translateX(0)}
+.drw-hd{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px}
+.drw-hd-top{display:flex;justify-content:space-between;align-items:flex-start}
+.drw-tag{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary)}
+.drw-nm{font-size:1rem;font-weight:700;color:var(--text-primary)}
+.drw-dt{font-size:.8rem;color:var(--text-secondary);margin-top:2px}
+.x-btn{background:none;border:none;cursor:pointer;color:var(--text-secondary);padding:3px;border-radius:4px;line-height:1;flex-shrink:0}
+.x-btn:hover{background:var(--bg-default)}
+.drw-body{flex:1;overflow-y:auto;padding:16px}
+.drw-foot{padding:11px 16px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end;flex-shrink:0}
+/* DETAIL GRID */
+.det-grid{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.det-row{display:grid;grid-template-columns:110px 1fr;border-bottom:1px solid var(--border)}
+.det-row:last-child{border-bottom:none}
+.det-l{padding:8px 11px;font-size:.7rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default)}
+.det-r{padding:8px 11px;font-size:.82rem;color:var(--text-primary)}
+.det-r.bal{font-weight:700;color:var(--info-dark)}
+/* PARTICIPANTS */
+.px-section{margin-top:12px}
+.sec-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);margin-bottom:7px}
+.px-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:6px}
+.px-av{width:26px;height:26px;border-radius:50%;background:var(--info);color:#fff;display:grid;place-items:center;font-size:.65rem;font-weight:700;flex-shrink:0}
+.px-nm{font-size:.82rem;font-weight:700;flex:1}
+/* WAITLIST */
+.wl-section{margin-top:12px}
+.wl-note{font-size:.72rem;color:var(--text-secondary);font-style:italic;margin-bottom:7px}
+.wl-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:5px}
+.wl-pos{width:22px;height:22px;border-radius:50%;background:var(--info-bg);display:grid;place-items:center;font-size:.68rem;font-weight:700;color:var(--info-dark);flex-shrink:0}
+.wl-nm{font-size:.82rem;font-weight:700;flex:1}
+/* INLINE CONFIRM */
+.inline-confirm{background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:12px;margin-top:10px}
+.inline-confirm p{font-size:.82rem;font-weight:600;color:#b91c1c;margin-bottom:10px}
+/* PAX SEARCH */
+.px-search-wrap{margin-top:8px}
+.s-input{width:100%;border:1px solid var(--border-input);border-radius:6px;padding:7px 10px;font-size:.82rem;background:#fff;outline:none}
+.s-input:focus{border-color:var(--info);outline:2px solid rgba(59,130,246,.2);outline-offset:1px}
+.px-dd{border:1px solid var(--border-input);border-radius:7px;overflow:hidden;margin-top:4px}
+.px-res{display:flex;align-items:center;justify-content:space-between;padding:8px 11px;cursor:pointer;border-bottom:1px solid var(--border);font-size:.82rem;transition:background 100ms}
+.px-res:last-child{border-bottom:none}.px-res:hover{background:var(--bg-default)}
+/* TENTATIVE NOTICE */
+.tent-notice{background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:12px;margin-top:10px;font-size:.8rem;color:#92400e}
+.tent-notice strong{display:block;margin-bottom:3px}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="sb-logo"><div class="sb-badge">Z</div><strong>Zalexy</strong></div>
+  <nav class="sb-nav">
+    <div class="sb-section">Scheduling</div>
+    <button class="nav-item active"><span class="ms">calendar_today</span>Calendar</button>
+    <button class="nav-item" onclick="location.href='booking-flow-staff.html'"><span class="ms">add_circle</span>New Booking</button>
+    <button class="nav-item" data-noop><span class="ms">group</span>Waitlist</button>
+    <button class="nav-item" data-noop><span class="ms">event_busy</span>Cancellations</button>
+    <div class="sb-section">Clients</div>
+    <button class="nav-item" data-noop><span class="ms">person</span>Profiles</button>
+    <div class="sb-section">Prototypes</div>
+    <button class="nav-item" onclick="location.href='booking-flow-staff.html'"><span class="ms">edit_calendar</span>Staff Booking</button>
+    <button class="nav-item" onclick="location.href='booking-flow-client.html'"><span class="ms">person</span>Client Booking</button>
+    <button class="nav-item active"><span class="ms">grid_on</span>Calendar Master</button>
+  </nav>
+</aside>
+
+<div class="main-shell">
+  <div class="topbar">
+    <div class="loc-pill"><span class="ms" style="font-size:15px">location_on</span>Solar Swim (PDT)</div>
+    <button class="btn btn-out btn-sm" data-noop>Michael Torres ▾</button>
+  </div>
+  <div class="main-area">
+    <!-- PAGE HEADER -->
+    <div class="page-hd">
+      <div class="page-hd-l">
+        <div class="breadcrumb">Scheduling / Calendar</div>
+        <h1 class="page-title">Calendar</h1>
+        <div class="page-sub" id="pageSub">Thu Sep 3, 2026 / Solar Swim</div>
+      </div>
+      <div class="page-hd-r">
+        <button class="btn btn-out btn-sm" data-noop>Cancellations</button>
+        <button class="btn btn-blue btn-sm" onclick="location.href='booking-flow-staff.html'"><span class="ms" style="font-size:15px">add</span> Book</button>
+      </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <div class="date-nav">
+        <button class="btn btn-out btn-sm" id="prevDay" onclick="navDay(-1)">&#8592; Prev</button>
+        <span class="date-lbl" id="dateLbl">Thu Sep 3</span>
+        <button class="btn btn-out btn-sm" id="nextDay" onclick="navDay(1)">Next &#8594;</button>
+      </div>
+      <button class="btn btn-out btn-sm" onclick="goToday()">Today</button>
+      <div class="sep"></div>
+      <select id="fLoc" onchange="applyFilters()"><option>Solar Swim</option><option>Uptown Swim</option></select>
+      <select id="fSvc" onchange="applyFilters()"><option>All Services</option><option>Swim</option><option>Basketball</option><option>Fitness</option></select>
+      <select id="fLvl" onchange="applyFilters()"><option>All Levels</option><option>Beginner 1</option><option>Beginner 2</option><option>Intermediate</option></select>
+      <select id="fStat" onchange="applyFilters()"><option>All Statuses</option><option>Confirmed</option><option>Tentative</option><option>Semi-Private</option></select>
+      <select id="fStaff" onchange="applyFilters()"><option>All Staff</option><option>Michael Torres</option><option>Sarah Chen</option><option>James Wright</option><option>Anthony Lee</option><option>Shaquem Hill</option><option>Tina Wu</option></select>
+      <div class="sep"></div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#3b82f6"></div>Confirmed</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div>Tentative</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#7c3aed"></div>Semi</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#94a3b8"></div>Break</div>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="cal-wrap">
+      <div class="cal-scroll" id="calScroll">
+        <table class="cal-table" id="calTable"></table>
+      </div>
+      <!-- DRAWER -->
+      <div class="drawer" id="drawer">
+        <div class="drw-hd">
+          <div class="drw-hd-top">
+            <div>
+              <div class="drw-tag">Booking Detail</div>
+              <div class="drw-nm" id="drwNm">Maria Garcia</div>
+              <div class="drw-dt" id="drwDt">Mon Sep 14 / 12:30 – 1:55 PM</div>
+              <span class="chip c-ok" id="drwStatus">Confirmed</span>
+            </div>
+            <button class="x-btn" onclick="closeDrawer()"><span class="ms">close</span></button>
+          </div>
+        </div>
+        <div class="drw-body" id="drwBody"></div>
+        <div class="drw-foot" id="drwFoot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TOOLTIP -->
+<div class="tooltip tt-hidden" id="tooltip"></div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+const COACHES=['Michael Torres','Sarah Chen','James Wright','Anthony Lee','Shaquem Hill','Tina Wu','Derek Cole','Priya Nair','Cory Davis','Naya Fox','Luke Dean','Emma Cole'];
+const TIMES_RANGE=[];
+for(let h=6;h<=20;h++){TIMES_RANGE.push(`${h>12?h-12:h}:00 ${h>=12?'PM':'AM'}`);TIMES_RANGE.push(`${h>12?h-12:h}:30 ${h>=12?'PM':'AM'}`);}
+const TIMES_RANGE_FIXED=['6:00 AM','6:30 AM','7:00 AM','7:30 AM','8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','12:00 PM','12:30 PM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM','5:00 PM','5:30 PM','6:00 PM','6:30 PM','7:00 PM','7:30 PM'];
+
+const BOOKINGS=[
+  {id:'b1',coach:'Michael Torres',startSlot:4,dur:2,type:'confirmed',title:'Swim B2 / 60 min',sub:'Ava Smith',cap:'3 / 8 spots',service:'Swim',client:'Ava Smith',level:'Beginner 2',loc:'Pool Lane 8',fund:'Self Pay',bal:'5 / 8 sessions'},
+  {id:'b2',coach:'Sarah Chen',startSlot:6,dur:3,type:'confirmed',title:'Swim B1 / Group',sub:'5 / 8 spots',service:'Swim',client:'Group',level:'Beginner 1',loc:'Pool Lane 4',fund:'Various',bal:'—'},
+  {id:'b3',coach:'Michael Torres',startSlot:8,dur:1,type:'break',title:'Paid Break',sub:'30 min',service:null},
+  {id:'b4',coach:'Michael Torres',startSlot:9,dur:2,type:'tentative',title:'Tentative',sub:'Maria Garcia',service:'Swim',client:'Maria Garcia',level:'Beginner 2 · Private',loc:'Pool Lane 2',fund:'Regional Center',bal:'5 / 8 sessions'},
+  {id:'b5',coach:'James Wright',startSlot:10,dur:2,type:'confirmed',title:'Semi-Private',sub:'Liam Turner +1',cap:'2 / 3',service:'Swim',client:'Liam Turner + Emma Davis',level:'Beginner 2',loc:'Pool Lane 5',fund:'Self Pay',bal:'—'},
+  {id:'b6',coach:'Sarah Chen',startSlot:13,dur:3,type:'confirmed',title:'Swim B2 / Group',sub:'3 / 8 spots',service:'Swim',client:'Group',level:'Beginner 2',loc:'Pool Lane 10',fund:'Various',bal:'—'},
+  {id:'b7',coach:'Anthony Lee',startSlot:14,dur:2,type:'semi-pending',title:'Semi-Private',sub:'Lucas Brown / 1/3 open',service:'Swim',client:'Lucas Brown',level:'Beginner 2',loc:'Pool Lane 6',fund:'Self Pay',bal:'4 / 4 sessions'},
+  {id:'b8',coach:'Michael Torres',startSlot:16,dur:2,type:'confirmed',title:'Basketball / Carlos',sub:'Carlos Garcia',service:'Basketball',client:'Carlos Garcia',level:'Beginner',loc:'Court 1',fund:'Self Pay',bal:'2 / 4 sessions'},
+  {id:'b9',coach:'Sarah Chen',startSlot:18,dur:1,type:'break',title:'Paid Break',sub:'30 min',service:null},
+  {id:'b10',coach:'James Wright',startSlot:20,dur:2,type:'confirmed',title:'Swim B2 / FULL',sub:'8 / 8 spots',service:'Swim',client:'Group (Full)',level:'Beginner 2',loc:'Pool Lane 8',fund:'Various',bal:'—',waitlist:[{nm:'Liam Turner',fund:'Self Pay',pos:1},{nm:'Carlos Garcia',fund:'Self Pay',pos:2}]},
+  {id:'b11',coach:'Anthony Lee',startSlot:20,dur:2,type:'confirmed',title:'Private Swim',sub:'Ava Smith',service:'Swim',client:'Ava Smith',level:'Beginner 2',loc:'Pool Lane 3',fund:'Voucher',bal:'7 / 8 sessions'},
+  {id:'b12',coach:'Tina Wu',startSlot:22,dur:2,type:'confirmed',title:'Group Fitness',sub:'12 spots',service:'Fitness',client:'Group',level:'All',loc:'Studio A',fund:'Various',bal:'—'}
+];
+
+const DATES=['Thu Sep 2','Thu Sep 3','Fri Sep 4','Sat Sep 5'];
+let curDate=1; // index into DATES
+
+const STATE={drawer:null,filterSvc:'All Services',filterStaff:'All Staff',filterStat:'All Statuses',confirmOpen:false,paxSearchOpen:false};
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function render(){
+  const svcFilter=document.getElementById('fSvc')?.value||'All Services';
+  const staffFilter=document.getElementById('fStaff')?.value||'All Staff';
+  const statFilter=document.getElementById('fStat')?.value||'All Statuses';
+  const coaches=staffFilter!=='All Staff'?[staffFilter]:COACHES;
+  const table=document.getElementById('calTable');
+
+  // Build header row
+  let hdr='<thead><tr>';
+  hdr+=`<th class="cal-corner"></th>`;
+  coaches.forEach(c=>{
+    const cnt=BOOKINGS.filter(b=>b.coach===c&&b.type!=='break').length;
+    hdr+=`<th class="coach-cell"><div class="coach-nm">${c}</div><div class="coach-cnt">${cnt} booking${cnt!==1?'s':''}</div></th>`;
+  });
+  hdr+='</tr></thead>';
+
+  // Build body rows
+  let body='<tbody>';
+  TIMES_RANGE_FIXED.forEach((t,idx)=>{
+    body+=`<tr>`;
+    body+=`<td class="time-cell"><span class="time-label">${t}</span></td>`;
+    coaches.forEach(coach=>{
+      // find a booking that starts at this slot for this coach
+      const booking=BOOKINGS.find(b=>b.coach===coach&&b.startSlot===idx);
+      // check if a booking overlaps (started earlier)
+      const overlapping=BOOKINGS.find(b=>b.coach===coach&&b.startSlot<idx&&b.startSlot+b.dur>idx);
+      if(overlapping){body+=`<td class="slot-cell"></td>`;return;}
+      if(!booking){body+=`<td class="slot-cell"><div style="height:100%"></div></td>`;return;}
+
+      // apply dim if filter mismatch
+      let dim='';
+      if(svcFilter!=='All Services'&&booking.service&&!booking.service.toLowerCase().includes(svcFilter.toLowerCase())) dim=' style="opacity:0.3"';
+      if(statFilter!=='All Statuses'){
+        const match=(statFilter==='Confirmed'&&booking.type==='confirmed')||(statFilter==='Tentative'&&booking.type==='tentative')||(statFilter==='Semi-Private'&&(booking.type==='semi-pending'));
+        if(!match) dim=' style="opacity:0.3"';
+      }
+
+      const h=booking.dur*52;
+      const cls=booking.type==='confirmed'?'b-confirmed':booking.type==='tentative'?'b-tentative':booking.type==='semi-pending'?'b-semi-pending':booking.type==='waitlisted'?'b-waitlisted':'b-break';
+      const clickable=booking.type!=='break';
+      const onclick=clickable?`onclick="openDrawer('${booking.id}')" onmouseenter="showTip(event,'${booking.id}')" onmouseleave="hideTip()"`:``;
+      body+=`<td class="slot-cell" rowspan="${booking.dur}">
+        <div class="block ${cls}" style="top:3px;height:${h-6}px" ${onclick}${dim}>
+          <div class="block-title">${booking.title}</div>
+          <div class="block-sub">${booking.sub}</div>
+          ${booking.cap?`<div class="block-cap">${booking.cap}</div>`:''}
+        </div>
+      </td>`;
+    });
+    body+='</tr>';
+  });
+  body+='</tbody>';
+  table.innerHTML=hdr+body;
+  document.getElementById('dateLbl').textContent=DATES[curDate].replace('Thu ','').replace('Fri ','').replace('Sat ','');
+  document.getElementById('pageSub').textContent=`${DATES[curDate]} · Solar Swim`;
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+function navDay(d){curDate=Math.max(0,Math.min(DATES.length-1,curDate+d));render();}
+function goToday(){curDate=1;render();}
+
+// ─── FILTERS ──────────────────────────────────────────────────────────────────
+function applyFilters(){render();}
+
+// ─── DRAWER ───────────────────────────────────────────────────────────────────
+function openDrawer(id){
+  const b=BOOKINGS.find(x=>x.id===id);
+  if(!b) return;
+  STATE.drawer=id;
+  STATE.confirmOpen=false;
+  STATE.paxSearchOpen=false;
+  document.getElementById('drwNm').textContent=b.client||b.sub||b.title;
+  document.getElementById('drwDt').textContent=`${DATES[curDate]} / ${TIMES_RANGE_FIXED[b.startSlot]} \u2013 ${TIMES_RANGE_FIXED[b.startSlot+b.dur]||'End'}`;
+  const sc=document.getElementById('drwStatus');
+  if(b.type==='tentative'){sc.textContent='Tentative';sc.className='chip c-warn';}
+  else if(b.type==='semi-pending'){sc.textContent='Pending Partner';sc.className='chip c-purple';}
+  else{sc.textContent='Confirmed';sc.className='chip c-ok';}
+  renderDrawerBody(b);
+  document.getElementById('drawer').classList.add('open');
+}
+
+function renderDrawerBody(b){
+  const body=document.getElementById('drwBody');
+  const foot=document.getElementById('drwFoot');
+  let html='';
+
+  // INFO GRID
+  const infoRows=[['Client',b.client||b.sub],['Service',b.title],['Level',b.level||'\u2014'],['Instructor',b.coach],['Location',b.loc||'\u2014'],['Date',DATES[curDate]],['Funding',b.fund||'\u2014'],['Balance',b.bal||'\u2014','bal'],['Status',b.type==='tentative'?'Tentative (authorization pending)':b.type==='semi-pending'?'Pending Partner':b.type==='confirmed'?'Confirmed':'Break']];
+  html+=`<div class="det-grid">${infoRows.map(([l,v,cls])=>`<div class="det-row"><div class="det-l">${l}</div><div class="det-r${cls?' '+cls:''}">${v}</div></div>`).join('')}</div>`;
+
+  // TENTATIVE NOTICE
+  if(b.type==='tentative'){
+    html+=`<div class="tent-notice"><strong>Recurring tentative slot</strong>This slot is reserved based on ${b.client}'s recurring subscription. It will be confirmed once Regional Center authorization is received.</div>`;
+  }
+
+  // PARTICIPANTS (semi / group)
+  if(b.type==='semi-pending'){
+    html+=`<div class="px-section"><div class="sec-lbl">Participants (1 / 3)</div>
+      <div class="px-row"><div class="px-av">LB</div><div class="px-nm">Lucas Brown</div><span class="chip c-ok">Confirmed</span></div>
+      <button class="btn btn-out btn-sm" style="width:100%;justify-content:center;margin-top:4px" onclick="STATE.paxSearchOpen=!STATE.paxSearchOpen;renderDrawerBody(BOOKINGS.find(b=>b.id===STATE.drawer))"><span class="ms" style="font-size:15px">add</span> Add Participant</button>
+      ${STATE.paxSearchOpen?`<div class="px-search-wrap" style="margin-top:8px"><input class="s-input" placeholder="Search clients\u2026" oninput="paxSearch(this.value)" id="drwPxSrch"><div class="px-dd" id="drwPxDD"></div></div>`:''}
+    </div>`;
+  }
+  if(b.id==='b5'){
+    html+=`<div class="px-section"><div class="sec-lbl">Participants (2 / 3)</div>
+      <div class="px-row"><div class="px-av">LT</div><div class="px-nm">Liam Turner</div><span class="chip c-ok">Attended</span></div>
+      <div class="px-row"><div class="px-av">ED</div><div class="px-nm">Emma Davis</div><span class="chip c-info">Enrolled</span></div>
+    </div>`;
+  }
+  if(b.id==='b6'||b.id==='b2'||b.id==='b12'){
+    html+=`<div class="px-section"><div class="sec-lbl">Group Participants</div>
+      ${['Rachel Kim','Marcus Webb','Sofia Torres','David Nair','Priya Shah'].map(nm=>`<div class="px-row"><div class="px-av">${nm.split(' ').map(x=>x[0]).join('')}</div><div class="px-nm">${nm}</div><span class="chip c-info">Enrolled</span></div>`).join('')}
+    </div>`;
+  }
+
+  // WAITLIST
+  if(b.waitlist&&b.waitlist.length>0){
+    html+=`<div class="wl-section"><div class="sec-lbl">Waitlist</div>
+      <div class="wl-note">Waitlist is shown for all classes \u2014 full or not.</div>
+      ${b.waitlist.map(w=>`<div class="wl-row"><div class="wl-pos">${w.pos}</div><div class="wl-nm">${w.nm}</div><span class="chip c-muted" style="background:#f1f5f9;color:var(--text-secondary)">${w.fund}</span><button class="btn btn-out btn-sm" style="margin-left:6px" onclick="toast('${w.nm} promoted to booking')">Promote</button></div>`).join('')}
+    </div>`;
+  }
+
+  // INLINE CANCEL CONFIRM
+  if(STATE.confirmOpen){
+    html+=`<div class="inline-confirm"><p>Cancel this booking? This action cannot be undone.</p><div style="display:flex;gap:7px"><button class="btn btn-out btn-sm" onclick="STATE.confirmOpen=false;renderDrawerBody(BOOKINGS.find(b=>b.id===STATE.drawer))">Keep Booking</button><button class="btn btn-sm" style="background:var(--danger);color:#fff" onclick="cancelConfirm()">Yes, Cancel</button></div></div>`;
+  }
+
+  body.innerHTML=html;
+  if(STATE.paxSearchOpen) document.getElementById('drwPxSrch')?.focus();
+
+  // FOOTER ACTIONS
+  const isTent=b.type==='tentative';
+  const isBreak=b.type==='break';
+  if(isBreak){foot.innerHTML='<span style="font-size:.78rem;color:var(--text-secondary)">Break blocks have no actions.</span>';return;}
+  if(isTent){foot.innerHTML='<span style="font-size:.78rem;color:var(--text-secondary)">Tentative — awaiting RC authorization.</span>';return;}
+  foot.innerHTML=`
+    <button class="btn btn-out btn-sm" onclick="toast('Reschedule — date picker would open here')">Reschedule</button>
+    <button class="btn btn-out btn-sm" style="border-color:#fca5a5;color:var(--danger)" onclick="STATE.confirmOpen=true;renderDrawerBody(BOOKINGS.find(b=>b.id=STATE.drawer))">Cancel</button>
+    <button class="btn btn-blue btn-sm" onclick="toast('All participants marked attended')">Check In All</button>`;
+}
+
+function closeDrawer(){document.getElementById('drawer').classList.remove('open');STATE.drawer=null;}
+
+function cancelConfirm(){
+  closeDrawer();
+  toast('Booking cancelled');
+}
+
+function paxSearch(q){
+  const el=document.getElementById('drwPxDD');if(!el)return;
+  const res=['Ava Smith','Carlos Garcia','Liam Turner','Lucas Brown'].filter(n=>n.toLowerCase().includes(q.toLowerCase())).slice(0,4);
+  el.innerHTML=res.map(n=>`<div class="px-res" onclick="addPax('${n}')"><span>${n}</span><span class="chip c-ok">\u2713 Eligible</span></div>`).join('')||'<div style="padding:8px 11px;font-size:.78rem;color:var(--text-secondary)">No results</div>';
+}
+
+function addPax(nm){
+  toast(nm+' added to slot');
+  STATE.paxSearchOpen=false;
+  const b=BOOKINGS.find(x=>x.id===STATE.drawer);
+  if(b) renderDrawerBody(b);
+}
+
+// ─── TOOLTIP ──────────────────────────────────────────────────────────────────
+function showTip(e,id){
+  const b=BOOKINGS.find(x=>x.id===id);if(!b) return;
+  const t=document.getElementById('tooltip');
+  t.innerHTML=`<strong>${b.client||b.sub}</strong><br>${b.title}<br>${b.level||''}<br>\U0001f464 ${b.coach}<br>\U0001f4cd ${b.loc||'\u2014'}<br>${TIMES_RANGE_FIXED[b.startSlot]}`;
+  t.classList.remove('tt-hidden');
+  const rect=e.target.getBoundingClientRect();
+  t.style.left=Math.min(rect.left,window.innerWidth-240)+'px';
+  t.style.top=(rect.top-t.offsetHeight-10)+'px';
+}
+function hideTip(){document.getElementById('tooltip').classList.add('tt-hidden');}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+let toastT;
+function toast(m){
+  let el=document.getElementById('toast_el');
+  if(!el){el=document.createElement('div');el.id='toast_el';el.style.cssText='position:fixed;bottom:24px;right:24px;background:#1e293b;color:#f8fafc;padding:10px 16px;border-radius:8px;font-size:.82rem;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:300;transition:opacity 220ms;max-width:280px';document.body.appendChild(el);}
+  el.textContent=m;el.style.opacity='1';
+  clearTimeout(toastT);toastT=setTimeout(()=>{el.style.opacity='0';},2500);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
+

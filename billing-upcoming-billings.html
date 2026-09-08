@@ -1,0 +1,536 @@
+<!--
+  Zalexy Prototype — Billing: Upcoming Billings
+  Spec:   ai-workspace/prototypes/billing/billing-upcoming-billings.md
+  Design: ai-workspace/prototypes/_shared/design-system.md
+  Static prototype. Not production code. No app dependencies.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zalexy — Upcoming Billings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{
+  --primary:#334155; --primary-light:#475569; --primary-dark:#1e293b;
+  --secondary:#10b981; --secondary-light:#34d399; --secondary-dark:#059669;
+  --success:#10b981; --success-bg:#d1fae5; --success-dark:#047857;
+  --info:#3b82f6; --info-bg:#eff6ff; --info-dark:#1d4ed8; --info-hover:#2563eb;
+  --bg-default:#f8fafc; --bg-paper:#ffffff;
+  --text-primary:#0f172a; --text-secondary:#64748b;
+  --border:#f1f5f9; --border-input:#cbd5e1; --border-input-hover:#94a3b8;
+  --hover-row:#f1f5f9; --action-hover:rgba(71,85,105,.04); --action-selected:rgba(71,85,105,.08);
+  --danger:#ef4444; --warning:#f59e0b;
+  --radius-card:10px; --radius-base:8px; --radius-control:6px; --radius-chip:4px;
+  --shadow-card:0 2px 4px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.03);
+  --shadow-1:0 1px 3px rgba(0,0,0,.05);
+  --shadow-appbar:0 1px 1px rgba(51,65,85,.03);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Inter","Roboto","Helvetica","Arial",sans-serif;color:var(--text-primary);}
+button{font-family:inherit;}
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* ---------- Sidebar (copied verbatim from out/index.html) ---------- */
+.sidebar{width:240px;flex:0 0 240px;background:var(--primary-dark);color:#f8fafc;display:flex;flex-direction:column;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:10px;padding:20px 20px 16px;}
+.logo svg{flex:0 0 auto;}
+.logo span{font-weight:700;font-size:1.05rem;letter-spacing:.02em;}
+.nav{padding:8px 12px;display:flex;flex-direction:column;gap:2px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-base);color:#f8fafc;font-size:.9rem;font-weight:500;text-decoration:none;cursor:pointer;}
+.nav-item .material-symbols-rounded{font-size:20px;min-width:24px;color:rgba(248,250,252,.7);}
+.nav-item.disabled{opacity:.42;cursor:not-allowed;}
+.nav-item:not(.disabled):hover{background:rgba(248,250,252,.08);}
+.nav-item.active{background:rgba(248,250,252,.14);}
+.nav-item.active .material-symbols-rounded{color:#f8fafc;}
+.nav-section{margin:16px 12px 6px;font-size:.7rem;font-weight:700;letter-spacing:.08em;color:rgba(248,250,252,.45);text-transform:uppercase;}
+.sidebar-foot{padding:14px 20px;font-size:.7rem;color:rgba(248,250,252,.4);border-top:1px solid rgba(248,250,252,.08);}
+
+/* ---------- Main / shell ---------- */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg-default);overflow:hidden;}
+.topbar{flex:0 0 64px;height:64px;background:#fff;box-shadow:var(--shadow-appbar);display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:16px;}
+.search-input-wrap{position:relative;width:320px;}
+.search-input-wrap .material-symbols-rounded{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--text-secondary);}
+.search-input{width:100%;height:36px;padding:8px 12px 8px 36px;font-size:14px;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;}
+.search-input:hover{border-color:var(--border-input-hover);}
+.search-input:focus{border-color:var(--primary);outline:none;}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.icon-btn{position:relative;width:36px;height:36px;border:none;background:transparent;border-radius:var(--radius-control);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);cursor:pointer;}
+.icon-btn:hover{background:var(--action-hover);}
+.notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--danger);}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:#d1fae5;color:var(--success-dark);font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+.page{flex:1;overflow-y:auto;padding:24px;}
+.page-header{margin-bottom:24px;}
+.page-header h1{font-size:1.75rem;font-weight:600;letter-spacing:-.01em;margin:0 0 4px;}
+.page-header .subtitle{font-size:.8rem;color:var(--text-secondary);margin:0;}
+
+/* ---------- Banner ---------- */
+.banner{display:flex;align-items:center;gap:10px;background:var(--info-bg);border-radius:var(--radius-base);padding:12px 16px;font-size:.875rem;color:var(--info-dark);margin-bottom:24px;}
+.banner .material-symbols-rounded.lead{font-size:20px;color:var(--info-dark);}
+.banner .banner-text{flex:1;}
+.banner-close{border:none;background:transparent;color:var(--info-dark);width:24px;height:24px;border-radius:var(--radius-control);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;}
+.banner-close:hover{background:rgba(29,78,216,.08);}
+
+/* ---------- KPI strip ---------- */
+.kpi-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+@media (max-width:1024px){.kpi-strip{grid-template-columns:1fr;}}
+.kpi-tile{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:20px;display:flex;gap:12px;align-items:flex-start;}
+.kpi-icon{width:40px;height:40px;border-radius:var(--radius-base);display:flex;align-items:center;justify-content:center;flex:0 0 40px;}
+.kpi-icon .material-symbols-rounded{font-size:22px;}
+.kpi-body{min-width:0;}
+.kpi-label{font-size:.725rem;font-weight:600;letter-spacing:.05em;color:var(--text-secondary);text-transform:uppercase;margin:0 0 4px;}
+.kpi-value{font-size:1.75rem;font-weight:700;letter-spacing:-.02em;margin:0 0 4px;font-variant-numeric:tabular-nums;}
+.kpi-footnote{font-size:.75rem;color:var(--text-secondary);margin:0;}
+.kpi-link{color:var(--info-dark);font-weight:600;text-decoration:underline;cursor:pointer;background:none;border:none;padding:0;font-size:.75rem;font-family:inherit;}
+
+/* ---------- Card ---------- */
+.card{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);border:none;}
+.card-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px 12px;}
+.card-header h2{font-size:1.25rem;font-weight:600;margin:0;}
+.btn{display:inline-flex;align-items:center;gap:6px;justify-content:center;border:none;border-radius:var(--radius-control);padding:8px 16px;font-weight:600;font-size:.875rem;cursor:pointer;text-decoration:none;box-shadow:none;text-transform:none;}
+.btn-outlined{background:#fff;color:var(--text-primary);border:1px solid var(--border);}
+.btn-outlined:hover{border-color:var(--primary);background:var(--action-hover);}
+.card-body{padding:0 24px;}
+
+/* ---------- Segmented control ---------- */
+.segmented{display:inline-flex;background:#f1f5f9;border-radius:var(--radius-control);padding:3px;gap:2px;margin-bottom:16px;}
+.segment{height:32px;padding:0 14px;border:none;background:transparent;font-size:.8rem;font-weight:600;color:var(--text-secondary);border-radius:var(--radius-chip);cursor:pointer;}
+.segment:hover:not(.active){color:var(--text-primary);}
+.segment.active{background:#fff;color:var(--text-primary);box-shadow:var(--shadow-1);}
+
+/* ---------- Table ---------- */
+.table-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);padding:12px 16px;border-bottom:1px solid var(--border);background:transparent;white-space:nowrap;}
+th.align-right{text-align:right;}
+th:not(.align-right){text-align:left;}
+td{font-size:.875rem;padding:16px;border-bottom:1px solid var(--border);color:var(--text-primary);vertical-align:top;}
+tr:hover td{background:var(--hover-row);}
+tbody tr:last-child td{border-bottom:0;}
+td.align-right{text-align:right;}
+
+.member-cell{display:flex;align-items:center;gap:10px;}
+.avatar{width:32px;height:32px;border-radius:50%;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 32px;}
+.member-name{font-size:.875rem;font-weight:600;}
+.member-id{font-size:.75rem;font-weight:400;color:var(--text-secondary);font-variant-numeric:tabular-nums;}
+
+.dash-italic{color:var(--text-secondary);font-style:italic;}
+
+/* Charge breakdown */
+.breakdown-line{display:flex;align-items:baseline;gap:0;}
+.breakdown-line .label{font-size:.8rem;font-weight:400;color:var(--text-secondary);white-space:nowrap;}
+.breakdown-line .leader{flex:1;border-bottom:1px dotted var(--border-input);margin:0 6px 4px;}
+.breakdown-line .amount{font-size:.8rem;font-weight:600;color:var(--text-primary);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.breakdown-total{display:flex;align-items:baseline;gap:0;border-top:1px solid var(--border);margin-top:4px;padding-top:4px;}
+.breakdown-total .label{font-size:.8rem;font-weight:600;color:var(--text-primary);white-space:nowrap;}
+.breakdown-total .leader{flex:1;margin:0 6px 4px;}
+.breakdown-total .amount{font-size:.8rem;font-weight:700;color:var(--info-dark);white-space:nowrap;font-variant-numeric:tabular-nums;}
+
+.total-amount{font-variant-numeric:tabular-nums;}
+.total-amount.prorated{font-size:.875rem;font-weight:700;color:var(--info-dark);}
+.total-amount.plain{font-size:.875rem;font-weight:400;color:var(--text-primary);}
+
+.chip{height:24px;border-radius:var(--radius-chip);font-size:.75rem;font-weight:600;padding:0 8px;display:inline-flex;align-items:center;white-space:nowrap;}
+.chip-muted{background:#f1f5f9;color:var(--text-secondary);}
+
+.would-have-been{font-variant-numeric:tabular-nums;color:var(--text-secondary);text-decoration:line-through;}
+
+/* ---------- Card footer ---------- */
+.card-footer{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;border-top:1px solid var(--border);}
+.footer-count{font-size:.8rem;font-weight:400;color:var(--text-secondary);}
+.pagination{display:flex;gap:6px;}
+.page-btn{width:32px;height:32px;border-radius:var(--radius-control);font-size:.8rem;font-weight:600;background:#fff;border:1px solid var(--border);color:var(--text-primary);cursor:pointer;}
+.page-btn:hover{background:var(--hover-row);}
+.page-btn.active{background:var(--primary-dark);color:#fff;border-color:var(--primary-dark);}
+
+:focus-visible{outline:2px solid var(--info);outline-offset:2px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect width="28" height="28" rx="7" fill="#3b82f6"/>
+        <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>ZALEXY</span>
+    </div>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">point_of_sale</span>Point of Sale</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">groups</span>Leads</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">account_circle</span>Accounts</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Profiles</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">receipt_long</span>Transactions</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">request_quote</span>Invoices</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Staff</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">event</span>Scheduling</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">settings</span>Settings</a>
+      <div class="nav-section">Prototypes</div>
+      <a class="nav-item" href="index.html"><span class="material-symbols-rounded">grid_view</span>Prototype Gallery</a>
+      <a class="nav-item" href="admin-intake-form-builder.html"><span class="material-symbols-rounded">dynamic_form</span>Admin: Intake &amp; Builder</a>
+      <a class="nav-item" href="admin-settings-policy-engine.html"><span class="material-symbols-rounded">admin_panel_settings</span>Admin: Policy Engine Settings</a>
+      <a class="nav-item" href="profile-intake-tab.html"><span class="material-symbols-rounded">badge</span>Profile: Intake Tab</a>
+      <a class="nav-item" href="profile-overview-tab.html"><span class="material-symbols-rounded">contact_page</span>Profile: Details Tab</a>
+      <a class="nav-item" href="portal-profile-tab.html"><span class="material-symbols-rounded">family_restroom</span>Portal: My Account</a>
+      <div class="nav-section">Billing Module</div>
+      <a class="nav-item" href="billing-dashboard.html"><span class="material-symbols-rounded">space_dashboard</span>Billing Dashboard</a>
+      <a class="nav-item active" href="billing-upcoming-billings.html"><span class="material-symbols-rounded">event_upcoming</span>Upcoming Billings</a>
+      <a class="nav-item" href="billing-failed-payments.html"><span class="material-symbols-rounded">error</span>Failed Payments</a>
+      <a class="nav-item" href="billing-member-billing.html"><span class="material-symbols-rounded">groups</span>Member Billing</a>
+      <a class="nav-item" href="billing-module-settings.html"><span class="material-symbols-rounded">settings</span>Module Settings</a>
+    </nav>
+    <div class="sidebar-foot">Prototype build · not production</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="search-input-wrap">
+        <span class="material-symbols-rounded">search</span>
+        <input class="search-input" type="text" placeholder="Search members, batches…" data-noop aria-label="Search members, batches">
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" data-noop aria-label="Notifications">
+          <span class="material-symbols-rounded">notifications</span>
+          <span class="notif-dot"></span>
+        </button>
+        <div class="user-avatar">PS</div>
+      </div>
+    </header>
+
+    <div class="page">
+      <div class="page-header">
+        <h1>Upcoming Billings</h1>
+        <p class="subtitle">Solar Swim · Fri 17 Apr 2026 · America/Los_Angeles · Batch B-2026-0420</p>
+      </div>
+
+      <div id="banner-root"></div>
+      <div id="kpi-root"></div>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Upcoming Charges Preview</h2>
+          <button class="btn btn-outlined" data-noop>
+            <span class="material-symbols-rounded" style="font-size:18px;">download</span>Export
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="segmented" role="tablist" id="segmented-root"></div>
+          <div class="table-scroll">
+            <table id="data-table">
+              <thead id="table-head"></thead>
+              <tbody id="table-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="footer-count" id="footer-count"></span>
+          <div class="pagination" id="pagination-root"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Single state object ----------
+  var state = {
+    bannerVisible: true,
+    segment: 'billed', // 'billed' | 'excluded'
+    page: 1
+  };
+
+  // ---------- Seed data — verbatim from spec §5 ----------
+  var billedRows = [
+    {
+      initials: 'JD', avatarBg: '#eff6ff', avatarColor: '#1d4ed8',
+      name: 'John Dawson', id: 'MEM-1042', plan: 'Annual Premium',
+      contractStart: 'Sat 20 Apr 2024', lastBilled: 'Sun 20 Apr 2025', nextBilling: 'Mon 20 Apr 2026',
+      lines: [ {label:'Annual renewal', amount:'$149.00'} ],
+      total: null, totalAmount: '$149.00', prorated: false
+    },
+    {
+      initials: 'TP', avatarBg: '#eff6ff', avatarColor: '#1d4ed8',
+      name: 'Tom Perez', id: 'MEM-1092', plan: 'Monthly Standard',
+      contractStart: 'Sun 12 Apr 2026', lastBilled: 'Never', nextBilling: 'Mon 20 Apr 2026',
+      lines: [ {label:'Prorated Apr 12–30 (19 days)', amount:'$18.99'}, {label:'Full month — May', amount:'$29.99'} ],
+      total: {label:'Total', amount:'$48.98'}, totalAmount: '$48.98', prorated: true
+    },
+    {
+      initials: 'KN', avatarBg: '#eff6ff', avatarColor: '#1d4ed8',
+      name: 'Karen Nguyen', id: 'MEM-1088', plan: 'Monthly Standard',
+      contractStart: 'Sun 20 Apr 2025', lastBilled: 'Fri 20 Mar 2026', nextBilling: 'Mon 20 Apr 2026',
+      lines: [ {label:'Full month — April', amount:'$29.99'} ],
+      total: null, totalAmount: '$29.99', prorated: false
+    },
+    {
+      initials: 'RL', avatarBg: '#eff6ff', avatarColor: '#1d4ed8',
+      name: 'Rachel Lee', id: 'MEM-1095', plan: 'Annual Premium',
+      contractStart: 'Sun 20 Apr 2025', lastBilled: 'Sun 20 Apr 2025', nextBilling: 'Mon 20 Apr 2026',
+      lines: [ {label:'Annual renewal', amount:'$149.00'} ],
+      total: null, totalAmount: '$149.00', prorated: false
+    },
+    {
+      initials: 'NF', avatarBg: '#eff6ff', avatarColor: '#1d4ed8',
+      name: 'Nora Feld', id: 'MEM-1147', plan: 'Annual Premium',
+      contractStart: 'Wed 15 Apr 2026', lastBilled: 'Never', nextBilling: 'Mon 20 Apr 2026',
+      lines: [ {label:'Annual — first term', amount:'$149.00'}, {label:'Registration fee', amount:'$25.00'} ],
+      total: {label:'Total', amount:'$174.00'}, totalAmount: '$174.00', prorated: false
+    }
+  ];
+
+  var excludedRows = [
+    {
+      initials:'AB', avatarBg:'#f1f5f9', avatarColor:'#64748b',
+      name:'Andre Bell', id:'MEM-1104', plan:'Monthly Standard', nextBilling:'Mon 20 Apr 2026',
+      excludedBy:'Billing hold', detail:'Hold placed Tue 14 Apr — card dispute under review', wouldHaveBeen:'$29.99'
+    },
+    {
+      initials:'NR', avatarBg:'#f1f5f9', avatarColor:'#64748b',
+      name:'Nadia Roy', id:'MEM-1112', plan:'Monthly Standard', nextBilling:'Mon 20 Apr 2026',
+      excludedBy:'Auto-renew off', detail:'Member opted out of automatic renewal on Thu 9 Apr', wouldHaveBeen:'$29.99'
+    },
+    {
+      initials:'CB', avatarBg:'#f1f5f9', avatarColor:'#64748b',
+      name:'Colin Byrne', id:'MEM-1098', plan:'Annual Premium', nextBilling:'—',
+      excludedBy:'Paid in full', detail:'Contract type PAY_IN_FULL is never included in a recurring run', wouldHaveBeen:'$149.00'
+    },
+    {
+      initials:'RA', avatarBg:'#f1f5f9', avatarColor:'#64748b',
+      name:'Ruth Alvarez', id:'MEM-1141', plan:'Monthly Standard', nextBilling:'Mon 20 Apr 2026',
+      excludedBy:'Billing disabled', detail:'billing_enabled is off for this subscription', wouldHaveBeen:'$29.99'
+    },
+    {
+      initials:'TL', avatarBg:'#f1f5f9', avatarColor:'#64748b',
+      name:'Theo Lang', id:'MEM-1150', plan:'Monthly Standard', nextBilling:'Mon 20 Apr 2026',
+      excludedBy:'Below minimum', detail:'Balance $0.50 is under the $1.00 minimum amount threshold', wouldHaveBeen:'$0.50'
+    },
+    {
+      initials:'ID', avatarBg:'#f1f5f9', avatarColor:'#64748b',
+      name:'Ines Duval', id:'MEM-1155', plan:'Monthly Standard', nextBilling:'Mon 20 Apr 2026',
+      excludedBy:'No stored card', detail:'No card on file — member must update payment method', wouldHaveBeen:'$29.99'
+    },
+    {
+      initials:'HM', avatarBg:'#f1f5f9', avatarColor:'#64748b',
+      name:'Hugo Marsh', id:'MEM-1162', plan:'Annual Premium', nextBilling:'Tue 21 Apr 2026',
+      excludedBy:'Outside window', detail:"Next billing date falls after this run's date", wouldHaveBeen:'$149.00'
+    }
+  ];
+
+  var PAGE_SIZE = 5;
+  var TOTAL_BILLED = 89;
+  var TOTAL_EXCLUDED = 7;
+
+  // ---------- Render helpers ----------
+  function escapeHtml(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function avatarHtml(row){
+    return '<span class="avatar" style="background:' + row.avatarBg + ';color:' + row.avatarColor + ';">' + escapeHtml(row.initials) + '</span>';
+  }
+
+  function memberCellHtml(row){
+    return '<div class="member-cell">' + avatarHtml(row) +
+      '<div><div class="member-name">' + escapeHtml(row.name) + '</div>' +
+      '<div class="member-id">' + escapeHtml(row.id) + '</div></div></div>';
+  }
+
+  function dateOrNeverHtml(value){
+    if(value === 'Never'){
+      return '<span class="dash-italic">Never</span>';
+    }
+    return escapeHtml(value);
+  }
+
+  function breakdownHtml(row){
+    var html = '';
+    row.lines.forEach(function(line){
+      html += '<div class="breakdown-line"><span class="label">' + escapeHtml(line.label) + '</span>' +
+        '<span class="leader"></span><span class="amount">' + escapeHtml(line.amount) + '</span></div>';
+    });
+    if(row.total){
+      html += '<div class="breakdown-total"><span class="label">' + escapeHtml(row.total.label) + '</span>' +
+        '<span class="leader"></span><span class="amount">' + escapeHtml(row.total.amount) + '</span></div>';
+    }
+    return html;
+  }
+
+  function renderBanner(){
+    var root = document.getElementById('banner-root');
+    if(!state.bannerVisible){
+      root.innerHTML = '';
+      return;
+    }
+    root.innerHTML =
+      '<div class="banner">' +
+        '<span class="material-symbols-rounded lead" aria-hidden="true">info</span>' +
+        '<span class="banner-text">Preview of batch <strong>B-2026-0420</strong>, scheduled ' +
+        '<strong>Mon 20 Apr 2026, 06:00 AM</strong>. Amounts include proration where applicable. ' +
+        'Nothing on this screen has been charged.</span>' +
+        '<button class="banner-close" id="banner-close-btn" aria-label="Dismiss banner">&times;</button>' +
+      '</div>';
+    document.getElementById('banner-close-btn').addEventListener('click', function(){
+      state.bannerVisible = false;
+      render();
+    });
+  }
+
+  function renderKpi(){
+    var root = document.getElementById('kpi-root');
+    root.innerHTML =
+      '<div class="kpi-strip">' +
+        '<div class="kpi-tile">' +
+          '<div class="kpi-icon" style="background:var(--info-bg);"><span class="material-symbols-rounded" style="color:var(--info-dark);">groups</span></div>' +
+          '<div class="kpi-body">' +
+            '<p class="kpi-label">Members to bill</p>' +
+            '<p class="kpi-value">89</p>' +
+            '<p class="kpi-footnote"><button class="kpi-link" id="kpi-excluded-link">7 excluded by rules</button></p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="kpi-tile">' +
+          '<div class="kpi-icon" style="background:var(--success-bg);"><span class="material-symbols-rounded" style="color:var(--success-dark);">attach_money</span></div>' +
+          '<div class="kpi-body">' +
+            '<p class="kpi-label">Estimated total</p>' +
+            '<p class="kpi-value">$12,430.00</p>' +
+            '<p class="kpi-footnote">includes $18.99 proration</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="kpi-tile">' +
+          '<div class="kpi-icon" style="background:#fef3c7;"><span class="material-symbols-rounded" style="color:#b45309;">event</span></div>' +
+          '<div class="kpi-body">' +
+            '<p class="kpi-label">Scheduled date</p>' +
+            '<p class="kpi-value">Mon 20 Apr</p>' +
+            '<p class="kpi-footnote">06:00 AM · Sat/Sun skipped</p>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    document.getElementById('kpi-excluded-link').addEventListener('click', function(e){
+      e.preventDefault();
+      state.segment = 'excluded';
+      state.page = 1;
+      render();
+    });
+  }
+
+  function renderSegmented(){
+    var root = document.getElementById('segmented-root');
+    root.innerHTML =
+      '<button class="segment' + (state.segment === 'billed' ? ' active' : '') + '" role="tab" ' +
+        'aria-selected="' + (state.segment === 'billed') + '" data-segment="billed">Will be billed (89)</button>' +
+      '<button class="segment' + (state.segment === 'excluded' ? ' active' : '') + '" role="tab" ' +
+        'aria-selected="' + (state.segment === 'excluded') + '" data-segment="excluded">Excluded (7)</button>';
+    root.querySelectorAll('.segment').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        state.segment = btn.getAttribute('data-segment');
+        state.page = 1;
+        render();
+      });
+    });
+  }
+
+  function renderTable(){
+    var head = document.getElementById('table-head');
+    var body = document.getElementById('table-body');
+
+    if(state.segment === 'billed'){
+      head.innerHTML =
+        '<tr>' +
+          '<th style="width:200px;">Member</th>' +
+          '<th style="width:150px;">Membership Plan</th>' +
+          '<th style="width:130px;">Contract Start</th>' +
+          '<th style="width:130px;">Last Billed</th>' +
+          '<th style="width:140px;">Next Billing Date</th>' +
+          '<th style="min-width:280px;">Charge Breakdown</th>' +
+          '<th class="align-right" style="width:120px;">Total Amount</th>' +
+        '</tr>';
+
+      var rowsHtml = '';
+      billedRows.forEach(function(row){
+        var totalClass = row.prorated ? 'total-amount prorated' : 'total-amount plain';
+        rowsHtml +=
+          '<tr>' +
+            '<td>' + memberCellHtml(row) + '</td>' +
+            '<td>' + escapeHtml(row.plan) + '</td>' +
+            '<td>' + escapeHtml(row.contractStart) + '</td>' +
+            '<td>' + dateOrNeverHtml(row.lastBilled) + '</td>' +
+            '<td>' + escapeHtml(row.nextBilling) + '</td>' +
+            '<td>' + breakdownHtml(row) + '</td>' +
+            '<td class="align-right"><span class="' + totalClass + '">' + escapeHtml(row.totalAmount) + '</span></td>' +
+          '</tr>';
+      });
+      body.innerHTML = rowsHtml;
+    } else {
+      head.innerHTML =
+        '<tr>' +
+          '<th style="width:200px;">Member</th>' +
+          '<th style="width:150px;">Membership Plan</th>' +
+          '<th style="width:140px;">Next Billing Date</th>' +
+          '<th style="width:200px;">Excluded By</th>' +
+          '<th style="min-width:220px;">Detail</th>' +
+          '<th class="align-right" style="width:120px;">Would Have Been</th>' +
+        '</tr>';
+
+      var exRowsHtml = '';
+      excludedRows.forEach(function(row){
+        exRowsHtml +=
+          '<tr>' +
+            '<td>' + memberCellHtml(row) + '</td>' +
+            '<td>' + escapeHtml(row.plan) + '</td>' +
+            '<td>' + escapeHtml(row.nextBilling) + '</td>' +
+            '<td><span class="chip chip-muted">' + escapeHtml(row.excludedBy) + '</span></td>' +
+            '<td>' + escapeHtml(row.detail) + '</td>' +
+            '<td class="align-right"><span class="would-have-been">' + escapeHtml(row.wouldHaveBeen) + '</span></td>' +
+          '</tr>';
+      });
+      body.innerHTML = exRowsHtml;
+    }
+  }
+
+  function renderFooter(){
+    var countEl = document.getElementById('footer-count');
+    var pagRoot = document.getElementById('pagination-root');
+
+    if(state.segment === 'billed'){
+      var start = (state.page - 1) * PAGE_SIZE + 1;
+      var end = Math.min(state.page * PAGE_SIZE, TOTAL_BILLED);
+      countEl.textContent = 'Showing ' + start + '–' + end + ' of ' + TOTAL_BILLED + ' members';
+
+      var pagHtml = '';
+      [1,2,3].forEach(function(p){
+        pagHtml += '<button class="page-btn' + (state.page === p ? ' active' : '') + '" data-page="' + p + '">' + p + '</button>';
+      });
+      pagRoot.innerHTML = pagHtml;
+      pagRoot.querySelectorAll('.page-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          state.page = parseInt(btn.getAttribute('data-page'), 10);
+          render();
+        });
+      });
+    } else {
+      countEl.textContent = 'Showing 1–' + TOTAL_EXCLUDED + ' of ' + TOTAL_EXCLUDED + ' members';
+      pagRoot.innerHTML = '';
+    }
+  }
+
+  function render(){
+    renderBanner();
+    renderKpi();
+    renderSegmented();
+    renderTable();
+    renderFooter();
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1667 @@
+<!--
+  Zalexy Prototype — Voucher Management
+  Spec:   ai-workspace/prototypes/staff/voucher-management.md
+  Design: ai-workspace/prototypes/_shared/design-system.md
+  Static prototype. Not production code. No app dependencies.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zalexy — Voucher Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{
+  --primary:#334155; --primary-light:#475569; --primary-dark:#1e293b;
+  --secondary:#10b981; --secondary-light:#34d399; --secondary-dark:#059669;
+  --success:#10b981; --success-bg:#d1fae5; --success-dark:#047857;
+  --info:#3b82f6; --info-bg:#eff6ff; --info-dark:#1d4ed8; --info-hover:#2563eb;
+  --bg-default:#f8fafc; --bg-paper:#ffffff;
+  --text-primary:#0f172a; --text-secondary:#64748b;
+  --border:#f1f5f9; --border-input:#cbd5e1; --border-input-hover:#94a3b8;
+  --hover-row:#f1f5f9; --action-hover:rgba(71,85,105,.04); --action-selected:rgba(71,85,105,.08);
+  --danger:#ef4444; --warning:#f59e0b;
+  --radius-card:10px; --radius-base:8px; --radius-control:6px; --radius-chip:4px;
+  --shadow-card:0 2px 4px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.03);
+  --shadow-1:0 1px 3px rgba(0,0,0,.05);
+  --shadow-appbar:0 1px 1px rgba(51,65,85,.03);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Inter","Roboto","Helvetica","Arial",sans-serif;color:var(--text-primary);}
+button,input,select,textarea{font-family:inherit;}
+.app{display:flex;height:100vh;overflow:hidden;}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px;}
+button{cursor:pointer;}
+
+/* ---------- Sidebar ---------- */
+.sidebar{width:240px;flex:0 0 240px;background:var(--primary-dark);color:#f8fafc;display:flex;flex-direction:column;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:10px;padding:20px 20px 16px;text-decoration:none;color:inherit;background:none;border:none;text-align:left;}
+.logo svg{flex:0 0 auto;}
+.logo span{font-weight:700;font-size:1.05rem;letter-spacing:.02em;}
+.nav{padding:8px 12px;display:flex;flex-direction:column;gap:2px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-base);color:#f8fafc;font-size:.9rem;font-weight:500;text-decoration:none;cursor:pointer;background:none;border:none;width:100%;text-align:left;}
+.nav-item .material-symbols-rounded{font-size:20px;min-width:24px;color:rgba(248,250,252,.7);}
+.nav-item.disabled{opacity:.42;cursor:not-allowed;}
+.nav-item:not(.disabled):hover{background:rgba(248,250,252,.08);}
+.nav-item.active{background:rgba(248,250,252,.14);}
+.nav-item.active .material-symbols-rounded{color:#f8fafc;}
+.nav-parent{display:flex;align-items:center;gap:12px;padding:10px 12px;color:#f8fafc;font-size:.9rem;font-weight:500;opacity:.85;}
+.nav-parent .material-symbols-rounded{font-size:20px;min-width:24px;color:rgba(248,250,252,.7);}
+.nav-subsection{margin:4px 12px 2px 44px;font-size:.68rem;font-weight:700;letter-spacing:.06em;color:rgba(248,250,252,.45);text-transform:uppercase;}
+.nav-child{padding-left:44px;}
+.sidebar-foot{padding:14px 20px;font-size:.7rem;color:rgba(248,250,252,.4);border-top:1px solid rgba(248,250,252,.08);}
+
+/* ---------- Main ---------- */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg-default);}
+.content{flex:1;overflow-y:auto;padding:24px;}
+.content-inner{max-width:1440px;margin:0 auto;}
+.breadcrumb{font-size:.8rem;color:var(--text-secondary);margin-bottom:8px;}
+.breadcrumb a,.breadcrumb button{color:var(--text-secondary);text-decoration:none;background:none;border:none;padding:0;font-size:.8rem;cursor:pointer;}
+.breadcrumb a:hover,.breadcrumb button:hover{text-decoration:underline;}
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;flex-wrap:wrap;}
+.page-header h1{font-size:1.75rem;font-weight:600;letter-spacing:-.01em;margin:0 0 4px;}
+.page-header .subtitle{font-size:.8rem;font-weight:400;color:var(--text-secondary);margin:0;}
+.header-actions{display:flex;gap:12px;flex:0 0 auto;}
+
+.btn-primary{background:var(--info);color:#fff;border:none;border-radius:var(--radius-control);padding:8px 16px;font-weight:600;font-size:.875rem;box-shadow:none;}
+.btn-primary:hover{background:var(--info-hover);}
+.btn-secondary{background:var(--secondary);color:#fff;border:none;border-radius:var(--radius-control);padding:8px 16px;font-weight:600;font-size:.875rem;box-shadow:none;}
+.btn-secondary:hover{background:var(--secondary-dark);}
+.btn-outline{background:#fff;color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-control);padding:8px 16px;font-weight:600;font-size:.875rem;box-shadow:none;}
+.btn-outline:hover{border-color:var(--primary);background:var(--action-hover);}
+.btn-outline-danger{background:#fff;color:#b91c1c;border:1px solid #fecaca;border-radius:var(--radius-control);padding:8px 16px;font-weight:600;font-size:.875rem;box-shadow:none;}
+.btn-outline-danger:hover{background:#fee2e2;}
+.btn-primary:disabled,.btn-outline-danger:disabled,.btn-outline:disabled{opacity:.5;cursor:not-allowed;}
+.btn-xs{height:30px;padding:0 12px;font-size:.8rem;font-weight:600;border-radius:var(--radius-control);box-shadow:none;}
+.btn-xs.outline{background:#fff;border:1px solid var(--border);color:var(--text-primary);}
+.btn-xs.outline:hover{border-color:var(--primary);background:var(--action-hover);}
+.btn-xs.primary{background:var(--info);border:none;color:#fff;}
+.btn-xs.primary:hover{background:var(--info-hover);}
+.btn-xs.danger{background:#fff;border:1px solid #fecaca;color:#b91c1c;}
+.btn-xs.danger:hover{background:#fee2e2;}
+
+/* ---------- Banner ---------- */
+.banner{display:flex;align-items:center;gap:10px;border-radius:var(--radius-base);padding:12px 16px;font-size:.875rem;margin-bottom:20px;}
+.banner.success{background:var(--success-bg);color:var(--success-dark);}
+.banner.success .material-symbols-rounded{color:var(--success-dark);}
+.banner-text{flex:1;}
+.banner-close{background:none;border:none;cursor:pointer;display:flex;align-items:center;padding:2px;border-radius:4px;box-shadow:none;color:inherit;}
+
+/* ---------- KPI strip ---------- */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:20px;}
+@media (max-width:1280px){.kpi-grid{grid-template-columns:repeat(3,1fr);}}
+@media (max-width:720px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
+.kpi-tile{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);border:1.5px solid transparent;padding:16px 20px;display:flex;flex-direction:column;gap:6px;text-align:left;font:inherit;color:inherit;}
+.kpi-tile:hover{box-shadow:var(--shadow-1);}
+.kpi-tile.active{border-color:var(--info);background:var(--info-bg);}
+.kpi-label{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);}
+.kpi-value{font-size:1.75rem;font-weight:700;color:var(--text-primary);letter-spacing:-.02em;}
+
+/* ---------- Card / table ---------- */
+.card{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);}
+.filter-bar{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.filter-search{position:relative;width:320px;}
+.filter-search .material-symbols-rounded{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--text-secondary);}
+.filter-search input{width:100%;height:36px;padding:8px 12px 8px 34px;font-size:14px;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);}
+select,input[type=text],input[type=number],input[type=date],textarea{height:36px;padding:8px 12px;font-size:14px;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);}
+textarea{height:auto;resize:vertical;}
+select:hover,input:hover,textarea:hover{border-color:var(--border-input-hover);}
+select:focus,input:focus,textarea:focus{border-color:var(--primary);outline:none;}
+.filter-bar .btn-outline{margin-left:auto;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:.725rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);padding:12px 16px;border-bottom:1px solid var(--border);text-align:left;background:transparent;}
+td{font-size:.875rem;padding:16px;border-bottom:1px solid var(--border);color:var(--text-primary);vertical-align:top;}
+tbody tr{cursor:pointer;}
+tbody tr:hover td{background:var(--hover-row);}
+tbody tr:last-child td{border-bottom:0;}
+.cell-name{font-weight:600;font-size:.875rem;}
+.cell-sub{font-size:.8rem;color:var(--text-secondary);margin-top:2px;}
+.balance-text{font-weight:700;color:#1d4ed8;font-size:.875rem;}
+.balance-muted{color:var(--text-secondary);font-weight:400;font-size:.875rem;}
+.row-actions{display:flex;gap:8px;}
+.table-caption{padding:12px 20px;font-size:.8rem;color:var(--text-secondary);}
+
+.chip{height:24px;border-radius:var(--radius-chip);font-size:.75rem;font-weight:600;padding:0 8px;display:inline-flex;align-items:center;white-space:nowrap;}
+.chip-success{background:var(--success-bg);color:var(--success-dark);}
+.chip-info{background:var(--info-bg);color:var(--info-dark);}
+.chip-warning{background:#fef3c7;color:#b45309;}
+.chip-muted{background:#f1f5f9;color:var(--text-secondary);}
+.chip-danger{background:#fee2e2;color:#b91c1c;}
+.status-stack{display:flex;flex-direction:column;gap:4px;align-items:flex-start;}
+
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;gap:12px;color:var(--text-secondary);}
+.empty-state .material-symbols-rounded{font-size:32px;}
+
+/* ---------- Drawer ---------- */
+.drawer-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;z-index:50;}
+.drawer-backdrop.open{display:block;}
+.drawer{position:fixed;top:0;right:0;height:100%;width:560px;max-width:100%;background:#fff;border-radius:16px 0 0 16px;box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .18s ease;z-index:51;}
+.drawer.open{transform:translateX(0);}
+.drawer-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.eyebrow{font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);margin:0 0 4px;}
+.drawer-title{font-size:1.25rem;font-weight:600;margin:0 0 4px;}
+.drawer-sub{font-size:.8rem;color:var(--text-secondary);margin:0;}
+.icon-btn{background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;color:var(--text-secondary);box-shadow:none;}
+.icon-btn:hover{background:var(--action-hover);}
+.drawer-body{flex:1;overflow-y:auto;padding:20px 24px;}
+.drawer-footer{border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:flex-end;gap:12px;flex:0 0 auto;}
+
+.hold-banner{background:#fee2e2;border-left:3px solid var(--danger);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.hold-banner-text{font-size:.875rem;color:#7f1d1d;flex:1;}
+
+.metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.metric{display:flex;flex-direction:column;gap:4px;}
+.metric-label{font-size:.8rem;color:var(--text-secondary);}
+.metric-value{font-size:1.25rem;font-weight:700;color:var(--text-primary);}
+.unlimited-caption{font-size:.8rem;color:var(--text-secondary);margin:-10px 0 20px;}
+
+.section{margin-bottom:24px;}
+.section-title{font-size:.875rem;font-weight:600;margin:0 0 10px;color:var(--text-primary);text-transform:uppercase;letter-spacing:.04em;}
+.kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;}
+.kv-item{display:flex;flex-direction:column;gap:3px;}
+.kv-item.full{grid-column:1/-1;}
+.kv-label{font-size:.75rem;font-weight:600;color:var(--text-secondary);}
+.kv-value{font-size:.875rem;color:var(--text-primary);font-weight:600;}
+.kv-consequence{font-size:.78rem;color:var(--text-secondary);}
+
+.radio-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;}
+.radio-row .rc-body{display:flex;flex-direction:column;gap:1px;}
+.radio-row .rc-text{font-size:.8rem;font-weight:600;color:var(--text-primary);}
+.radio-row .rc-desc{font-size:.75rem;color:var(--text-secondary);}
+.footnote{font-size:.75rem;color:var(--text-secondary);margin-top:6px;}
+
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:.75rem;font-weight:600;margin:0 6px 6px 0;}
+.pill.on{background:var(--info-bg);color:var(--info-dark);}
+.pill.off{background:#f1f5f9;color:var(--text-secondary);}
+.pill-group-label{font-size:.72rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 6px;}
+.next-notif{font-size:.8rem;color:var(--text-secondary);margin-top:8px;}
+
+.chain{display:flex;flex-direction:column;}
+.chain-step{display:flex;gap:12px;position:relative;padding-bottom:18px;}
+.chain-step:last-child{padding-bottom:0;}
+.chain-step:not(:last-child):after{content:'';position:absolute;left:6px;top:16px;bottom:-2px;width:2px;background:var(--border);}
+.chain-dot{width:14px;height:14px;border-radius:50%;flex:0 0 auto;margin-top:2px;}
+.chain-dot.done{background:var(--success);}
+.chain-dot.current{background:var(--warning);}
+.chain-dot.future{background:#fff;border:2px solid #cbd5e1;}
+.chain-text{font-size:.875rem;color:var(--text-secondary);}
+.chain-text.done{color:var(--text-primary);}
+.chain-text.current{font-weight:600;color:var(--text-primary);}
+.chain-current-chip{margin-left:8px;background:#fef3c7;color:#b45309;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:10px;}
+
+.held-list{margin-top:14px;border-top:1px solid var(--border);}
+.held-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:.8rem;border-bottom:1px solid var(--border);}
+.ghost-chip{background:#fee2e2;color:#b91c1c;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:4px;}
+.confirmed-chip{background:var(--success-bg);color:var(--success-dark);font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:4px;}
+.chain-actions{display:flex;justify-content:flex-end;margin-top:14px;}
+
+.ledger-table{width:100%;border-collapse:collapse;}
+.ledger-table th{font-size:.68rem;padding:8px 10px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);border-bottom:1px solid var(--border);text-align:left;}
+.ledger-table td{font-size:.78rem;padding:9px 10px;border-bottom:1px solid var(--border);}
+.change-pos{color:var(--success-dark);font-weight:700;}
+.change-neg{color:#b91c1c;font-weight:700;}
+.change-zero{color:var(--text-secondary);}
+.ledger-summary{font-size:.8rem;color:var(--text-secondary);margin-top:10px;}
+
+.source-link{display:flex;align-items:center;gap:8px;color:var(--info-dark);font-weight:600;font-size:.875rem;background:none;border:none;cursor:pointer;padding:0;box-shadow:none;}
+.source-caption{font-size:.75rem;color:var(--text-secondary);margin-top:4px;}
+
+/* ---------- Modal ---------- */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:60;padding:20px;}
+.modal-backdrop.open{display:flex;}
+.modal{background:#fff;border-radius:var(--radius-card);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);width:560px;max-width:100%;max-height:88vh;display:flex;flex-direction:column;}
+.modal.wide{width:720px;}
+.modal.xwide{width:980px;}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.modal-header h4{font-size:1.25rem;font-weight:600;margin:0 0 4px;}
+.modal-header .subtitle{font-size:.8rem;color:var(--text-secondary);margin:0;}
+.modal-body{padding:20px 24px;overflow-y:auto;}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;flex:0 0 auto;}
+.modal-footer-right{display:flex;gap:12px;justify-content:flex-end;flex:1;}
+label{font-size:.75rem;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;}
+.required{color:var(--danger);font-weight:700;font-size:1.1em;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-field{display:flex;flex-direction:column;}
+.form-field.full{grid-column:1/-1;}
+.form-field select,.form-field input,.form-field textarea{width:100%;}
+.checkbox-list,.radio-list-inline{display:flex;flex-wrap:wrap;gap:12px;}
+.checkbox-item,.radio-item{display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:400;color:var(--text-primary);}
+.checkbox-item input,.radio-item input{width:auto;height:auto;}
+.radio-list{display:flex;flex-direction:column;gap:8px;}
+.info-banner{display:flex;gap:8px;background:var(--info-bg);color:var(--info-dark);padding:10px 14px;border-radius:var(--radius-base);font-size:.8rem;margin-bottom:16px;}
+.warning-banner{background:#fef3c7;color:#b45309;display:flex;gap:8px;padding:10px 14px;border-radius:var(--radius-base);font-size:.8rem;margin-bottom:16px;}
+.info-banner .material-symbols-rounded,.warning-banner .material-symbols-rounded{font-size:18px;flex:0 0 auto;}
+
+/* ---------- Import overlay ---------- */
+.step-header{display:flex;gap:4px;padding:16px 24px 0;border-bottom:1px solid var(--border);}
+.step-pill{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:.8rem;font-weight:600;color:var(--text-secondary);border-bottom:3px solid transparent;}
+.step-pill.active{color:var(--info-dark);border-color:var(--info);}
+.step-pill.done{color:var(--success-dark);}
+.step-num{width:20px;height:20px;border-radius:50%;background:#f1f5f9;display:inline-flex;align-items:center;justify-content:center;font-size:.68rem;}
+.step-pill.active .step-num{background:var(--info);color:#fff;}
+.step-pill.done .step-num{background:var(--success);color:#fff;}
+.tiles-row{display:flex;gap:12px;margin-bottom:16px;}
+.tile-sm{flex:1;background:var(--bg-default);border-radius:var(--radius-base);padding:12px 16px;text-align:center;}
+.tile-sm .val{font-size:1.25rem;font-weight:700;}
+.tile-sm .lbl{font-size:.68rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;}
+.segmented{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;}
+.seg-btn{padding:6px 12px;font-size:.78rem;border:1px solid var(--border-input);background:#fff;border-radius:var(--radius-control);box-shadow:none;}
+.seg-btn.active{background:var(--primary-dark);color:#fff;border-color:var(--primary-dark);}
+.decision-table th,.decision-table td{font-size:.76rem;padding:10px;}
+.duplicate-caption{font-size:.68rem;color:var(--text-secondary);margin-top:3px;}
+.apply-summary{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.apply-summary-row{display:flex;justify-content:space-between;font-size:.875rem;padding:10px 14px;background:var(--bg-default);border-radius:var(--radius-base);}
+.review-caption{font-size:.8rem;color:var(--text-secondary);}
+.checkbox-confirm{display:flex;align-items:center;gap:8px;font-size:.85rem;margin-bottom:4px;}
+.checkbox-confirm input{width:auto;height:auto;}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <button class="logo" id="logoHome" type="button" aria-label="Go to prototype gallery">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect width="28" height="28" rx="7" fill="#3b82f6"/>
+        <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>ZALEXY</span>
+    </button>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">point_of_sale</span>Point of Sale</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">groups</span>Leads</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">account_circle</span>Accounts</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Profiles</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">receipt_long</span>Transactions</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">request_quote</span>Invoices</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Staff</a>
+      <div class="nav-parent"><span class="material-symbols-rounded">event</span>Scheduling</div>
+      <div class="nav-subsection">Funding</div>
+      <a class="nav-item nav-child" id="navRc" href="rc-authorizations.html"><span class="material-symbols-rounded">assignment_turned_in</span>Regional Center</a>
+      <a class="nav-item nav-child active" href="voucher-management.html" aria-current="page"><span class="material-symbols-rounded">confirmation_number</span>Vouchers</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">settings</span>Settings</a>
+    </nav>
+    <div class="sidebar-foot">Prototype build · not production</div>
+  </aside>
+
+  <main class="main">
+    <div class="content">
+      <div class="content-inner">
+        <div class="breadcrumb">
+          <button id="crumbRoot" type="button">Accounts</button> › Funding › Vouchers
+        </div>
+
+        <div class="page-header">
+          <div>
+            <h1>Voucher Management</h1>
+            <p class="subtitle">Vendor authorization, value, validity, consumption and invoicing.</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn-primary" id="btnImport" type="button">Import Voucher CSV</button>
+            <button class="btn-outline" id="btnAdd" type="button">+ Add Voucher</button>
+          </div>
+        </div>
+
+        <div id="successBanner" class="banner success" style="display:none;">
+          <span class="material-symbols-rounded" aria-hidden="true">check_circle</span>
+          <span class="banner-text" id="successBannerText"></span>
+          <button class="banner-close" id="successBannerClose" type="button" aria-label="Dismiss"><span class="material-symbols-rounded">close</span></button>
+        </div>
+
+        <div class="kpi-grid" id="kpiGrid" role="group" aria-label="Voucher status filters"></div>
+
+        <div class="card">
+          <div class="filter-bar">
+            <div class="filter-search">
+              <span class="material-symbols-rounded" aria-hidden="true">search</span>
+              <label for="searchInput" class="visually-hidden" style="position:absolute;left:-9999px;">Search vouchers</label>
+              <input type="text" id="searchInput" placeholder="Search client, household, voucher ID, provider">
+            </div>
+            <select id="filterProvider" aria-label="Filter by provider">
+              <option value="">All Providers</option>
+              <option value="HomeLearn">HomeLearn</option>
+              <option value="ChoiceEd">ChoiceEd</option>
+              <option value="Golden Path Academy">Golden Path Academy</option>
+            </select>
+            <select id="filterValueType" aria-label="Filter by value type">
+              <option value="">All Value Types</option>
+              <option value="SESSION_COUNT">Session Count</option>
+              <option value="UNIT_COUNT">Unit Count</option>
+              <option value="DOLLAR_BUDGET">Dollar Budget</option>
+              <option value="UNLIMITED_WITHIN_VALIDITY">Unlimited</option>
+              <option value="SERVICE_AUTHORIZATION_ONLY">Auth Only</option>
+            </select>
+            <select id="filterValidity" aria-label="Filter by validity type">
+              <option value="">All Validity Types</option>
+              <option value="DATE_RANGE">Date Range</option>
+              <option value="CREDIT_BASED">Credit Based</option>
+              <option value="CLASS_COUNT_BASED">Class Count Based</option>
+              <option value="COMBINED">Combined</option>
+              <option value="MANUAL">Manual</option>
+            </select>
+            <select id="filterStatus" aria-label="Filter by status">
+              <option value="">All Statuses</option>
+              <option value="PENDING_REVIEW">Pending Review</option>
+              <option value="ACTIVE">Active</option>
+              <option value="LOW_BALANCE">Low Balance</option>
+              <option value="EXPIRING">Expiring</option>
+              <option value="EXHAUSTED">Exhausted</option>
+              <option value="EXPIRED">Expired</option>
+              <option value="REJECTED">Rejected</option>
+            </select>
+            <button class="btn-outline" id="btnClearFilters" type="button">Clear filters</button>
+          </div>
+          <div id="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Client / Household</th>
+                  <th>Voucher ID</th>
+                  <th>Provider</th>
+                  <th>Scope</th>
+                  <th>Coverage</th>
+                  <th>Value Type</th>
+                  <th>Balance</th>
+                  <th>Validity</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+          <div class="table-caption" id="tableCaption"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Drawer -->
+<div class="drawer-backdrop" id="drawerBackdrop">
+  <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <div id="drawerContent"></div>
+  </div>
+</div>
+
+<!-- Approve / Reject modal -->
+<div class="modal-backdrop" id="reviewModalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" id="reviewModal">
+    <div id="reviewModalContent"></div>
+  </div>
+</div>
+
+<!-- Add Voucher modal -->
+<div class="modal-backdrop" id="addModalBackdrop">
+  <div class="modal wide" role="dialog" aria-modal="true">
+    <div id="addModalContent"></div>
+  </div>
+</div>
+
+<!-- Import overlay -->
+<div class="modal-backdrop" id="importBackdrop">
+  <div class="modal xwide" role="dialog" aria-modal="true">
+    <div id="importContent"></div>
+  </div>
+</div>
+
+<!-- Match Client modal -->
+<div class="modal-backdrop" id="matchModalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div id="matchModalContent"></div>
+  </div>
+</div>
+
+<script>
+// =====================================================================
+// Lookup tables — every enum value has a consequence sentence available,
+// not only the ones used by seeded vouchers.
+// =====================================================================
+var VALUE_TYPE_LABEL = {
+  SESSION_COUNT: 'Session Count',
+  UNIT_COUNT: 'Unit Count',
+  DOLLAR_BUDGET: 'Dollar Budget',
+  UNLIMITED_WITHIN_VALIDITY: 'Unlimited',
+  SERVICE_AUTHORIZATION_ONLY: 'Auth Only'
+};
+var VALUE_TYPE_CONSEQUENCE = {
+  SESSION_COUNT: 'Balance is counted in sessions, one session per attended booking.',
+  UNIT_COUNT: 'Balance is counted in units, one unit per attended session.',
+  DOLLAR_BUDGET: 'Balance is counted in dollars against vendor invoices.',
+  UNLIMITED_WITHIN_VALIDITY: 'No unit or dollar cap applies within the validity window.',
+  SERVICE_AUTHORIZATION_ONLY: 'This voucher authorizes service without tracking a numeric balance.'
+};
+var VALIDITY_TYPE_LABEL = {
+  DATE_RANGE: 'Date Range',
+  CREDIT_BASED: 'Credit Based',
+  CLASS_COUNT_BASED: 'Class Count Based',
+  COMBINED: 'Combined',
+  MANUAL: 'Manual'
+};
+var VALIDITY_TYPE_CONSEQUENCE = {
+  DATE_RANGE: 'Expires on the valid-to date regardless of usage.',
+  CREDIT_BASED: 'Expires once the unit or dollar limit is consumed, regardless of date.',
+  CLASS_COUNT_BASED: 'Expires once the configured class count is reached.',
+  COMBINED: null, // computed per-voucher, see validityConsequence()
+  MANUAL: 'Expires only when a Billing Admin manually closes the voucher.'
+};
+var CARRY_FORWARD_LABEL = {
+  NONE: 'None',
+  TO_NEXT_AUTHORIZATION: 'To Next Authorization',
+  UNTIL_EXPIRATION: 'Until Expiration',
+  MANUAL_APPROVAL: 'Manual Approval'
+};
+var CARRY_FORWARD_CONSEQUENCE = {
+  NONE: 'Unused balance is lost at expiry.',
+  TO_NEXT_AUTHORIZATION: 'Unused balance moves to the next approved voucher for this client.',
+  UNTIL_EXPIRATION: 'Unused balance stays spendable until the validity date, ignoring the period boundary.',
+  MANUAL_APPROVAL: 'Unused balance is held for a Billing Admin to carry forward by hand.'
+};
+var INVOICE_BASIS_OPTIONS = [
+  {value:'ATTENDED_SESSIONS', label:'Attended Sessions', consequence:'Invoice on valid billable attendance.'},
+  {value:'UNITS_CONSUMED', label:'Units Consumed', consequence:'Invoice on entitlement units consumed.'},
+  {value:'CALENDAR_MONTH', label:'Calendar Month', consequence:'Invoice on monthly authorization or budget rules.'}
+];
+var INVOICE_GROUPING_OPTIONS = [
+  {value:'PER_STUDENT', label:'Per Student', consequence:'One invoice line per student.'},
+  {value:'CONSOLIDATED_MONTHLY', label:'Consolidated Monthly', consequence:'One monthly invoice for the whole vendor.'},
+  {value:'BOTH', label:'Both', consequence:'Vendor receives both a per-student breakdown and a monthly consolidation.'}
+];
+var STATUS_META = {
+  PENDING_REVIEW: {label:'Pending Review', chip:'chip-warning'},
+  ACTIVE: {label:'Active', chip:'chip-success'},
+  LOW_BALANCE: {label:'Low Balance', chip:'chip-warning'},
+  EXPIRING: {label:'Expiring', chip:'chip-warning'},
+  EXHAUSTED: {label:'Exhausted', chip:'chip-muted'},
+  EXPIRED: {label:'Expired', chip:'chip-danger'},
+  REJECTED: {label:'Rejected', chip:'chip-danger'}
+};
+var SCOPE_LABEL = {
+  INDIVIDUAL_CLIENT: 'Individual',
+  HOUSEHOLD_SHARED: 'Household',
+  SELECTED_FAMILY_MEMBERS: 'Selected members'
+};
+var NOTIF_TIMINGS = ['30d','14d','7d','1d','on-expiry'];
+var NOTIF_TIMING_LABEL = {'30d':'30 Days','14d':'14 Days','7d':'7 Days','1d':'1 Day','on-expiry':'On Expiration'};
+var NOTIF_TRIGGERS = [3,2,1,0];
+var NOTIF_CHANNELS = ['Parent Email','Parent SMS','Staff Email','Dashboard Alert'];
+var CHAIN_STAGES = [
+  'Voucher expires',
+  'Past bookings remain',
+  'Future recurring bookings become GHOST / FUNDING HOLD',
+  'Parent and staff notified',
+  'New voucher added',
+  'Eligibility recalculated',
+  'Future bookings reconfirm'
+];
+
+function esc(s){ return (s === null || s === undefined) ? '' : String(s); }
+
+function validityConsequence(v){
+  if (v.validityType === 'COMBINED') {
+    var unit = v.valueType === 'UNIT_COUNT' ? 'units' : (v.valueType === 'SESSION_COUNT' ? 'sessions' : 'units');
+    return 'Expires ' + v.validTo + ' or when ' + v.unitLimit + ' ' + unit + ' are consumed, whichever comes first.';
+  }
+  return VALIDITY_TYPE_CONSEQUENCE[v.validityType];
+}
+
+function assignmentConsequence(v){
+  if (v.assignment === 'INDIVIDUAL_CLIENT') return 'Only ' + v.clientName + ' may spend this balance.';
+  if (v.assignment === 'HOUSEHOLD_SHARED') return 'Any member of the ' + v.householdName + ' may spend this balance.';
+  return 'Only the listed members of the ' + v.householdName + ' may spend this balance.';
+}
+
+function balanceInfo(v){
+  if (v.valueType === 'UNLIMITED_WITHIN_VALIDITY') return {text:'Unlimited', muted:true};
+  if (v.valueType === 'SERVICE_AUTHORIZATION_ONLY') return {text:'Authorization only', muted:true};
+  if (v.valueType === 'DOLLAR_BUDGET') return {text:'Balance: $' + v.available + ' / $' + v.authorized, muted:false};
+  var unit = v.valueType === 'UNIT_COUNT' ? 'units' : (v.valueType === 'SESSION_COUNT' ? 'sessions' : 'units');
+  return {text:'Balance: ' + v.available + ' / ' + v.authorized + ' ' + unit, muted:false};
+}
+
+// =====================================================================
+// Seed data — verbatim from spec §11
+// =====================================================================
+var vouchers = [
+  {
+    id:'HS-4482', isHousehold:true, householdName:'Garcia Household', clientName:'Maria Garcia',
+    coveredMembers:['Maria Garcia','Diego Garcia'], provider:'HomeLearn', assignment:'HOUSEHOLD_SHARED',
+    coverageText:'Swim Group + Semi',
+    serviceCoverageMode:'selected', serviceCoverageList:['Swim'],
+    classTypeCoverageMode:'selected', classTypeCoverageList:['Group','Semi-Private'],
+    valueType:'UNIT_COUNT', authorized:8, reserved:1, used:3, available:4,
+    validityType:'COMBINED', validFrom:'Apr 1, 2026', validTo:'Apr 30, 2026', unitLimit:8,
+    validityDisplay:'Apr 30 OR 8 units',
+    carryForward:'NONE', invoiceBasis:'ATTENDED_SESSIONS', invoiceGrouping:'BOTH',
+    notifTimings:['14d','7d','on-expiry'], notifTriggers:[2,0], notifChannels:['Parent Email','Dashboard Alert'],
+    nextNotification:'Apr 23, 2026 (7 days before expiry) → Parent Email, Dashboard Alert',
+    sourceFile:'HOMELEARN-VOUCHERS-APR2026.csv', sourceRow:7, batch:'IMP-0412', importedDate:'Apr 1, 2026',
+    status:'ACTIVE', fundingHold:false,
+    ledger:[
+      {date:'Apr 1', type:'Voucher Authorization', source:'HS-4482', change:'+8', changeType:'pos', reserved:0, available:8, reason:'Authorization approved', by:'Rosanna'},
+      {date:'Apr 2', type:'Reserve', source:'HS-4482', change:'0', changeType:'zero', reserved:1, available:7, reason:'Maria — future #BK-122', by:'System'},
+      {date:'Apr 3', type:'Consume', source:'HS-4482', change:'−1', changeType:'neg', reserved:0, available:7, reason:'Maria — attended #BK-122', by:'System'},
+      {date:'Apr 8', type:'Reserve', source:'HS-4482', change:'0', changeType:'zero', reserved:1, available:6, reason:'Diego — future #BK-131', by:'System'},
+      {date:'Apr 9', type:'Consume', source:'HS-4482', change:'−1', changeType:'neg', reserved:0, available:6, reason:'Diego — attended #BK-131', by:'System'},
+      {date:'Apr 10', type:'Make-Up Create', source:'MU-00921', change:'+1 MU', changeType:'zero', reserved:0, available:6, reason:'Early cancel #BK-128', by:'System'},
+      {date:'Apr 14', type:'Consume', source:'HS-4482', change:'−1', changeType:'neg', reserved:0, available:5, reason:'Maria — attended #BK-138', by:'System'},
+      {date:'Apr 15', type:'Correction', source:'HS-4482', change:'−1', changeType:'neg', reserved:0, available:4, reason:'Duplicate attendance reversed', by:'Rosanna'},
+      {date:'Apr 21', type:'Reserve', source:'HS-4482', change:'0', changeType:'zero', reserved:1, available:4, reason:'Maria — future #BK-145', by:'System'}
+    ]
+  },
+  {
+    id:'HS-7781', isHousehold:false, clientName:'Luke Bell', provider:'ChoiceEd', assignment:'INDIVIDUAL_CLIENT',
+    coverageText:'Swim',
+    serviceCoverageMode:'selected', serviceCoverageList:['Swim'],
+    classTypeCoverageMode:'all', classTypeCoverageList:[],
+    valueType:'DOLLAR_BUDGET', authorized:500, reserved:40, used:310, available:150,
+    validityType:'CREDIT_BASED', unitLimit:500,
+    validityDisplay:'Credit-based',
+    carryForward:'NONE', invoiceBasis:'UNITS_CONSUMED', invoiceGrouping:'PER_STUDENT',
+    notifTimings:['30d'], notifTriggers:[3,1], notifChannels:['Parent Email','Parent SMS'],
+    nextNotification:'Balance ≤ 1 credit ($100) → Parent Email, Parent SMS',
+    sourceFile:'CHOICEED-VOUCHERS-MAR2026.csv', sourceRow:3, batch:'IMP-0388', importedDate:'Mar 3, 2026',
+    status:'LOW_BALANCE', fundingHold:false,
+    ledger:[
+      {date:'Jan 1', type:'Voucher Authorization', source:'HS-7781', change:'+$500', changeType:'pos', reserved:0, available:500, reason:'Authorization approved', by:'Rosanna'},
+      {date:'Feb 10', type:'Consume', source:'HS-7781', change:'−$150', changeType:'neg', reserved:0, available:350, reason:'Luke — attended sessions, Jan', by:'System'},
+      {date:'Mar 10', type:'Consume', source:'HS-7781', change:'−$160', changeType:'neg', reserved:0, available:190, reason:'Luke — attended sessions, Feb', by:'System'},
+      {date:'Apr 5', type:'Reserve', source:'HS-7781', change:'$0', changeType:'zero', reserved:40, available:150, reason:'Luke — future #BK-301', by:'System'}
+    ]
+  },
+  {
+    id:'HS-9910', isHousehold:false, clientName:'Priya Raman', provider:'HomeLearn', assignment:'INDIVIDUAL_CLIENT',
+    coverageText:'All services',
+    serviceCoverageMode:'all', serviceCoverageList:[],
+    classTypeCoverageMode:'all', classTypeCoverageList:[],
+    valueType:'SESSION_COUNT', authorized:12, reserved:0, used:0, available:12,
+    validityType:'DATE_RANGE', validFrom:'May 1, 2026', validTo:'Jul 31, 2026',
+    validityDisplay:'May 1 – Jul 31',
+    carryForward:'TO_NEXT_AUTHORIZATION', invoiceBasis:'ATTENDED_SESSIONS', invoiceGrouping:'CONSOLIDATED_MONTHLY',
+    notifTimings:['30d','7d'], notifTriggers:[1], notifChannels:['Parent Email'],
+    nextNotification:'Jul 24, 2026 (7 days before expiry) → Parent Email',
+    sourceFile:'HOMELEARN-VOUCHERS-APR2026.csv', sourceRow:12, batch:'IMP-0415', importedDate:'Apr 10, 2026',
+    status:'PENDING_REVIEW', fundingHold:false,
+    ledger:[
+      {date:'Apr 10', type:'Voucher Authorization', source:'HS-9910', change:'Pending', changeType:'zero', reserved:0, available:'Pending', reason:'Submitted for review', by:'System'}
+    ]
+  },
+  {
+    id:'HS-6120', isHousehold:true, householdName:'Okafor Household', clientName:'Amara Okafor',
+    coveredMembers:['Amara Okafor','Chidi Okafor'], provider:'Golden Path Academy', assignment:'SELECTED_FAMILY_MEMBERS',
+    coverageText:'Swim Group',
+    serviceCoverageMode:'selected', serviceCoverageList:['Swim'],
+    classTypeCoverageMode:'selected', classTypeCoverageList:['Group'],
+    valueType:'UNIT_COUNT', authorized:16, reserved:0, used:16, available:0,
+    validityType:'DATE_RANGE', validFrom:'Jan 1, 2026', validTo:'Mar 31, 2026',
+    validityDisplay:'Jan 1 – Mar 31',
+    carryForward:'UNTIL_EXPIRATION', invoiceBasis:'CALENDAR_MONTH', invoiceGrouping:'BOTH',
+    notifTimings:['on-expiry'], notifTriggers:[0], notifChannels:['Staff Email'],
+    nextNotification:'None — voucher already exhausted',
+    sourceFile:'GOLDENPATH-VOUCHERS-DEC2025.csv', sourceRow:5, batch:'IMP-0350', importedDate:'Dec 20, 2025',
+    status:'EXHAUSTED', fundingHold:false,
+    ledger:[
+      {date:'Jan 1', type:'Voucher Authorization', source:'HS-6120', change:'+16', changeType:'pos', reserved:0, available:16, reason:'Authorization approved', by:'Rosanna'},
+      {date:'Feb 1', type:'Consume', source:'HS-6120', change:'−10', changeType:'neg', reserved:0, available:6, reason:'Amara — attended sessions, Jan', by:'System'},
+      {date:'Mar 15', type:'Consume', source:'HS-6120', change:'−6', changeType:'neg', reserved:0, available:0, reason:'Chidi — attended sessions, Feb–Mar', by:'System'}
+    ]
+  },
+  {
+    id:'HS-5507', isHousehold:false, clientName:'Sofia Nunez', provider:'ChoiceEd', assignment:'INDIVIDUAL_CLIENT',
+    coverageText:'Swim Group + Private',
+    serviceCoverageMode:'selected', serviceCoverageList:['Swim'],
+    classTypeCoverageMode:'selected', classTypeCoverageList:['Group','Private'],
+    valueType:'UNIT_COUNT', authorized:10, reserved:3, used:7, available:0,
+    validityType:'DATE_RANGE', validFrom:'Feb 1, 2026', validTo:'Mar 31, 2026',
+    validityDisplay:'Feb 1 – Mar 31',
+    carryForward:'TO_NEXT_AUTHORIZATION', invoiceBasis:'ATTENDED_SESSIONS', invoiceGrouping:'PER_STUDENT',
+    notifTimings:['7d','1d','on-expiry'], notifTriggers:[0], notifChannels:['Parent Email','Staff Email','Dashboard Alert'],
+    nextNotification:'Notifications already sent — voucher expired Mar 31, 2026',
+    sourceFile:'CHOICEED-VOUCHERS-JAN2026.csv', sourceRow:9, batch:'IMP-0365', importedDate:'Jan 15, 2026',
+    status:'EXPIRED', fundingHold:true, chainCurrentIndex:3,
+    heldBookings:[
+      {date:'Tue Apr 21', time:'4:00 PM', service:'Swim Group', status:'GHOST'},
+      {date:'Tue Apr 28', time:'4:00 PM', service:'Swim Group', status:'GHOST'},
+      {date:'Tue May 5', time:'4:00 PM', service:'Swim Group', status:'GHOST'}
+    ],
+    ledger:[
+      {date:'Feb 1', type:'Voucher Authorization', source:'HS-5507', change:'+10', changeType:'pos', reserved:0, available:10, reason:'Authorization approved', by:'Rosanna'},
+      {date:'Feb 5', type:'Reserve', source:'HS-5507', change:'0', changeType:'zero', reserved:1, available:9, reason:'Sofia — future #BK-201', by:'System'},
+      {date:'Feb 6', type:'Consume', source:'HS-5507', change:'−1', changeType:'neg', reserved:0, available:9, reason:'Sofia — attended #BK-201', by:'System'},
+      {date:'Mar 1', type:'Consume', source:'HS-5507', change:'−6', changeType:'neg', reserved:0, available:3, reason:'Sofia — attended sessions, Feb–Mar', by:'System'},
+      {date:'Mar 20', type:'Reserve', source:'HS-5507', change:'0', changeType:'zero', reserved:3, available:0, reason:'Sofia — future #BK-220, #BK-224, #BK-228', by:'System'},
+      {date:'Mar 31', type:'Expire', source:'HS-5507', change:'0', changeType:'zero', reserved:0, available:0, reason:'Validity ended — 3 future bookings held', by:'System'}
+    ]
+  },
+  {
+    id:'HS-8802', isHousehold:false, clientName:'Tobias Frank', provider:'HomeLearn', assignment:'INDIVIDUAL_CLIENT',
+    coverageText:'All services',
+    serviceCoverageMode:'all', serviceCoverageList:[],
+    classTypeCoverageMode:'all', classTypeCoverageList:[],
+    valueType:'UNLIMITED_WITHIN_VALIDITY', authorized:null, reserved:null, used:null, available:null,
+    validityType:'DATE_RANGE', validFrom:'Apr 1, 2026', validTo:'Apr 30, 2026',
+    validityDisplay:'Apr 1 – Apr 30',
+    carryForward:'NONE', invoiceBasis:'CALENDAR_MONTH', invoiceGrouping:'CONSOLIDATED_MONTHLY',
+    notifTimings:['7d'], notifTriggers:[], notifChannels:['Parent Email'],
+    nextNotification:'Apr 23, 2026 (7 days before expiry) → Parent Email',
+    sourceFile:'HOMELEARN-VOUCHERS-MAR2026.csv', sourceRow:2, batch:'IMP-0399', importedDate:'Mar 28, 2026',
+    status:'EXPIRING', fundingHold:false,
+    ledger:[
+      {date:'Apr 1', type:'Voucher Authorization', source:'HS-8802', change:'+Unlimited', changeType:'pos', reserved:'—', available:'—', reason:'Authorization approved', by:'Rosanna'},
+      {date:'Apr 3', type:'Consume', source:'HS-8802', change:'0', changeType:'zero', reserved:'—', available:'—', reason:'Tobias — attended session', by:'System'},
+      {date:'Apr 10', type:'Consume', source:'HS-8802', change:'0', changeType:'zero', reserved:'—', available:'—', reason:'Tobias — attended session', by:'System'},
+      {date:'Apr 15', type:'Consume', source:'HS-8802', change:'0', changeType:'zero', reserved:'—', available:'—', reason:'Tobias — attended session', by:'System'}
+    ]
+  },
+  {
+    id:'HS-3391', isHousehold:false, clientName:'Nadia Hassan', provider:'Golden Path Academy', assignment:'INDIVIDUAL_CLIENT',
+    coverageText:'Swim Semi-Private',
+    serviceCoverageMode:'selected', serviceCoverageList:['Swim'],
+    classTypeCoverageMode:'selected', classTypeCoverageList:['Semi-Private'],
+    valueType:'SERVICE_AUTHORIZATION_ONLY', authorized:null, reserved:null, used:null, available:null,
+    validityType:'MANUAL',
+    validityDisplay:'Manual',
+    carryForward:'MANUAL_APPROVAL', invoiceBasis:'ATTENDED_SESSIONS', invoiceGrouping:'PER_STUDENT',
+    notifTimings:[], notifTriggers:[], notifChannels:[],
+    nextNotification:'No notifications configured',
+    sourceFile:'GOLDENPATH-VOUCHERS-FEB2026.csv', sourceRow:1, batch:'IMP-0372', importedDate:'Feb 5, 2026',
+    status:'ACTIVE', fundingHold:false,
+    ledger:[
+      {date:'Feb 5', type:'Voucher Authorization', source:'HS-3391', change:'Authorized', changeType:'zero', reserved:'—', available:'—', reason:'Authorization approved', by:'Rosanna'},
+      {date:'Mar 2', type:'Consume', source:'HS-3391', change:'—', changeType:'zero', reserved:'—', available:'—', reason:'Nadia — attended session', by:'System'}
+    ]
+  }
+];
+
+// =====================================================================
+// Application state — single plain object, re-rendered on every change
+// =====================================================================
+var state = {
+  activeTile: null,
+  search: '',
+  filters: { provider:'', valueType:'', validity:'', status:'' },
+  drawerOpen: false,
+  drawerVoucherId: null,
+  reviewModal: null, // {type:'approve'|'reject', voucherId}
+  rejectReason: '',
+  addOpen: false,
+  addForm: {
+    voucherId:'', provider:'', assignment:'', client:'', household:'', coveredMembers:[],
+    serviceCoverageMode:'all', services:[], classTypeCoverageMode:'all', classTypes:[],
+    valueType:'', value:'', validityType:'', validFrom:'', validTo:'', unitLimit:'',
+    carryForward:'', invoiceBasis:'', invoiceGrouping:'', notifTimings:[], balanceTriggers:[], channels:[]
+  },
+  importOpen: false,
+  importStep: 1,
+  importChecked: false,
+  needsReviewTotal: 4,
+  needsReviewRemaining: 1,
+  matchOpen: false,
+  matchChoice: '',
+  importRows: [
+    {row:'#7', clientMatch:'Maria Garcia — exact match', existing:'HS-4482 · 8 units', imported:'HS-4482 · 12 units', diff:'Value Changed', proposed:'Changed — Review', kind:'changed', decision:'Accept Update'},
+    {row:'#8', clientMatch:'Luke Bell — exact match', existing:'HS-7781', imported:'HS-7781', diff:'No Change', proposed:'Existing — Skip', kind:'duplicate'},
+    {row:'#9', clientMatch:'Priya Raman — new student', existing:'—', imported:'HS-9910 · 12 units', diff:'New', proposed:'New — Add', kind:'new', decision:'Accept Add'},
+    {row:'#10', clientMatch:'Unmatched — similar to "T. Nguyen"', existing:'—', imported:'HS-9911 · 6 units', diff:'Client Match Required', proposed:'Unknown Client — Needs Review', kind:'needsreview', resolved:false, matchChoice:null},
+    {row:'#11', clientMatch:'Garcia Household', existing:'HS-4482', imported:'HS-4482 duplicate row', diff:'Duplicate in file', proposed:'Existing — Skip', kind:'duplicate'},
+    {row:'#12', clientMatch:'(blank validity columns)', existing:'—', imported:'HS-0000', diff:'Missing required field: Valid To', proposed:'Invalid — Error', kind:'invalid'}
+  ],
+  successBanner: null,
+  pendingReviewCount: 12
+};
+
+function findVoucher(id){
+  for (var i = 0; i < vouchers.length; i++) if (vouchers[i].id === id) return vouchers[i];
+  return null;
+}
+
+// =====================================================================
+// Table / KPI rendering
+// =====================================================================
+function isEmptyStr(s){ return !s || s === ''; }
+
+function filtersActive(){
+  return state.activeTile !== null || !isEmptyStr(state.search) || !isEmptyStr(state.filters.provider) ||
+    !isEmptyStr(state.filters.valueType) || !isEmptyStr(state.filters.validity) || !isEmptyStr(state.filters.status);
+}
+
+function getVisibleVouchers(){
+  return vouchers.filter(function(v){
+    if (state.activeTile === 'active' && v.status !== 'ACTIVE') return false;
+    if (state.activeTile === 'pending' && v.status !== 'PENDING_REVIEW') return false;
+    if (state.activeTile === 'expiring' && v.status !== 'EXPIRING') return false;
+    if (state.activeTile === 'exhausted' && v.status !== 'EXHAUSTED') return false;
+    if (state.activeTile === 'holds' && !v.fundingHold) return false;
+
+    if (state.filters.provider && v.provider !== state.filters.provider) return false;
+    if (state.filters.valueType && v.valueType !== state.filters.valueType) return false;
+    if (state.filters.validity && v.validityType !== state.filters.validity) return false;
+    if (state.filters.status && v.status !== state.filters.status) return false;
+
+    if (state.search) {
+      var q = state.search.toLowerCase();
+      var hay = [v.clientName, v.householdName, v.id, v.provider].join(' ').toLowerCase();
+      if (hay.indexOf(q) === -1) return false;
+    }
+    return true;
+  });
+}
+
+function renderKpis(){
+  var tiles = [
+    {key:'active', label:'Active', value:86},
+    {key:'pending', label:'Pending Review', value:state.pendingReviewCount},
+    {key:'expiring', label:'Expiring Soon', value:9},
+    {key:'exhausted', label:'Exhausted', value:5},
+    {key:'holds', label:'Funding Holds', value:7}
+  ];
+  var html = tiles.map(function(t){
+    var active = state.activeTile === t.key;
+    return '<button type="button" class="kpi-tile' + (active ? ' active' : '') + '" data-tile="' + t.key + '">' +
+      '<span class="kpi-label">' + t.label + '</span>' +
+      '<span class="kpi-value">' + t.value + '</span>' +
+      '</button>';
+  }).join('');
+  document.getElementById('kpiGrid').innerHTML = html;
+  document.querySelectorAll('#kpiGrid .kpi-tile').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var tile = btn.getAttribute('data-tile');
+      state.activeTile = (state.activeTile === tile) ? null : tile;
+      render();
+    });
+  });
+}
+
+function nameCell(v){
+  if (v.isHousehold) {
+    return '<div class="cell-name">' + esc(v.householdName) + '</div>' +
+      '<div class="cell-sub">' + v.coveredMembers.join(' · ') + '</div>';
+  }
+  return '<div class="cell-name">' + esc(v.clientName) + '</div>';
+}
+
+function coverageCell(v){
+  var text = v.coverageText;
+  if (text.length > 28) {
+    return '<span title="' + esc(text) + '">' + esc(text.slice(0,28)) + '…</span>';
+  }
+  return esc(text);
+}
+
+function statusCell(v){
+  var meta = STATUS_META[v.status];
+  var html = '<div class="status-stack"><span class="chip ' + meta.chip + '">' + meta.label + '</span>';
+  if (v.fundingHold) html += '<span class="chip chip-danger">Funding Hold</span>';
+  html += '</div>';
+  return html;
+}
+
+function actionsCell(v){
+  if (v.status === 'PENDING_REVIEW') {
+    return '<div class="row-actions">' +
+      '<button type="button" class="btn-xs primary" data-action="approve" data-id="' + v.id + '">Approve</button>' +
+      '<button type="button" class="btn-xs danger" data-action="reject" data-id="' + v.id + '">Reject</button>' +
+      '</div>';
+  }
+  return '<button type="button" class="btn-xs outline" data-action="open" data-id="' + v.id + '">Open</button>';
+}
+
+function renderTable(){
+  var visible = getVisibleVouchers();
+  var tbody = document.getElementById('tableBody');
+  var wrap = document.getElementById('tableWrap');
+
+  if (visible.length === 0) {
+    wrap.innerHTML = '<div class="empty-state">' +
+      '<span class="material-symbols-rounded" aria-hidden="true">filter_alt_off</span>' +
+      '<div>No vouchers match these filters.</div>' +
+      '<button type="button" class="btn-outline" id="emptyClear">Clear filters</button>' +
+      '</div>';
+    document.getElementById('emptyClear').addEventListener('click', clearFilters);
+  } else {
+    wrap.innerHTML = '<table><thead><tr>' +
+      '<th>Client / Household</th><th>Voucher ID</th><th>Provider</th><th>Scope</th><th>Coverage</th>' +
+      '<th>Value Type</th><th>Balance</th><th>Validity</th><th>Status</th><th></th>' +
+      '</tr></thead><tbody id="tableBody"></tbody></table>';
+    tbody = document.getElementById('tableBody');
+    tbody.innerHTML = visible.map(function(v){
+      var bal = balanceInfo(v);
+      return '<tr data-id="' + v.id + '">' +
+        '<td>' + nameCell(v) + '</td>' +
+        '<td>' + v.id + '</td>' +
+        '<td>' + v.provider + '</td>' +
+        '<td><span class="chip chip-muted">' + SCOPE_LABEL[v.assignment] + '</span></td>' +
+        '<td>' + coverageCell(v) + '</td>' +
+        '<td><span class="chip chip-muted">' + VALUE_TYPE_LABEL[v.valueType] + '</span></td>' +
+        '<td><span class="' + (bal.muted ? 'balance-muted' : 'balance-text') + '">' + bal.text + '</span></td>' +
+        '<td>' + v.validityDisplay + '</td>' +
+        '<td>' + statusCell(v) + '</td>' +
+        '<td>' + actionsCell(v) + '</td>' +
+        '</tr>';
+    }).join('');
+
+    tbody.querySelectorAll('tr').forEach(function(tr){
+      tr.addEventListener('click', function(){ openDrawer(tr.getAttribute('data-id')); });
+    });
+    tbody.querySelectorAll('[data-action]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var id = btn.getAttribute('data-id');
+        var action = btn.getAttribute('data-action');
+        if (action === 'open') openDrawer(id);
+        else if (action === 'approve') openReviewModal('approve', id);
+        else if (action === 'reject') openReviewModal('reject', id);
+      });
+    });
+  }
+
+  var caption = filtersActive() ?
+    ('Showing ' + visible.length + ' of 119 · filtered') :
+    ('Showing ' + visible.length + ' of 119 vouchers');
+  document.getElementById('tableCaption').textContent = caption;
+
+  document.getElementById('btnClearFilters').disabled = !filtersActive();
+}
+
+function clearFilters(){
+  state.activeTile = null;
+  state.search = '';
+  state.filters = { provider:'', valueType:'', validity:'', status:'' };
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterProvider').value = '';
+  document.getElementById('filterValueType').value = '';
+  document.getElementById('filterValidity').value = '';
+  document.getElementById('filterStatus').value = '';
+  render();
+}
+
+// =====================================================================
+// Success banner
+// =====================================================================
+function renderBanner(){
+  var el = document.getElementById('successBanner');
+  if (state.successBanner) {
+    el.style.display = 'flex';
+    document.getElementById('successBannerText').textContent = state.successBanner;
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+// =====================================================================
+// Drawer
+// =====================================================================
+function openDrawer(id){
+  state.drawerVoucherId = id;
+  state.drawerOpen = true;
+  render();
+}
+function closeDrawer(){
+  state.drawerOpen = false;
+  render();
+}
+
+function renderDrawer(){
+  var backdrop = document.getElementById('drawerBackdrop');
+  var panel = document.getElementById('drawer');
+  if (!state.drawerOpen || !state.drawerVoucherId) {
+    backdrop.classList.remove('open');
+    panel.classList.remove('open');
+    return;
+  }
+  backdrop.classList.add('open');
+  panel.classList.add('open');
+
+  var v = findVoucher(state.drawerVoucherId);
+  var html = '';
+
+  // Header
+  html += '<div class="drawer-header">' +
+    '<div>' +
+    '<p class="eyebrow">Voucher / Entitlement</p>' +
+    '<h4 class="drawer-title" id="drawerTitle">Voucher ' + v.id + '</h4>' +
+    '<p class="drawer-sub">' + (v.isHousehold ? v.householdName : v.clientName) + ' · ' + v.provider + ' · ' + v.coverageText + '</p>' +
+    '</div>' +
+    '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+    '<span class="chip ' + STATUS_META[v.status].chip + '">' + STATUS_META[v.status].label + '</span>' +
+    '<button type="button" class="icon-btn" id="drawerClose" aria-label="Close">✕</button>' +
+    '</div></div>';
+
+  html += '<div class="drawer-body">';
+
+  if (v.fundingHold) {
+    html += '<div class="hold-banner">' +
+      '<span class="hold-banner-text">Funding hold — 3 future bookings are unfunded pending a replacement voucher.</span>' +
+      '<button type="button" class="btn-xs outline" id="reviewHoldsBtn">Review holds</button>' +
+      '</div>';
+  }
+
+  // Metric row
+  html += '<div style="margin-top:20px;">';
+  if (v.valueType === 'UNLIMITED_WITHIN_VALIDITY') {
+    html += '<div class="metric-row"><div class="metric"><span class="metric-label">Authorized</span><span class="metric-value">—</span></div>' +
+      '<div class="metric"><span class="metric-label">Reserved</span><span class="metric-value">—</span></div>' +
+      '<div class="metric"><span class="metric-label">Used</span><span class="metric-value">—</span></div>' +
+      '<div class="metric"><span class="metric-label">Available</span><span class="metric-value">—</span></div></div>' +
+      '<p class="unlimited-caption">Unlimited within validity period.</p>';
+  } else if (v.valueType === 'SERVICE_AUTHORIZATION_ONLY') {
+    html += '<div class="metric-row"><div class="metric"><span class="metric-label">Authorized</span><span class="metric-value">—</span></div>' +
+      '<div class="metric"><span class="metric-label">Reserved</span><span class="metric-value">—</span></div>' +
+      '<div class="metric"><span class="metric-label">Used</span><span class="metric-value">—</span></div>' +
+      '<div class="metric"><span class="metric-label">Available</span><span class="metric-value">—</span></div></div>' +
+      '<p class="unlimited-caption">Authorization only — no numeric balance is tracked.</p>';
+  } else {
+    var pfx = v.valueType === 'DOLLAR_BUDGET' ? '$' : '';
+    html += '<div class="metric-row">' +
+      '<div class="metric"><span class="metric-label">Authorized</span><span class="metric-value">' + pfx + v.authorized + '</span></div>' +
+      '<div class="metric"><span class="metric-label">Reserved</span><span class="metric-value">' + pfx + v.reserved + '</span></div>' +
+      '<div class="metric"><span class="metric-label">Used</span><span class="metric-value">' + pfx + v.used + '</span></div>' +
+      '<div class="metric"><span class="metric-label">Available</span><span class="metric-value">' + pfx + v.available + '</span></div>' +
+      '</div>';
+  }
+  html += '</div>';
+
+  // Assignment & coverage
+  html += '<div class="section"><h5 class="section-title">Assignment &amp; Coverage</h5><div class="kv-grid">';
+  html += '<div class="kv-item"><span class="kv-label">Assignment</span><span class="kv-value">' + v.assignment + '</span><span class="kv-consequence">' + assignmentConsequence(v) + '</span></div>';
+  if (v.assignment !== 'INDIVIDUAL_CLIENT') {
+    html += '<div class="kv-item"><span class="kv-label">Covered members</span><span class="kv-value">' + v.coveredMembers.join(' · ') + '</span></div>';
+  }
+  var svcText = v.serviceCoverageMode === 'all' ? 'All Services' : ('Selected Services — ' + v.serviceCoverageList.join(', '));
+  html += '<div class="kv-item"><span class="kv-label">Service coverage</span><span class="kv-value">' + svcText + '</span><span class="kv-consequence">Bookings outside these services cannot draw on this voucher.</span></div>';
+  var ctText = v.classTypeCoverageMode === 'all' ? 'All Class Types' : ('Selected Class Types — ' + v.classTypeCoverageList.join(', '));
+  html += '<div class="kv-item"><span class="kv-label">Class type coverage</span><span class="kv-value">' + ctText + '</span><span class="kv-consequence">Private lessons are not covered unless selected.</span></div>';
+  html += '</div></div>';
+
+  // Value & validity
+  html += '<div class="section"><h5 class="section-title">Value &amp; Validity</h5><div class="kv-grid">';
+  html += '<div class="kv-item"><span class="kv-label">Value type</span><span class="kv-value">' + v.valueType + '</span><span class="kv-consequence">' + VALUE_TYPE_CONSEQUENCE[v.valueType] + '</span></div>';
+  html += '<div class="kv-item"><span class="kv-label">Validity type</span><span class="kv-value">' + v.validityType + '</span><span class="kv-consequence">' + validityConsequence(v) + '</span></div>';
+  if (v.validFrom && v.validTo) {
+    html += '<div class="kv-item full"><span class="kv-label">Valid from / to</span><span class="kv-value">' + v.validFrom + ' – ' + v.validTo + '</span></div>';
+  }
+  html += '</div></div>';
+
+  // Carry forward
+  html += '<div class="section"><h5 class="section-title">Carry Forward</h5>' +
+    '<div class="kv-item"><span class="kv-value">' + CARRY_FORWARD_LABEL[v.carryForward] + '</span><span class="kv-consequence">' + CARRY_FORWARD_CONSEQUENCE[v.carryForward] + '</span></div>';
+  if (v.carryForward === 'TO_NEXT_AUTHORIZATION' && v.available === 0) {
+    html += '<p class="kv-consequence" style="margin-top:6px;">No balance to carry forward — voucher was fully consumed before expiry.</p>';
+  }
+  html += '</div>';
+
+  // Invoicing
+  html += '<div class="section"><h5 class="section-title">Invoicing</h5>';
+  html += '<p class="kv-label" style="margin-bottom:6px;">Invoice basis</p>';
+  INVOICE_BASIS_OPTIONS.forEach(function(opt){
+    var checked = opt.value === v.invoiceBasis;
+    html += '<div class="radio-row"><input type="radio" disabled ' + (checked ? 'checked' : '') + ' id="ib-' + opt.value + '">' +
+      '<div class="rc-body"><label class="rc-text" for="ib-' + opt.value + '" style="margin:0;">' + opt.label + '</label><span class="rc-desc">' + opt.consequence + '</span></div></div>';
+  });
+  html += '<p class="kv-label" style="margin:14px 0 6px;">Invoice grouping</p>';
+  INVOICE_GROUPING_OPTIONS.forEach(function(opt){
+    var checked = opt.value === v.invoiceGrouping;
+    html += '<div class="radio-row"><input type="radio" disabled ' + (checked ? 'checked' : '') + ' id="ig-' + opt.value + '">' +
+      '<div class="rc-body"><label class="rc-text" for="ig-' + opt.value + '" style="margin:0;">' + opt.label + '</label><span class="rc-desc">' + opt.consequence + '</span></div></div>';
+  });
+  html += '<p class="footnote">Different vendors may use different billing methods.</p>';
+  html += '</div>';
+
+  // Notifications
+  html += '<div class="section"><h5 class="section-title">Expiration Notifications</h5>';
+  html += '<p class="pill-group-label">Timings</p><div>' + NOTIF_TIMINGS.map(function(t){
+    var on = v.notifTimings.indexOf(t) !== -1;
+    return '<span class="pill ' + (on ? 'on' : 'off') + '">' + NOTIF_TIMING_LABEL[t] + '</span>';
+  }).join('') + '</div>';
+  html += '<p class="pill-group-label">Balance triggers</p><div>' + NOTIF_TRIGGERS.map(function(t){
+    var on = v.notifTriggers.indexOf(t) !== -1;
+    return '<span class="pill ' + (on ? 'on' : 'off') + '">' + t + (t === 1 ? ' Credit' : ' Credits') + '</span>';
+  }).join('') + '</div>';
+  if (v.notifChannels.length) {
+    html += '<p class="pill-group-label">Channels</p><div>' + v.notifChannels.map(function(c){
+      return '<span class="chip chip-muted">' + c + '</span>';
+    }).join(' ') + '</div>';
+  }
+  html += '<p class="next-notif">Next notification: ' + v.nextNotification + '</p>';
+  html += '</div>';
+
+  // Expiration chain (only when funding hold)
+  if (v.fundingHold) {
+    html += '<div class="section" id="funding-holds"><h5 class="section-title">Expiration Chain</h5><div class="chain">';
+    CHAIN_STAGES.forEach(function(stage, idx){
+      var cls, dotCls, chip = '';
+      if (idx < v.chainCurrentIndex) { cls = 'done'; dotCls = 'done'; }
+      else if (idx === v.chainCurrentIndex) { cls = 'current'; dotCls = 'current'; chip = '<span class="chain-current-chip">Current</span>'; }
+      else { cls = ''; dotCls = 'future'; }
+      html += '<div class="chain-step"><span class="chain-dot ' + dotCls + '"></span><span class="chain-text ' + cls + '">' + stage + chip + '</span></div>';
+    });
+    html += '</div>';
+    html += '<div class="held-list">' + v.heldBookings.map(function(b, idx){
+      var confirmed = b.status === 'CONFIRMED';
+      return '<div class="held-row"><span>' + b.date + ' · ' + b.time + '</span><span>' + b.service + '</span>' +
+        '<span class="' + (confirmed ? 'confirmed-chip' : 'ghost-chip') + '">' + b.status + '</span></div>';
+    }).join('') + '</div>';
+    html += '<div class="chain-actions"><button type="button" class="btn-outline" id="overrideHoldBtn">Keep bookings confirmed (override)</button></div>';
+    html += '</div>';
+  }
+
+  // Ledger
+  html += '<div class="section"><h5 class="section-title">Entitlement Ledger</h5>';
+  html += '<table class="ledger-table"><thead><tr><th>Date</th><th>Type</th><th>Source</th><th>Change</th><th>Reserved</th><th>Available</th><th>Booking / Reason</th><th>By</th></tr></thead><tbody>';
+  v.ledger.forEach(function(row){
+    html += '<tr><td>' + row.date + '</td><td>' + row.type + '</td><td>' + row.source + '</td>' +
+      '<td class="change-' + row.changeType + '">' + row.change + '</td>' +
+      '<td>' + row.reserved + '</td><td>' + row.available + '</td>' +
+      '<td>' + row.reason + '</td><td>' + row.by + '</td></tr>';
+  });
+  html += '</tbody></table>';
+
+  if (v.valueType !== 'UNLIMITED_WITHIN_VALIDITY' && v.valueType !== 'SERVICE_AUTHORIZATION_ONLY') {
+    var pfx2 = v.valueType === 'DOLLAR_BUDGET' ? '$' : '';
+    var unitWord = v.valueType === 'UNIT_COUNT' ? '' : '';
+    html += '<p class="ledger-summary">Ledger balance: ' + pfx2 + v.authorized + ' authorized − ' + pfx2 + v.used + ' used − ' + pfx2 + v.reserved + ' reserved = ' + pfx2 + v.available + ' available</p>';
+  } else {
+    html += '<p class="ledger-summary">This voucher does not track a numeric balance.</p>';
+  }
+  html += '<p class="ledger-summary">Make-up tokens are managed on the client’s Schedule &amp; Bookings tab.</p>';
+  html += '</div>';
+
+  // Source document
+  html += '<div class="section"><h5 class="section-title">Source Document</h5>' +
+    '<button type="button" class="source-link" data-noop><span class="material-symbols-rounded">description</span>' + v.sourceFile + ' · row ' + v.sourceRow + '</button>' +
+    '<p class="source-caption">Imported ' + v.importedDate + ' · batch ' + v.batch + '</p></div>';
+
+  html += '</div>'; // drawer-body
+
+  // Footer
+  if (v.status === 'PENDING_REVIEW') {
+    html += '<div class="drawer-footer">' +
+      '<button type="button" class="btn-outline" id="drawerFooterClose">Close</button>' +
+      '<button type="button" class="btn-outline-danger" id="drawerFooterReject">Reject</button>' +
+      '<button type="button" class="btn-primary" id="drawerFooterApprove">Approve</button>' +
+      '</div>';
+  } else {
+    html += '<div class="drawer-footer">' +
+      '<button type="button" class="btn-outline" id="drawerFooterClose">Close</button>' +
+      '<button type="button" class="btn-primary" data-noop>Edit Voucher</button>' +
+      '</div>';
+  }
+
+  document.getElementById('drawerContent').innerHTML = html;
+
+  document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+  document.getElementById('drawerFooterClose').addEventListener('click', closeDrawer);
+  var reviewHoldsBtn = document.getElementById('reviewHoldsBtn');
+  if (reviewHoldsBtn) reviewHoldsBtn.addEventListener('click', function(){
+    var target = document.getElementById('funding-holds');
+    if (target) target.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  var overrideBtn = document.getElementById('overrideHoldBtn');
+  if (overrideBtn) overrideBtn.addEventListener('click', function(){
+    v.heldBookings.forEach(function(b){ b.status = 'CONFIRMED'; });
+    v.ledger.push({date:'Apr 17', type:'Override', source:v.id, change:'0', changeType:'zero', reserved:0, available:0, reason:'Bookings kept confirmed by admin override', by:'Admin'});
+    render();
+  });
+  var footApprove = document.getElementById('drawerFooterApprove');
+  if (footApprove) footApprove.addEventListener('click', function(){ openReviewModal('approve', v.id); });
+  var footReject = document.getElementById('drawerFooterReject');
+  if (footReject) footReject.addEventListener('click', function(){ openReviewModal('reject', v.id); });
+}
+
+// =====================================================================
+// Approve / Reject modal
+// =====================================================================
+function openReviewModal(type, id){
+  state.reviewModal = {type:type, voucherId:id};
+  state.rejectReason = '';
+  render();
+}
+function closeReviewModal(){
+  state.reviewModal = null;
+  render();
+}
+
+function renderReviewModal(){
+  var backdrop = document.getElementById('reviewModalBackdrop');
+  if (!state.reviewModal) { backdrop.classList.remove('open'); return; }
+  backdrop.classList.add('open');
+  var v = findVoucher(state.reviewModal.voucherId);
+  var html = '';
+
+  if (state.reviewModal.type === 'approve') {
+    html += '<div class="modal-header"><div><h4>Approve voucher ' + v.id + '</h4></div>' +
+      '<button type="button" class="icon-btn" id="reviewClose" aria-label="Close">✕</button></div>';
+    html += '<div class="modal-body">' +
+      '<div class="kv-grid" style="margin-bottom:14px;">' +
+      '<div class="kv-item"><span class="kv-label">Voucher ID</span><span class="kv-value">' + v.id + '</span></div>' +
+      '<div class="kv-item"><span class="kv-label">Provider</span><span class="kv-value">' + v.provider + '</span></div>' +
+      '<div class="kv-item"><span class="kv-label">Client / Household</span><span class="kv-value">' + (v.isHousehold ? v.householdName : v.clientName) + '</span></div>' +
+      '<div class="kv-item"><span class="kv-label">Value</span><span class="kv-value">' + balanceInfo(v).text + '</span></div>' +
+      '<div class="kv-item full"><span class="kv-label">Validity</span><span class="kv-value">' + v.validityDisplay + '</span></div>' +
+      '</div>' +
+      '<p>Approving credits the entitlement ledger and makes the voucher spendable immediately.</p>' +
+      '</div>';
+    html += '<div class="modal-footer"><div class="modal-footer-right">' +
+      '<button type="button" class="btn-outline" id="reviewCancel">Cancel</button>' +
+      '<button type="button" class="btn-primary" id="reviewConfirm">Approve voucher</button>' +
+      '</div></div>';
+  } else {
+    html += '<div class="modal-header"><div><h4>Reject voucher ' + v.id + '</h4></div>' +
+      '<button type="button" class="icon-btn" id="reviewClose" aria-label="Close">✕</button></div>';
+    html += '<div class="modal-body">' +
+      '<div class="kv-grid" style="margin-bottom:14px;">' +
+      '<div class="kv-item"><span class="kv-label">Voucher ID</span><span class="kv-value">' + v.id + '</span></div>' +
+      '<div class="kv-item"><span class="kv-label">Provider</span><span class="kv-value">' + v.provider + '</span></div>' +
+      '<div class="kv-item"><span class="kv-label">Client / Household</span><span class="kv-value">' + (v.isHousehold ? v.householdName : v.clientName) + '</span></div>' +
+      '<div class="kv-item"><span class="kv-label">Value</span><span class="kv-value">' + balanceInfo(v).text + '</span></div>' +
+      '</div>' +
+      '<label for="rejectReason">Reason <span class="required">*</span></label>' +
+      '<textarea id="rejectReason" rows="3">' + esc(state.rejectReason) + '</textarea>' +
+      '</div>';
+    html += '<div class="modal-footer"><div class="modal-footer-right">' +
+      '<button type="button" class="btn-outline" id="reviewCancel">Cancel</button>' +
+      '<button type="button" class="btn-outline-danger" id="reviewConfirm" ' + (state.rejectReason.trim() === '' ? 'disabled' : '') + '>Reject voucher</button>' +
+      '</div></div>';
+  }
+
+  document.getElementById('reviewModalContent').innerHTML = html;
+  document.getElementById('reviewClose').addEventListener('click', closeReviewModal);
+  document.getElementById('reviewCancel').addEventListener('click', closeReviewModal);
+
+  if (state.reviewModal.type === 'reject') {
+    document.getElementById('rejectReason').addEventListener('input', function(e){
+      state.rejectReason = e.target.value;
+      render();
+      document.getElementById('rejectReason').focus();
+      var len = document.getElementById('rejectReason').value.length;
+      document.getElementById('rejectReason').setSelectionRange(len, len);
+    });
+  }
+
+  document.getElementById('reviewConfirm').addEventListener('click', function(){
+    if (state.reviewModal.type === 'approve') {
+      v.status = 'ACTIVE';
+      v.ledger.push({date:'Apr 17', type:'Voucher Authorization', source:v.id, change: (v.valueType === 'DOLLAR_BUDGET' ? '+$' + v.authorized : '+' + v.authorized), changeType:'pos', reserved:0, available:v.available, reason:'Approved by Billing Admin', by:'Rosanna'});
+      state.pendingReviewCount -= 1;
+      state.successBanner = v.id + ' approved — ' + v.available + ' units credited.';
+      state.reviewModal = null;
+      render();
+    } else {
+      if (state.rejectReason.trim() === '') return;
+      v.status = 'REJECTED';
+      v.rejectionReason = state.rejectReason;
+      state.pendingReviewCount -= 1;
+      state.reviewModal = null;
+      render();
+    }
+  });
+}
+
+// =====================================================================
+// Add Voucher modal
+// =====================================================================
+function openAddModal(){
+  state.addOpen = true;
+  state.addForm = {
+    voucherId:'', provider:'', assignment:'', client:'', household:'', coveredMembers:[],
+    serviceCoverageMode:'all', services:[], classTypeCoverageMode:'all', classTypes:[],
+    valueType:'', value:'', validityType:'', validFrom:'', validTo:'', unitLimit:'',
+    carryForward:'', invoiceBasis:'', invoiceGrouping:'', notifTimings:[], balanceTriggers:[], channels:[]
+  };
+  render();
+}
+function closeAddModal(){
+  state.addOpen = false;
+  render();
+}
+
+function addFormValid(){
+  var f = state.addForm;
+  if (!f.voucherId || !f.provider || !f.valueType) return false;
+  if (f.assignment === 'INDIVIDUAL_CLIENT' && !f.client) return false;
+  if ((f.assignment === 'HOUSEHOLD_SHARED' || f.assignment === 'SELECTED_FAMILY_MEMBERS') && !f.household) return false;
+  if (!f.assignment) return false;
+  return true;
+}
+
+function multiCheckbox(name, options, selected){
+  return options.map(function(opt){
+    var checked = selected.indexOf(opt) !== -1;
+    var cid = name + '-' + opt.replace(/\s+/g,'');
+    return '<label class="checkbox-item" for="' + cid + '"><input type="checkbox" id="' + cid + '" data-group="' + name + '" value="' + opt + '" ' + (checked ? 'checked' : '') + '>' + opt + '</label>';
+  }).join('');
+}
+
+function renderAddModal(){
+  var backdrop = document.getElementById('addModalBackdrop');
+  if (!state.addOpen) { backdrop.classList.remove('open'); return; }
+  backdrop.classList.add('open');
+  var f = state.addForm;
+  var html = '';
+
+  html += '<div class="modal-header"><div><h4>Add Voucher</h4><p class="subtitle">Create a new voucher / authorization record.</p></div>' +
+    '<button type="button" class="icon-btn" id="addClose" aria-label="Close">✕</button></div>';
+
+  html += '<div class="modal-body"><div class="form-grid">';
+
+  html += '<div class="form-field"><label for="af-voucherId">Voucher / Auth ID <span class="required">*</span></label>' +
+    '<input type="text" id="af-voucherId" value="' + esc(f.voucherId) + '"></div>';
+
+  html += '<div class="form-field"><label for="af-provider">Provider <span class="required">*</span></label>' +
+    '<select id="af-provider"><option value="">Select…</option>' +
+    ['HomeLearn','ChoiceEd','Golden Path Academy'].map(function(p){ return '<option value="' + p + '" ' + (f.provider === p ? 'selected' : '') + '>' + p + '</option>'; }).join('') +
+    '</select></div>';
+
+  html += '<div class="form-field"><label for="af-assignment">Assignment <span class="required">*</span></label>' +
+    '<select id="af-assignment"><option value="">Select…</option>' +
+    ['INDIVIDUAL_CLIENT','HOUSEHOLD_SHARED','SELECTED_FAMILY_MEMBERS'].map(function(a){ return '<option value="' + a + '" ' + (f.assignment === a ? 'selected' : '') + '>' + a + '</option>'; }).join('') +
+    '</select></div>';
+
+  if (f.assignment === 'INDIVIDUAL_CLIENT') {
+    html += '<div class="form-field"><label for="af-client">Client <span class="required">*</span></label>' +
+      '<select id="af-client"><option value="">Select…</option>' +
+      ['Maria Garcia','Luke Bell','Priya Raman','Sofia Nunez','Tobias Frank','Nadia Hassan'].map(function(c){ return '<option value="' + c + '" ' + (f.client === c ? 'selected' : '') + '>' + c + '</option>'; }).join('') +
+      '</select></div>';
+  } else if (f.assignment === 'HOUSEHOLD_SHARED' || f.assignment === 'SELECTED_FAMILY_MEMBERS') {
+    html += '<div class="form-field"><label for="af-household">Household <span class="required">*</span></label>' +
+      '<select id="af-household"><option value="">Select…</option>' +
+      ['Garcia Household','Okafor Household'].map(function(h){ return '<option value="' + h + '" ' + (f.household === h ? 'selected' : '') + '>' + h + '</option>'; }).join('') +
+      '</select></div>';
+  }
+
+  if (f.assignment === 'SELECTED_FAMILY_MEMBERS') {
+    html += '<div class="form-field full"><label>Covered members</label><div class="checkbox-list">' +
+      multiCheckbox('coveredMembers', ['Maria Garcia','Diego Garcia','Amara Okafor','Chidi Okafor'], f.coveredMembers) +
+      '</div></div>';
+  }
+
+  html += '<div class="form-field full"><label>Service coverage</label><div class="radio-list-inline">' +
+    '<label class="radio-item"><input type="radio" name="af-svcMode" value="all" ' + (f.serviceCoverageMode === 'all' ? 'checked' : '') + '> All Services</label>' +
+    '<label class="radio-item"><input type="radio" name="af-svcMode" value="selected" ' + (f.serviceCoverageMode === 'selected' ? 'checked' : '') + '> Selected Services</label>' +
+    '</div></div>';
+
+  if (f.serviceCoverageMode === 'selected') {
+    html += '<div class="form-field full"><label>Services</label><div class="checkbox-list">' +
+      multiCheckbox('services', ['Swim','Fitness','Gymnastics'], f.services) + '</div></div>';
+  }
+
+  html += '<div class="form-field full"><label>Class type coverage</label><div class="radio-list-inline">' +
+    '<label class="radio-item"><input type="radio" name="af-ctMode" value="all" ' + (f.classTypeCoverageMode === 'all' ? 'checked' : '') + '> All Class Types</label>' +
+    '<label class="radio-item"><input type="radio" name="af-ctMode" value="selected" ' + (f.classTypeCoverageMode === 'selected' ? 'checked' : '') + '> Selected Class Types</label>' +
+    '</div></div>';
+
+  if (f.classTypeCoverageMode === 'selected') {
+    html += '<div class="form-field full"><label>Class types</label><div class="checkbox-list">' +
+      multiCheckbox('classTypes', ['Group','Semi-Private','Private'], f.classTypes) + '</div></div>';
+  }
+
+  html += '<div class="form-field"><label for="af-valueType">Value type <span class="required">*</span></label>' +
+    '<select id="af-valueType"><option value="">Select…</option>' +
+    ['SESSION_COUNT','UNIT_COUNT','DOLLAR_BUDGET','UNLIMITED_WITHIN_VALIDITY','SERVICE_AUTHORIZATION_ONLY'].map(function(vt){ return '<option value="' + vt + '" ' + (f.valueType === vt ? 'selected' : '') + '>' + VALUE_TYPE_LABEL[vt] + '</option>'; }).join('') +
+    '</select></div>';
+
+  if (f.valueType && f.valueType !== 'UNLIMITED_WITHIN_VALIDITY' && f.valueType !== 'SERVICE_AUTHORIZATION_ONLY') {
+    html += '<div class="form-field"><label for="af-value">Value' + (f.valueType === 'DOLLAR_BUDGET' ? ' ($)' : '') + '</label>' +
+      '<input type="number" id="af-value" value="' + esc(f.value) + '"></div>';
+  }
+
+  html += '<div class="form-field"><label for="af-validityType">Validity type <span class="required">*</span></label>' +
+    '<select id="af-validityType"><option value="">Select…</option>' +
+    ['DATE_RANGE','CREDIT_BASED','CLASS_COUNT_BASED','COMBINED','MANUAL'].map(function(vt){ return '<option value="' + vt + '" ' + (f.validityType === vt ? 'selected' : '') + '>' + VALIDITY_TYPE_LABEL[vt] + '</option>'; }).join('') +
+    '</select></div>';
+
+  if (f.validityType === 'DATE_RANGE' || f.validityType === 'COMBINED' || f.validityType === 'MANUAL') {
+    html += '<div class="form-field"><label for="af-validFrom">Valid from</label><input type="date" id="af-validFrom" value="' + esc(f.validFrom) + '"></div>';
+    html += '<div class="form-field"><label for="af-validTo">Valid to</label><input type="date" id="af-validTo" value="' + esc(f.validTo) + '"></div>';
+  }
+  if (f.validityType === 'CREDIT_BASED' || f.validityType === 'CLASS_COUNT_BASED' || f.validityType === 'COMBINED') {
+    html += '<div class="form-field"><label for="af-unitLimit">Unit limit</label><input type="number" id="af-unitLimit" value="' + esc(f.unitLimit) + '"></div>';
+  }
+
+  html += '<div class="form-field"><label for="af-carryForward">Carry forward</label>' +
+    '<select id="af-carryForward"><option value="">Select…</option>' +
+    ['NONE','TO_NEXT_AUTHORIZATION','UNTIL_EXPIRATION','MANUAL_APPROVAL'].map(function(cf){ return '<option value="' + cf + '" ' + (f.carryForward === cf ? 'selected' : '') + '>' + CARRY_FORWARD_LABEL[cf] + '</option>'; }).join('') +
+    '</select></div>';
+
+  html += '<div class="form-field full"><label>Invoice basis</label><div class="radio-list-inline">' +
+    INVOICE_BASIS_OPTIONS.map(function(o){ return '<label class="radio-item"><input type="radio" name="af-invoiceBasis" value="' + o.value + '" ' + (f.invoiceBasis === o.value ? 'checked' : '') + '>' + o.label + '</label>'; }).join('') +
+    '</div></div>';
+
+  html += '<div class="form-field full"><label>Invoice grouping</label><div class="radio-list-inline">' +
+    INVOICE_GROUPING_OPTIONS.map(function(o){ return '<label class="radio-item"><input type="radio" name="af-invoiceGrouping" value="' + o.value + '" ' + (f.invoiceGrouping === o.value ? 'checked' : '') + '>' + o.label + '</label>'; }).join('') +
+    '</div></div>';
+
+  html += '<div class="form-field full"><label>Notifications</label><div class="checkbox-list">' +
+    multiCheckbox('notifTimings', NOTIF_TIMINGS.map(function(t){ return NOTIF_TIMING_LABEL[t]; }), f.notifTimings) + '</div></div>';
+
+  html += '<div class="form-field full"><label>Balance triggers</label><div class="checkbox-list">' +
+    multiCheckbox('balanceTriggers', ['3','2','1','0'], f.balanceTriggers) + '</div></div>';
+
+  html += '<div class="form-field full"><label>Channels</label><div class="checkbox-list">' +
+    multiCheckbox('channels', NOTIF_CHANNELS, f.channels) + '</div></div>';
+
+  html += '</div></div>';
+
+  html += '<div class="modal-footer"><div class="modal-footer-right">' +
+    '<button type="button" class="btn-outline" id="addCancel">Cancel</button>' +
+    '<button type="button" class="btn-primary" id="addCreate" ' + (addFormValid() ? '' : 'disabled') + '>Create Voucher</button>' +
+    '</div></div>';
+
+  document.getElementById('addModalContent').innerHTML = html;
+
+  document.getElementById('addClose').addEventListener('click', closeAddModal);
+  document.getElementById('addCancel').addEventListener('click', closeAddModal);
+  document.getElementById('addCreate').addEventListener('click', function(){
+    if (!addFormValid()) return;
+    // Prototype scope: submission closes the modal; full creation flow is out of scope.
+    closeAddModal();
+  });
+
+  bindAddField('af-voucherId', 'voucherId', 'value');
+  bindAddField('af-provider', 'provider', 'value');
+  bindAddField('af-assignment', 'assignment', 'value');
+  bindAddField('af-client', 'client', 'value');
+  bindAddField('af-household', 'household', 'value');
+  bindAddField('af-value', 'value', 'value');
+  bindAddField('af-validityType', 'validityType', 'value');
+  bindAddField('af-validFrom', 'validFrom', 'value');
+  bindAddField('af-validTo', 'validTo', 'value');
+  bindAddField('af-unitLimit', 'unitLimit', 'value');
+  bindAddField('af-carryForward', 'carryForward', 'value');
+  bindAddField('af-valueType', 'valueType', 'value');
+
+  var svcModeRadios = document.getElementsByName('af-svcMode');
+  svcModeRadios.forEach(function(r){ r.addEventListener('change', function(){ if (r.checked) { state.addForm.serviceCoverageMode = r.value; render(); } }); });
+  var ctModeRadios = document.getElementsByName('af-ctMode');
+  ctModeRadios.forEach(function(r){ r.addEventListener('change', function(){ if (r.checked) { state.addForm.classTypeCoverageMode = r.value; render(); } }); });
+  var ibRadios = document.getElementsByName('af-invoiceBasis');
+  ibRadios.forEach(function(r){ r.addEventListener('change', function(){ if (r.checked) { state.addForm.invoiceBasis = r.value; render(); } }); });
+  var igRadios = document.getElementsByName('af-invoiceGrouping');
+  igRadios.forEach(function(r){ r.addEventListener('change', function(){ if (r.checked) { state.addForm.invoiceGrouping = r.value; render(); } }); });
+
+  ['coveredMembers','services','classTypes','notifTimings','balanceTriggers','channels'].forEach(function(group){
+    document.querySelectorAll('[data-group="' + group + '"]').forEach(function(cb){
+      cb.addEventListener('change', function(){
+        var arr = state.addForm[group];
+        var val = cb.value;
+        var idx = arr.indexOf(val);
+        if (cb.checked && idx === -1) arr.push(val);
+        if (!cb.checked && idx !== -1) arr.splice(idx, 1);
+        render();
+      });
+    });
+  });
+}
+
+function bindAddField(elId, stateKey, prop){
+  var el = document.getElementById(elId);
+  if (!el) return;
+  el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', function(){
+    state.addForm[stateKey] = el[prop];
+    render();
+    var again = document.getElementById(elId);
+    if (again && again.tagName === 'INPUT') { again.focus(); }
+  });
+}
+
+// =====================================================================
+// Import overlay
+// =====================================================================
+function openImport(){
+  state.importOpen = true;
+  state.importStep = 1;
+  state.importChecked = false;
+  render();
+}
+function closeImport(){
+  state.importOpen = false;
+  render();
+}
+
+function stepPillsHtml(){
+  var labels = ['Upload','Map & Parse','Review & Resolve','Approve & Apply'];
+  return '<div class="step-header">' + labels.map(function(l, idx){
+    var n = idx + 1;
+    var cls = n === state.importStep ? 'active' : (n < state.importStep ? 'done' : '');
+    return '<div class="step-pill ' + cls + '"><span class="step-num">' + n + '</span>' + l + '</div>';
+  }).join('') + '</div>';
+}
+
+function renderImport(){
+  var backdrop = document.getElementById('importBackdrop');
+  if (!state.importOpen) { backdrop.classList.remove('open'); return; }
+  backdrop.classList.add('open');
+
+  var html = '<div class="modal-header"><div><h4>Voucher CSV Import</h4><p class="subtitle">Voucher batch · RCEB and voucher imports are separate batches.</p></div>' +
+    '<button type="button" class="icon-btn" id="importClose" aria-label="Close">✕</button></div>';
+  html += stepPillsHtml();
+  html += '<div class="modal-body" id="importStepBody"></div>';
+  html += '<div class="modal-footer" id="importFooter"></div>';
+
+  document.getElementById('importContent').innerHTML = html;
+  document.getElementById('importClose').addEventListener('click', closeImport);
+
+  var body = document.getElementById('importStepBody');
+  var footer = document.getElementById('importFooter');
+
+  if (state.importStep === 1) {
+    body.innerHTML = '<div class="info-banner"><span class="material-symbols-rounded" aria-hidden="true">info</span>' +
+      '<span>CSV preferred, PDF fallback. The uploaded source file is retained in the import audit record.</span></div>' +
+      '<div class="form-grid">' +
+      '<div class="form-field"><label for="imp-type">Import Type</label><select id="imp-type"><option>Voucher</option></select></div>' +
+      '<div class="form-field"><label for="imp-loc">Location</label><select id="imp-loc"><option>Solar Swim and Gym</option></select></div>' +
+      '<div class="form-field"><label for="imp-provider">Provider</label><select id="imp-provider"><option>HomeLearn</option><option>ChoiceEd</option><option>Golden Path Academy</option></select></div>' +
+      '<div class="form-field"><label for="imp-file">CSV File</label><input type="file" id="imp-file" data-noop></div>' +
+      '</div>';
+    footer.innerHTML = '<div></div><div class="modal-footer-right">' +
+      '<button type="button" class="btn-outline" id="impCancel">Cancel</button>' +
+      '<button type="button" class="btn-primary" id="impNext">Continue to Mapping</button>' +
+      '</div>';
+    document.getElementById('impCancel').addEventListener('click', closeImport);
+    document.getElementById('impNext').addEventListener('click', function(){ state.importStep = 2; render(); });
+  }
+
+  else if (state.importStep === 2) {
+    var mapRows = [
+      ['StudentName','Maria Garcia','Client','Yes'],
+      ['VoucherID','HS-4482','Voucher / Auth ID','Yes'],
+      ['Vendor','HomeLearn','Provider','Yes'],
+      ['ValidFrom','04/01/2026','Valid From','Yes'],
+      ['ValidTo','04/30/2026','Valid To','Yes'],
+      ['Units','8','Value','No'],
+      ['Services','Swim Group','Service Coverage','No']
+    ];
+    body.innerHTML = '<table class="decision-table"><thead><tr><th>CSV Column</th><th>Sample</th><th>Zalexy Field</th><th>Required</th><th>Status</th></tr></thead><tbody>' +
+      mapRows.map(function(r){
+        return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + r[3] + '</td><td><span class="chip chip-success">Matched</span></td></tr>';
+      }).join('') + '</tbody></table>';
+    footer.innerHTML = '<div><button type="button" class="btn-outline" id="impBack">Back</button></div><div class="modal-footer-right">' +
+      '<button type="button" class="btn-primary" id="impNext2">Continue to Review</button></div>';
+    document.getElementById('impBack').addEventListener('click', function(){ state.importStep = 1; render(); });
+    document.getElementById('impNext2').addEventListener('click', function(){ state.importStep = 3; render(); });
+  }
+
+  else if (state.importStep === 3) {
+    var resolvedCount = state.needsReviewTotal - state.needsReviewRemaining;
+    var tiles = [
+      {v:64, l:'Rows'}, {v:18, l:'New'}, {v:9, l:'Changed'}, {v:33, l:'Existing'}, {v:4, l:'Needs Review'}
+    ];
+    body.innerHTML = '<div class="tiles-row">' + tiles.map(function(t){
+      return '<div class="tile-sm"><div class="val">' + t.v + '</div><div class="lbl">' + t.l + '</div></div>';
+    }).join('') + '</div>';
+    body.innerHTML += '<div class="segmented">' +
+      ['All','New','Changed','Existing','Needs Review','Invalid'].map(function(s, i){
+        return '<button type="button" class="seg-btn' + (i === 0 ? ' active' : '') + '" data-noop>' + s + '</button>';
+      }).join('') + '</div>';
+
+    body.innerHTML += '<table class="decision-table"><thead><tr><th>Source Row</th><th>Client Match</th><th>Existing Record</th><th>Imported Value</th><th>Difference</th><th>Proposed</th><th>Decision</th></tr></thead><tbody id="decisionBody"></tbody></table>';
+    body.innerHTML += '<p class="review-caption" id="reviewCaption" style="margin-top:12px;"></p>';
+
+    document.getElementById('decisionBody').innerHTML = state.importRows.map(function(r){
+      var decisionCell;
+      if (r.kind === 'duplicate') {
+        decisionCell = '<select disabled><option>Skip</option></select><div class="duplicate-caption">Duplicate — will not be added</div>';
+      } else if (r.kind === 'invalid') {
+        decisionCell = '<span class="chip chip-muted">Cannot import</span>';
+      } else if (r.kind === 'needsreview') {
+        if (r.resolved) {
+          decisionCell = '<div class="duplicate-caption">Matched — ' + r.matchChoice + '</div>' +
+            '<select><option>Accept Add</option><option>Skip</option></select>';
+        } else {
+          decisionCell = '<button type="button" class="btn-xs outline" id="matchClientBtn" data-row="' + r.row + '">Match Client</button>';
+        }
+      } else if (r.kind === 'changed') {
+        decisionCell = '<select id="decisionSelect-' + r.row + '"><option ' + (r.decision === 'Accept Update' ? 'selected' : '') + '>Accept Update</option><option ' + (r.decision === 'Skip' ? 'selected' : '') + '>Skip</option></select>';
+      } else {
+        decisionCell = '<select id="decisionSelect-' + r.row + '"><option ' + (r.decision === 'Accept Add' ? 'selected' : '') + '>Accept Add</option><option ' + (r.decision === 'Skip' ? 'selected' : '') + '>Skip</option></select>';
+      }
+      return '<tr><td>' + r.row + '</td><td>' + r.clientMatch + '</td><td>' + r.existing + '</td><td>' + r.imported + '</td><td>' + r.diff + '</td>' +
+        '<td>' + r.proposed + '</td><td>' + decisionCell + '</td></tr>';
+    }).join('');
+
+    document.getElementById('reviewCaption').textContent = resolvedCount + ' of ' + state.needsReviewTotal + ' rows needing review resolved';
+
+    var matchBtn = document.getElementById('matchClientBtn');
+    if (matchBtn) matchBtn.addEventListener('click', function(){ openMatchClient(); });
+
+    footer.innerHTML = '<div><button type="button" class="btn-outline" id="impBack3">Back</button></div><div class="modal-footer-right">' +
+      '<button type="button" class="btn-outline" data-noop>Save Review</button>' +
+      '<button type="button" class="btn-primary" id="impNext3" ' + (state.needsReviewRemaining > 0 ? 'disabled' : '') + '>Continue to Approval</button></div>';
+    document.getElementById('impBack3').addEventListener('click', function(){ state.importStep = 2; render(); });
+    document.getElementById('impNext3').addEventListener('click', function(){
+      if (state.needsReviewRemaining > 0) return;
+      state.importStep = 4;
+      render();
+    });
+  }
+
+  else if (state.importStep === 4) {
+    body.innerHTML = '<div class="warning-banner"><span class="material-symbols-rounded" aria-hidden="true">warning</span>' +
+      '<span>Applying credits entitlement ledgers immediately. Vouchers on funding hold will be re-evaluated.</span></div>';
+    body.innerHTML += '<div class="apply-summary">' +
+      '<div class="apply-summary-row"><span>Will add</span><span>18 vouchers</span></div>' +
+      '<div class="apply-summary-row"><span>Will update</span><span>9 vouchers</span></div>' +
+      '<div class="apply-summary-row"><span>Will skip</span><span>33 duplicates</span></div>' +
+      '<div class="apply-summary-row"><span>Held for review</span><span>0</span></div>' +
+      '</div>';
+    body.innerHTML += '<label class="checkbox-confirm"><input type="checkbox" id="applyCheck" ' + (state.importChecked ? 'checked' : '') + '> I have reviewed all 27 changes</label>';
+
+    footer.innerHTML = '<div><button type="button" class="btn-outline" id="impBack4">Back</button></div><div class="modal-footer-right">' +
+      '<button type="button" class="btn-primary" id="impApply" ' + (state.importChecked ? '' : 'disabled') + '>Apply Import</button></div>';
+    document.getElementById('impBack4').addEventListener('click', function(){ state.importStep = 3; render(); });
+    document.getElementById('applyCheck').addEventListener('change', function(e){ state.importChecked = e.target.checked; render(); });
+    document.getElementById('impApply').addEventListener('click', function(){
+      if (!state.importChecked) return;
+      state.importOpen = false;
+      state.successBanner = 'Import IMP-0419 applied — 18 added, 9 updated, 33 skipped.';
+      render();
+    });
+  }
+
+  // Decision selects (changed/new rows) — cosmetic state capture
+  state.importRows.forEach(function(r){
+    var sel = document.getElementById('decisionSelect-' + r.row);
+    if (sel) sel.addEventListener('change', function(){ r.decision = sel.value; });
+  });
+}
+
+function openMatchClient(){
+  state.matchOpen = true;
+  state.matchChoice = '';
+  render();
+}
+function closeMatchClient(){
+  state.matchOpen = false;
+  render();
+}
+
+function renderMatchClient(){
+  var backdrop = document.getElementById('matchModalBackdrop');
+  if (!state.matchOpen) { backdrop.classList.remove('open'); return; }
+  backdrop.classList.add('open');
+
+  var options = ['Tam Nguyen (Profile #2210)', 'Thanh Nguyen (Profile #8814)', 'Create new profile'];
+  var html = '<div class="modal-header"><div><h4>Match Client</h4><p class="subtitle">Row #10 — similar to "T. Nguyen"</p></div>' +
+    '<button type="button" class="icon-btn" id="matchClose" aria-label="Close">✕</button></div>';
+  html += '<div class="modal-body"><div class="radio-list">' +
+    options.map(function(o, i){
+      var id = 'match-opt-' + i;
+      return '<label class="radio-item" for="' + id + '"><input type="radio" name="matchChoice" id="' + id + '" value="' + o + '" ' + (state.matchChoice === o ? 'checked' : '') + '>' + o + '</label>';
+    }).join('') + '</div></div>';
+  html += '<div class="modal-footer"><div class="modal-footer-right">' +
+    '<button type="button" class="btn-outline" id="matchCancel">Cancel</button>' +
+    '<button type="button" class="btn-primary" id="matchConfirm" ' + (state.matchChoice ? '' : 'disabled') + '>Confirm match</button>' +
+    '</div></div>';
+
+  document.getElementById('matchModalContent').innerHTML = html;
+  document.getElementById('matchClose').addEventListener('click', closeMatchClient);
+  document.getElementById('matchCancel').addEventListener('click', closeMatchClient);
+  document.getElementsByName('matchChoice').forEach(function(r){
+    r.addEventListener('change', function(){ if (r.checked) { state.matchChoice = r.value; render(); } });
+  });
+  document.getElementById('matchConfirm').addEventListener('click', function(){
+    if (!state.matchChoice) return;
+    var row = state.importRows.filter(function(r){ return r.kind === 'needsreview'; })[0];
+    row.resolved = true;
+    row.matchChoice = state.matchChoice;
+    state.needsReviewRemaining = 0;
+    state.matchOpen = false;
+    render();
+  });
+}
+
+// =====================================================================
+// Master render
+// =====================================================================
+function render(){
+  renderBanner();
+  renderKpis();
+  renderTable();
+  renderDrawer();
+  renderReviewModal();
+  renderAddModal();
+  renderImport();
+  renderMatchClient();
+}
+
+// =====================================================================
+// Static event wiring
+// =====================================================================
+document.getElementById('logoHome').addEventListener('click', function(){ window.location.href = 'index.html'; });
+document.getElementById('crumbRoot').addEventListener('click', function(){ window.location.href = 'index.html'; });
+document.getElementById('navRc').addEventListener('click', function(e){ /* navigates via href */ });
+
+document.getElementById('searchInput').addEventListener('input', function(e){ state.search = e.target.value; render(); document.getElementById('searchInput').focus(); var el = document.getElementById('searchInput'); el.setSelectionRange(el.value.length, el.value.length); });
+document.getElementById('filterProvider').addEventListener('change', function(e){ state.filters.provider = e.target.value; render(); });
+document.getElementById('filterValueType').addEventListener('change', function(e){ state.filters.valueType = e.target.value; render(); });
+document.getElementById('filterValidity').addEventListener('change', function(e){ state.filters.validity = e.target.value; render(); });
+document.getElementById('filterStatus').addEventListener('change', function(e){ state.filters.status = e.target.value; render(); });
+document.getElementById('btnClearFilters').addEventListener('click', clearFilters);
+
+document.getElementById('successBannerClose').addEventListener('click', function(){ state.successBanner = null; render(); });
+
+document.getElementById('drawerBackdrop').addEventListener('click', function(e){ if (e.target === this) closeDrawer(); });
+document.getElementById('reviewModalBackdrop').addEventListener('click', function(e){ if (e.target === this) closeReviewModal(); });
+document.getElementById('addModalBackdrop').addEventListener('click', function(e){ if (e.target === this) closeAddModal(); });
+document.getElementById('importBackdrop').addEventListener('click', function(e){ if (e.target === this) closeImport(); });
+document.getElementById('matchModalBackdrop').addEventListener('click', function(e){ if (e.target === this) closeMatchClient(); });
+
+document.getElementById('btnAdd').addEventListener('click', openAddModal);
+document.getElementById('btnImport').addEventListener('click', openImport);
+
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  if (state.matchOpen) { closeMatchClient(); return; }
+  if (state.reviewModal) { closeReviewModal(); return; }
+  if (state.addOpen) { closeAddModal(); return; }
+  if (state.importOpen) { closeImport(); return; }
+  if (state.drawerOpen) { closeDrawer(); return; }
+});
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,1424 @@
+<!--
+  Zalexy Prototype — Billing Module Settings
+  Spec:   ai-workspace/prototypes/billing/billing-module-settings.md
+  Design: ai-workspace/prototypes/_shared/design-system.md
+  Static prototype. Not production code. No app dependencies.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zalexy — Billing Module Settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{
+  --primary:#334155; --primary-light:#475569; --primary-dark:#1e293b;
+  --secondary:#10b981; --secondary-dark:#059669;
+  --success:#10b981; --success-bg:#d1fae5; --success-dark:#047857;
+  --info:#3b82f6; --info-bg:#eff6ff; --info-dark:#1d4ed8; --info-hover:#2563eb;
+  --bg-default:#f8fafc; --bg-paper:#ffffff;
+  --text-primary:#0f172a; --text-secondary:#64748b;
+  --border:#f1f5f9; --border-input:#cbd5e1; --border-input-hover:#94a3b8;
+  --hover-row:#f1f5f9; --action-hover:rgba(71,85,105,.04); --action-selected:rgba(71,85,105,.08);
+  --danger:#ef4444; --warning:#f59e0b;
+  --radius-card:10px; --radius-base:8px; --radius-control:6px; --radius-chip:4px;
+  --shadow-card:0 2px 4px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.03);
+  --shadow-1:0 1px 3px rgba(0,0,0,.05);
+  --shadow-appbar:0 1px 1px rgba(51,65,85,.03);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Inter","Roboto","Helvetica","Arial",sans-serif;color:var(--text-primary);}
+button,input,select{font-family:inherit;}
+.app{display:flex;height:100vh;overflow:hidden;}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px;}
+
+/* ---------- Sidebar ---------- */
+.sidebar{width:240px;flex:0 0 240px;background:var(--primary-dark);color:#f8fafc;display:flex;flex-direction:column;overflow-y:auto;}
+.logo{display:flex;align-items:center;gap:10px;padding:20px 20px 16px;text-decoration:none;color:inherit;}
+.logo svg{flex:0 0 auto;}
+.logo span{font-weight:700;font-size:1.05rem;letter-spacing:.02em;}
+.nav{padding:8px 12px;display:flex;flex-direction:column;gap:2px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-base);color:#f8fafc;font-size:.9rem;font-weight:500;text-decoration:none;cursor:pointer;}
+.nav-item .material-symbols-rounded{font-size:20px;min-width:24px;color:rgba(248,250,252,.7);}
+.nav-item.disabled{opacity:.42;cursor:not-allowed;}
+.nav-item:not(.disabled):hover{background:rgba(248,250,252,.08);}
+.nav-item.active{background:rgba(248,250,252,.14);}
+.nav-item.active .material-symbols-rounded{color:#f8fafc;}
+.nav-section{margin:16px 12px 6px;font-size:.7rem;font-weight:700;letter-spacing:.08em;color:rgba(248,250,252,.45);text-transform:uppercase;}
+.sidebar-foot{padding:14px 20px;font-size:.7rem;color:rgba(248,250,252,.4);border-top:1px solid rgba(248,250,252,.08);}
+
+/* ---------- Main ---------- */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg-default);}
+.topbar{flex:0 0 64px;height:64px;background:#fff;box-shadow:var(--shadow-appbar);display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
+.search{position:relative;width:320px;}
+.search .material-symbols-rounded{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--text-secondary);}
+.search input{width:100%;height:36px;padding:8px 12px 8px 34px;font-size:14px;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);}
+.search input:hover{border-color:var(--border-input-hover);}
+.search input:focus{border-color:var(--primary);outline:none;}
+.top-actions{display:flex;align-items:center;gap:16px;}
+.icon-btn{position:relative;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;color:var(--text-secondary);box-shadow:none;}
+.icon-btn:hover{background:var(--action-hover);}
+.icon-btn .dot{position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--danger);}
+.avatar{width:32px;height:32px;border-radius:50%;background:#d1fae5;color:var(--success-dark);font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+.content{flex:1;overflow-y:auto;padding:24px;}
+.page-header{margin-bottom:20px;}
+.page-header h1{font-size:1.75rem;font-weight:600;letter-spacing:-.01em;margin:0 0 4px;}
+.page-header .subtitle{font-size:.8rem;font-weight:400;color:var(--text-secondary);margin:0;}
+
+.chip{height:24px;border-radius:var(--radius-chip);font-size:.75rem;font-weight:600;padding:0 8px;display:inline-flex;align-items:center;gap:6px;}
+.chip-success{background:var(--success-bg);color:var(--success-dark);}
+.chip-info{background:var(--info-bg);color:var(--info-dark);}
+.chip-muted{background:#f1f5f9;color:var(--text-secondary);}
+.chip-danger{background:#fee2e2;color:#b91c1c;}
+
+.card{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:var(--shadow-card);}
+
+/* ---------- Scope bar ---------- */
+.scope-bar{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;padding:16px 24px;}
+.scope-bar-row{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;flex:1;}
+.scope-select-group{display:flex;flex-direction:column;gap:6px;}
+.scope-label{font-size:.7rem;font-weight:700;letter-spacing:.05em;color:var(--text-secondary);text-transform:uppercase;}
+.scope-select{height:36px;padding:8px 12px;font-size:.875rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);cursor:pointer;}
+.scope-select:hover{border-color:var(--border-input-hover);}
+.scope-select:focus{border-color:var(--primary);outline:none;}
+.scope-chevron{color:#cbd5e1;font-size:16px;align-self:flex-end;margin-bottom:8px;}
+.scope-summary{display:flex;align-items:center;gap:8px;margin-left:auto;align-self:flex-end;}
+.scope-breadcrumb{font-size:.75rem;font-weight:400;color:var(--text-secondary);margin-top:8px;width:100%;}
+.scope-breadcrumb b{font-weight:600;}
+.scope-breadcrumb-current{color:var(--info-dark);}
+
+/* ---------- Tabs ---------- */
+.tabs-container{display:flex;flex-direction:column;overflow:hidden;flex:1;}
+.tab-strip{display:flex;gap:4px;padding:0 24px;flex-wrap:wrap;border-bottom:1px solid #e2e8f0;background:#f8fafc;overflow-x:auto;}
+.tab-btn{font-size:.82rem;font-weight:600;color:#64748b;min-height:40px;padding:8px 12px;background:transparent;border:none;cursor:pointer;text-transform:none;position:relative;}
+.tab-btn:hover{color:var(--text-primary);}
+.tab-btn.active{color:#3b82f6;}
+.tab-btn.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:3px;background:#3b82f6;border-radius:3px 3px 0 0;}
+.tab-btn.dirty::before{content:'';position:absolute;top:8px;right:4px;width:6px;height:6px;background:var(--info);border-radius:50%;}
+.tab-content{flex:1;overflow-y:auto;background:var(--bg-paper);padding:0;}
+.tab-pane{display:none;padding:20px 24px 24px;}
+.tab-pane.active{display:block;}
+
+/* ---------- Section cards ---------- */
+.section-card{margin-bottom:24px;}
+.section-head{display:flex;align-items:flex-start;gap:16px;padding:18px 24px 12px;}
+.section-icon{width:32px;height:32px;border-radius:var(--radius-base);display:flex;align-items:center;justify-content:center;flex:0 0 32px;font-size:18px;color:var(--info-dark);background:var(--info-bg);}
+.section-title{flex:1;}
+.section-title h4{font-size:1rem;font-weight:600;margin:0 0 4px;color:var(--text-primary);}
+.section-title .subtitle{font-size:.8rem;font-weight:400;color:var(--text-secondary);margin:0;}
+.section-body{padding:20px 24px 24px;}
+
+/* ---------- Form layout ---------- */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px;}
+@media (max-width:1024px){.form-grid{grid-template-columns:1fr;}}
+.form-group{display:flex;flex-direction:column;gap:8px;}
+.form-group.full{grid-column:1/-1;}
+.form-label{font-size:.875rem;font-weight:600;color:var(--text-primary);}
+.form-input,
+.form-select{height:36px;padding:8px 12px;font-size:.875rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);}
+.form-input:hover,
+.form-select:hover{border-color:var(--border-input-hover);}
+.form-input:focus,
+.form-select:focus{border-color:var(--primary);outline:none;}
+.form-input.error,
+.form-select.error{border-color:var(--danger);}
+.form-input:disabled,
+.form-select:disabled{background:#f1f5f9;color:var(--text-secondary);cursor:not-allowed;}
+.form-helper{font-size:.75rem;color:var(--text-secondary);margin-top:2px;}
+.form-error{font-size:.75rem;color:var(--danger);margin-top:2px;}
+.form-inheritance{display:flex;align-items:center;gap:6px;margin-top:4px;}
+.form-reset-link{font-size:.75rem;color:var(--info);font-weight:600;text-decoration:none;cursor:pointer;background:none;border:none;padding:0;}
+.form-reset-link:hover{text-decoration:underline;}
+
+/* ---------- Checkbox/toggle ---------- */
+.checkbox-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);}
+.checkbox-row:last-child{border-bottom:none;}
+.checkbox-input{width:18px;height:18px;accent-color:var(--secondary);cursor:pointer;margin-top:2px;flex:0 0 18px;}
+.checkbox-label{flex:1;}
+.checkbox-label .title{font-size:.875rem;font-weight:600;color:var(--text-primary);}
+.checkbox-label .desc{font-size:.8rem;color:var(--text-secondary);margin-top:2px;}
+.toggle-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:0 0 auto;}
+.toggle-switch,.switch-input{width:40px;height:24px;background:var(--border);border:none;border-radius:12px;cursor:pointer;position:relative;transition:background 0.2s;-webkit-appearance:none;appearance:none;margin:0;flex:0 0 40px;}
+.toggle-switch.on,.switch-input:checked{background:var(--secondary);}
+.toggle-switch::after,.switch-input::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left 0.2s;}
+.toggle-switch.on::after,.switch-input:checked::after{left:18px;}
+
+/* ---------- Preview strips ---------- */
+.preview-strip{background:var(--info-bg);border-radius:var(--radius-base);padding:12px 16px;font-size:.8rem;color:var(--info-dark);display:flex;align-items:flex-start;gap:12px;margin-top:16px;}
+.preview-strip .material-symbols-rounded{font-size:18px;flex:0 0 18px;margin-top:2px;}
+
+/* ---------- Cron row ---------- */
+.cron-row{border:1px solid var(--border);border-radius:var(--radius-base);padding:16px;margin-bottom:12px;}
+.cron-row.enabled{border-color:#a7f3d0;background:#f0fdf4;}
+.cron-row.disabled{border-color:var(--border);background:#f8fafc;}
+.cron-header{display:flex;align-items:center;gap:12px;}
+.cron-title{font-size:.875rem;font-weight:600;color:var(--text-primary);}
+.cron-route{font-size:.7rem;font-weight:400;color:var(--text-secondary);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+.cron-status-chip{margin-left:auto;margin-right:12px;}
+.cron-body{margin-top:12px;display:flex;flex-direction:column;gap:8px;}
+.cron-input{width:100%;height:36px;padding:8px 12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.875rem;border:1px solid var(--border-input);border-radius:var(--radius-control);background:#fff;color:var(--text-primary);}
+.cron-input.error{border-color:var(--danger);}
+.cron-input:focus{border-color:var(--primary);outline:none;}
+.cron-english{font-size:.75rem;color:var(--text-secondary);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+.cron-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.cron-chip{background:#f1f5f9;color:var(--text-secondary);font-size:.75rem;font-weight:600;padding:6px 12px;border-radius:var(--radius-chip);cursor:pointer;border:none;}
+.cron-chip.active{background:var(--info);color:#fff;}
+
+/* ---------- Notification matrix ---------- */
+.notif-matrix{width:100%;border-collapse:collapse;margin-top:12px;}
+.notif-matrix th{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);padding:12px 12px;border-bottom:1px solid var(--border);text-align:left;background:transparent;}
+.notif-matrix th.center{text-align:center;}
+.notif-matrix td{font-size:.875rem;padding:16px 12px;border-bottom:1px solid var(--border);color:var(--text-primary);}
+.notif-matrix tbody tr:hover td{background:var(--hover-row);}
+.notif-matrix tbody tr:last-child td{border-bottom:0;}
+.notif-event{flex:1;}
+.notif-event-title{font-size:.875rem;font-weight:600;}
+.notif-event-desc{font-size:.75rem;color:var(--text-secondary);margin-top:2px;}
+.notif-col{text-align:center;}
+
+/* ---------- Footer ---------- */
+.footer-bar{position:sticky;bottom:0;padding:16px 24px;border-top:1px solid var(--border);background:var(--bg-paper);display:flex;align-items:center;gap:12px;}
+.footer-counter{font-size:.8rem;color:var(--text-secondary);}
+.footer-counter.dirty{color:var(--info-dark);font-weight:600;}
+.footer-counter.error{color:var(--danger);font-weight:600;}
+.footer-counter-link{color:var(--info);font-weight:600;text-decoration:none;cursor:pointer;margin-left:4px;}
+.footer-actions{display:flex;align-items:center;gap:12px;margin-left:auto;}
+.btn{height:40px;padding:8px 16px;font-size:.875rem;font-weight:600;border-radius:var(--radius-control);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-outline{background:#fff;color:var(--text-primary);border:1px solid var(--border);}
+.btn-outline:hover:not(:disabled){border-color:var(--primary);background:var(--action-hover);}
+.btn-outline:disabled{opacity:.5;cursor:not-allowed;}
+.btn-primary{background:var(--secondary);color:#fff;}
+.btn-primary:hover:not(:disabled){background:var(--secondary-dark);}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;}
+.btn.icon-btn-small{width:36px;height:36px;padding:0;background:none;border:none;cursor:pointer;color:var(--text-secondary);}
+
+/* ---------- Modals ---------- */
+.modal-backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:1000;}
+.modal-backdrop.hidden{display:none;}
+.modal{background:var(--bg-paper);border-radius:var(--radius-card);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);max-width:560px;width:90%;max-height:80vh;overflow-y:auto;display:flex;flex-direction:column;}
+.modal.wide{max-width:720px;}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;padding:24px;border-bottom:1px solid var(--border);}
+.modal-title{font-size:1.125rem;font-weight:600;color:var(--text-primary);margin:0;}
+.modal-subtitle{font-size:.875rem;color:var(--text-secondary);margin:4px 0 0;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text-secondary);padding:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
+.modal-body{flex:1;padding:24px;overflow-y:auto;}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:12px;}
+
+/* ---------- Code block ---------- */
+.code-block{background:#1e293b;color:#f8fafc;border-radius:var(--radius-base);padding:16px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;line-height:1.6;overflow-x:auto;position:relative;white-space:pre;}
+.code-copy-btn{position:absolute;top:12px;right:12px;background:none;border:none;cursor:pointer;color:rgba(248,250,252,.7);padding:4px;}
+.code-copy-btn:hover{color:#f8fafc;}
+
+/* ---------- Change list modal ---------- */
+.change-list{display:grid;grid-template-columns:1fr auto;gap:12px;row-gap:12px;}
+.change-item{grid-column:1;padding:12px 0;border-bottom:1px solid var(--border);}
+.change-item:last-child{border-bottom:none;}
+.change-label{font-size:.875rem;font-weight:600;color:var(--text-primary);}
+.change-tab{font-size:.7rem;font-weight:400;color:var(--text-secondary);margin-top:2px;}
+.change-values{grid-column:2;padding:12px 0;text-align:right;}
+.change-old{font-size:.875rem;color:var(--text-secondary);text-decoration:line-through;}
+.change-arrow{color:var(--text-secondary);margin:0 4px;}
+.change-new{font-size:.875rem;font-weight:600;color:var(--text-primary);}
+
+/* ---------- Warning banner ---------- */
+.warning-banner{display:flex;align-items:flex-start;gap:12px;background:#fef3c7;border-radius:var(--radius-base);padding:12px 16px;font-size:.8rem;color:#b45309;margin-bottom:16px;}
+.warning-banner .material-symbols-rounded{font-size:18px;flex:0 0 18px;margin-top:2px;}
+.warning-banner-link{background:none;border:none;color:#b45309;font-weight:600;text-decoration:underline;cursor:pointer;padding:0;}
+
+/* ---------- Scope change confirm ---------- */
+.scope-confirm-strip{display:flex;align-items:center;gap:12px;background:var(--info-bg);border-radius:var(--radius-base);padding:12px 16px;font-size:.8rem;color:var(--info-dark);margin-bottom:16px;}
+.scope-confirm-strip.hidden{display:none;}
+.scope-confirm-buttons{display:flex;gap:8px;margin-left:auto;}
+.scope-confirm-buttons button{height:32px;padding:6px 12px;font-size:.8rem;font-weight:600;border-radius:var(--radius-control);border:none;cursor:pointer;}
+.scope-confirm-buttons .btn-keep{background:var(--info);color:#fff;}
+.scope-confirm-buttons .btn-discard{background:#fff;color:var(--text-primary);border:1px solid var(--border);}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <a class="logo" href="index.html">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect width="28" height="28" rx="7" fill="#3b82f6"/>
+        <path d="M8 9h12l-12 10h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>ZALEXY</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">point_of_sale</span>Point of Sale</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">groups</span>Leads</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">account_circle</span>Accounts</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Profiles</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">receipt_long</span>Transactions</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">request_quote</span>Invoices</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">badge</span>Staff</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">event</span>Scheduling</a>
+      <a class="nav-item disabled" tabindex="-1" aria-disabled="true" title="Disabled in this prototype"><span class="material-symbols-rounded">settings</span>Settings</a>
+      <div class="nav-section">Prototypes</div>
+      <a class="nav-item" href="index.html"><span class="material-symbols-rounded">grid_view</span>Prototype Gallery</a>
+      <a class="nav-item" href="admin-intake-form-builder.html"><span class="material-symbols-rounded">dynamic_form</span>Admin: Intake &amp; Builder</a>
+      <a class="nav-item" href="admin-settings-policy-engine.html"><span class="material-symbols-rounded">admin_panel_settings</span>Admin: Policy Engine Settings</a>
+      <a class="nav-item" href="profile-intake-tab.html"><span class="material-symbols-rounded">badge</span>Profile: Intake Tab</a>
+      <a class="nav-item" href="profile-overview-tab.html"><span class="material-symbols-rounded">contact_page</span>Profile: Details Tab</a>
+      <a class="nav-item" href="portal-profile-tab.html"><span class="material-symbols-rounded">family_restroom</span>Portal: My Account</a>
+      <div class="nav-section">Billing Module</div>
+      <a class="nav-item" href="billing-dashboard.html"><span class="material-symbols-rounded">space_dashboard</span>Billing Dashboard</a>
+      <a class="nav-item" href="billing-upcoming-billings.html"><span class="material-symbols-rounded">event_upcoming</span>Upcoming Billings</a>
+      <a class="nav-item" href="billing-failed-payments.html"><span class="material-symbols-rounded">error</span>Failed Payments</a>
+      <a class="nav-item" href="billing-member-billing.html"><span class="material-symbols-rounded">groups</span>Member Billing</a>
+      <a class="nav-item active" href="billing-module-settings.html"><span class="material-symbols-rounded">settings</span>Module Settings</a>
+    </nav>
+    <div class="sidebar-foot">Prototype build · not production</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="search">
+        <span class="material-symbols-rounded">search</span>
+        <input type="text" placeholder="Search members, batches…" data-noop aria-label="Search members, batches">
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" data-noop aria-label="Notifications"><span class="material-symbols-rounded">notifications</span><span class="dot"></span></button>
+        <div class="avatar" aria-hidden="true">PS</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-header">
+        <h1>Module Settings</h1>
+        <p class="subtitle">Solar Swim · Fri 17 Apr 2026 · America/Los_Angeles</p>
+      </div>
+
+      <!-- Scope bar -->
+      <div class="card scope-bar">
+        <div class="scope-bar-row">
+          <div class="scope-select-group">
+            <label class="scope-label">Location</label>
+            <select id="scopeLocation" class="scope-select">
+              <option value="org">Organization Default</option>
+              <option value="solar-swim" selected>Solar Swim</option>
+              <option value="riverside">Riverside Aquatics</option>
+            </select>
+          </div>
+          <span class="scope-chevron">chevron_right</span>
+          <div class="scope-select-group">
+            <label class="scope-label">Service</label>
+            <select id="scopeService" class="scope-select">
+              <option value="all">All Services</option>
+              <option value="swim" selected>Swim</option>
+              <option value="basketball">Basketball</option>
+              <option value="fitness">Fitness</option>
+            </select>
+          </div>
+          <span class="scope-chevron">chevron_right</span>
+          <div class="scope-select-group">
+            <label class="scope-label">Funding Type</label>
+            <select id="scopeFunding" class="scope-select">
+              <option value="all">All Funding Types</option>
+              <option value="self-pay">Self Pay</option>
+              <option value="regional-center" selected>Regional Center</option>
+              <option value="voucher">Voucher</option>
+              <option value="insurance">Insurance</option>
+              <option value="complimentary">Complimentary</option>
+            </select>
+          </div>
+          <span class="scope-chevron">chevron_right</span>
+          <div class="scope-select-group">
+            <label class="scope-label">Class Type</label>
+            <select id="scopeClass" class="scope-select">
+              <option value="all">All Class Types</option>
+              <option value="private">Private</option>
+              <option value="semi-private" selected>Semi-Private</option>
+              <option value="group">Group</option>
+            </select>
+          </div>
+          <div class="scope-summary">
+            <span class="chip chip-info" id="scopeOverrideChip">3 overrides at this scope</span>
+          </div>
+        </div>
+        <div class="scope-breadcrumb">Resolving: <b>Organization Default</b> → <b>Solar Swim</b> → <b>Swim</b> → <b>Regional Center</b> → <span class="scope-breadcrumb-current"><b>Semi-Private</b></span></div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="card" style="margin-top:24px;display:flex;flex-direction:column;flex:1;overflow:hidden;">
+        <div class="tab-strip">
+          <button class="tab-btn active" data-tab="batch-execution" role="tab" aria-selected="true">Batch Execution</button>
+          <button class="tab-btn" data-tab="automation" role="tab" aria-selected="false">Automation &amp; Cron</button>
+          <button class="tab-btn" data-tab="retry" role="tab" aria-selected="false">Retry Logic</button>
+          <button class="tab-btn" data-tab="billing-cycles" role="tab" aria-selected="false">Billing Cycles</button>
+          <button class="tab-btn" data-tab="notifications" role="tab" aria-selected="false">Notifications</button>
+        </div>
+
+        <div class="tab-content">
+          <!-- Tab 1: Batch Execution -->
+          <div class="tab-pane active" id="batch-execution">
+            <!-- Processing Window -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-icon">schedule</div>
+                <div class="section-title">
+                  <h4>Processing Window</h4>
+                  <p class="subtitle">Restrict batch creation to specific hours. Leave both hours blank for no restriction.</p>
+                </div>
+              </div>
+              <div class="section-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label class="form-label">Batch Timezone</label>
+                    <select class="form-select" data-field="batchTimezone">
+                      <option value="UTC">UTC</option>
+                      <option value="America/Los_Angeles" selected>America/Los_Angeles</option>
+                      <option value="America/New_York">America/New_York</option>
+                      <option value="America/Chicago">America/Chicago</option>
+                      <option value="America/Denver">America/Denver</option>
+                      <option value="Europe/London">Europe/London</option>
+                      <option value="Asia/Kolkata">Asia/Kolkata</option>
+                    </select>
+                    <div class="form-inheritance"><span class="chip chip-muted">Inherited · Location</span></div>
+                    <p class="form-helper">Interprets the window hours below and all batch date maths. Cron expressions always run in UTC.</p>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Window Start Hour (0–23)</label>
+                    <input type="number" class="form-input" min="0" max="23" value="1" data-field="windowStart">
+                    <div class="form-inheritance"><span class="chip chip-info">Overridden here</span></div>
+                    <p class="form-helper">Batches will not run before this hour</p>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Window End Hour (0–23)</label>
+                    <input type="number" class="form-input" min="0" max="23" value="5" data-field="windowEnd">
+                    <div class="form-inheritance"><span class="chip chip-info">Overridden here</span></div>
+                    <p class="form-helper">Batches will not run at or after this hour</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Batch Size & Throughput -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-icon" style="background:#e0e7ff;color:#4f46e5;">tune</div>
+                <div class="section-title">
+                  <h4>Batch Size &amp; Throughput</h4>
+                  <p class="subtitle">Caps applied while a batch is assembled and charged.</p>
+                </div>
+              </div>
+              <div class="section-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label class="form-label">Max Members per Batch</label>
+                    <input type="number" class="form-input" min="1" max="5000" value="300" data-field="maxMembers">
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <p class="form-helper">A batch will not exceed this many members</p>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Max Batch Amount</label>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                      <input type="checkbox" class="checkbox-input" id="noLimitBatch" checked data-field="noLimitBatch">
+                      <label for="noLimitBatch" style="font-size:.875rem;flex:1;">No limit</label>
+                    </div>
+                    <input type="number" class="form-input" min="0.01" placeholder="$" value="" disabled data-field="maxBatchAmount">
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <p class="form-helper">Uncheck "No limit" to set a cap.</p>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Gateway Rate Limit</label>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <input type="number" class="form-input" min="1" max="300" value="50" data-field="gatewayRate" style="flex:1;">
+                      <span style="font-size:.875rem;color:var(--text-secondary);">txn / min</span>
+                    </div>
+                    <div class="form-inheritance"><span class="chip chip-muted">Inherited · Location</span></div>
+                    <p class="form-helper">Maximum charges submitted to Cayan per minute</p>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Delay Between Charges</label>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <input type="number" class="form-input" min="0" max="60" value="5" data-field="delayCharges" style="flex:1;">
+                      <span style="font-size:.875rem;color:var(--text-secondary);">seconds</span>
+                    </div>
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <p class="form-helper">Pause between individual card charges</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Safety -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-icon" style="background:#fee2e2;color:#b91c1c;">shield</div>
+                <div class="section-title">
+                  <h4>Safety</h4>
+                  <p class="subtitle">Guards that stop a run before it does damage.</p>
+                </div>
+              </div>
+              <div class="section-body">
+                <div class="checkbox-row">
+                  <label for="pauseGateway" class="checkbox-label">
+                    <div class="title">Pause on gateway error</div>
+                    <div class="desc">Halt the whole batch if Cayan returns a server error, rather than failing members one by one.</div>
+                  </label>
+                  <div class="toggle-right">
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <input type="checkbox" class="switch-input" id="pauseGateway" checked data-field="pauseGateway">
+                  </div>
+                </div>
+                <div class="checkbox-row">
+                  <label for="weekendProcessing" class="checkbox-label">
+                    <div class="title">Weekend processing</div>
+                    <div class="desc">Run scheduled batches on Saturday and Sunday. When off, a weekend run is deferred to the next weekday.</div>
+                  </label>
+                  <div class="toggle-right">
+                    <div class="form-inheritance"><span class="chip chip-info">Overridden here</span></div>
+                    <input type="checkbox" class="switch-input" id="weekendProcessing" data-field="weekendProcessing">
+                  </div>
+                </div>
+                <div class="checkbox-row">
+                  <label for="dryRunMode" class="checkbox-label">
+                    <div class="title">Dry-run mode</div>
+                    <div class="desc">Assemble and price the batch, write nothing, charge nothing. Produces a preview only.</div>
+                  </label>
+                  <div class="toggle-right">
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <input type="checkbox" class="switch-input" id="dryRunMode" data-field="dryRunMode">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Automation & Cron -->
+          <div class="tab-pane" id="automation">
+            <div class="warning-banner">
+              <span class="material-symbols-rounded">warning</span>
+              <span>Schedule changes require a redeploy. After editing, use <a class="warning-banner-link" onclick="openModal('exportVercel')">Export vercel.json</a> to copy the updated <code>crons</code> array into <code>server/vercel.json</code> and redeploy.</span>
+            </div>
+
+            <!-- Cron Schedules -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-icon" style="background:#f0fdf4;color:#059669;">update</div>
+                <div class="section-title">
+                  <h4>Cron Schedules</h4>
+                  <p class="subtitle">Automated jobs. All cron expressions run in UTC.</p>
+                </div>
+              </div>
+              <div class="section-body">
+                <!-- Arrears -->
+                <div class="cron-row enabled" data-cron="arrears">
+                  <div class="cron-header">
+                    <div class="cron-title">Arrears Batch — Auto Create</div>
+                    <div class="cron-route">GET /billing/admin/cron/arrears</div>
+                    <span class="chip chip-success cron-status-chip">Enabled</span>
+                    <input type="checkbox" class="toggle-switch on" data-field="arrearsEnabled" checked>
+                  </div>
+                  <div class="cron-body">
+                    <input type="text" class="cron-input" value="0 2 * * *" data-field="arrearsCron" placeholder="0 2 * * *">
+                    <div class="cron-english">Every day at 02:00 UTC</div>
+                    <div class="cron-chips">
+                      <button class="cron-chip" onclick="setCron(this, 'arrearsCron', '0 1 * * *')">Daily 1am</button>
+                      <button class="cron-chip active" onclick="setCron(this, 'arrearsCron', '0 2 * * *')">Daily 2am</button>
+                      <button class="cron-chip" onclick="setCron(this, 'arrearsCron', '0 3 * * *')">Daily 3am</button>
+                      <button class="cron-chip" onclick="setCron(this, 'arrearsCron', '0 */6 * * *')">Every 6h</button>
+                      <button class="cron-chip" onclick="setCron(this, 'arrearsCron', '0 2 * * 0')">Weekly Sun</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Recurring -->
+                <div class="cron-row enabled" data-cron="recurring">
+                  <div class="cron-header">
+                    <div class="cron-title">Recurring Batch — Auto Create</div>
+                    <div class="cron-route">GET /billing/admin/cron/recurring</div>
+                    <span class="chip chip-success cron-status-chip">Enabled</span>
+                    <input type="checkbox" class="toggle-switch on" data-field="recurringEnabled" checked>
+                  </div>
+                  <div class="cron-body">
+                    <input type="text" class="cron-input" value="0 1 * * *" data-field="recurringCron" placeholder="0 1 * * *">
+                    <div class="cron-english">Every day at 01:00 UTC</div>
+                    <div class="cron-chips">
+                      <button class="cron-chip active" onclick="setCron(this, 'recurringCron', '0 1 * * *')">Daily 1am</button>
+                      <button class="cron-chip" onclick="setCron(this, 'recurringCron', '0 2 * * *')">Daily 2am</button>
+                      <button class="cron-chip" onclick="setCron(this, 'recurringCron', '0 3 * * *')">Daily 3am</button>
+                      <button class="cron-chip" onclick="setCron(this, 'recurringCron', '0 */6 * * *')">Every 6h</button>
+                      <button class="cron-chip" onclick="setCron(this, 'recurringCron', '0 2 * * 0')">Weekly Sun</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Retry -->
+                <div class="cron-row disabled" data-cron="retry">
+                  <div class="cron-header">
+                    <div class="cron-title">Retry Failed Payments</div>
+                    <div class="cron-route">GET /billing/admin/cron/retry</div>
+                    <span class="chip chip-muted cron-status-chip">Disabled</span>
+                    <input type="checkbox" class="toggle-switch" data-field="retryEnabled">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Automation Gates -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-icon" style="background:#f5f3ff;color:#7c3aed;">toggle_on</div>
+                <div class="section-title">
+                  <h4>Automation Gates</h4>
+                  <p class="subtitle">Master switches for unattended operation.</p>
+                </div>
+              </div>
+              <div class="section-body">
+                <div class="checkbox-row">
+                  <label for="autoCreateBatches" class="checkbox-label">
+                    <div class="title">Auto-create batches</div>
+                    <div class="desc">Allow the cron job to assemble batches without staff action.</div>
+                  </label>
+                  <div class="toggle-right">
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <input type="checkbox" class="switch-input" id="autoCreateBatches" checked data-field="autoCreateBatches">
+                  </div>
+                </div>
+                <div class="checkbox-row">
+                  <label for="autoProcessBatches" class="checkbox-label">
+                    <div class="title">Auto-process batches</div>
+                    <div class="desc">Charge cards automatically once a batch is assembled. When off, batches wait as Queued for staff to run.</div>
+                  </label>
+                  <div class="toggle-right">
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <input type="checkbox" class="switch-input" id="autoProcessBatches" checked data-field="autoProcessBatches">
+                  </div>
+                </div>
+                <div class="checkbox-row">
+                  <label for="allowUnattendedArrears" class="checkbox-label">
+                    <div class="title">Allow unattended arrears batching</div>
+                    <div class="desc">Arrears batches may be created by cron without staff approval. Manual staff creation always works regardless.</div>
+                  </label>
+                  <div class="toggle-right">
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <input type="checkbox" class="switch-input" id="allowUnattendedArrears" data-field="allowUnattendedArrears">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 3: Retry Logic -->
+          <div class="tab-pane" id="retry">
+            <!-- Retry Policy -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-icon" style="background:#fef3c7;color:#b45309;">autorenew</div>
+                <div class="section-title">
+                  <h4>Retry Policy</h4>
+                  <p class="subtitle">How a declined card is re-attempted before a human is involved.</p>
+                </div>
+              </div>
+              <div class="section-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label class="form-label">Maximum auto-retries</label>
+                    <input type="number" class="form-input" min="0" max="3" value="2" data-field="maxRetries">
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <p class="form-helper">After this many failed attempts the invoice is flagged for staff review. Hard maximum 3.</p>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Retry Gap</label>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <input type="number" class="form-input" min="1" max="168" value="12" data-field="retryGap" style="flex:1;">
+                      <span style="font-size:.875rem;color:var(--text-secondary);">hours</span>
+                    </div>
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <p class="form-helper">Wait time between attempts. PRD default is 12 hours.</p>
+                  </div>
+                  <div class="form-group full">
+                    <label class="form-label">Action after final failure</label>
+                    <select class="form-select" data-field="finalFailureAction">
+                      <option value="review" selected>Flag for staff review</option>
+                      <option value="suspend">Flag and suspend scheduling</option>
+                      <option value="hold">Flag and apply payment hold</option>
+                      <option value="cancel">Cancel membership</option>
+                    </select>
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <p class="form-helper">What happens when retries are exhausted</p>
+                  </div>
+                </div>
+
+                <div class="preview-strip" id="retryPreview">
+                  <span class="material-symbols-rounded">info</span>
+                  <span>With these settings, a card declined on <b>Fri 17 Apr at 06:00</b> is retried at <b>18:00 Fri 17 Apr</b> and <b>06:00 Sat 18 Apr</b>, then flagged for staff review.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Retry Notifications -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-icon" style="background:#ffe2e5;color:#dc2626;">campaign</div>
+                <div class="section-title">
+                  <h4>Retry Notifications</h4>
+                  <p class="subtitle">Who hears about a retry, and when.</p>
+                </div>
+              </div>
+              <div class="section-body">
+                <div class="checkbox-row">
+                  <label for="notifyMemberRetry" class="checkbox-label">
+                    <div class="title">Notify member after each failed attempt</div>
+                    <div class="desc">Sends the payment-update link with every failure, not only the last.</div>
+                  </label>
+                  <div class="toggle-right">
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <input type="checkbox" class="switch-input" id="notifyMemberRetry" checked data-field="notifyMemberRetry">
+                  </div>
+                </div>
+                <div class="checkbox-row">
+                  <label for="notifyStaffRetry" class="checkbox-label">
+                    <div class="title">Notify staff after each failed attempt</div>
+                    <div class="desc">When off, staff are told only once retries are exhausted.</div>
+                  </label>
+                  <div class="toggle-right">
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <input type="checkbox" class="switch-input" id="notifyStaffRetry" data-field="notifyStaffRetry">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 4: Billing Cycles -->
+          <div class="tab-pane" id="billing-cycles">
+            <!-- Cycle Anchor -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-icon" style="background:#f0fdf4;color:#059669;">event_repeat</div>
+                <div class="section-title">
+                  <h4>Cycle Anchor</h4>
+                  <p class="subtitle">What date a member's billing cycle is measured from.</p>
+                </div>
+              </div>
+              <div class="section-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label class="form-label">Billing anchor</label>
+                    <select class="form-select" data-field="billingAnchor">
+                      <option value="contract" selected>Contract start date</option>
+                      <option value="month">First day of month</option>
+                      <option value="session">First attended session</option>
+                      <option value="manual">Manual per member</option>
+                    </select>
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <p class="form-helper">Changing this does not move existing members' cycles</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Proration -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-icon" style="background:#ede9fe;color:#7c3aed;">pie_chart</div>
+                <div class="section-title">
+                  <h4>Proration</h4>
+                  <p class="subtitle">How a partial first or last cycle is priced.</p>
+                </div>
+              </div>
+              <div class="section-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label class="form-label">Proration method</label>
+                    <select class="form-select" id="prorationType" data-field="prorationType">
+                      <option value="scheduled">Scheduled occurrences</option>
+                      <option value="calendar" selected>Calendar days</option>
+                      <option value="weekly">Weekly</option>
+                      <option value="manual">Manual</option>
+                      <option value="none">None</option>
+                    </select>
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <p class="form-helper">Scheduled occurrences counts remaining sessions; calendar days uses a day ratio</p>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Rounding</label>
+                    <select class="form-select" id="proroundRounding" data-field="proroundRounding">
+                      <option value="nearest" selected>Nearest cent</option>
+                      <option value="down">Round down</option>
+                      <option value="up">Round up</option>
+                      <option value="decimal">Allow decimals</option>
+                    </select>
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <p class="form-helper">Applied after the proration calculation</p>
+                  </div>
+                </div>
+
+                <div class="preview-strip" id="proratePreview">
+                  <span class="material-symbols-rounded">info</span>
+                  <span>A member joining <b>Sun 12 Apr</b> on Monthly Standard <code>$29.99</code> is charged <code>29.99 × 19 / 30</code> = <b><code>$18.99</code></b> for 12–30 Apr, plus <b><code>$29.99</code></b> for May. Total <b><code>$48.98</code></b>.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Arrears Detection -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-icon" style="background:#fef3c7;color:#b45309;">history</div>
+                <div class="section-title">
+                  <h4>Arrears Detection</h4>
+                  <p class="subtitle">How far back to look for members who were never billed.</p>
+                </div>
+              </div>
+              <div class="section-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label class="form-label">Arrears window</label>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <input type="number" class="form-input" min="1" max="1095" value="90" data-field="arrearsWindow" style="flex:1;">
+                      <span style="font-size:.875rem;color:var(--text-secondary);">days back</span>
+                    </div>
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <p class="form-helper">How far back to look for unbilled members</p>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Maximum lookback</label>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <input type="number" class="form-input" min="1" max="60" value="12" data-field="maxLookback" style="flex:1;">
+                      <span style="font-size:.875rem;color:var(--text-secondary);">months</span>
+                    </div>
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <p class="form-helper">Subscriptions older than this are skipped entirely</p>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Minimum arrear amount</label>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <span style="font-size:.875rem;color:var(--text-secondary);">$</span>
+                      <input type="number" class="form-input" min="0" value="1.00" data-field="minArrearAmount" style="flex:1;">
+                    </div>
+                    <div class="form-inheritance"><span class="chip chip-muted">Inherited · Location</span></div>
+                    <p class="form-helper">Members owing less than this are skipped</p>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Approval limit per member</label>
+                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                      <input type="checkbox" class="checkbox-input" id="noLimitApproval" data-field="noLimitApproval">
+                      <label for="noLimitApproval" style="font-size:.875rem;flex:1;">No limit</label>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <span style="font-size:.875rem;color:var(--text-secondary);">$</span>
+                      <input type="number" class="form-input" min="0.01" value="500.00" data-field="approvalLimit" style="flex:1;">
+                    </div>
+                    <div class="form-inheritance"><span class="chip chip-muted">Inherited · Location</span></div>
+                    <p class="form-helper">Members owing more than this are skipped and need staff approval</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 5: Notifications -->
+          <div class="tab-pane" id="notifications">
+            <!-- Notification Events -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-icon" style="background:#dbeafe;color:#0284c7;">notifications</div>
+                <div class="section-title">
+                  <h4>Notification Events</h4>
+                  <p class="subtitle">Per-event delivery.</p>
+                </div>
+              </div>
+              <div class="section-body">
+                <div style="overflow-x:auto;">
+                <table class="notif-matrix">
+                  <thead>
+                    <tr>
+                      <th style="width:260px;">EVENT</th>
+                      <th class="center" style="width:90px;">EMAIL</th>
+                      <th class="center" style="width:90px;">SMS</th>
+                      <th style="width:170px;">TIMING</th>
+                      <th style="width:190px;">RECIPIENTS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div class="notif-event">
+                          <div class="notif-event-title">Payment upcoming</div>
+                          <div class="notif-event-desc">Pre-charge notice before a scheduled charge</div>
+                        </div>
+                      </td>
+                      <td class="notif-col"><input type="checkbox" class="checkbox-input" checked data-field="notif-upcoming-email"></td>
+                      <td class="notif-col"><input type="checkbox" class="checkbox-input" checked data-field="notif-upcoming-sms"></td>
+                      <td><select class="form-select" style="width:100%;" data-field="notif-upcoming-timing"><option selected>3 days before</option><option>Immediately</option><option>On completion</option><option>1 day before</option><option>7 days before</option></select></td>
+                      <td><select class="form-select" style="width:100%;" data-field="notif-upcoming-recip"><option selected>Member</option><option>Staff</option><option>Admin</option><option>Member + Staff</option><option>Member + Admin</option></select></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="notif-event">
+                          <div class="notif-event-title">Payment succeeded</div>
+                          <div class="notif-event-desc">Confirmation after a successful charge</div>
+                        </div>
+                      </td>
+                      <td class="notif-col"><input type="checkbox" class="checkbox-input" checked data-field="notif-succeeded-email"></td>
+                      <td class="notif-col"><input type="checkbox" class="checkbox-input" data-field="notif-succeeded-sms"></td>
+                      <td><select class="form-select" style="width:100%;" data-field="notif-succeeded-timing"><option selected>Immediately</option><option>3 days before</option><option>On completion</option><option>1 day before</option><option>7 days before</option></select></td>
+                      <td><select class="form-select" style="width:100%;" data-field="notif-succeeded-recip"><option selected>Member</option><option>Staff</option><option>Admin</option><option>Member + Staff</option><option>Member + Admin</option></select></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="notif-event">
+                          <div class="notif-event-title">Payment failed</div>
+                          <div class="notif-event-desc">Sent on each failed attempt, with the update-payment link</div>
+                        </div>
+                      </td>
+                      <td class="notif-col"><input type="checkbox" class="checkbox-input" checked data-field="notif-failed-email"></td>
+                      <td class="notif-col"><input type="checkbox" class="checkbox-input" checked data-field="notif-failed-sms"></td>
+                      <td><select class="form-select" style="width:100%;" data-field="notif-failed-timing"><option selected>Immediately</option><option>3 days before</option><option>On completion</option><option>1 day before</option><option>7 days before</option></select></td>
+                      <td><select class="form-select" style="width:100%;" data-field="notif-failed-recip"><option selected>Member</option><option>Staff</option><option>Admin</option><option>Member + Staff</option><option>Member + Admin</option></select></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="notif-event">
+                          <div class="notif-event-title">Payment retry scheduled</div>
+                          <div class="notif-event-desc">Tells the member when the next attempt will run</div>
+                        </div>
+                      </td>
+                      <td class="notif-col"><input type="checkbox" class="checkbox-input" checked data-field="notif-retry-scheduled-email"></td>
+                      <td class="notif-col"><input type="checkbox" class="checkbox-input" data-field="notif-retry-scheduled-sms"></td>
+                      <td><select class="form-select" style="width:100%;" data-field="notif-retry-scheduled-timing"><option selected>Immediately</option><option>3 days before</option><option>On completion</option><option>1 day before</option><option>7 days before</option></select></td>
+                      <td><select class="form-select" style="width:100%;" data-field="notif-retry-scheduled-recip"><option selected>Member</option><option>Staff</option><option>Admin</option><option>Member + Staff</option><option>Member + Admin</option></select></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="notif-event">
+                          <div class="notif-event-title">Retries exhausted</div>
+                          <div class="notif-event-desc">Escalation once automatic retries are used up</div>
+                        </div>
+                      </td>
+                      <td class="notif-col"><input type="checkbox" class="checkbox-input" checked data-field="notif-exhausted-email"></td>
+                      <td class="notif-col"><input type="checkbox" class="checkbox-input" checked data-field="notif-exhausted-sms"></td>
+                      <td><select class="form-select" style="width:100%;" data-field="notif-exhausted-timing"><option selected>Immediately</option><option>3 days before</option><option>On completion</option><option>1 day before</option><option>7 days before</option></select></td>
+                      <td><select class="form-select" style="width:100%;" data-field="notif-exhausted-recip"><option selected>Member + Staff</option><option>Member</option><option>Staff</option><option>Admin</option><option>Member + Admin</option></select></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="notif-event">
+                          <div class="notif-event-title">Batch summary</div>
+                          <div class="notif-event-desc">Run summary after each scheduled batch completes</div>
+                        </div>
+                      </td>
+                      <td class="notif-col"><input type="checkbox" class="checkbox-input" checked data-field="notif-batch-email"></td>
+                      <td class="notif-col"><input type="checkbox" class="checkbox-input" data-field="notif-batch-sms"></td>
+                      <td><select class="form-select" style="width:100%;" data-field="notif-batch-timing"><option>Immediately</option><option>3 days before</option><option selected>On completion</option><option>1 day before</option><option>7 days before</option></select></td>
+                      <td><select class="form-select" style="width:100%;" data-field="notif-batch-recip"><option>Member</option><option>Staff</option><option selected>Admin</option><option>Member + Staff</option><option>Member + Admin</option></select></td>
+                    </tr>
+                  </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Delivery -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-icon" style="background:#e0f2fe;color:#0369a1;">send</div>
+                <div class="section-title">
+                  <h4>Delivery</h4>
+                  <p class="subtitle">Where alerts are sent and by which provider.</p>
+                </div>
+              </div>
+              <div class="section-body">
+                <div class="form-grid">
+                  <div class="form-group full">
+                    <label class="form-label">Admin recipients</label>
+                    <input type="text" class="form-input" value="priyabrata@kibiz.com" data-field="adminRecipients">
+                    <div class="form-inheritance"><span class="chip chip-muted">Inherited · Location</span></div>
+                    <p class="form-helper">Comma-separated for multiple recipients</p>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">SMS provider</label>
+                    <select class="form-select" id="smsProvider" data-field="smsProvider">
+                      <option value="twilio" selected>Twilio</option>
+                      <option value="gohighlevel">GoHighLevel</option>
+                      <option value="none">None</option>
+                    </select>
+                    <div class="form-inheritance"><span class="chip chip-muted">Org default</span></div>
+                    <p class="form-helper">The notification layer is provider-independent</p>
+                  </div>
+                </div>
+                <p class="form-error" id="smsDisabledReason" style="display:none;">Select an SMS provider to enable SMS notifications.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-bar">
+          <span class="footer-counter" id="changeCounter">No unsaved changes</span>
+          <div class="footer-actions">
+            <button class="btn btn-outline" id="discardBtn" disabled onclick="discardChanges()">Discard changes</button>
+            <button class="btn btn-primary" id="saveBtn" disabled onclick="saveConfiguration()">Save Configuration</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal: Review Changes -->
+<div class="modal-backdrop hidden" id="reviewChangesModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3 class="modal-title" id="reviewTitle">3 unsaved changes</h3>
+        <p class="modal-subtitle" id="reviewSubtitle">These will be written at scope Solar Swim → Swim → Regional Center → Semi-Private.</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('reviewChanges')">&times;</button>
+    </div>
+    <div class="modal-body" id="reviewBody">
+      <!-- Changes rendered here -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('reviewChanges')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Export vercel.json -->
+<div class="modal-backdrop hidden" id="exportVercelModal">
+  <div class="modal wide">
+    <div class="modal-head">
+      <div>
+        <h3 class="modal-title">vercel.json — crons array</h3>
+        <p class="modal-subtitle">Copy this into server/vercel.json and redeploy to apply schedule changes.</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('exportVercel')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="position:relative;">
+        <button class="code-copy-btn" onclick="copyCronJson()"><span class="material-symbols-rounded">content_copy</span></button>
+        <pre class="code-block" id="cronCodeBlock">{
+  "crons": [
+    { "path": "/api/v1/billing/admin/cron/arrears",   "schedule": "0 2 * * *" },
+    { "path": "/api/v1/billing/admin/cron/recurring", "schedule": "0 1 * * *" }
+  ]
+}</pre>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('exportVercel')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// State
+var state = {
+  baseline: {},
+  current: {},
+  smsProvider: 'twilio',
+  activeCronRows: { arrears: true, recurring: true, retry: false },
+  activeTab: 'batch-execution',
+  modals: { reviewChanges: false, exportVercel: false },
+  pendingScopeChange: null
+};
+
+// Initialize on load
+function init() {
+  captureBaseline();
+  attachEventListeners();
+  updateUI();
+  handleHashNav();
+}
+
+function captureBaseline() {
+  var fields = document.querySelectorAll('[data-field]');
+  fields.forEach(function(f) {
+    var field = f.getAttribute('data-field');
+    if (f.type === 'checkbox') {
+      state.baseline[field] = f.checked;
+      state.current[field] = f.checked;
+    } else {
+      state.baseline[field] = f.value;
+      state.current[field] = f.value;
+    }
+  });
+}
+
+function attachEventListeners() {
+  // Tab buttons
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      switchTab(btn.getAttribute('data-tab'));
+    });
+  });
+
+  // Form fields
+  document.querySelectorAll('[data-field]').forEach(function(f) {
+    f.addEventListener('change', function() {
+      handleFieldChange(f);
+    });
+    f.addEventListener('input', function() {
+      if (f.type !== 'checkbox') {
+        handleFieldChange(f);
+      }
+    });
+  });
+
+  // No limit checkboxes
+  document.getElementById('noLimitBatch').addEventListener('change', function() {
+    var amountInput = document.querySelector('input[data-field="maxBatchAmount"]');
+    amountInput.disabled = this.checked;
+    if (this.checked) amountInput.value = '';
+    state.current['noLimitBatch'] = this.checked;
+    updateUI();
+  });
+
+  document.getElementById('noLimitApproval').addEventListener('change', function() {
+    var limitInput = document.querySelector('input[data-field="approvalLimit"]');
+    limitInput.disabled = this.checked;
+    if (this.checked) limitInput.value = '';
+    state.current['noLimitApproval'] = this.checked;
+    updateUI();
+  });
+
+  // Proration type change
+  document.getElementById('prorationType').addEventListener('change', function() {
+    var roundingSelect = document.getElementById('proroundRounding');
+    if (this.value === 'none') {
+      roundingSelect.disabled = true;
+    } else {
+      roundingSelect.disabled = false;
+    }
+    updateProratePreview();
+    updateUI();
+  });
+
+  // SMS provider change
+  document.getElementById('smsProvider').addEventListener('change', function() {
+    state.smsProvider = this.value;
+    updateSMSSwitches();
+    updateUI();
+  });
+
+  // Cron toggle switches
+  document.querySelectorAll('.toggle-switch').forEach(function(sw) {
+    sw.addEventListener('click', function() {
+      var cronName = this.closest('[data-cron]').getAttribute('data-cron');
+      var field = this.getAttribute('data-field');
+      var isNowEnabled = !this.classList.contains('on');
+
+      state.current[field] = isNowEnabled;
+
+      if (isNowEnabled) {
+        this.classList.add('on');
+        this.closest('[data-cron]').classList.remove('disabled');
+        this.closest('[data-cron]').classList.add('enabled');
+      } else {
+        this.classList.remove('on');
+        this.closest('[data-cron]').classList.remove('enabled');
+        this.closest('[data-cron]').classList.add('disabled');
+      }
+
+      state.activeCronRows[cronName] = isNowEnabled;
+      updateUI();
+    });
+  });
+
+  // Scope selects
+  document.querySelectorAll('.scope-select').forEach(function(sel) {
+    sel.addEventListener('change', function() {
+      handleScopeChange();
+    });
+  });
+}
+
+function handleFieldChange(field) {
+  var fieldName = field.getAttribute('data-field');
+  if (field.type === 'checkbox') {
+    state.current[fieldName] = field.checked;
+  } else {
+    state.current[fieldName] = field.value;
+  }
+  updateUI();
+}
+
+function updateUI() {
+  updateChangeCounter();
+  updateRetryPreview();
+  updateProratePreview();
+  updateSMSSwitches();
+  updateTabDots();
+  updateFooterButtons();
+}
+
+function updateChangeCounter() {
+  var changes = 0;
+  for (var key in state.baseline) {
+    if (state.baseline[key] !== state.current[key]) {
+      changes++;
+    }
+  }
+
+  var counter = document.getElementById('changeCounter');
+  var saveBtn = document.getElementById('saveBtn');
+  var discardBtn = document.getElementById('discardBtn');
+
+  if (changes === 0) {
+    counter.textContent = 'No unsaved changes';
+    counter.classList.remove('dirty', 'error');
+    saveBtn.disabled = true;
+    discardBtn.disabled = true;
+  } else {
+    counter.innerHTML = '<span class="footer-counter-text" style="color:var(--info-dark);font-weight:600;">' + changes + ' unsaved changes</span><a class="footer-counter-link" onclick="openModal(\'reviewChanges\')">View</a>';
+    counter.classList.add('dirty');
+    saveBtn.disabled = false;
+    discardBtn.disabled = false;
+  }
+}
+
+function updateTabDots() {
+  var tabs = ['batch-execution', 'automation', 'retry', 'billing-cycles', 'notifications'];
+  tabs.forEach(function(tab) {
+    var pane = document.getElementById(tab);
+    var btn = document.querySelector('[data-tab="' + tab + '"]');
+
+    var fields = pane.querySelectorAll('[data-field]');
+    var hasChanges = false;
+    fields.forEach(function(f) {
+      var field = f.getAttribute('data-field');
+      if (state.baseline[field] !== state.current[field]) {
+        hasChanges = true;
+      }
+    });
+
+    if (hasChanges) {
+      btn.classList.add('dirty');
+    } else {
+      btn.classList.remove('dirty');
+    }
+  });
+}
+
+function updateRetryPreview() {
+  var maxRetries = parseInt(document.querySelector('[data-field="maxRetries"]').value) || 0;
+  var retryGap = parseInt(document.querySelector('[data-field="retryGap"]').value) || 12;
+  var action = document.querySelector('[data-field="finalFailureAction"]').value;
+
+  var actionText = 'flagged for staff review';
+  if (action === 'suspend') actionText = 'flagged and suspend scheduling';
+  if (action === 'hold') actionText = 'flagged and apply payment hold';
+  if (action === 'cancel') actionText = 'cancelled membership';
+
+  var preview = document.getElementById('retryPreview');
+
+  if (maxRetries === 0) {
+    preview.innerHTML = '<span class="material-symbols-rounded">info</span><span>Automatic retries are off — a declined card is flagged for staff review immediately.</span>';
+  } else {
+    var times = [];
+    for (var i = 1; i <= maxRetries; i++) {
+      var hoursOffset = i * retryGap;
+      times.push('<b>' + (6 + Math.floor(hoursOffset / 24)) + ':00 ' + (hoursOffset < 24 ? 'Fri 17 Apr' : 'Sat 18 Apr') + '</b>');
+    }
+    preview.innerHTML = '<span class="material-symbols-rounded">info</span><span>With these settings, a card declined on <b>Fri 17 Apr at 06:00</b> is retried at ' + times.join(' and ') + ', then ' + actionText + '.</span>';
+  }
+}
+
+function updateProratePreview() {
+  var method = document.getElementById('prorationType').value;
+  var rounding = document.getElementById('proroundRounding').value;
+  var preview = document.getElementById('proratePreview');
+
+  var parts = [];
+
+  switch(method) {
+    case 'calendar':
+      if (rounding === 'up') {
+        parts = ['29.99 × 19 / 30 = <b><code>$19.00</code></b>', '<b><code>$29.99</code></b>', '<b><code>$48.99</code></b>'];
+      } else {
+        parts = ['29.99 × 19 / 30 = <b><code>$18.99</code></b>', '<b><code>$29.99</code></b>', '<b><code>$48.98</code></b>'];
+      }
+      break;
+    case 'scheduled':
+    case 'weekly':
+      parts = ['3 of 4 remaining ' + (method === 'scheduled' ? 'sessions' : 'weeks') + ' → <b><code>$22.49</code></b>', '<b><code>$29.99</code></b>', '<b><code>$52.48</code></b>'];
+      break;
+    case 'manual':
+      preview.innerHTML = '<span class="material-symbols-rounded">info</span><span>Staff enters the first-cycle amount for each member. No automatic calculation.</span>';
+      return;
+    case 'none':
+      preview.innerHTML = '<span class="material-symbols-rounded">info</span><span>The full <b><code>$29.99</code></b> is charged for a partial first month. No proration.</span>';
+      return;
+  }
+
+  preview.innerHTML = '<span class="material-symbols-rounded">info</span><span>A member joining <b>Sun 12 Apr</b> on Monthly Standard <code>$29.99</code> is charged ' + parts[0] + ' for 12–30 Apr, plus ' + parts[1] + ' for May. Total ' + parts[2] + '.</span>';
+}
+
+function updateSMSSwitches() {
+  var smsProvider = document.getElementById('smsProvider').value;
+  var smsSwitches = document.querySelectorAll('[data-field*="sms"]');
+  var reason = document.getElementById('smsDisabledReason');
+
+  if (smsProvider === 'none') {
+    smsSwitches.forEach(function(sw) {
+      sw.disabled = true;
+      sw.checked = false;
+      state.current[sw.getAttribute('data-field')] = false;
+    });
+    reason.style.display = 'block';
+  } else {
+    smsSwitches.forEach(function(sw) {
+      sw.disabled = false;
+    });
+    reason.style.display = 'none';
+  }
+}
+
+function updateFooterButtons() {
+  var saveBtn = document.getElementById('saveBtn');
+  var discardBtn = document.getElementById('discardBtn');
+
+  if (saveBtn.disabled && discardBtn.disabled) {
+    saveBtn.disabled = true;
+    discardBtn.disabled = true;
+  }
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+
+  document.getElementById(tabName).classList.add('active');
+  document.querySelector('[data-tab="' + tabName + '"]').classList.add('active');
+
+  state.activeTab = tabName;
+  window.location.hash = '#' + tabName;
+}
+
+function handleHashNav() {
+  var hash = window.location.hash.substr(1);
+  if (hash === 'batch-execution' || hash === 'automation' || hash === 'retry' || hash === 'billing-cycles' || hash === 'notifications') {
+    switchTab(hash);
+  }
+}
+
+function handleScopeChange() {
+  var changes = 0;
+  for (var key in state.baseline) {
+    if (state.baseline[key] !== state.current[key]) {
+      changes++;
+    }
+  }
+  if (changes > 0) {
+    var confirmed = confirm('Changing scope will discard ' + changes + ' unsaved changes. Continue?');
+    if (!confirmed) {
+      return;
+    }
+  }
+  state.current = {};
+  state.baseline = {};
+  captureBaseline();
+  updateUI();
+}
+
+function setCron(btn, fieldId, expr) {
+  var input = document.querySelector('[data-field="' + fieldId + '"]');
+  input.value = expr;
+  state.current[fieldId] = expr;
+
+  document.querySelectorAll('[data-field="' + fieldId + '"]').parentElement?.querySelectorAll('.cron-chip').forEach(function(c) {
+    c.classList.remove('active');
+  });
+  btn.classList.add('active');
+
+  updateUI();
+}
+
+function openModal(modalName) {
+  if (modalName === 'reviewChanges') {
+    var changes = [];
+    for (var key in state.baseline) {
+      if (state.baseline[key] !== state.current[key]) {
+        changes.push({ field: key, old: state.baseline[key], new: state.current[key] });
+      }
+    }
+
+    var body = document.getElementById('reviewBody');
+    body.innerHTML = '';
+    changes.forEach(function(ch) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:grid;grid-template-columns:1fr auto;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);';
+      row.innerHTML = '<div><div class="form-label">' + ch.field + '</div><div style="font-size:.7rem;color:var(--text-secondary);">' + getTabForField(ch.field) + '</div></div><div style="text-align:right;"><span style="color:var(--text-secondary);text-decoration:line-through;">' + ch.old + '</span> <span style="color:var(--text-secondary);">→</span> <span style="font-weight:600;">' + ch.new + '</span></div>';
+      body.appendChild(row);
+    });
+  } else if (modalName === 'exportVercel') {
+    updateVercelJson();
+  }
+
+  document.getElementById(modalName + 'Modal').style.display = 'flex';
+}
+
+function closeModal(modalName) {
+  document.getElementById(modalName + 'Modal').style.display = 'none';
+}
+
+function getTabForField(field) {
+  if (['batchTimezone', 'windowStart', 'windowEnd', 'maxMembers', 'noLimitBatch', 'maxBatchAmount', 'gatewayRate', 'delayCharges', 'pauseGateway', 'weekendProcessing', 'dryRunMode'].includes(field)) return 'Batch Execution';
+  if (['arrearsEnabled', 'arrearsCron', 'recurringEnabled', 'recurringCron', 'retryEnabled', 'retryCron', 'autoCreateBatches', 'autoProcessBatches', 'allowUnattendedArrears'].includes(field)) return 'Automation & Cron';
+  if (['maxRetries', 'retryGap', 'finalFailureAction', 'notifyMemberRetry', 'notifyStaffRetry'].includes(field)) return 'Retry Logic';
+  if (['billingAnchor', 'prorationType', 'proroundRounding', 'arrearsWindow', 'maxLookback', 'minArrearAmount', 'noLimitApproval', 'approvalLimit'].includes(field)) return 'Billing Cycles';
+  return 'Notifications';
+}
+
+function updateVercelJson() {
+  var crons = [];
+  if (state.activeCronRows.arrears) {
+    crons.push('{ "path": "/api/v1/billing/admin/cron/arrears",   "schedule": "' + state.current['arrearsCron'] + '" }');
+  }
+  if (state.activeCronRows.recurring) {
+    crons.push('{ "path": "/api/v1/billing/admin/cron/recurring", "schedule": "' + state.current['recurringCron'] + '" }');
+  }
+  if (state.activeCronRows.retry) {
+    crons.push('{ "path": "/api/v1/billing/admin/cron/retry",     "schedule": "' + state.current['retryCron'] + '" }');
+  }
+
+  var json = '{\n  "crons": [\n    ' + crons.join(',\n    ') + '\n  ]\n}';
+  document.getElementById('cronCodeBlock').textContent = json;
+}
+
+function copyCronJson() {
+  var code = document.getElementById('cronCodeBlock').textContent;
+  navigator.clipboard.writeText(code).then(function() {
+    alert('Copied to clipboard');
+  });
+}
+
+function saveConfiguration() {
+  state.baseline = {};
+  for (var key in state.current) {
+    state.baseline[key] = state.current[key];
+  }
+  alert('Configuration saved');
+  updateUI();
+}
+
+function discardChanges() {
+  for (var key in state.baseline) {
+    var field = document.querySelector('[data-field="' + key + '"]');
+    if (field) {
+      if (field.type === 'checkbox') {
+        field.checked = state.baseline[key];
+      } else {
+        field.value = state.baseline[key];
+      }
+    }
+  }
+  state.current = {};
+  captureBaseline();
+  updateUI();
+}
+
+init();
+window.addEventListener('hashchange', handleHashNav);
+</script>
+</body>
+</html>
