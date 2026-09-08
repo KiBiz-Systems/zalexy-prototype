@@ -199,8 +199,10 @@ tbody tr:last-child td{border-bottom:0;}
 
 .held-list{margin-top:14px;border-top:1px solid var(--border);}
 .held-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:.8rem;border-bottom:1px solid var(--border);}
-.ghost-chip{background:#fee2e2;color:#b91c1c;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:4px;}
+.authhold-chip{background:#fef3c7;color:#b45309;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:4px;}
 .confirmed-chip{background:var(--success-bg);color:var(--success-dark);font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:4px;}
+.held-status-cell{display:flex;align-items:center;gap:8px;}
+.held-status-line{font-size:.72rem;color:var(--text-secondary);}
 .chain-actions{display:flex;justify-content:flex-end;margin-top:14px;}
 
 .ledger-table{width:100%;border-collapse:collapse;}
@@ -476,7 +478,7 @@ var NOTIF_CHANNELS = ['Parent Email','Parent SMS','Staff Email','Dashboard Alert
 var CHAIN_STAGES = [
   'Voucher expires',
   'Past bookings remain',
-  'Future recurring bookings become GHOST / FUNDING HOLD',
+  'Future recurring bookings move to Authorization Hold, waiting on voucher funding',
   'Parent and staff notified',
   'New voucher added',
   'Eligibility recalculated',
@@ -608,9 +610,9 @@ var vouchers = [
     sourceFile:'CHOICEED-VOUCHERS-JAN2026.csv', sourceRow:9, batch:'IMP-0365', importedDate:'Jan 15, 2026',
     status:'EXPIRED', fundingHold:true, chainCurrentIndex:3,
     heldBookings:[
-      {date:'Tue Apr 21', time:'4:00 PM', service:'Swim Group', status:'GHOST'},
-      {date:'Tue Apr 28', time:'4:00 PM', service:'Swim Group', status:'GHOST'},
-      {date:'Tue May 5', time:'4:00 PM', service:'Swim Group', status:'GHOST'}
+      {date:'Tue Apr 21', time:'4:00 PM', service:'Swim Group', status:'AUTHORIZATION_HOLD'},
+      {date:'Tue Apr 28', time:'4:00 PM', service:'Swim Group', status:'AUTHORIZATION_HOLD'},
+      {date:'Tue May 5', time:'4:00 PM', service:'Swim Group', status:'AUTHORIZATION_HOLD'}
     ],
     ledger:[
       {date:'Feb 1', type:'Voucher Authorization', source:'HS-5507', change:'+10', changeType:'pos', reserved:0, available:10, reason:'Authorization approved', by:'Rosanna'},
@@ -1026,8 +1028,11 @@ function renderDrawer(){
     html += '</div>';
     html += '<div class="held-list">' + v.heldBookings.map(function(b, idx){
       var confirmed = b.status === 'CONFIRMED';
+      var label = confirmed ? 'Confirmed' : 'Authorization Hold';
+      var line = confirmed ? 'Booked. A session is reserved.' : 'Waiting on voucher funding.';
       return '<div class="held-row"><span>' + b.date + ' · ' + b.time + '</span><span>' + b.service + '</span>' +
-        '<span class="' + (confirmed ? 'confirmed-chip' : 'ghost-chip') + '">' + b.status + '</span></div>';
+        '<span class="held-status-cell"><span class="' + (confirmed ? 'confirmed-chip' : 'authhold-chip') + '">' + label + '</span>' +
+        '<span class="held-status-line">' + line + '</span></span></div>';
     }).join('') + '</div>';
     html += '<div class="chain-actions"><button type="button" class="btn-outline" id="overrideHoldBtn">Keep bookings confirmed (override)</button></div>';
     html += '</div>';
