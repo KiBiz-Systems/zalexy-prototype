@@ -15,942 +15,1446 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <style>
-:root{--primary:#334155;--primary-light:#475569;--primary-dark:#1e293b;--info:#3b82f6;--info-bg:#eff6ff;--info-dark:#1d4ed8;--info-hover:#2563eb;--success:#10b981;--success-bg:#d1fae5;--success-dark:#047857;--warning:#f59e0b;--danger:#ef4444;--text-primary:#0f172a;--text-secondary:#64748b;--border:#f1f5f9;--border-input:#cbd5e1;--bg-default:#f8fafc;--bg-paper:#fff;--radius-card:10px;--radius-base:8px;--shadow-card:0 2px 4px rgba(0,0,0,0.02),0 1px 2px rgba(0,0,0,0.03)}
+:root{
+  --primary:#334155;--primary-light:#475569;--primary-dark:#1e293b;
+  --secondary:#10b981;--secondary-dark:#059669;
+  --success:#10b981;--success-bg:#d1fae5;--success-dark:#047857;
+  --info:#3b82f6;--info-bg:#eff6ff;--info-dark:#1d4ed8;--info-hover:#2563eb;
+  --bg-default:#f8fafc;--bg-paper:#fff;
+  --text-primary:#0f172a;--text-secondary:#64748b;
+  --border:#f1f5f9;--border-input:#cbd5e1;--border-input-hover:#94a3b8;
+  --danger:#ef4444;--warning:#f59e0b;
+  --radius-card:10px;--radius-base:8px;--radius-control:6px;--radius-chip:4px;
+  --shadow-card:0 2px 4px rgba(0,0,0,0.02),0 1px 2px rgba(0,0,0,0.03);
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',sans-serif;background:var(--bg-default);color:var(--text-primary);font-size:15px;min-height:100vh}
+body{font-family:'Inter','Roboto','Helvetica','Arial',sans-serif;background:var(--bg-default);color:var(--text-primary);font-size:14px;min-height:100vh}
 button{font:inherit;cursor:pointer}
 input,select{font:inherit}
 :focus-visible{outline:2px solid var(--info);outline-offset:2px}
-/* PORTAL HEADER — dark top bar, no sidebar */
-.portal-hd{background:var(--primary-dark);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;color:#f8fafc}
-.portal-left{display:flex;align-items:center;gap:28px}
-.portal-logo{display:flex;align-items:center;gap:10px}
-.logo-badge{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#3b82f6,#10b981);display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px}
-.logo-name{font-size:1.1rem;font-weight:700;color:#f8fafc}
+h1,h2,h3,h4{font-weight:600;color:var(--text-primary)}
+
+/* ---- Portal shell: top bar only, NO sidebar ---- */
+.portal-hd{background:var(--primary-dark);padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;color:#f8fafc}
+.portal-left{display:flex;align-items:center;gap:30px}
+.portal-logo{display:flex;align-items:center;gap:9px}
+.logo-badge{width:30px;height:30px;border-radius:8px;background:#3b82f6;display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px}
+.logo-name{font-size:1.05rem;font-weight:700;color:#f8fafc;letter-spacing:-.01em}
+.gallery-link{font-size:.8rem;color:rgba(248,250,252,.7);text-decoration:none;white-space:nowrap}
+.gallery-link:hover{color:#f8fafc;text-decoration:underline}
 .portal-nav{display:flex;align-items:center;gap:22px}
-.nav-item{background:none;border:none;color:rgba(248,250,252,.7);font-size:.875rem;font-weight:600;cursor:pointer;padding:4px 0}
+.nav-item{background:none;border:none;color:rgba(248,250,252,.68);font-size:.85rem;font-weight:600;cursor:pointer;padding:4px 0}
 .nav-item:hover{color:#f8fafc}
 .nav-item.current{color:#fff;border-bottom:2px solid var(--info);cursor:default}
-.portal-user{display:flex;align-items:center;gap:10px;font-size:.875rem;color:#f8fafc}
-.user-av{width:32px;height:32px;border-radius:50%;background:var(--info);color:#fff;display:grid;place-items:center;font-size:.72rem;font-weight:700}
-/* MAIN */
-.main-wrap{max-width:800px;margin:0 auto;padding:24px 24px 130px}
-.breadcrumb{font-size:.8rem;color:var(--text-secondary);margin-bottom:6px}
-.page-h-row{display:flex;align-items:center;justify-content:space-between}
+.portal-user{display:flex;align-items:center;gap:10px;font-size:.85rem;color:#f8fafc}
+.user-av{width:30px;height:30px;border-radius:50%;background:var(--info);color:#fff;display:grid;place-items:center;font-size:.7rem;font-weight:700}
+
+.main-wrap{max-width:800px;margin:0 auto;padding:24px 24px 140px}
+.breadcrumb{font-size:.78rem;color:var(--text-secondary);margin-bottom:6px}
+.page-h-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .page-title{font-size:1.6rem;font-weight:700;letter-spacing:-.02em}
-.page-h{margin-bottom:20px}
-/* TYPE TABS */
-.type-tabs{display:flex;gap:8px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-card);padding:8px;margin-bottom:16px;position:sticky;top:8px;z-index:20}
-.t-tab{flex:1;padding:10px;border-radius:8px;font-size:.9rem;font-weight:600;border:1.5px solid var(--border-input);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all 140ms;text-align:center}
+.btn{border-radius:var(--radius-control);padding:8px 16px;font-weight:600;font-size:.85rem;border:none;box-shadow:none}
+.btn-outline{background:#fff;color:var(--text-primary);border:1px solid var(--border-input)}
+.btn-outline:hover{border-color:var(--primary);background:rgba(71,85,105,.04)}
+.btn-primary{background:var(--info);color:#fff}
+.btn-primary:hover{background:var(--info-hover)}
+.btn-primary:disabled{background:#cbd5e1;cursor:not-allowed}
+.btn-emerald{background:var(--secondary);color:#fff}
+.btn-emerald:hover{background:var(--secondary-dark)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-link{background:none;border:none;color:var(--info);font-weight:600;font-size:.85rem;padding:0}
+
+/* Booking type tabs */
+.type-tabs{display:flex;gap:8px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-card);padding:8px;margin-bottom:14px;position:sticky;top:8px;z-index:22;box-shadow:var(--shadow-card)}
+.t-tab{flex:1;padding:10px;border-radius:8px;font-size:.85rem;font-weight:600;border:1.5px solid var(--border-input);background:transparent;color:var(--text-secondary);cursor:pointer;text-align:center}
 .t-tab.active{background:var(--primary-dark);color:#fff;border-color:var(--primary-dark)}
-/* STEPPER */
-.stepper{background:#fff;border:1px solid var(--border);border-radius:var(--radius-card);padding:14px 20px;margin-bottom:12px;display:flex;align-items:center;position:sticky;top:60px;z-index:19}
-.s-item{display:flex;align-items:center;gap:7px;flex:1}
+
+/* Stepper */
+.stepper{background:#fff;border:1px solid var(--border);border-radius:var(--radius-card);padding:14px 20px;margin-bottom:12px;display:flex;align-items:center;position:sticky;top:64px;z-index:21;box-shadow:var(--shadow-card)}
+.s-item{display:flex;align-items:center;gap:7px;flex:1;background:none;border:none;cursor:default;text-align:left}
+.s-item.clickable{cursor:pointer}
 .s-item:last-child{flex:0 0 auto}
-.s-dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:.75rem;font-weight:700;flex-shrink:0}
+.s-dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;font-weight:700;flex-shrink:0}
 .s-dot.done{background:var(--success-bg);color:var(--success-dark)}
 .s-dot.act{background:var(--info);color:#fff}
 .s-dot.fut{background:#e2e8f0;color:var(--text-secondary)}
-.s-lbl{font-size:.8rem;font-weight:600;white-space:nowrap}
+.s-lbl{font-size:.78rem;font-weight:600;white-space:nowrap}
 .s-lbl.done{color:var(--success-dark)}.s-lbl.act{color:var(--text-primary)}.s-lbl.fut{color:var(--text-secondary)}
 .s-line{flex:1;height:1px;background:var(--border);margin:0 8px}
-/* CHILD TABS */
-.child-tabs{display:flex;gap:8px;margin-bottom:16px}
-.child-pill{display:inline-flex;align-items:center;border-radius:8px;padding:4px 14px;font-size:.8rem;font-weight:600;border:1.5px solid var(--border-input);background:#fff;color:var(--text-secondary);cursor:pointer}
-.child-pill.active{border-color:var(--info);color:var(--info-dark);background:var(--info-bg)}
-.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:7px}
-.dot.grey{background:#cbd5e1}.dot.amber{background:var(--warning)}.dot.green{background:var(--success)}
-/* CARD */
-.card{background:#fff;border-radius:var(--radius-card);box-shadow:var(--shadow-card);margin-bottom:12px;overflow:hidden}
+
+/* Household tab strip */
+.tab-strip{display:flex;gap:8px;margin-bottom:16px}
+.tab-pill{display:inline-flex;align-items:center;border-radius:8px;padding:6px 14px;font-size:.8rem;font-weight:600;border:1.5px solid var(--border-input);background:#fff;color:var(--text-secondary);cursor:pointer}
+.tab-pill.active{border-color:var(--info);color:var(--info-dark);background:var(--info-bg)}
+.tdot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:7px}
+.tdot.grey{background:#cbd5e1}.tdot.amber{background:var(--warning)}.tdot.green{background:var(--success)}
+
+.card{background:#fff;border-radius:var(--radius-card);box-shadow:var(--shadow-card);margin-bottom:14px;overflow:hidden}
 .card-hd{padding:16px 20px;border-bottom:1px solid var(--border)}
-.card-hd h2{font-size:1.05rem;font-weight:700;color:var(--text-primary)}
-.card-hd p{font-size:.825rem;color:var(--text-secondary);margin-top:3px}
+.card-hd h2{font-size:1.05rem;font-weight:700}
+.card-hd p{font-size:.8rem;color:var(--text-secondary);margin-top:3px}
 .card-bd{padding:20px}
-/* COLLAPSED */
-.coll{display:flex;align-items:center;background:#fff;border:1px solid var(--border);border-radius:10px;padding:13px 16px;margin-bottom:8px;gap:10px}
-.chk{width:22px;height:22px;border-radius:50%;background:var(--success-bg);display:grid;place-items:center;flex-shrink:0;font-size:12px;color:var(--success-dark);font-weight:700}
-.coll-txt{flex:1;font-size:.9rem;font-weight:600}
-.edit-btn{background:none;border:none;color:var(--info);font-size:.825rem;font-weight:600;cursor:pointer}
-/* MEMBER CARDS */
-.member-grid{display:flex;flex-direction:column;gap:9px}
-.member-card{border:1px solid var(--border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:all 140ms;display:flex;align-items:flex-start;gap:12px}
-.member-card:hover{border-color:#94a3b8;background:var(--bg-default)}
-.member-card.sel{border:1.5px solid var(--info);background:var(--info-bg)}
-.member-card.disabled{opacity:.5;cursor:not-allowed}
-.m-av{width:38px;height:38px;border-radius:50%;background:var(--info);color:#fff;display:grid;place-items:center;font-size:.8rem;font-weight:700;flex-shrink:0}
-.m-toprow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.m-nm{font-size:.9rem;font-weight:700;color:#0f172a}
-.m-sub{font-size:.8rem;color:var(--text-secondary);margin-top:2px}
-.m-balance{font-weight:700;color:var(--info-dark);font-size:.825rem;white-space:nowrap}
-.bal-line{font-weight:700;color:var(--info-dark);font-size:.825rem;margin-top:4px}
-.bal-line.buying{color:var(--info-dark)}
-.reason-line{font-size:.8rem;color:var(--text-secondary);margin-top:3px}
-.makeup-line{font-size:.8rem;color:var(--info-dark);margin-top:5px;cursor:pointer;text-decoration:underline;display:inline-block}
-.buy-link{background:none;border:none;color:var(--info);font-weight:700;font-size:.825rem;cursor:pointer;padding:0}
-.rm-link,.rm-btn{background:none;border:none;color:var(--danger);font-size:.8rem;font-weight:600;cursor:pointer;margin-left:8px}
-.m-check,.m-radio{width:20px;height:20px;border:2px solid var(--border-input);flex-shrink:0;margin-top:2px}
-.m-check{border-radius:5px}
-.m-radio{border-radius:50%}
-.m-check.on{background:var(--info);border-color:var(--info)}
-.m-radio.on{background:var(--info);border-color:var(--info);box-shadow:inset 0 0 0 3.5px #fff}
-/* SERVICE LIST */
-.svc-list{display:flex;flex-direction:column;gap:8px}
-.svc-item{border:1px solid var(--border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:all 140ms;display:flex;align-items:flex-start;gap:12px}
-.svc-item:hover{border-color:#94a3b8}
-.svc-item.sel{border:1.5px solid var(--info);background:var(--info-bg)}
-.svc-item.ineligible{opacity:.5;cursor:not-allowed}
-.svc-nm{font-size:.95rem;font-weight:700}
-.svc-sub{font-size:.8rem;color:var(--text-secondary);margin-top:2px}
-.svc-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border-input);flex-shrink:0;margin-left:auto;margin-top:2px}
-.svc-radio.on{background:var(--info);border-color:var(--info);box-shadow:inset 0 0 0 3.5px #fff}
-/* BUY PANEL */
-.buy-panel{background:#fff;border:1px solid var(--border);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:20px;margin-top:12px}
-.buy-title{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.buy-sub{font-size:.825rem;color:var(--text-secondary);margin:4px 0 12px}
-.buy-grid{display:flex;gap:12px;flex-wrap:wrap}
-.buy-card{flex:1;min-width:200px;border:1px solid var(--border);border-radius:8px;padding:14px}
-.buy-nm{font-size:.825rem;font-weight:700}
-.buy-desc{font-size:.775rem;color:var(--text-secondary);margin:4px 0}
-.strike{text-decoration:line-through;color:var(--text-secondary);font-size:.875rem}
-.buy-mem{font-weight:700;color:var(--info-dark);margin-top:2px}
-.buy-save{font-size:.775rem;color:var(--success-dark);margin-top:2px}
-.buy-foot{font-size:.775rem;color:var(--text-secondary);margin-top:14px}
-/* REMOVE CONFIRM */
-.remove-confirm{background:#fff;border:1px solid var(--border);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:16px;margin-top:10px}
-.rc-title{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.rc-body{font-size:.825rem;margin-top:6px}
-.drop-item{font-size:.8rem;color:var(--text-secondary);margin-top:2px}
-.rc-note{font-size:.775rem;color:var(--text-secondary);margin-top:8px}
-.rc-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
-/* SEMI-PRIVATE */
-.semi-meta{font-size:.875rem;font-weight:600;margin-bottom:6px}
-.req-note{font-size:.825rem;color:var(--text-secondary);background:var(--bg-default);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:14px}
-.pax-section{margin-top:6px}
-.sec-lbl{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);margin-bottom:9px}
-.pax-row{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin-bottom:8px}
-.p-av{width:32px;height:32px;border-radius:50%;background:var(--info);color:#fff;display:grid;place-items:center;font-size:.72rem;font-weight:700;flex-shrink:0}
-.p-av.fam{background:#7c3aed}
-.p-nm{font-size:.875rem;font-weight:700}
-.p-sub{font-size:.75rem;color:var(--text-secondary)}
-select,input[type=date]{height:36px;padding:6px 10px;font-size:.875rem;border:1px solid var(--border-input);border-radius:6px;background:#fff}
-select:hover,input[type=date]:hover{border-color:#94a3b8}
-.banner{border-radius:8px;padding:12px 15px;font-size:.83rem;margin-top:12px}
-.b-info{background:var(--info-bg);border:1px solid #bfdbfe;color:var(--info-dark)}
-.b-warn{background:#fef3c7;border:1px solid #fde68a;color:#b45309}
-/* DAY ROWS (checkbox list, not chips) */
-.day-rows{display:flex;flex-direction:column;gap:6px}
-.day-row{border:1px solid var(--border);border-radius:8px;padding:9px 12px;display:flex;align-items:center;flex-wrap:wrap;gap:12px}
-.day-row.on{border-color:var(--success);background:var(--success-bg)}
-.day-check{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:600;cursor:pointer}
-.day-times{font-size:.8rem;color:var(--text-secondary);display:flex;align-items:center;gap:6px}
-.pref-section{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
-.rec-opts{display:flex;flex-direction:column;gap:8px}
-.rec-opt{display:flex;align-items:center;gap:8px;font-size:.875rem;cursor:pointer}
-.dates-preview{background:var(--bg-default);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-top:16px;font-size:.825rem;line-height:1.6}
-.skipped-line{color:var(--text-secondary)}
-.stop-line{color:var(--info-dark);margin-top:4px}
-/* SLOT CARDS */
-.dg-lbl{font-size:.825rem;font-weight:700;color:var(--text-primary);margin:14px 0 8px;padding-bottom:7px;border-bottom:1px solid var(--border)}
-.slot-list{display:flex;flex-direction:column;gap:9px}
-.slot-item{border:1px solid var(--border);border-radius:10px;padding:14px 16px;transition:all 140ms;display:flex;align-items:center;gap:14px}
-.slot-item.sel{border:1.5px solid var(--info);background:var(--info-bg)}
-.slot-time-blk{text-align:center;flex-shrink:0;min-width:56px}
-.slot-time-blk .t-main{font-size:1rem;font-weight:700}
-.slot-time-blk .t-sub{font-size:.75rem;color:var(--text-secondary);margin-top:1px}
-.slot-info{flex:1}
-.slot-svc{font-size:.95rem;font-weight:700}
-.slot-meta{font-size:.8rem;color:var(--text-secondary);margin-top:3px}
-.slot-right{text-align:right;flex-shrink:0}
-.cap-bar-w{width:90px}
-.cap-bar{height:5px;border-radius:3px;background:#e2e8f0;overflow:hidden;margin-bottom:4px}
-.cap-fill{height:100%;border-radius:3px}
-.cap-fill.low{background:var(--success)}.cap-fill.med{background:var(--warning)}.cap-fill.full{background:var(--danger)}
-.cap-text{font-size:.7rem;color:var(--text-secondary)}
-.slot-actions{display:flex;flex-direction:column;gap:5px;align-items:flex-end;margin-top:6px}
-.chip{display:inline-flex;align-items:center;height:22px;border-radius:4px;padding:0 8px;font-size:.72rem;font-weight:600;white-space:nowrap}
-.c-ok{background:var(--success-bg);color:var(--success-dark)}.c-info{background:var(--info-bg);color:var(--info-dark)}.c-warn{background:#fef3c7;color:#b45309}.c-muted{background:#f1f5f9;color:var(--text-secondary)}
-.joint-block{font-size:.8rem;color:#b45309;max-width:220px;margin-bottom:6px}
-/* REVIEW */
-.review-block{margin-bottom:20px}
-.review-name{font-size:.8rem;font-weight:700;letter-spacing:.04em;margin-bottom:8px}
-.out-banner{border-radius:10px;padding:12px 16px;border-left:5px solid;margin-bottom:12px}
-.out-banner.confirmed{background:var(--success-bg);border-left-color:var(--success)}
-.out-banner.pending{background:#fef3c7;border-left-color:var(--warning)}
-.out-banner.waitlisted{background:var(--info-bg);border-left-color:var(--info)}
-.out-t{font-size:1rem;font-weight:700}
-.review-list{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.review-row{display:grid;grid-template-columns:160px 1fr;border-bottom:1px solid var(--border)}
-.review-row:last-child{border-bottom:none}
-.rrl{padding:11px 15px;font-size:.75rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default)}
-.rrv{padding:11px 15px;font-size:.9rem;color:var(--text-primary)}
-.credit-line{font-size:.825rem;color:var(--info-dark);margin-top:10px;font-weight:600}
-.purchase-line{display:flex;align-items:flex-start;justify-content:space-between;border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-top:8px;gap:8px}
-.purchase-price{text-align:right;font-weight:700;color:var(--info-dark);font-size:.85rem}
-.was{font-weight:400;color:var(--text-secondary);font-size:.75rem}
-.rceb-note{background:#fef3c7;border:1px solid #fde68a;color:#b45309;border-radius:8px;padding:12px 16px;font-size:.825rem;margin-top:16px}
-.total-row{display:flex;justify-content:space-between;font-weight:700;font-size:1rem;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
-.pay-row{font-size:.825rem;color:var(--text-secondary);margin-top:6px;display:flex;justify-content:space-between;align-items:center}
-.link-btn{background:none;border:none;color:var(--info);font-weight:600;font-size:.8rem;cursor:pointer}
-/* MAKE-UP */
-.makeup-modebar{background:var(--info-bg);border:1px solid #bfdbfe;color:var(--info-dark);border-radius:8px;padding:10px 16px;font-size:.825rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px}
-.readonly-note{background:var(--bg-default);border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-size:.9rem;font-weight:600}
-/* CANCELLATION */
-.upcoming-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.875rem}
-.cancel-panel{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px;margin-top:14px}
-.cp-title{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.cp-sub{font-size:.825rem;color:var(--text-secondary);margin-top:4px}
-.cp-note{font-size:.85rem;margin-top:12px;font-weight:600}
-.cp-outcome{border-radius:8px;padding:10px 12px;font-size:.825rem;margin-top:8px;line-height:1.6}
-.cp-outcome.early{background:var(--success-bg)}
-.cp-outcome.late{background:#fee2e2}
-.cp-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
-/* SUCCESS */
-.succ-state{text-align:center;padding:60px 20px}
-.succ-icon{width:70px;height:70px;border-radius:50%;background:var(--success-bg);display:grid;place-items:center;margin:0 auto 20px;font-size:2rem;color:var(--success-dark);font-weight:700}
-.succ-t{font-size:1.4rem;font-weight:700;margin-bottom:6px}
-.succ-s{font-size:.9rem;color:var(--text-secondary);margin-bottom:24px}
-/* BTNS */
-.btn{border-radius:8px;padding:8px 18px;font-size:.9rem;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 140ms;box-shadow:none}
-.btn-blue{background:var(--info);color:#fff}.btn-blue:hover{background:var(--info-hover)}.btn-blue:disabled{opacity:.4;cursor:not-allowed}
-.btn-green{background:var(--success);color:#fff}.btn-green:hover{background:var(--success-dark)}
-.btn-out{background:#fff;color:var(--text-primary);border:1.5px solid var(--border-input)}.btn-out:hover{border-color:#64748b;background:var(--bg-default)}
-.btn-sm{padding:6px 12px;font-size:.825rem}
-/* FOOTER */
-.sf{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-top:1px solid var(--border);padding:14px 20px;z-index:30}
-.sf-inner{max-width:800px;margin:0 auto;width:100%;display:flex;justify-content:space-between;align-items:center}
-.sf-r{display:flex;gap:8px}
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:#1e293b;color:#f8fafc;padding:11px 18px;border-radius:8px;font-size:.875rem;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:100;opacity:0;transition:all 220ms;white-space:nowrap}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-secondary);margin:14px 0 8px}
+.eyebrow:first-child{margin-top:0}
+
+/* Toast */
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--primary-dark);color:#fff;padding:10px 18px;border-radius:8px;font-size:.82rem;font-weight:600;z-index:100;box-shadow:0 6px 16px rgba(0,0,0,.2)}
+
+/* Step 1 member rows */
+.member-row{border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:9px}
+.member-row.sel{border:1.5px solid var(--info);background:var(--info-bg)}
+.member-row.disabled{opacity:.55}
+.m-head{display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+.m-head input{margin-top:3px;width:16px;height:16px}
+.m-name{font-size:.9rem;font-weight:700;color:var(--text-primary)}
+.m-age{font-size:.8rem;color:var(--text-secondary)}
+.m-reason{font-size:.78rem;color:var(--text-secondary);margin-top:2px}
+.m-body{margin-top:12px;margin-left:28px;display:flex;flex-direction:column;gap:10px}
+
+.svc{border:1px solid var(--border);border-radius:8px;padding:12px 16px;background:var(--bg-paper)}
+.svc.ineligible{opacity:.55}
+.svc-name{font-size:.9rem;font-weight:600}
+.svc-balance{color:var(--info-dark);font-weight:700;font-size:.85rem;margin-top:4px}
+.svc-plan{color:var(--text-secondary);font-size:.8rem;margin-top:2px}
+.svc-buy{color:var(--info);font-weight:700;font-size:.85rem;cursor:pointer;background:none;border:none;padding:0}
+.svc-noSess{color:var(--text-secondary);font-size:.8rem;margin-top:2px}
+.svc-buying{color:var(--info-dark);font-weight:700;font-size:.85rem;margin-top:4px}
+.svc-remove{color:var(--danger);font-size:.78rem;font-weight:600;background:none;border:none;cursor:pointer;margin-left:8px}
+.svc-warn{background:#fee2e2;color:#b91c1c;border-radius:8px;padding:8px 12px;font-size:.78rem;margin-top:8px}
+
+.makeup-banner{background:var(--info-bg);border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;color:var(--info-dark);font-size:.82rem;margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.makeup-banner .btn{white-space:nowrap}
+.makeup-strip{background:var(--info-bg);border:1px solid #bfdbfe;border-radius:8px;padding:10px 16px;color:var(--info-dark);font-size:.82rem;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+
+.buy-panel{background:var(--bg-paper);border:1px solid var(--border);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:20px;margin-top:12px}
+.buy-panel h3{font-size:.85rem;letter-spacing:.03em;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.buy-panel .sub{font-size:.8rem;color:var(--text-secondary);margin-bottom:14px}
+.buy-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.buy-item{border:1px solid var(--border);border-radius:8px;padding:14px}
+.buy-item h4{font-size:.85rem;font-weight:700}
+.buy-item .desc{font-size:.78rem;color:var(--text-secondary);margin:4px 0 8px}
+.price-std{text-decoration:line-through;color:var(--text-secondary);font-size:.85rem}
+.price-mem{font-weight:700;color:var(--text-primary);font-size:.95rem;margin-left:6px}
+.save-line{font-size:.76rem;color:var(--success-dark);margin-top:4px}
+.buy-note{font-size:.76rem;color:var(--text-secondary);margin-top:12px}
+.add-picker{margin-top:10px;border:1px dashed var(--border-input);border-radius:8px;padding:10px}
+.pick-row{display:flex;justify-content:space-between;align-items:center;padding:7px 4px;font-size:.82rem}
+.pick-row.ok{cursor:pointer;color:var(--text-primary)}
+.pick-row.ok:hover{background:var(--bg-default)}
+.pick-row.no{color:var(--text-secondary);opacity:.7}
+
+.remove-confirm{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:14px;margin-top:8px;font-size:.82rem}
+.remove-confirm .rows{margin:8px 0;padding-left:16px;color:var(--text-secondary)}
+
+/* Step 2 */
+.day-row{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:.85rem}
+.day-row input{width:16px;height:16px}
+.day-row select{height:32px;padding:4px 8px;border:1px solid var(--border-input);border-radius:6px;font-size:.8rem}
+.day-row.checked .day-label{color:var(--success-dark);font-weight:700}
+.day-label{width:88px;flex-shrink:0}
+.radio-row{display:flex;align-items:center;gap:8px;font-size:.85rem;padding:4px 0}
+.rule-text{font-size:.8rem;color:var(--text-secondary);margin-top:4px;margin-left:24px}
+.searchline{font-size:.8rem;color:var(--text-secondary);margin:10px 0}
+
+.day-heading{font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);border-bottom:1px solid var(--border);padding-bottom:6px;margin:18px 0 10px}
+.slot-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.slot-card{border:1px solid var(--border-input);border-radius:8px;padding:12px}
+.slot-card.sel{border:1.5px solid var(--info);background:var(--info-bg)}
+.slot-time{font-size:.88rem;font-weight:700}
+.slot-loc{font-size:.78rem;color:var(--text-secondary);margin:2px 0 8px}
+.seat-row{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:6px}
+.seat{width:14px;height:14px;border-radius:3px;display:inline-block}
+.seat.filled{background:var(--primary)}
+.seat.free{background:transparent;border:1px solid var(--border-input)}
+.ratio{font-size:.78rem;color:var(--text-secondary);margin-bottom:8px}
+.full-tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:4px;background:#f1f5f9;color:var(--text-secondary);font-size:.7rem;font-weight:700;margin-left:6px}
+.btn-row{display:flex;gap:8px}
+.btn-row .btn{flex:1;font-size:.78rem;padding:7px 10px;text-align:center}
+.block-msg{background:#fef3c7;color:#b45309;border-radius:8px;padding:9px 10px;font-size:.78rem;margin-top:2px}
+.joint-msg{background:#eff6ff;color:#1d4ed8;border-radius:8px;padding:10px;font-size:.8rem}
+.joint-msg .btn{margin-top:8px;width:100%}
+.no-days{font-size:.82rem;color:var(--text-secondary);padding:14px;background:var(--bg-default);border-radius:8px}
+
+/* Semi private */
+.radio-member{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:.87rem;font-weight:600}
+.semi-note{font-size:.82rem;color:var(--text-secondary);background:var(--bg-default);border-radius:8px;padding:10px 12px;margin:10px 0}
+.participant-row{border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:.85rem;margin-bottom:8px}
+.participant-row b{font-weight:700}
+.select-fm{height:36px;padding:6px 10px;border:1px solid var(--border-input);border-radius:6px;width:100%;margin-top:6px}
+.amber-box{background:#fef3c7;color:#b45309;border-radius:8px;padding:12px 16px;font-size:.82rem;margin-top:10px}
+
+/* Preview */
+.preview-toggle{display:flex;gap:6px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:4px}
+.pv-btn{padding:5px 12px;border-radius:6px;border:none;background:transparent;font-size:.78rem;font-weight:600;color:var(--text-secondary)}
+.pv-btn.active{background:var(--primary-dark);color:#fff}
+.pv-block-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.pv-service-title{font-size:.9rem;font-weight:700}
+.pv-plan-line{font-size:.8rem;color:var(--text-secondary);margin-bottom:10px}
+.pv-day{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);margin:10px 0 4px}
+.pv-date-row{display:flex;align-items:center;gap:8px;font-size:.84rem;padding:3px 0}
+.pv-date-row input{width:15px;height:15px}
+.pv-skip{font-size:.8rem;color:var(--text-secondary);padding:3px 0}
+.pv-stop{background:var(--bg-default);border-radius:8px;padding:10px 12px;font-size:.8rem;margin:12px 0 20px;color:var(--text-primary)}
+.pv-beyond-hd{font-size:.78rem;font-weight:700;color:var(--text-secondary);margin:10px 0 6px}
+.pv-tentative{display:flex;align-items:center;gap:8px;font-size:.82rem;color:#b45309;padding:3px 0}
+.pv-tentative input{width:15px;height:15px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px}
+.cal-cell{min-height:44px;border:1px solid var(--border);border-radius:6px;padding:4px;font-size:.68rem;color:var(--text-secondary)}
+.cal-chip{display:block;margin-top:2px;border-radius:4px;padding:1px 4px;font-size:.66rem;font-weight:700}
+.cal-chip.booked{background:var(--info-bg);color:var(--info-dark)}
+.cal-chip.tentative{background:#fef3c7;color:#b45309}
+.cal-chip.skip{background:#f1f5f9;color:var(--text-secondary)}
+
+/* Step 4 funding */
+.fund-block{border-bottom:1px solid var(--border);padding:14px 0}
+.fund-block:last-child{border-bottom:none}
+.fund-title{font-size:.9rem;font-weight:700;margin-bottom:6px}
+.fund-rc{font-size:.84rem;color:var(--text-primary);background:var(--bg-default);border-radius:8px;padding:10px 12px}
+.fund-radio{display:flex;flex-direction:column;gap:2px}
+.fund-radio label{display:flex;align-items:flex-start;gap:8px;font-size:.85rem;padding:6px 0;cursor:pointer}
+.fund-radio input{margin-top:3px}
+.fund-sub{font-size:.78rem;color:var(--text-secondary);margin-left:24px}
+
+/* Step 5 summary */
+.summary-name{font-size:.95rem;font-weight:700;margin:18px 0 8px}
+.summary-name:first-child{margin-top:0}
+.banner{border-left:4px solid var(--success);background:var(--success-bg);color:var(--success-dark);padding:10px 14px;border-radius:6px;font-weight:700;font-size:.85rem;margin-bottom:10px}
+.banner.warn{border-left-color:var(--warning);background:#fef3c7;color:#b45309}
+.banner.info{border-left-color:var(--info);background:var(--info-bg);color:var(--info-dark)}
+.dgrid{display:grid;grid-template-columns:150px 1fr;gap:6px 10px;font-size:.84rem;margin-bottom:10px}
+.dgrid .lbl{color:var(--text-secondary);font-weight:600}
+.credit-line{font-size:.82rem;color:var(--text-secondary);font-style:italic;margin:2px 0 14px}
+.purchase-line{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;font-size:.84rem;border-bottom:1px solid var(--border)}
+.rc-note{background:#fef3c7;color:#b45309;border-radius:8px;padding:10px 12px;font-size:.8rem;margin:10px 0}
+.total-row{display:flex;justify-content:space-between;align-items:center;padding-top:14px;margin-top:6px;border-top:2px solid var(--text-primary);font-weight:700;font-size:1rem}
+.pay-row{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;color:var(--text-secondary);margin-top:6px}
+
+/* Footer */
+.step-footer{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--border);padding:14px 24px;display:flex;justify-content:space-between;max-width:800px;margin:0 auto;left:0;right:0}
+
+/* Success */
+.success-wrap{text-align:center;padding:50px 20px}
+.success-check{width:64px;height:64px;border-radius:50%;background:var(--success-bg);color:var(--success-dark);display:grid;place-items:center;margin:0 auto 18px;font-size:34px}
+.success-wrap h1{font-size:1.4rem;margin-bottom:6px}
+.success-sub{color:var(--text-secondary);font-size:.9rem;margin-bottom:10px}
+.success-chip{display:inline-flex;align-items:center;height:26px;padding:0 12px;border-radius:4px;background:var(--success-bg);color:var(--success-dark);font-weight:700;font-size:.8rem;margin-bottom:22px}
+.success-actions{display:flex;gap:10px;justify-content:center}
+
+.demo-block{margin-top:40px;padding-top:24px;border-top:1px dashed var(--border-input);text-align:left}
+.demo-block h3{font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin-bottom:10px}
+.booking-row{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);border-radius:8px;padding:12px 16px}
+.cancel-panel{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px;margin-top:10px}
+.cancel-panel h4{font-size:.9rem;text-transform:uppercase;letter-spacing:.03em;margin-bottom:8px}
+.cancel-panel .booking-line{font-size:.85rem;font-weight:600;margin-bottom:10px}
+.cancel-panel .window-line{font-size:.83rem;margin-bottom:12px}
+.what-happens{border-radius:8px;padding:10px 12px;font-size:.82rem;margin-bottom:14px}
+.what-happens.early{background:var(--success-bg);color:var(--success-dark)}
+.what-happens.late{background:#fee2e2;color:#b91c1c}
+.cancel-actions{display:flex;gap:10px;justify-content:flex-end}
+
+.check{color:var(--success-dark);font-weight:700}
+
+/* Print */
+@media print {
+  .portal-hd, .type-tabs, .stepper, .tab-strip, .step-footer, button:not(.print-exempt) { display: none !important; }
+  body, .step-panel-summary { background: #fff !important; }
+  .step-panel-summary { max-width: none; margin: 0; padding: 0; box-shadow: none; }
+  .main-wrap{padding:0}
+}
 </style>
 </head>
 <body>
-<!-- PORTAL HEADER -->
-<div class="portal-hd">
-  <div class="portal-left">
-    <div class="portal-logo"><div class="logo-badge">Z</div><span class="logo-name">Zalexy</span></div>
-    <nav class="portal-nav">
-      <button class="nav-item" onclick="goHome()">Home</button>
-      <span class="nav-item current">Schedule</span>
-      <button class="nav-item" data-noop>Purchases</button>
-      <button class="nav-item" data-noop>Payments</button>
-      <button class="nav-item" data-noop>Documents</button>
-    </nav>
-  </div>
-  <div class="portal-user">
-    <span>Solar Swim</span>
-    <div class="user-av">CG</div>
-  </div>
-</div>
-
-<!-- MAIN -->
-<div class="main-wrap">
-  <div class="page-h">
-    <div class="breadcrumb">Home / Schedule a Class</div>
-    <div class="page-h-row">
-      <h1 class="page-title">Schedule a Class</h1>
-      <button class="btn btn-out btn-sm" onclick="goHome()">Cancel</button>
-    </div>
-  </div>
-
-  <div class="type-tabs">
-    <button class="t-tab active" id="tabGroup" onclick="switchType('group')">Group</button>
-    <button class="t-tab" id="tabSemi" onclick="switchType('semi')">Semi-Private</button>
-    <button class="t-tab" id="tabPrivate" onclick="switchType('private')">Private</button>
-  </div>
-
-  <div class="stepper" id="stepper"></div>
-  <div id="childTabsWrap"></div>
-  <div id="stepsArea"></div>
-</div>
-
-<!-- STICKY FOOTER -->
-<div class="sf">
-  <div class="sf-inner">
-    <div>
-      <strong id="sfTitle" style="font-size:.9rem;font-weight:700">Choose who's booking</strong>
-      <div id="sfSub" style="font-size:.775rem;color:var(--text-secondary);margin-top:2px">Solar Swim</div>
-    </div>
-    <div class="sf-r">
-      <button class="btn btn-out" id="backBtn" onclick="goBack()" style="display:none">&#8592; Back</button>
-      <button class="btn btn-blue" id="nextBtn" onclick="goNext()" disabled>Next &#8594;</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
+<div id="app-root"></div>
 
 <script>
-/* ---------- Constants & seed data ---------- */
-const TODAY=new Date(2026,8,8);           // Sep 8, 2026 — "now" for horizon / cancellation-window math
-const REC_START=new Date(2026,8,13);      // recurrence search begins the day before Mon Sep 14
-const HORIZON_DAYS=7;
-const CLOSURES={'2026-09-23':'Staff Training Day'};
-const DAY_JS={MON:1,TUE:2,WED:3,THU:4,FRI:5,SAT:6,SUN:0};
-const DAYS=['MON','TUE','WED','THU','FRI','SAT','SUN'];
-const DAYFULL={MON:'Monday',TUE:'Tuesday',WED:'Wednesday',THU:'Thursday',FRI:'Friday',SAT:'Saturday',SUN:'Sunday'};
-const DDATE={MON:'Sep 14',TUE:'Sep 15',WED:'Sep 16',THU:'Sep 17',FRI:'Sep 18',SAT:'Sep 19',SUN:'Sep 20'};
-const ISO_BY_DAY={MON:'2026-09-14',TUE:'2026-09-15',WED:'2026-09-16',THU:'2026-09-17',FRI:'2026-09-18',SAT:'2026-09-19',SUN:'2026-09-20'};
-const TIME_OPTS=['Morning (6 AM – 12 PM)','Afternoon (12 – 5 PM)','Evening (5 – 8 PM)','Any time'];
+(function(){
+"use strict";
 
-const MEMBERS=[
- {id:'mg',nm:'Maria Garcia',rel:'Child',age:10,lvl:'Swim Beginner 2',fund:'Regional Center',fundStatus:'RCEB Pending',bal:5,cap:8,makeup:1,init:'MG'},
- {id:'sg',nm:'Sofia Garcia',rel:'Child',age:8,lvl:'Swim Beginner 2',fund:'Self Pay',bal:0,cap:8,makeup:0,init:'SG'},
- {id:'cg2',nm:'Carlos Garcia',rel:'Spouse',age:38,lvl:'Basketball',fund:'Self Pay',bal:2,cap:4,makeup:0,init:'CG'},
- {id:'eg',nm:'Emma Garcia',rel:'Child',age:3,ineligible:true,reason:'Intake not complete — contact us to continue.',init:'EG'}
+/* ============================= SEED DATA ============================= */
+var MEMBERS = [
+  {id:'maria', name:'Maria Garcia', age:10},
+  {id:'sofia', name:'Sofia Garcia', age:8},
+  {id:'carlos', name:'Carlos Garcia', age:38}
 ];
 
-const SERVICES={
- mg:[
-  {id:'swim',nm:'Swimming',sub:'Beginner 2 · Regional Center',cap:8,eligible:true},
-  {id:'bball',nm:'Basketball',eligible:false,reason:'Requires in-person assessment. Contact us to schedule your assessment.'},
-  {id:'swimadv',nm:'Swim Advanced',eligible:false,reason:'This class is for ages 13+ and Level 4 swimmers. Maria is age 10, Level 2. Only staff can adjust this — contact the front desk.'}
- ],
- sg:[
-  {id:'swim',nm:'Swimming',sub:'Beginner 2 · Self Pay',cap:8,eligible:true,buy:true},
-  {id:'bball',nm:'Basketball',eligible:false,reason:'Requires in-person assessment. Contact us to schedule your assessment.'},
-  {id:'swimadv',nm:'Swim Advanced',eligible:false,reason:'This class is for ages 13+ and Level 4 swimmers. Sofia is age 8, Level 2. Only staff can adjust this — contact the front desk.'}
- ],
- cg2:[
-  {id:'swim',nm:'Swimming',eligible:false,reason:'Voucher required. Contact us to add a voucher to your account.'},
-  {id:'bball',nm:'Basketball',sub:'Self Pay',cap:4,eligible:true}
- ]
+var CATALOG = {
+  maria: {
+    swim: {name:'Swimming', level:'Beginner 2', funding:'rc', balance:{avail:5,total:8}, plan:'Sep 1 – Sep 30, 2026'},
+    gym:  {name:'Gymnastics', level:'Beginner', funding:'balance', balance:{avail:3,total:6}, plan:'Sep 1 – Sep 30, 2026'}
+  },
+  sofia: {
+    swim: {name:'Swimming', level:'Beginner 2', funding:'card', balance:{avail:0,total:8}, plan:'Sep 1 – Sep 30, 2026'}
+  },
+  carlos: {
+    basketball: {name:'Basketball', level:null, funding:'balance', balance:{avail:2,total:4}, plan:'Sep 1 – Sep 30, 2026'}
+  }
 };
 
-const SG=[
- {id:'g1',day:'MON',date:'Sep 14',time:'12:30',end:'1:55 PM',svc:'Swimming · Beginner 2',loc:'Solar Swim',filled:3,cap:8},
- {id:'g2',day:'MON',date:'Sep 14',time:'4:00',end:'5:00 PM',svc:'Swimming · Beginner 2',loc:'Solar Swim',filled:8,cap:8},
- {id:'g3',day:'WED',date:'Sep 16',time:'9:00',end:'10:30 AM',svc:'Swimming · Beginner 2',loc:'Solar Swim',filled:6,cap:8},
- {id:'g4',day:'WED',date:'Sep 16',time:'6:00',end:'7:25 AM',svc:'Swimming · Beginner 2',loc:'Solar Swim',filled:1,cap:8},
- {id:'g5',day:'FRI',date:'Sep 18',time:'3:00',end:'4:00 PM',svc:'Swimming · Beginner 2',loc:'Solar Swim',filled:7,cap:8}
-];
-const SS=[
- {id:'s1',day:'MON',date:'Sep 14',time:'12:30',end:'1:30 PM',svc:'Semi-Private Swimming · Beginner 2',loc:'Solar Swim',px:1,req:2},
- {id:'s2',day:'WED',date:'Sep 16',time:'9:00',end:'10:00 AM',svc:'Semi-Private Swimming · Beginner 2',loc:'Solar Swim',px:2,req:2}
-];
-const SP=[
- {id:'p1',day:'MON',date:'Sep 14',time:'12:30',end:'1:30 PM',svc:'Private Swimming · Beginner 2',loc:'Solar Swim'},
- {id:'p2',day:'MON',date:'Sep 14',time:'3:00',end:'4:00 PM',svc:'Private Swimming · Beginner 2',loc:'Solar Swim'},
- {id:'p3',day:'WED',date:'Sep 16',time:'8:00',end:'9:00 AM',svc:'Private Swimming · Beginner 2',loc:'Solar Swim'}
-];
-
-const CATALOG=[
- {id:'pack8',nm:'8-Class Swim Pack',desc:'8 classes',std:160,mem:144,save:16,sessions:8,sub:false},
- {id:'sub8',nm:'Monthly Swim Subscription',desc:'8 classes/month, renews 1st of month',std:150,mem:135,save:15,sessions:8,sub:true}
-];
-
-/* ---------- State ---------- */
-const S={
- type:'group', step:1, sel:[], activeChild:null, children:{},
- semiFam:null, buy:{}, buyPanelFor:null, removeConfirmFor:null,
- makeup:{active:false,memberId:null,bannerFor:null}, cancelPanelOpen:false, success:false
+// Extra add-picker demo entries for Maria (one addable, four illustrating Anti-Pattern 2.2 / G8 messages)
+var ADD_OPTIONS_EXTRA = {
+  maria: [
+    {key:'gym', name:'Gymnastics', eligible:true},
+    {key:'basketball_demo', name:'Basketball', eligible:false, reason:"This class is for ages 13+. Maria is age 10. Only staff can adjust this — contact the front desk."},
+    {key:'advswim_demo', name:'Advanced Swim', eligible:false, reason:"This class is for Level 4 swimmers. Maria is Level 2. Only staff can move her up a level — contact the front desk to request an assessment."},
+    {key:'trampoline_demo', name:'Trampoline', eligible:false, reason:"Voucher required. Contact us to add a voucher to your account."},
+    {key:'diving_demo', name:'Diving', eligible:false, reason:"Requires in-person assessment. Contact us to schedule your assessment."}
+  ]
 };
 
-/* ---------- Helpers ---------- */
-function withFocusPreserved(fn){
-  const ae=document.activeElement;
-  const id=ae&&ae.id?ae.id:null;
-  let start=null,end=null;
-  if(ae&&typeof ae.selectionStart==='number'){start=ae.selectionStart;end=ae.selectionEnd;}
-  fn();
-  if(id){
-    const el=document.getElementById(id);
-    if(el){el.focus();if(start!==null&&el.setSelectionRange){try{el.setSelectionRange(start,end);}catch(e){}}}
+function tMin(str){
+  var m = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  var h = +m[1], mi = +m[2]; var ap = m[3].toUpperCase();
+  if (ap === 'PM' && h !== 12) h += 12;
+  if (ap === 'AM' && h === 12) h = 0;
+  return h*60+mi;
+}
+
+var GROUP_SWIM_SLOTS = [
+  {id:'gs1', day:'Mon Sep 14', label:'12:30 – 1:55 PM', start:tMin('12:30 PM'), end:tMin('1:55 PM'), loc:'Solar Swim', filled:3, cap:8},
+  {id:'gs2', day:'Mon Sep 14', label:'4:00 – 5:00 PM', start:tMin('4:00 PM'), end:tMin('5:00 PM'), loc:'Solar Swim', filled:8, cap:8},
+  {id:'gs3', day:'Wed Sep 16', label:'6:00 – 7:25 AM', start:tMin('6:00 AM'), end:tMin('7:25 AM'), loc:'Solar Swim', filled:1, cap:8},
+  {id:'gs4', day:'Wed Sep 16', label:'9:00 – 10:30 AM', start:tMin('9:00 AM'), end:tMin('10:30 AM'), loc:'Solar Swim', filled:6, cap:8},
+  {id:'gs5', day:'Fri Sep 18', label:'3:00 – 4:00 PM', start:tMin('3:00 PM'), end:tMin('4:00 PM'), loc:'Solar Swim', filled:7, cap:8, jointRisk:true}
+];
+var GYM_SLOTS = [
+  {id:'gy1', day:'Mon Sep 14', label:'9:00 – 10:00 AM', start:tMin('9:00 AM'), end:tMin('10:00 AM'), loc:'Solar Swim', filled:2, cap:8},
+  {id:'gy2', day:'Mon Sep 14', label:'1:00 – 2:00 PM', start:tMin('1:00 PM'), end:tMin('2:00 PM'), loc:'Solar Swim', filled:2, cap:8},
+  {id:'gy3', day:'Mon Sep 14', label:'2:00 – 3:00 PM', start:tMin('2:00 PM'), end:tMin('3:00 PM'), loc:'Solar Swim', filled:2, cap:8}
+];
+var BASKETBALL_SLOTS = [
+  {id:'bb1', day:'Fri Sep 18', label:'5:00 – 6:00 PM', start:tMin('5:00 PM'), end:tMin('6:00 PM'), loc:'Solar Swim', filled:2, cap:8}
+];
+var SEMI_SLOTS = [
+  {id:'sm1', day:'Mon Sep 14', label:'12:30 – 1:30 PM', loc:'Solar Swim', filled:1, cap:2, status:'pending'},
+  {id:'sm2', day:'Wed Sep 16', label:'9:00 – 10:00 AM', loc:'Solar Swim', filled:2, cap:2, status:'open'}
+];
+var PRIVATE_SLOTS = [
+  {id:'pv1', day:'Mon Sep 14', label:'12:30 – 1:30 PM', loc:'Solar Swim'},
+  {id:'pv2', day:'Mon Sep 14', label:'3:00 – 4:00 PM', loc:'Solar Swim'},
+  {id:'pv3', day:'Wed Sep 16', label:'8:00 – 9:00 AM', loc:'Solar Swim'}
+];
+var MAKEUP_SLOT = {id:'mk1', day:'Wed Sep 16', label:'6:00 – 7:25 AM', loc:'Solar Swim'};
+
+var BUY_CATALOG = [
+  {key:'pack', name:'8-Class Swim Pack', desc:'8 classes', standard:160, member:144, saving:16, membership:'Family Membership'},
+  {key:'sub', name:'Monthly Swim Subscription', desc:'8 classes/month, renews 1st of month', standard:150, member:135, saving:15, membership:'Family Membership', monthly:true}
+];
+
+var PREVIEW_DATA = {
+  'maria|swim': {
+    planLine: "Your plan covers Sep 1 – Sep 30, 2026 — we've booked up to there.",
+    time:'12:30 PM',
+    dates:['Mon Sep 14','Wed Sep 16','Mon Sep 21','Mon Sep 28','Wed Sep 30'],
+    skipped:[{date:'Wed Sep 23', reason:'Staff Training Day (closed)'}],
+    stop:"Stopping at Sep 30 — that's the end of this month's plan. Buy more sessions, or wait for next month's plan, to keep going past this date.",
+    tentative:[]
+  },
+  'maria|gym': {
+    planLine: "Your plan covers Sep 1 – Sep 30, 2026 — we've booked up to there.",
+    time:'2:00 PM',
+    dates:['Mon Sep 14','Mon Sep 21','Mon Sep 28'],
+    skipped:[],
+    stop:"Stopping at Sep 28 — that's the end of this month's plan. Buy more sessions, or wait for next month's plan, to keep going past this date.",
+    tentative:[{date:'Sun Oct 5'}]
+  },
+  'sofia|swim': {
+    planLine:'', time:'6:00 AM', dates:['Wed Sep 16'], skipped:[], stop:'', tentative:[]
+  },
+  'carlos|basketball': {
+    planLine: "Your plan covers Sep 1 – Sep 30, 2026 — we've booked up to there.",
+    time:'5:00 PM', dates:['Fri Sep 18'], skipped:[],
+    stop:"Stopping at Sep 30 — that's the end of this month's plan. Buy more sessions, or wait for next month's plan, to keep going past this date.",
+    tentative:[]
   }
+};
+
+var STEP_LABELS = ['Who','When','Preview','Pay','Booking'];
+var DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+var TIME_OPTS = [
+  {v:'', t:'Any time'},
+  {v:'morning', t:'Morning (6 AM – 12 PM)'},
+  {v:'afternoon', t:'Afternoon (12 – 5 PM)'},
+  {v:'evening', t:'Evening (5 – 8 PM)'}
+];
+
+/* ============================= STATE ============================= */
+var S = {
+  type: 'group',
+  step: 1,
+  selected: [],
+  semiPrimary: 'maria',
+  semiSecond: '',
+  activeTab: '',
+  services: { maria:['swim'], sofia:['swim'], carlos:['basketball'] },
+  sched: {},
+  purchase: {},
+  buyOpen: {},
+  addPickerOpen: {},
+  removeConfirm: {},
+  funding: {},
+  previewView: 'list',
+  previewChecks: {},
+  makeUp: {active:false, member:null},
+  toast: '',
+  cancelDemoOpen: false
+};
+
+function key(m,s){ return m + '|' + s; }
+
+function getSched(m,s){
+  var k = key(m,s);
+  if (!S.sched[k]) {
+    S.sched[k] = {days:{}, from:{}, to:{}, recurrence:'recurring', orderMode:'a-first', slot:null, waitlist:false, blockMsg:''};
+  }
+  return S.sched[k];
 }
-function fmtDateLong(iso){
-  const d=new Date(iso+'T00:00:00');
-  const wd=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
-  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
-  return `${wd} ${mo} ${d.getDate()}`;
+
+function activeMembers(){
+  if (S.type === 'semi') return S.semiPrimary ? [S.semiPrimary] : [];
+  return S.selected;
 }
-function fmtDayDate(s){return `${DAYFULL[s.day].slice(0,3)} ${s.date}`;}
-function capInfo(filled,cap){
-  const remaining=cap-filled;
-  if(remaining<=0) return {cls:'full',text:'Class full',remaining};
-  const pct=filled/cap*100;
-  if(pct<60) return {cls:'low',text:`${remaining} spots left`,remaining};
-  return {cls:'med',text:`Filling up — ${remaining} spot${remaining===1?'':'s'} left`,remaining};
+
+function memberName(id){
+  var m = MEMBERS.filter(function(x){return x.id===id;})[0];
+  return m ? m.name : id;
 }
-function isoLocal(d){const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;}
-function generateDates(days,rec,creditsAvail,searchThrough){
-  const out=[],skipped=[];let d=new Date(REC_START);d.setDate(d.getDate()+1);
-  const maxIter=90;let iter=0;
-  const stEnd=searchThrough?new Date(searchThrough+'T00:00:00'):null;
-  while(iter<maxIter && out.length<creditsAvail){
-    iter++;
-    const iso=isoLocal(d);
-    const dayName=Object.keys(DAY_JS).find(k=>DAY_JS[k]===d.getDay());
-    if(days.includes(dayName)){
-      if(CLOSURES[iso]) skipped.push({date:iso,label:CLOSURES[iso]});
-      else { out.push(iso); if(rec==='once') break; }
+function memberFirst(id){ return memberName(id).split(' ')[0]; }
+
+function memberServices(id){ return S.services[id] || []; }
+
+function svcData(m,s){ return (CATALOG[m] && CATALOG[m][s]) || null; }
+
+/* ============================= LOGIC HELPERS ============================= */
+function overlaps(aS,aE,bS,bE){ return aS < bE && bS < aE; }
+
+function slotsForService(m,s){
+  if (S.type === 'semi') return SEMI_SLOTS;
+  if (S.type === 'private') return PRIVATE_SLOTS;
+  if (s === 'swim') return GROUP_SWIM_SLOTS;
+  if (s === 'gym') return GYM_SLOTS;
+  if (s === 'basketball') return BASKETBALL_SLOTS;
+  return [];
+}
+
+function checkedDaysFor(m,s){
+  var sc = getSched(m,s);
+  return Object.keys(sc.days).filter(function(d){ return sc.days[d]; });
+}
+
+function dayShort(fullDayName){
+  // map "Monday" -> "Mon" prefix used by seed slot .day strings
+  return fullDayName.slice(0,3);
+}
+
+function otherServiceOf(m,s){
+  var list = memberServices(m);
+  for (var i=0;i<list.length;i++){ if (list[i] !== s) return list[i]; }
+  return null;
+}
+
+// Short order-mode names for the two seeded services (D9 exact-label wording)
+var SHORT_NAME = {swim:'Swim', gym:'Gym'};
+function shortCap(k){ return SHORT_NAME[k] || (svcData('maria',k)||{name:k}).name; }
+
+// Validate picking `slot` for member m / service s. Returns {ok:true} or {ok:false,msg:string}
+function validateSlotPick(m,s,slot){
+  var other = otherServiceOf(m,s);
+  if (!other) return {ok:true};
+  var oSched = getSched(m,other);
+  if (!oSched.slot) return {ok:true};
+  var oSlot = oSched.slot;
+  if (oSlot.day !== slot.day) return {ok:true}; // different day, no clash possible
+  var oData = svcData(m,other);
+  var mine = svcData(m,s);
+  // true overlap check (blocked in every mode, including Flexible)
+  if (overlaps(slot.start, slot.end, oSlot.start, oSlot.end)){
+    return {ok:false, msg:memberFirst(m)+' already has a class at that time — '+oData.name+', '+dayShort(oSlot.day)+' '+oSlot.label+'. Pick a different time for '+mine.name+'.'};
+  }
+  var mode = getSched(m, memberServices(m)[0]).orderMode; // order mode is stored per pair, on every service
+  var firstKey = memberServices(m)[0], secondKey = memberServices(m)[1];
+  if (mode === 'flex') return {ok:true};
+  if (mode === 'a-first'){
+    // firstKey must run, then secondKey after
+    if (s === secondKey){
+      var fSched = getSched(m, firstKey);
+      if (fSched.slot && fSched.slot.day === slot.day && slot.start < fSched.slot.end){
+        var fData = svcData(m, firstKey);
+        return {ok:false, msg: shortCap(firstKey)+' first, then '+shortCap(secondKey).toLowerCase()+' is set for '+memberFirst(m)+' — this class would come before her '+fData.name+' class ends. Pick a time after '+fSched.slot.label.split(' – ')[1]+', or switch '+memberFirst(m)+' to No preference (classes still can\'t overlap).'};
+      }
+    } else if (s === firstKey){
+      var sSched = getSched(m, secondKey);
+      if (sSched.slot && sSched.slot.day === slot.day && sSched.slot.start < slot.end){
+        var sDataX = svcData(m, secondKey);
+        return {ok:false, msg: shortCap(firstKey)+' first, then '+shortCap(secondKey).toLowerCase()+' is set for '+memberFirst(m)+' — this class would come after her '+sDataX.name+' class starts. Pick a different time, or switch '+memberFirst(m)+' to No preference (classes still can\'t overlap).'};
+      }
     }
-    if(stEnd && d>stEnd) break;
-    d.setDate(d.getDate()+1);
-  }
-  return {dates:out,skipped};
-}
-function showToast(msg){
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  clearTimeout(window.__toastT);window.__toastT=setTimeout(()=>t.classList.remove('show'),2600);
-}
-function initChild(id){
-  S.children[id]={svc:null,days:[],dayTimes:{},rec:'recurring',searchThrough:'2026-09-30',slotId:null,wl:false,bookedDates:[],makeup:false,makeupDate:null};
-}
-function childStatus(id){
-  const c=S.children[id];if(!c)return 'grey';
-  const svcOk=c.makeup?true:(S.type==='semi'?true:!!c.svc);
-  const whenOk=c.makeup?!!c.makeupDate:(c.days&&c.days.length>0);
-  const slotOk=!!c.slotId;
-  if(svcOk&&whenOk&&slotOk)return 'green';
-  if(svcOk||whenOk||slotOk)return 'amber';
-  return 'grey';
-}
-function memberById(id){return MEMBERS.find(m=>m.id===id);}
-
-/* ---------- Render pipeline ---------- */
-function render(){withFocusPreserved(()=>{
-  renderTypeTabs();renderStepper();renderChildTabs();renderStepsArea();renderFooter();
-});}
-function renderTypeTabs(){
-  ['tabGroup','tabSemi','tabPrivate'].forEach(id=>document.getElementById(id).classList.remove('active'));
-  const m={group:'tabGroup',semi:'tabSemi',private:'tabPrivate'};
-  document.getElementById(m[S.type]).classList.add('active');
-}
-function renderStepper(){
-  const L=['Who','Service','When','Slots','Confirm'];
-  document.getElementById('stepper').innerHTML=L.map((l,i)=>{
-    const n=i+1,st=S.success?'done':(n<S.step?'done':n===S.step?'act':'fut'),ic=st==='done'?'&#10003;':n;
-    return `<div class="s-item"><div class="s-dot ${st}">${ic}</div><span class="s-lbl ${st}">${l}</span>${n<5?'<div class="s-line"></div>':''}</div>`;
-  }).join('');
-}
-function renderChildTabs(){
-  const wrap=document.getElementById('childTabsWrap');
-  if(S.type==='semi'||S.sel.length<2||S.step<2||S.step>4||S.success){wrap.innerHTML='';return;}
-  wrap.innerHTML=`<div class="child-tabs">${S.sel.map(id=>{
-    const m=memberById(id),st=childStatus(id),active=S.activeChild===id;
-    return `<button class="child-pill ${active?'active':''}" onclick="setActiveChild('${id}')"><span class="dot ${st}"></span>${m.nm.split(' ')[0]}</button>`;
-  }).join('')}</div>`;
-}
-function setActiveChild(id){S.activeChild=id;render();}
-
-function renderStepsArea(){
-  let h='';
-  if(S.step===1 && !S.success) h+=cancelDemoHtml();
-  if(S.makeup.active) h+=makeupModeBar();
-  if(!S.success){ for(let i=1;i<S.step;i++) h+=coll(i); h+=active(S.step); }
-  else h+=succ();
-  document.getElementById('stepsArea').innerHTML=h;
-}
-function coll(n){
-  const id=S.activeChild||S.sel[0];const c=S.children[id];const m=id?memberById(id):null;
-  const sm={
-    1:S.sel.map(x=>memberById(x).nm).join(', '),
-    2:S.type==='semi'?'Semi-Private Swimming':(c&&c.svc?`${S.type==='group'?'Group':'Private'} ${SERVICES[id].find(s=>s.id===c.svc).nm}`:''),
-    3:c?`${c.days.map(d=>DAYFULL[d].slice(0,3)).join(' & ')||''} / ${c.rec==='recurring'?'Recurring':'One time only'}`:'',
-    4:c&&c.slotId?slotSm(id):''
-  };
-  return `<div class="coll"><div class="chk">&#10003;</div><span class="coll-txt">Step ${n} — ${sm[n]||''}</span><button class="edit-btn" onclick="editStep(${n})">Edit</button></div>`;
-}
-function slotSm(id){
-  const c=S.children[id];const pool=c.makeup?SG:(S.type==='semi'?SS:S.type==='private'?SP:SG);
-  const s=pool.find(x=>x.id===c.slotId);return s?`${fmtDayDate(s)} · ${s.time} – ${s.end}`:'';
-}
-function active(n){if(n===1)return step1();if(n===2)return step2();if(n===3)return step3();if(n===4)return step4();if(n===5)return step5();}
-
-/* ---------- STEP 1 ---------- */
-function cancelDemoHtml(){
-  const sess=new Date(2026,8,14,12,30);
-  const early=(sess-TODAY)/36e5>=24;
-  return `<div class="card">
-    <div class="card-hd"><h2>Your Upcoming Sessions</h2><p>Manage an existing booking (the full list lives on My Bookings)</p></div>
-    <div class="card-bd">
-      <div class="upcoming-row"><div>Maria Garcia — Group Swimming, Mon Sep 14, 12:30–1:55 PM</div>
-        <button class="btn btn-out btn-sm" onclick="toggleCancelPanel()">Cancel</button></div>
-      ${S.cancelPanelOpen?cancelPanelHtml(early):''}
-    </div>
-  </div>`;
-}
-function toggleCancelPanel(){S.cancelPanelOpen=!S.cancelPanelOpen;render();}
-function cancelPanelHtml(early){
-  return `<div class="cancel-panel">
-    <div class="cp-title">Cancelling This Booking</div>
-    <div class="cp-sub">Maria Garcia — Group Swimming, Mon Sep 14, 12:30–1:55 PM</div>
-    ${early?`
-    <div class="cp-note">This is an early cancellation — outside the 24-hour cancellation window.</div>
-    <div class="cp-outcome early">Session returned to your balance.<br>You'll also receive 1 make-up token, usable within 7 days, for the same service, level and location.</div>`:`
-    <div class="cp-note">This is a late cancellation — inside the 24-hour cancellation window.</div>
-    <div class="cp-outcome late">This session will be used — nothing is returned.<br>No make-up token is issued for a late cancellation.<br>If you think this is wrong, contact the front desk.</div>`}
-    <div class="cp-actions"><button class="btn btn-out" onclick="toggleCancelPanel()">Keep My Booking</button><button class="btn" style="background:var(--danger);color:#fff" onclick="confirmCancel()">Cancel Booking</button></div>
-  </div>`;
-}
-function confirmCancel(){showToast('Booking cancelled (simulated).');S.cancelPanelOpen=false;render();}
-
-function step1(){
-  return `<div class="card">
-   <div class="card-hd"><h2>Who are you booking for?</h2><p>${S.type==='semi'?'Select one household member as the primary participant.':'Select one or more household members below.'}</p></div>
-   <div class="card-bd"><div class="member-grid">${MEMBERS.map(memberRow).join('')}</div></div>
-  </div>`;
-}
-function memberRow(m){
-  const isSemi=S.type==='semi';
-  const checked=isSemi?S.sel[0]===m.id:S.sel.includes(m.id);
-  const purchase=S.buy[m.id];
-  const hasBuySessions=purchase&&purchase.added;
-  const noSessions=!m.ineligible&&m.bal===0&&!hasBuySessions;
-  const disabled=!!m.ineligible||noSessions;
-  let balHtml='';
-  if(!m.ineligible){
-    if(hasBuySessions) balHtml=`<div class="m-balance">Buying: ${purchase.item.sessions} sessions (pending payment)</div>`;
-    else if(m.bal===0) balHtml=`<button class="buy-link" onclick="event.stopPropagation();openBuy('${m.id}','step1')">Buy</button>`;
-    else balHtml=`<div class="m-balance">Balance: ${m.bal} / ${m.cap} sessions</div>`;
-  }
-  const reasonLine = m.ineligible?`<div class="reason-line">${m.reason}</div>`
-    : (m.bal===0&&!hasBuySessions?`<div class="reason-line">No sessions left — tap Buy to add sessions.</div>`:'');
-  const makeupLine=(!m.ineligible&&m.makeup>0)?`<div class="makeup-line" onclick="event.stopPropagation();openMakeupBanner('${m.id}')">${m.makeup} make-up available</div>`:'';
-  const removeLink=hasBuySessions?`<button class="rm-link" onclick="event.stopPropagation();openRemoveConfirm('${m.id}')">Remove</button>`:'';
-  const buyPanel=(S.buyPanelFor&&S.buyPanelFor.ctx==='step1'&&S.buyPanelFor.id===m.id)?buyPanelHtml(m.id):'';
-  const removePanel=S.removeConfirmFor===m.id?removeConfirmHtml(m.id):'';
-  const makeupBanner=(S.makeup.bannerFor===m.id)?makeupBannerHtml(m):'';
-  return `<div class="member-card ${checked?'sel':''} ${disabled?'disabled':''}" onclick="${disabled?'':`toggleMember('${m.id}')`}">
-    <div class="${isSemi?'m-radio':'m-check'} ${checked?'on':''}"></div>
-    <div class="m-av">${m.init}</div>
-    <div style="flex:1">
-      <div class="m-toprow"><span class="m-nm">${m.nm}${m.age?` (age ${m.age})`:''}</span>${balHtml}${removeLink}</div>
-      <div class="m-sub">${m.rel}${m.lvl?` / ${m.lvl}`:''}${m.fund?` / ${m.fund}`:''}</div>
-      ${reasonLine}${makeupLine}${makeupBanner}${buyPanel}${removePanel}
-    </div>
-  </div>`;
-}
-function toggleMember(id){
-  if(S.type==='semi'){ S.sel=[id]; if(!S.children[id]) initChild(id); }
-  else {
-    if(S.sel.includes(id)){ S.sel=S.sel.filter(x=>x!==id); delete S.children[id]; if(S.activeChild===id) S.activeChild=S.sel[0]||null; }
-    else { S.sel.push(id); initChild(id); if(!S.activeChild) S.activeChild=id; }
-  }
-  render();
-}
-
-/* ---- Buy panel / purchases ---- */
-function openBuy(memberId,ctx){S.buyPanelFor={id:memberId,ctx};render();}
-function closeBuy(){S.buyPanelFor=null;render();}
-function addToBooking(memberId,itemId){
-  const item=CATALOG.find(c=>c.id===itemId);
-  S.buy[memberId]={item,added:true};
-  S.buyPanelFor=null;
-  render();
-}
-function buyPanelHtml(memberId){
-  const m=memberById(memberId);
-  return `<div class="buy-panel" onclick="event.stopPropagation()">
-    <div class="buy-title">Buy Sessions for ${m.nm.split(' ')[0]} — Swimming Beginner 2</div>
-    <div class="buy-sub">No sessions left.</div>
-    <div class="buy-grid">${CATALOG.map(c=>`
-      <div class="buy-card">
-        <div class="buy-nm">${c.nm}</div>
-        <div class="buy-desc">${c.desc}</div>
-        <div class="strike">$${c.std}${c.sub?'/mo':''}</div>
-        <div class="buy-mem">Member price: $${c.mem}${c.sub?'/mo':''}</div>
-        <div class="buy-save">You save $${c.save}${c.sub?'/mo':''} (Family Membership)${c.sub?' — renews the 1st of each month':''}</div>
-        <button class="btn btn-blue btn-sm" style="margin-top:10px" onclick="event.stopPropagation();addToBooking('${memberId}','${c.id}')">Add to Booking</button>
-      </div>`).join('')}</div>
-    <div class="buy-foot">Only options ${m.nm.split(' ')[0]} is eligible for (age ${m.age}, Beginner 2) are shown. A pack her age group or level doesn't allow, or a purchase for another account, is never offered here.</div>
-  </div>`;
-}
-function openRemoveConfirm(memberId){S.removeConfirmFor=memberId;render();}
-function cancelRemove(){S.removeConfirmFor=null;render();}
-function confirmRemove(memberId){
-  const item=S.buy[memberId]&&S.buy[memberId].item;
-  delete S.buy[memberId];
-  if(S.children[memberId]) S.children[memberId].slotId=null;
-  const m=memberById(memberId);
-  if(S.sel.includes(memberId)&&m.bal===0){ S.sel=S.sel.filter(x=>x!==memberId); if(S.activeChild===memberId) S.activeChild=S.sel[0]||null; }
-  S.removeConfirmFor=null;
-  render();
-}
-function removeConfirmHtml(memberId){
-  const m=memberById(memberId);const purchase=S.buy[memberId];const c=S.children[memberId];
-  let dropped='';
-  if(c&&c.slotId){
-    const pool=S.type==='semi'?SS:S.type==='private'?SP:SG;
-    const s=pool.find(x=>x.id===c.slotId);
-    if(s) dropped=`<div class="drop-item">— ${fmtDayDate(s)}, ${s.time}–${s.end} ${s.svc}</div>`;
-  }
-  return `<div class="remove-confirm" onclick="event.stopPropagation()">
-    <div class="rc-title">Remove This Purchase?</div>
-    <div class="rc-body">Removing the ${purchase.item.nm} for ${m.nm.split(' ')[0]} will also remove:</div>
-    ${dropped||'<div class="drop-item">— No classes booked with these sessions yet</div>'}
-    <div class="rc-note">Nothing has been charged yet — this only clears the booking.</div>
-    <div class="rc-actions"><button class="btn btn-out btn-sm" onclick="cancelRemove()">Cancel</button><button class="btn btn-sm" style="background:var(--danger);color:#fff" onclick="confirmRemove('${memberId}')">Remove</button></div>
-  </div>`;
-}
-
-/* ---- Make-up ---- */
-function openMakeupBanner(memberId){S.makeup.bannerFor=S.makeup.bannerFor===memberId?null:memberId;render();}
-function makeupBannerHtml(m){
-  return `<div class="banner b-info" onclick="event.stopPropagation()">
-    ${m.nm.split(' ')[0]} has ${m.makeup} make-up available for Swimming Beginner 2 at Solar Swim.<br>
-    You can book a make-up up to 7 days ahead.
-    <div style="margin-top:8px"><button class="btn btn-blue btn-sm" onclick="event.stopPropagation();useMakeupToken('${m.id}')">Use Make-Up Token</button></div>
-  </div>`;
-}
-function useMakeupToken(memberId){
-  S.type='group';S.sel=[memberId];
-  if(!S.children[memberId]) initChild(memberId);
-  S.children[memberId].makeup=true;
-  S.makeup={active:true,memberId,bannerFor:null};
-  S.activeChild=memberId;S.step=2;
-  render();
-}
-function cancelMakeup(){
-  const id=S.makeup.memberId;
-  if(S.children[id]) S.children[id].makeup=false;
-  S.makeup={active:false,memberId:null,bannerFor:null};
-  S.step=1;
-  render();
-}
-function makeupModeBar(){
-  const m=memberById(S.makeup.memberId);
-  return `<div class="makeup-modebar"><span>Booking a make-up for ${m.nm} — Swimming Beginner 2, Solar Swim.</span><button class="link-btn" onclick="cancelMakeup()">Cancel make-up booking</button></div>`;
-}
-
-/* ---------- STEP 2 ---------- */
-function step2(){
-  const id=S.activeChild||S.sel[0];const child=S.children[id];const m=memberById(id);
-  if(S.type==='semi') return step2Semi();
-  if(child.makeup) return `<div class="card"><div class="card-hd"><h2>Service</h2></div><div class="card-bd"><div class="readonly-note">Swimming Beginner 2 — using your make-up token</div></div></div>`;
-  const svcs=SERVICES[id]||[];
-  return `<div class="card">
-   <div class="card-hd"><h2>What service?</h2><p>Available for ${m.nm}${m.lvl?` / ${m.lvl}`:''}</p></div>
-   <div class="card-bd"><div class="svc-list">${svcs.map(sv=>svcCard(id,sv,child)).join('')}</div></div>
-  </div>`;
-}
-function svcCard(memberId,sv,child){
-  const m=memberById(memberId);
-  const sel=child.svc===sv.id;
-  if(!sv.eligible){
-    return `<div class="svc-item ineligible"><div style="flex:1"><div class="svc-nm">${sv.nm}</div><div class="svc-sub reason-line">${sv.reason}</div></div><div class="svc-radio"></div></div>`;
-  }
-  const bought=S.buy[memberId]&&S.buy[memberId].added;
-  if(sv.buy&&m.bal===0&&!bought){
-    return `<div class="svc-item">
-      <div style="flex:1">
-        <div class="svc-nm">${sv.nm}</div><div class="svc-sub">${sv.sub||''}</div>
-        <button class="buy-link" style="margin-top:4px;display:block" onclick="event.stopPropagation();openBuy('${memberId}','step2')">Buy</button>
-        <div class="reason-line">No sessions left</div>
-        ${(S.buyPanelFor&&S.buyPanelFor.ctx==='step2'&&S.buyPanelFor.id===memberId)?buyPanelHtml(memberId):''}
-      </div>
-      <div class="svc-radio"></div>
-    </div>`;
-  }
-  const balNow=bought?S.buy[memberId].item.sessions:m.bal;
-  return `<div class="svc-item ${sel?'sel':''}" onclick="selectService('${memberId}','${sv.id}')">
-    <div style="flex:1"><div class="svc-nm">${sv.nm}</div><div class="svc-sub">${sv.sub||''}${balNow!==undefined?` · ${balNow} / ${sv.cap||m.cap} sessions`:''}</div></div>
-    <div class="svc-radio ${sel?'on':''}"></div>
-  </div>`;
-}
-function selectService(memberId,svcId){S.children[memberId].svc=svcId;render();}
-
-function step2Semi(){
-  const primaryId=S.sel[0];const primary=memberById(primaryId);
-  const others=MEMBERS.filter(x=>x.id!==primaryId&&!x.ineligible);
-  return `<div class="card">
-   <div class="card-hd"><h2>Semi-Private</h2></div>
-   <div class="card-bd">
-     <div class="semi-meta">Service: Swimming &nbsp; Level: ${primary.lvl}</div>
-     <div class="req-note">Required Participants for this class: 2 (set by the service) — so this slot needs one more person to be confirmed.</div>
-     <div class="pax-section">
-       <div class="sec-lbl">Participants</div>
-       <div class="pax-row"><div class="p-av">${primary.init}</div><div style="flex:1"><div class="p-nm">${primary.nm} (Primary)</div><div class="p-sub">${primary.lvl} / eligible</div></div></div>
-       ${S.semiFam?semiFamRow():''}
-     </div>
-     ${!S.semiFam?`
-     <label class="sec-lbl" for="semiFamSelect" style="display:block;margin-top:14px">Add a family member? (optional)</label>
-     <select id="semiFamSelect" onchange="pickSemiFam(this.value)">
-       <option value="">Select family member…</option>
-       ${others.map(o=>{const elig=o.lvl===primary.lvl;return `<option value="${o.id}" ${elig?'':'disabled'}>${o.nm} — ${elig?'eligible':'not eligible — different level'}</option>`;}).join('')}
-     </select>
-     <div class="banner b-warn">With just ${primary.nm.split(' ')[0]}, this slot will show as "Waiting for a second participant." You can still proceed — a second person can join later.</div>`:''}
-   </div>
-  </div>`;
-}
-function semiFamRow(){
-  const f=memberById(S.semiFam);
-  return `<div class="pax-row"><div class="p-av fam">${f.init}</div><div style="flex:1"><div class="p-nm">${f.nm}</div><div class="p-sub">${f.lvl} / eligible</div></div><button class="rm-btn" onclick="S.semiFam=null;render()">Remove</button></div>`;
-}
-function pickSemiFam(id){if(!id)return;S.semiFam=id;render();}
-
-/* ---------- STEP 3 ---------- */
-function step3(){
-  const id=S.activeChild||S.sel[0];const child=S.children[id];const m=memberById(id);
-  if(child.makeup) return step3Makeup(child);
-  return `<div class="card">
-   <div class="card-hd"><h2>When would you like to come?</h2><p>Check the days that work for you and set a time range.</p></div>
-   <div class="card-bd">
-     <div class="day-rows">${DAYS.map(d=>dayRow(id,child,d)).join('')}</div>
-     <div class="pref-section">
-       <div class="sec-lbl">How often?</div>
-       <div class="rec-opts">
-         <label class="rec-opt"><input type="radio" name="rec_${id}" ${child.rec==='recurring'?'checked':''} onchange="setRec('${id}','recurring')"> Recurring (same day/time each week)</label>
-         <label class="rec-opt"><input type="radio" name="rec_${id}" ${child.rec==='once'?'checked':''} onchange="setRec('${id}','once')"> One time only</label>
-       </div>
-     </div>
-     <div class="pref-section">
-       <label class="sec-lbl" for="search_${id}" style="display:block">Search through</label>
-       <input type="date" id="search_${id}" value="${child.searchThrough}" onchange="setSearchThrough('${id}',this.value)">
-     </div>
-     ${(child.rec==='recurring'&&child.days.length>0)?datesPreview(id,child,m):''}
-   </div>
-  </div>`;
-}
-function dayRow(id,child,d){
-  const checked=child.days.includes(d);
-  const dt=child.dayTimes[d]||{from:TIME_OPTS[0],to:TIME_OPTS[2]};
-  return `<div class="day-row ${checked?'on':''}">
-    <label class="day-check"><input type="checkbox" ${checked?'checked':''} onchange="toggleDay('${id}','${d}')"> ${DAYFULL[d]}</label>
-    ${checked?`<span class="day-times">From <select onchange="setDayTime('${id}','${d}','from',this.value)">${TIME_OPTS.map(t=>`<option ${dt.from===t?'selected':''}>${t}</option>`).join('')}</select> To <select onchange="setDayTime('${id}','${d}','to',this.value)">${TIME_OPTS.map(t=>`<option ${dt.to===t?'selected':''}>${t}</option>`).join('')}</select></span>`:''}
-  </div>`;
-}
-function toggleDay(id,d){
-  const c=S.children[id];
-  if(c.days.includes(d)) c.days=c.days.filter(x=>x!==d);
-  else { c.days.push(d); if(!c.dayTimes[d]) c.dayTimes[d]={from:TIME_OPTS[0],to:TIME_OPTS[2]}; }
-  render();
-}
-function setDayTime(id,d,which,val){S.children[id].dayTimes[d][which]=val;render();}
-function setRec(id,val){S.children[id].rec=val;render();}
-function setSearchThrough(id,val){S.children[id].searchThrough=val;render();}
-function datesPreview(id,child,m){
-  const credits=(S.buy[id]&&S.buy[id].added)?S.buy[id].item.sessions:m.bal;
-  const {dates,skipped}=generateDates(child.days,'recurring',credits,child.searchThrough);
-  child.bookedDates=dates;
-  const lastLabel=dates.length?fmtDateLong(dates[dates.length-1]):'';
-  return `<div class="dates-preview">
-    <div class="sec-lbl">Your Dates</div>
-    <div>This will book:<br>${dates.map(fmtDateLong).join(' · ')||'—'}</div>
-    ${skipped.length?`<div class="skipped-line">Skipped: ${skipped.map(s=>`${fmtDateLong(s.date)} — ${s.label} (closed)`).join(', ')}</div>`:''}
-    ${dates.length?`<div class="stop-line">Stopping at ${lastLabel} — that's all ${dates.length} session${dates.length===1?'':'s'} in ${m.nm.split(' ')[0]}'s balance. Buy more sessions to keep going past this date.</div>`:''}
-  </div>`;
-}
-function step3Makeup(child){
-  const opts=[];for(let i=1;i<=HORIZON_DAYS;i++){const d=new Date(TODAY);d.setDate(d.getDate()+i);const iso=isoLocal(d);if(!CLOSURES[iso])opts.push(iso);}
-  return `<div class="card"><div class="card-hd"><h2>When would you like to come?</h2><p>You can book a make-up up to 7 days ahead.</p></div>
-   <div class="card-bd">
-     <label class="sec-lbl" for="muDate" style="display:block">Choose a date</label>
-     <select id="muDate" onchange="setMakeupDate(this.value)">
-       <option value="">Select a date…</option>
-       ${opts.map(iso=>`<option value="${iso}" ${child.makeupDate===iso?'selected':''}>${fmtDateLong(iso)}</option>`).join('')}
-     </select>
-   </div></div>`;
-}
-function setMakeupDate(iso){
-  const id=S.activeChild;const c=S.children[id];
-  c.makeupDate=iso;
-  const d=new Date(iso+'T00:00:00');
-  c.days=[Object.keys(DAY_JS).find(k=>DAY_JS[k]===d.getDay())];
-  render();
-}
-
-/* ---------- STEP 4 ---------- */
-function step4(){
-  const id=S.activeChild||S.sel[0];const child=S.children[id];const m=memberById(id);
-  const pool=child.makeup?SG:(S.type==='semi'?SS:S.type==='private'?SP:SG);
-  let list=pool;
-  if(child.makeup) list=pool.filter(s=>ISO_BY_DAY[s.day]===child.makeupDate);
-  else if(child.days.length) list=pool.filter(s=>child.days.includes(s.day));
-  const dayGroups=[...new Set(list.map(s=>s.day))];
-  return `<div class="card">
-   <div class="card-hd"><h2>Available Classes</h2><p>${list.length} classes found for ${m.nm.split(' ')[0]}${child.days.length?` / ${child.days.map(d=>DAYFULL[d]).join(' and ')}`:''}</p></div>
-   <div class="card-bd">
-     ${dayGroups.length?dayGroups.map(d=>`<div class="dg-lbl">${DAYFULL[d]} ${DDATE[d]}</div><div class="slot-list">${list.filter(s=>s.day===d).map(s=>slotCard(id,s)).join('')}</div>`).join(''):'<p class="reason-line">No classes match your selected days. Go back and choose different days.</p>'}
-   </div>
-  </div>`;
-}
-function slotCard(memberId,s){
-  const child=S.children[memberId];const sel=child.slotId===s.id;
-  if(S.type==='semi'&&!child.makeup){
-    const remaining=s.req-s.px;const pend=remaining>0;
-    return `<div class="slot-item ${sel?'sel':''}">
-      <div class="slot-time-blk"><div class="t-main">${s.time}</div><div class="t-sub">${s.end}</div></div>
-      <div class="slot-info"><div class="slot-svc">${s.svc}</div><div class="slot-meta">${s.loc}</div>
-        <div style="margin-top:5px"><span class="chip ${pend?'c-warn':'c-ok'}">${pend?'Waiting for a second participant':'Open'} (${s.px} of ${s.req})</span></div>
-      </div>
-      <div class="slot-actions"><button class="btn btn-blue btn-sm" onclick="selectSlot('${memberId}','${s.id}',false)">${sel?'Selected':'Choose'}</button></div>
-    </div>`;
-  }
-  if(s.cap!==undefined){
-    const info=capInfo(s.filled,s.cap);
-    const isMulti=(S.type==='group'||S.type==='private')&&S.sel.length>=2;
-    if(isMulti&&info.remaining>0&&info.remaining<S.sel.length){
-      const names=S.sel.map(x=>memberById(x).nm.split(' ')[0]).join(' and ');
-      return `<div class="slot-item">
-        <div class="slot-time-blk"><div class="t-main">${s.time}</div><div class="t-sub">${s.end}</div></div>
-        <div class="slot-info"><div class="slot-svc">${s.svc}</div><div class="slot-meta">${s.loc}</div></div>
-        <div class="slot-right">
-          <div class="joint-block">Only ${info.remaining} spot${info.remaining===1?'':'s'} left — not enough for both ${names}. Choose a different class, or join the waitlist together.</div>
-          <button class="btn btn-out btn-sm" onclick="joinWaitlistForBoth('${s.id}')">Join Waitlist for Both</button>
-        </div>
-      </div>`;
+  } else if (mode === 'b-first'){
+    if (s === firstKey){
+      var sSched2 = getSched(m, secondKey);
+      if (sSched2.slot && sSched2.slot.day === slot.day && slot.start < sSched2.slot.end){
+        var sData2 = svcData(m, secondKey);
+        return {ok:false, msg: shortCap(secondKey)+' first, then '+shortCap(firstKey).toLowerCase()+' is set for '+memberFirst(m)+' — this class would come before her '+sData2.name+' class ends. Pick a time after '+sSched2.slot.label.split(' – ')[1]+', or switch '+memberFirst(m)+' to No preference (classes still can\'t overlap).'};
+      }
+    } else if (s === secondKey){
+      var fSched2 = getSched(m, firstKey);
+      if (fSched2.slot && fSched2.slot.day === slot.day && slot.start < fSched2.slot.end){
+        var fData2 = svcData(m, firstKey);
+        return {ok:false, msg: shortCap(secondKey)+' first, then '+shortCap(firstKey).toLowerCase()+' is set for '+memberFirst(m)+' — this class would come before her '+fData2.name+' class ends. Pick a different time, or switch '+memberFirst(m)+' to No preference (classes still can\'t overlap).'};
+      }
     }
-    const full=info.remaining<=0;
-    return `<div class="slot-item ${sel?'sel':''}">
-      <div class="slot-time-blk"><div class="t-main">${s.time}</div><div class="t-sub">${s.end}</div></div>
-      <div class="slot-info"><div class="slot-svc">${s.svc}</div><div class="slot-meta">${s.loc}</div></div>
-      <div class="slot-right">
-        <div class="cap-bar-w"><div class="cap-bar"><div class="cap-fill ${info.cls}" style="width:${Math.round(s.filled/s.cap*100)}%"></div></div><div class="cap-text">${info.text}</div></div>
-        <div class="slot-actions">
-          ${!full?`<button class="btn btn-blue btn-sm" onclick="selectSlot('${memberId}','${s.id}',false)">Book</button>`:''}
-          <button class="btn btn-out btn-sm" onclick="selectSlot('${memberId}','${s.id}',true)">Join Waitlist</button>
-          ${full?`<span class="chip c-info">Class full — join waitlist</span>`:''}
-        </div>
-      </div>
-    </div>`;
   }
-  return `<div class="slot-item ${sel?'sel':''}">
-    <div class="slot-time-blk"><div class="t-main">${s.time}</div><div class="t-sub">${s.end}</div></div>
-    <div class="slot-info"><div class="slot-svc">${s.svc}</div><div class="slot-meta">${s.loc}</div></div>
-    <div class="slot-actions"><button class="btn btn-blue btn-sm" onclick="selectSlot('${memberId}','${s.id}',false)">Book</button></div>
-  </div>`;
-}
-function selectSlot(memberId,slotId,wl){S.children[memberId].slotId=slotId;S.children[memberId].wl=wl;render();}
-function joinWaitlistForBoth(slotId){S.sel.forEach(id=>{S.children[id].slotId=slotId;S.children[id].wl=true;});render();}
-
-/* ---------- STEP 5 ---------- */
-function step5(){
-  const ids=S.sel;
-  const cards=ids.map(participantSummary).join('');
-  const purchases=Object.entries(S.buy).filter(([id,b])=>b.added&&ids.includes(id));
-  const total=purchases.reduce((sum,[,b])=>sum+b.item.mem,0);
-  const anyRC=ids.some(id=>{const c=S.children[id];const m=memberById(id);return m.fund==='Regional Center'&&c.rec==='recurring'&&!c.wl;});
-  const singleWL=ids.length===1&&S.children[ids[0]].wl;
-  S.__confirmLabel=singleWL?'Join Waitlist':(total>0?`Confirm & Pay $${total.toFixed(2)}`:'Confirm Booking');
-  return `<div class="card"><div class="card-hd"><h2>Confirm Your Booking</h2></div><div class="card-bd">
-    ${cards}
-    ${purchases.length?`<div class="sec-lbl" style="margin-top:8px">Purchases</div>${purchases.map(([id,b])=>purchaseLine(id,b)).join('')}`:''}
-    ${anyRC?`<div class="rceb-note">Your recurring class will show as tentative until your Regional Center authorization is confirmed. This is normal — we'll update you when it's confirmed.</div>`:''}
-    ${!singleWL?`<div class="total-row"><span>Total Due Today</span><span>$${total.toFixed(2)}</span></div>
-    <div class="pay-row"><span>Pay with card ending 4242</span><button class="link-btn" data-noop>Use a different card</button></div>`:''}
-  </div></div>`;
-}
-function participantSummary(id){
-  const m=memberById(id);const c=S.children[id];
-  const pool=c.makeup?SG:(S.type==='semi'?SS:S.type==='private'?SP:SG);
-  const s=pool.find(x=>x.id===c.slotId);
-  let oc,label;
-  if(c.wl){oc='waitlisted';label='Added to waitlist';}
-  else if(S.type==='semi'&&!S.semiFam){oc='pending';label='Waiting for a second participant';}
-  else if(!c.makeup&&m.fund==='Regional Center'&&m.fundStatus==='RCEB Pending'){oc='pending';label='Pending Regional Center authorization';}
-  else {oc='confirmed';label='Confirmed';}
-  let creditLine;
-  if(c.wl) creditLine="Joining the waitlist doesn't use a session — nothing is reserved until a seat opens and you're moved in.";
-  else if(c.makeup) creditLine="This booking uses your make-up token — your regular session balance isn't touched.";
-  else if(S.buy[id]&&S.buy[id].added) creditLine=`Uses the ${S.buy[id].item.sessions} sessions just purchased below.`;
-  else { const n=(c.rec==='recurring'&&c.bookedDates&&c.bookedDates.length)?c.bookedDates.length:1; creditLine=`${n} session${n===1?'':'s'} reserved — not used yet.`; }
-  let datesRow;
-  if(c.rec==='recurring'&&c.bookedDates&&c.bookedDates.length){
-    const {skipped}=generateDates(c.days,'recurring',999,c.searchThrough);
-    datesRow=`${c.bookedDates.map(fmtDateLong).join(' · ')}${skipped.length?`<br><span class="skipped-line">Skipped: ${skipped.map(sk=>`${fmtDateLong(sk.date)} — ${sk.label}`).join(', ')}</span>`:''}`;
-  } else if(s) datesRow=`${fmtDayDate(s)}, ${s.time}–${s.end}`;
-  else if(c.makeupDate) datesRow=fmtDateLong(c.makeupDate);
-  else datesRow='—';
-  return `<div class="review-block">
-   <div class="review-name">${m.nm.toUpperCase()}</div>
-   <div class="out-banner ${oc}"><div class="out-t">${label}</div></div>
-   <div class="review-list">
-     <div class="review-row"><div class="rrl">For</div><div class="rrv">${m.nm}</div></div>
-     <div class="review-row"><div class="rrl">Class</div><div class="rrv">${s?s.svc:(c.makeup?'Swimming — Beginner 2 (make-up)':'—')}</div></div>
-     <div class="review-row"><div class="rrl">Dates</div><div class="rrv">${datesRow}</div></div>
-     <div class="review-row"><div class="rrl">Location</div><div class="rrv">Solar Swim</div></div>
-     <div class="review-row"><div class="rrl">Funding</div><div class="rrv">${m.fund}</div></div>
-     ${c.makeup?`<div class="review-row"><div class="rrl">Entitlement source</div><div class="rrv">1 Make-Up Token</div></div>`:''}
-   </div>
-   <div class="credit-line">Credit effect: ${creditLine}</div>
-  </div>`;
-}
-function purchaseLine(id,b){
-  const m=memberById(id);
-  return `<div class="purchase-line">
-    <div><div>${b.item.nm} for ${m.nm.split(' ')[0]}</div>${S.removeConfirmFor===id?removeConfirmHtml(id):''}</div>
-    <div style="display:flex;align-items:flex-start;gap:8px">
-      <div class="purchase-price">Member price $${b.item.mem}<br><span class="was">(was $${b.item.std} — you save $${b.item.save})</span></div>
-      <button class="rm-link" onclick="openRemoveConfirm('${id}')">Remove</button>
-    </div>
-  </div>`;
+  return {ok:true};
 }
 
-/* ---------- Success ---------- */
-function succ(){
-  const ids=S.sel;const first=memberById(ids[0]);const c0=S.children[ids[0]];
-  const typeLabel=S.type==='group'?'Group Swimming':S.type==='semi'?'Semi-Private Swimming':'Private Swimming';
-  const pool=c0.makeup?SG:(S.type==='semi'?SS:S.type==='private'?SP:SG);
-  const s0=pool.find(x=>x.id===c0.slotId);
-  const dayDate=s0?fmtDayDate(s0):'';
-  const subtitle=ids.length>1
-    ? `${ids.map(id=>memberById(id).nm).join(' & ')} / ${typeLabel}`
-    : `${first.nm} / ${typeLabel}${dayDate?` / ${dayDate}`:''}`;
-  const chipLabel=c0.wl?'Added to waitlist'
-    :(S.type==='semi'&&!S.semiFam?'Waiting for a second participant'
-    :(!c0.makeup&&first.fund==='Regional Center'&&first.fundStatus==='RCEB Pending'?'Pending Regional Center authorization':'Confirmed'));
-  return `<div class="card"><div class="card-bd"><div class="succ-state">
-    <div class="succ-icon">&#10003;</div>
-    <div class="succ-t">You're all set!</div>
-    <div class="succ-s">${subtitle}</div>
-    <div style="margin-bottom:20px"><span class="chip c-ok" style="font-size:.875rem;height:28px;padding:0 14px">${chipLabel}</span></div>
-    <div style="display:flex;gap:10px;justify-content:center">
-      <button class="btn btn-out" onclick="backToHome()">Back to Home</button>
-      <button class="btn btn-blue" onclick="scheduleAnother()">Schedule Another Class</button>
-    </div>
-  </div></div></div>`;
+function orderRuleSentence(m){
+  var svcs = memberServices(m);
+  if (svcs.length < 2) return '';
+  var aData = svcData(m, svcs[0]), bData = svcData(m, svcs[1]);
+  var mode = getSched(m, svcs[0]).orderMode;
+  if (mode === 'a-first') return 'On days '+memberFirst(m)+' has both classes, '+bData.name+' will be scheduled to start after '+aData.name+' ends.';
+  if (mode === 'b-first') return 'On days '+memberFirst(m)+' has both classes, '+aData.name+' will be scheduled to start after '+bData.name+' ends.';
+  return 'Classes can be scheduled in any order — they still can\'t overlap.';
 }
-function backToHome(){showToast('Returning to Home (simulated).');}
-function scheduleAnother(){resetAll();render();}
-function goHome(){showToast('Returning to Home (simulated).');}
 
-/* ---------- Navigation ---------- */
-function resetAll(){
-  S.step=1;S.sel=[];S.children={};S.activeChild=null;S.semiFam=null;
-  S.buy={};S.buyPanelFor=null;S.removeConfirmFor=null;
-  S.makeup={active:false,memberId:null,bannerFor:null};S.cancelPanelOpen=false;S.success=false;
+function memberComplete(id){
+  var svcs = memberServices(id);
+  if (!svcs.length) return 'grey';
+  var done = 0;
+  svcs.forEach(function(s){
+    var sc = getSched(id,s);
+    if (sc.slot || sc.waitlist) done++;
+  });
+  if (done === 0) return 'grey';
+  if (done === svcs.length) return 'green';
+  return 'amber';
 }
+
+/* ============================= EVENT HANDLERS ============================= */
+function setToast(msg){ S.toast = msg; render(); setTimeout(function(){ S.toast=''; render(); }, 2600); }
+
 function switchType(t){
-  if(t===S.type)return;
-  const hasProgress=S.sel.length>0||Object.keys(S.buy).length>0;
-  S.type=t;resetAll();
-  if(hasProgress) showToast('Switched booking type — previous selections were cleared.');
+  if (t === S.type) return;
+  S.type = t;
+  S.step = 1;
+  S.selected = [];
+  S.semiSecond = '';
+  S.activeTab = '';
+  S.sched = {};
+  S.buyOpen = {};
+  S.makeUp = {active:false, member:null};
+  setToast('Switched booking type — your day/time and slot selections were reset.');
+}
+
+function toggleMember(id){
+  var i = S.selected.indexOf(id);
+  if (i >= 0){
+    S.selected.splice(i,1);
+  } else {
+    if (S.selected.length >= 3) return;
+    S.selected.push(id);
+  }
+  if (!S.selected.length) S.activeTab = '';
+  else if (S.selected.indexOf(S.activeTab) === -1) S.activeTab = S.selected[0];
   render();
 }
-function canAdvanceToStep5(){
-  if((S.type==='group'||S.type==='private')&&S.sel.length>=2) return S.sel.every(id=>childStatus(id)==='green');
-  const id=S.activeChild||S.sel[0];return !!(S.children[id]&&S.children[id].slotId);
+
+function setActiveTab(id){ S.activeTab = id; render(); }
+
+function selectSemiPrimary(id){ S.semiPrimary = id; S.semiSecond=''; render(); }
+function selectSemiSecond(id){
+  if (id === 'carlos') return; // ineligible, disabled
+  S.semiSecond = id; render();
 }
+
+function toggleAddPicker(m){ S.addPickerOpen[m] = !S.addPickerOpen[m]; render(); }
+function addService(m, svcKey){
+  if (memberServices(m).indexOf(svcKey) === -1 && memberServices(m).length < 3){
+    S.services[m].push(svcKey);
+  }
+  S.addPickerOpen[m] = false;
+  render();
+}
+
+function openBuy(m,s){ S.buyOpen[key(m,s)] = true; render(); }
+function closeBuy(m,s){ S.buyOpen[key(m,s)] = false; render(); }
+function addToBooking(m,s,itemKey){
+  var item = BUY_CATALOG.filter(function(b){return b.key===itemKey;})[0];
+  S.purchase[key(m,s)] = item;
+  S.buyOpen[key(m,s)] = false;
+  S.funding[key(m,s)] = 'card-purchase';
+  render();
+}
+function toggleRemoveConfirm(m,s,v){ S.removeConfirm[key(m,s)] = v; render(); }
+function confirmRemovePurchase(m,s){
+  delete S.purchase[key(m,s)];
+  getSched(m,s).slot = null;
+  S.removeConfirm[key(m,s)] = false;
+  delete S.funding[key(m,s)];
+  render();
+}
+
+function toggleDay(m,s,day){
+  var sc = getSched(m,s);
+  sc.days[day] = !sc.days[day];
+  render();
+}
+function setFrom(m,s,day,val){ getSched(m,s).from[day] = val; }
+function setTo(m,s,day,val){ getSched(m,s).to[day] = val; }
+function setRecurrence(m,s,val){ getSched(m,s).recurrence = val; render(); }
+function setOrderMode(m,val){
+  var svcs = memberServices(m);
+  svcs.forEach(function(s){ getSched(m,s).orderMode = val; });
+  // re-validate already-picked slots
+  svcs.forEach(function(s){
+    var sc = getSched(m,s);
+    if (sc.slot){
+      var v = validateSlotPick(m,s,sc.slot);
+      if (!v.ok){ sc.slot = null; }
+    }
+  });
+  render();
+}
+
+function jointRiskMembers(slot){
+  if (S.type !== 'group') return [];
+  return S.selected.filter(function(m){
+    return memberServices(m).indexOf('swim') !== -1;
+  });
+}
+
+function bookSlot(m,s,slot){
+  if (slot.jointRisk){
+    var risked = jointRiskMembers(slot);
+    if (risked.length >= 2 && (slot.cap - slot.filled) < risked.length){
+      return; // blocked, handled via joint UI — no direct booking
+    }
+  }
+  var v = validateSlotPick(m,s,slot);
+  if (!v.ok){ getSched(m,s).blockMsg = v.msg; render(); return; }
+  var sc = getSched(m,s);
+  sc.slot = slot; sc.waitlist = false; sc.blockMsg = '';
+  render();
+}
+function waitlistSlot(m,s,slot){
+  var sc = getSched(m,s);
+  sc.slot = slot; sc.waitlist = true; sc.blockMsg = '';
+  render();
+}
+function jointWaitlist(slot){
+  var risked = jointRiskMembers(slot);
+  risked.forEach(function(m){
+    var sc = getSched(m,'swim');
+    sc.slot = slot; sc.waitlist = true; sc.blockMsg='';
+  });
+  render();
+}
+
+function togglePreviewView(){ S.previewView = (S.previewView === 'list') ? 'calendar' : 'list'; render(); }
+function ensurePreviewChecks(m,s){
+  var k = key(m,s);
+  if (!S.previewChecks[k]){
+    var data = PREVIEW_DATA[k];
+    var obj = {};
+    if (data) data.dates.forEach(function(d){ obj[d] = true; });
+    S.previewChecks[k] = obj;
+  }
+  return S.previewChecks[k];
+}
+function togglePreviewDate(m,s,date){
+  var obj = ensurePreviewChecks(m,s);
+  obj[date] = !obj[date];
+  render();
+}
+
+function setFunding(m,s,val){ S.funding[key(m,s)] = val; render(); }
+
+function goStep(n){ if (n <= S.step || n <= maxReachedStep()) S.step = n; render(); }
+function maxReachedStep(){ return S._maxStep || 1; }
+
+function canAdvance(){
+  if (S.step === 1){
+    if (S.type === 'semi') return !!S.semiPrimary;
+    return S.selected.length > 0;
+  }
+  if (S.step === 2){
+    var mem = activeMembers();
+    if (!mem.length) return false;
+    return mem.every(function(m){
+      return memberServices(m).every(function(s){
+        var sc = getSched(m,s);
+        return !!(sc.slot || sc.waitlist);
+      });
+    });
+  }
+  return true;
+}
+
 function goNext(){
-  if(S.step===5){S.success=true;render();return;}
-  if(S.step===4&&!canAdvanceToStep5())return;
-  S.step=Math.min(5,S.step+1);
+  if (!canAdvance()) return;
+  if (S.step < 5){
+    S.step++;
+    S._maxStep = Math.max(S._maxStep||1, S.step);
+  }
   render();
 }
-function goBack(){S.step=Math.max(1,S.step-1);render();}
-function editStep(n){S.step=n;render();}
+function goBack(){ if (S.step > 1) S.step--; render(); }
 
-function renderFooter(){
-  const bb=document.getElementById('backBtn'),nb=document.getElementById('nextBtn');
-  const sfTitle=document.getElementById('sfTitle'),sfSub=document.getElementById('sfSub');
-  sfSub.textContent='Solar Swim';
-  bb.style.display=(S.step>1&&!S.success)?'inline-flex':'none';
-  if(S.success){nb.style.display='none';sfTitle.textContent='Booking complete';return;}
-  nb.style.display='inline-flex';
-  const id=S.activeChild||S.sel[0];const c=id?S.children[id]:null;
-  let enabled=false,label='Next →';
-  if(S.step===1){ enabled=S.sel.length>0; sfTitle.textContent=enabled?`Booking for ${S.sel.map(x=>memberById(x).nm.split(' ')[0]).join(', ')}`:'Choose who’s booking'; }
-  else if(S.step===2){ enabled=S.type==='semi'?true:(c&&(c.makeup||!!c.svc)); sfTitle.textContent='Choose a service'; }
-  else if(S.step===3){ enabled=c&&(c.makeup?!!c.makeupDate:c.days.length>0); sfTitle.textContent='Set your preferences'; }
-  else if(S.step===4){ enabled=canAdvanceToStep5(); sfTitle.textContent=enabled?'Ready to review':'Choose a class'; }
-  else if(S.step===5){ enabled=true; label=S.__confirmLabel||'Confirm Booking'; sfTitle.textContent='Ready to confirm'; }
-  nb.disabled=!enabled;
-  nb.textContent=label;
-  nb.className=`btn ${S.step===5?'btn-green':'btn-blue'}`;
+function useMakeUp(m){
+  S.makeUp = {active:true, member:m};
+  S.type = 'group';
+  S.selected = [m];
+  S.activeTab = m;
+  S.services[m] = ['swim'];
+  var sc = getSched(m,'swim');
+  sc.days = {}; sc.slot = null; sc.waitlist=false;
+  S.funding[key(m,'swim')] = 'makeup';
+  render();
+}
+function exitMakeUp(){
+  S.makeUp = {active:false, member:null};
+  getSched(S.selected[0]||'maria','swim').slot = null;
+  render();
+}
+function pickMakeupSlot(m){
+  getSched(m,'swim').slot = {day:MAKEUP_SLOT.day, label:MAKEUP_SLOT.label, loc:MAKEUP_SLOT.loc, start:tMin('6:00 AM'), end:tMin('7:25 AM')};
+  render();
 }
 
+function anyBooked(){
+  var mem = activeMembers();
+  var everyWaitlisted = true, anySlot = false;
+  mem.forEach(function(m){
+    memberServices(m).forEach(function(s){
+      var sc = getSched(m,s);
+      if (sc.slot){ anySlot = true; if (!sc.waitlist) everyWaitlisted = false; }
+    });
+  });
+  return {anySlot:anySlot, allWaitlist: anySlot && everyWaitlisted};
+}
+
+function totalDue(){
+  var total = 0;
+  Object.keys(S.purchase).forEach(function(k){
+    if (S.funding[k] === 'card-purchase'){
+      total += S.purchase[k].member;
+    }
+  });
+  return total;
+}
+
+function confirmBooking(){ S.step = 6; render(); }
+function scheduleAnother(){
+  S.step = 1; S.selected = []; S.semiPrimary='maria'; S.semiSecond=''; S.activeTab='';
+  S.sched = {}; S.purchase = {}; S.funding = {}; S.buyOpen={}; S.makeUp={active:false,member:null};
+  S._maxStep = 1;
+  render();
+}
+function backHome(){ setToast('Returning to portal home (simulated).'); }
+function doPrint(){ window.print(); }
+
+function openCancelDemo(){ S.cancelDemoOpen = true; render(); }
+function closeCancelDemo(){ S.cancelDemoOpen = false; render(); }
+function isEarlyCancel(){
+  var sessionStart = new Date(2026, 8, 14, 12, 30); // Mon Sep 14 2026, 12:30 PM
+  var now = new Date();
+  var cutoff = new Date(sessionStart.getTime() - 24*60*60*1000);
+  return now < cutoff;
+}
+function confirmCancel(){ setToast('Booking cancelled (simulated).'); S.cancelDemoOpen = false; }
+
+function noop(){}
+
+/* ============================= RENDER ============================= */
+function render(){
+  var root = document.getElementById('app-root');
+  var html = '';
+  html += renderToast();
+  html += renderTopBar();
+  html += '<div class="main-wrap">';
+  if (S.step === 6){
+    html += renderSuccess();
+  } else {
+    html += renderPageHeader();
+    html += renderTypeTabs();
+    html += renderStepper();
+    if (S.makeUp.active){
+      html += '<div class="makeup-strip"><span><b>Make-up booking</b> for '+memberFirst(S.makeUp.member)+' — Swimming Beginner 2, Solar Swim.</span><button class="btn btn-outline" onclick="ZC.exitMakeUp()">Cancel make-up booking</button></div>';
+    }
+    html += renderTabStrip();
+    html += '<div class="step-panel'+(S.step===5?' step-panel-summary':'')+'">';
+    if (S.step === 1) html += renderStep1();
+    else if (S.step === 2) html += renderStep2();
+    else if (S.step === 3) html += renderStep3();
+    else if (S.step === 4) html += renderStep4();
+    else if (S.step === 5) html += renderStep5();
+    html += '</div>';
+  }
+  html += '</div>';
+  if (S.step !== 6) html += renderFooter();
+  root.innerHTML = html;
+}
+
+function renderToast(){
+  if (!S.toast) return '';
+  return '<div class="toast">'+S.toast+'</div>';
+}
+
+function renderTopBar(){
+  return '' +
+  '<div class="portal-hd">' +
+    '<div class="portal-left">' +
+      '<div class="portal-logo"><div class="logo-badge">Z</div><div class="logo-name">Zalexy</div></div>' +
+      '<a class="gallery-link" href="index.html">&larr; Prototype Gallery</a>' +
+      '<div class="portal-nav">' +
+        '<button class="nav-item" data-noop onclick="return false">Home</button>' +
+        '<button class="nav-item current">Schedule</button>' +
+        '<button class="nav-item" data-noop onclick="return false">Purchases</button>' +
+        '<button class="nav-item" data-noop onclick="return false">Payments</button>' +
+        '<button class="nav-item" data-noop onclick="return false">Documents</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="portal-user"><span>Solar Swim</span><div class="user-av">CG</div></div>' +
+  '</div>';
+}
+
+function renderPageHeader(){
+  return '' +
+  '<div class="breadcrumb">Home / Schedule a Class</div>' +
+  '<div class="page-h-row"><div class="page-title">Schedule a Class</div>' +
+  '<button class="btn btn-outline" data-noop onclick="return false">Cancel</button></div>';
+}
+
+function renderTypeTabs(){
+  var tabs = [['group','Group'],['semi','Semi-Private'],['private','Private']];
+  var html = '<div class="type-tabs">';
+  tabs.forEach(function(t){
+    html += '<button class="t-tab'+(S.type===t[0]?' active':'')+'" onclick="ZC.switchType(\''+t[0]+'\')">'+t[1]+'</button>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderStepper(){
+  var html = '<div class="stepper">';
+  STEP_LABELS.forEach(function(lbl, i){
+    var n = i+1;
+    var cls = n < S.step ? 'done' : (n === S.step ? 'act' : 'fut');
+    var clickable = n <= maxReachedStep();
+    html += '<button class="s-item'+(clickable?' clickable':'')+'" '+(clickable?('onclick="ZC.goStep('+n+')"'):'')+'>';
+    html += '<span class="s-dot '+cls+'">'+(n<S.step?'✓':n)+'</span><span class="s-lbl '+cls+'">'+lbl+'</span></button>';
+    if (n < 5) html += '<span class="s-line"></span>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderTabStrip(){
+  if (S.type === 'semi') return '';
+  if (S.step === 1) return '';
+  if (S.selected.length < 2) return '';
+  var html = '<div class="tab-strip">';
+  S.selected.forEach(function(id){
+    var c = memberComplete(id);
+    html += '<button class="tab-pill'+(S.activeTab===id?' active':'')+'" onclick="ZC.setActiveTab(\''+id+'\')"><span class="tdot '+c+'"></span>'+memberFirst(id)+'</button>';
+  });
+  html += '</div>';
+  return html;
+}
+
+/* ---- STEP 1 ---- */
+function renderStep1(){
+  if (S.type === 'semi') return renderStep1Semi();
+  var html = '<div class="card"><div class="card-hd"><h2>Who is this for?</h2><p>Select who this booking is for, then the class(es) they want.</p></div><div class="card-bd">';
+  MEMBERS.forEach(function(mem){
+    var sel = S.selected.indexOf(mem.id) !== -1;
+    html += '<div class="member-row'+(sel?' sel':'')+'">';
+    html += '<div class="m-head" onclick="ZC.toggleMember(\''+mem.id+'\')">';
+    html += '<input type="checkbox" '+(sel?'checked':'')+' onclick="event.stopPropagation();ZC.toggleMember(\''+mem.id+'\')" aria-label="Select '+mem.name+'"/>';
+    html += '<div><div class="m-name">'+mem.name+' (age '+mem.age+')</div></div></div>';
+    if (sel){
+      html += '<div class="m-body">';
+      memberServices(mem.id).forEach(function(s){
+        html += renderServiceSection(mem.id, s);
+      });
+      if (memberServices(mem.id).length < 3){
+        html += '<button class="btn-link" onclick="ZC.toggleAddPicker(\''+mem.id+'\')">+ Add another class for '+memberFirst(mem.id)+'</button>';
+        if (S.addPickerOpen[mem.id]) html += renderAddPicker(mem.id);
+      }
+      var mkKey = key(mem.id, memberServices(mem.id)[0]);
+      if (mem.id === 'maria'){
+        html += '<div class="makeup-banner"><span><b>'+mem.name.split(' ')[0]+'</b> has 1 make-up available for Swimming Beginner 2 at Solar Swim. You can book a make-up up to 7 days ahead.</span><button class="btn btn-outline" onclick="ZC.useMakeUp(\'maria\')">Use Make-Up Token</button></div>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+function renderAddPicker(m){
+  var opts = ADD_OPTIONS_EXTRA[m] || [];
+  var already = memberServices(m);
+  var html = '<div class="add-picker">';
+  opts.forEach(function(o){
+    if (already.indexOf(o.key) !== -1) return;
+    if (o.eligible){
+      html += '<div class="pick-row ok" onclick="ZC.addService(\''+m+'\',\''+o.key+'\')">'+o.name+' <span style="color:var(--info);font-weight:600">Add</span></div>';
+    } else {
+      html += '<div class="pick-row no">'+o.name+' — '+o.reason+'</div>';
+    }
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderServiceSection(m,s){
+  var d = svcData(m,s);
+  var pk = key(m,s);
+  var bought = S.purchase[pk];
+  var html = '<div class="svc">';
+  html += '<div class="svc-name">'+d.name+(d.level? ' — '+d.level : '')+'</div>';
+  if (d.balance.avail === 0 && !bought){
+    html += '<button class="svc-buy" onclick="ZC.openBuy(\''+m+'\',\''+s+'\')">Buy</button>';
+    html += '<div class="svc-noSess">No sessions left — tap Buy to add sessions.</div>';
+  } else if (bought){
+    html += '<div class="svc-buying">Buying: 8 sessions (pending payment) <button class="svc-remove" onclick="ZC.toggleRemoveConfirm(\''+m+'\',\''+s+'\',true)">Remove</button></div>';
+  } else {
+    html += '<div class="svc-balance">Balance: '+d.balance.avail+' / '+d.balance.total+' sessions</div>';
+  }
+  html += '<div class="svc-plan">Active plan: '+d.plan+'</div>';
+  if (S.buyOpen[pk]) html += renderBuyPanel(m,s);
+  if (S.removeConfirm[pk]) html += renderRemoveConfirm(m,s,pk);
+  html += '</div>';
+  return html;
+}
+
+function renderBuyPanel(m,s){
+  var d = svcData(m,s);
+  var html = '<div class="buy-panel"><h3>Buy Sessions for '+memberFirst(m)+' — '+d.name+' '+(d.level||'')+'</h3>';
+  html += '<div class="sub">No sessions left.</div><div class="buy-grid">';
+  BUY_CATALOG.forEach(function(item){
+    html += '<div class="buy-item"><h4>'+item.name+'</h4><div class="desc">'+item.desc+'</div>';
+    html += '<div><span class="price-std">$'+item.standard+(item.monthly?'/mo':'')+'</span><span class="price-mem">Member price: $'+item.member+(item.monthly?'/mo':'')+'</span></div>';
+    html += '<div class="save-line">You save $'+item.saving+(item.monthly?'/mo':'')+' ('+item.membership+')</div>';
+    html += '<button class="btn btn-primary" style="margin-top:10px;width:100%" onclick="ZC.addToBooking(\''+m+'\',\''+s+'\',\''+item.key+'\')">Add to Booking</button></div>';
+  });
+  html += '</div><div class="buy-note">Only options '+memberFirst(m)+' is eligible for are shown. A pack her age group or level doesn\'t allow, or a purchase for another account, is never offered here.</div>';
+  html += '<div style="margin-top:10px;text-align:right"><button class="btn btn-outline" onclick="ZC.closeBuy(\''+m+'\',\''+s+'\')">Close</button></div>';
+  html += '</div>';
+  return html;
+}
+
+function renderRemoveConfirm(m,s,pk){
+  var item = S.purchase[pk];
+  var html = '<div class="remove-confirm"><b>Remove this purchase?</b>';
+  html += '<div class="rows">Removing the '+item.name+' for '+memberFirst(m)+' will also remove:<div class="rows">— any class scheduled using this purchase</div></div>';
+  html += '<div>Nothing has been charged yet — this only clears the booking.</div>';
+  html += '<div style="text-align:right;margin-top:10px"><button class="btn btn-outline" onclick="ZC.toggleRemoveConfirm(\''+m+'\',\''+s+'\',false)">Cancel</button> ';
+  html += '<button class="btn btn-danger" onclick="ZC.confirmRemovePurchase(\''+m+'\',\''+s+'\')">Remove</button></div></div>';
+  return html;
+}
+
+function renderStep1Semi(){
+  var html = '<div class="card"><div class="card-hd"><h2>Semi-Private</h2><p>Choose the primary participant, then optionally add a second.</p></div><div class="card-bd">';
+  MEMBERS.forEach(function(mem){
+    html += '<div class="radio-member"><input type="radio" name="semiPrimary" '+(S.semiPrimary===mem.id?'checked':'')+' onclick="ZC.selectSemiPrimary(\''+mem.id+'\')"/> '+mem.name+' (age '+mem.age+')</div>';
+  });
+  var d = svcData('maria','swim');
+  html += '<div class="semi-note"><b>Service: Swimming &nbsp; Level: Beginner 2</b><br/>Required Participants for this class: 2 (set by the service) — so this slot needs one more person to be confirmed.</div>';
+  html += '<div class="eyebrow">Participants</div>';
+  html += '<div class="participant-row"><b>'+memberName(S.semiPrimary)+'</b> — Beginner 2 / eligible &nbsp; <span style="color:var(--text-secondary)">(Primary)</span></div>';
+  html += '<div style="font-size:.85rem;font-weight:600;margin-top:10px">Add a family member? (optional)</div>';
+  html += '<select class="select-fm" onchange="ZC.selectSemiSecond(this.value)">';
+  html += '<option value="">Select family member…</option>';
+  MEMBERS.forEach(function(mem){
+    if (mem.id === S.semiPrimary) return;
+    var disabled = mem.id === 'carlos';
+    html += '<option value="'+mem.id+'" '+(disabled?'disabled':'')+' '+(S.semiSecond===mem.id?'selected':'')+'>'+mem.name+' — '+(disabled?'not eligible — different level':'eligible')+'</option>';
+  });
+  html += '</select>';
+  if (!S.semiSecond){
+    html += '<div class="amber-box">With just '+memberFirst(S.semiPrimary)+', this slot will show as "Waiting for a second participant." You can still proceed — a second person can join later.</div>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+/* ---- STEP 2 ---- */
+function renderStep2(){
+  var mem = activeMembers();
+  if (!mem.length) return '<div class="card"><div class="card-bd">Select at least one person in Step 1.</div></div>';
+  var html = '';
+  mem.forEach(function(m){
+    if (mem.length > 1 && S.activeTab && S.activeTab !== m) return;
+    memberServices(m).forEach(function(s){
+      html += renderStep2Service(m,s);
+    });
+  });
+  return html;
+}
+
+function renderStep2Service(m,s){
+  var d = svcData(m,s);
+  var sc = getSched(m,s);
+  var html = '<div class="card"><div class="card-hd"><h2>When would you like to come? ('+memberFirst(m)+' / '+d.name+')</h2>';
+  if (S.makeUp.active){
+    html += '<p>You can book a make-up up to 7 days ahead — filtered to the same service, level and location.</p>';
+  } else {
+    html += '<p>Check the days that work for you and set a time range. '+(S.type==='group' ? 'These are scheduled classes you can join.' : 'These are times you can book for this class.')+'</p>';
+  }
+  html += '</div><div class="card-bd">';
+
+  if (S.makeUp.active){
+    html += renderMakeupPicker(m);
+    html += '</div></div>';
+    return html;
+  }
+
+  DAYS.forEach(function(dayName){
+    var checked = !!sc.days[dayName];
+    html += '<div class="day-row'+(checked?' checked':'')+'"><input type="checkbox" '+(checked?'checked':'')+' onchange="ZC.toggleDay(\''+m+'\',\''+s+'\',\''+dayName+'\')" id="d_'+m+'_'+s+'_'+dayName+'"/><label class="day-label" for="d_'+m+'_'+s+'_'+dayName+'">'+dayName+'</label>';
+    if (checked){
+      html += '<select onchange="ZC.setFrom(\''+m+'\',\''+s+'\',\''+dayName+'\',this.value)">';
+      TIME_OPTS.forEach(function(o){ html += '<option value="'+o.v+'">'+o.t+'</option>'; });
+      html += '</select> to <select onchange="ZC.setTo(\''+m+'\',\''+s+'\',\''+dayName+'\',this.value)">';
+      TIME_OPTS.forEach(function(o){ html += '<option value="'+o.v+'">'+o.t+'</option>'; });
+      html += '</select>';
+    }
+    html += '</div>';
+  });
+
+  html += '<div class="eyebrow">How often?</div>';
+  html += '<div class="radio-row"><input type="radio" name="rec_'+m+'_'+s+'" '+(sc.recurrence==='recurring'?'checked':'')+' onclick="ZC.setRecurrence(\''+m+'\',\''+s+'\',\'recurring\')"/> Recurring (same day/time each week)</div>';
+  html += '<div class="radio-row"><input type="radio" name="rec_'+m+'_'+s+'" '+(sc.recurrence==='once'?'checked':'')+' onclick="ZC.setRecurrence(\''+m+'\',\''+s+'\',\'once\')"/> One time only</div>';
+  html += '<div class="searchline">Search through: Sep 30, 2026</div>';
+
+  // order mode selector
+  if (memberServices(m).length === 2 && memberServices(m)[0] === s){
+    var svcs = memberServices(m);
+    html += '<div class="eyebrow">How should '+memberFirst(m)+"'s classes fit together?</div>";
+    html += '<div class="radio-row"><input type="radio" name="ord_'+m+'" '+(sc.orderMode==='a-first'?'checked':'')+' onclick="ZC.setOrderMode(\''+m+'\',\'a-first\')"/> '+shortCap(svcs[0])+' first, then '+shortCap(svcs[1]).toLowerCase()+'</div>';
+    html += '<div class="radio-row"><input type="radio" name="ord_'+m+'" '+(sc.orderMode==='b-first'?'checked':'')+' onclick="ZC.setOrderMode(\''+m+'\',\'b-first\')"/> '+shortCap(svcs[1])+' first, then '+shortCap(svcs[0]).toLowerCase()+'</div>';
+    html += '<div class="radio-row"><input type="radio" name="ord_'+m+'" '+(sc.orderMode==='flex'?'checked':'')+' onclick="ZC.setOrderMode(\''+m+'\',\'flex\')"/> No preference (classes still can\'t overlap)</div>';
+    html += '<div class="rule-text">'+orderRuleSentence(m)+'</div>';
+  }
+
+  var checkedDays = Object.keys(sc.days).filter(function(dn){ return sc.days[dn]; });
+  if (!checkedDays.length){
+    html += '<div class="no-days" style="margin-top:14px">Check the days that work for you to see class options.</div>';
+  } else {
+    var slots = slotsForService(m,s);
+    var shortDays = checkedDays.map(dayShort);
+    var byDay = {};
+    slots.forEach(function(sl){
+      var dShort = sl.day.split(' ').slice(0,2).join(' ');
+      var dPrefix = sl.day.slice(0,3);
+      if (shortDays.indexOf(dPrefix) === -1) return;
+      byDay[sl.day] = byDay[sl.day] || [];
+      byDay[sl.day].push(sl);
+    });
+    if (sc.blockMsg){
+      html += '<div class="block-msg" style="margin-top:12px">'+sc.blockMsg+'</div>';
+    }
+    if (!Object.keys(byDay).length){
+      html += '<div class="no-days" style="margin-top:14px">No classes on the days you checked yet — try another day.</div>';
+    }
+    Object.keys(byDay).forEach(function(dayFull){
+      html += '<div class="day-heading">'+dayFull+'</div><div class="slot-grid">';
+      byDay[dayFull].forEach(function(slot){
+        html += renderSlotCard(m,s,slot);
+      });
+      html += '</div>';
+    });
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function renderMakeupPicker(m){
+  var sc = getSched(m,'swim');
+  var isSel = sc.slot && sc.slot.day === MAKEUP_SLOT.day;
+  var html = '<div class="day-heading">'+MAKEUP_SLOT.day+' <span style="text-transform:none;font-weight:400">(within your 7-day make-up horizon)</span></div>';
+  html += '<div class="slot-grid"><div class="slot-card'+(isSel?' sel':'')+'">';
+  html += '<div class="slot-time">'+MAKEUP_SLOT.label+'</div><div class="slot-loc">📍 '+MAKEUP_SLOT.loc+'</div>';
+  html += '<button class="btn btn-primary" style="width:100%" onclick="ZC.pickMakeupSlot(\''+m+'\')">'+(isSel?'Selected':'Book')+'</button>';
+  html += '</div></div>';
+  return html;
+}
+
+function renderSlotCard(m,s,slot){
+  var sc = getSched(m,s);
+  var isSel = sc.slot && sc.slot.id === slot.id;
+  var html = '<div class="slot-card'+(isSel?' sel':'')+'">';
+  html += '<div class="slot-time">'+slot.label+'</div><div class="slot-loc">📍 '+slot.loc+'</div>';
+
+  if (S.type === 'group'){
+    var full = slot.filled >= slot.cap;
+    // joint capacity check
+    if (slot.jointRisk){
+      var risked = jointRiskMembers(slot);
+      if (risked.length >= 2 && (slot.cap - slot.filled) < risked.length){
+        html += renderSeatIcons(slot);
+        html += '<div class="ratio">'+slot.filled+' booked / '+slot.cap+' spots</div>';
+        var names = risked.map(memberFirst).join(' and ');
+        html += '<div class="joint-msg">Only '+(slot.cap-slot.filled)+' spot left — not enough for both '+names+'. Choose a different class, or join the waitlist together.<button class="btn btn-outline" onclick="ZC.jointWaitlist(\''+slot.id+'\')">Join Waitlist for Both</button></div>';
+        html += '</div>';
+        return html;
+      }
+    }
+    html += renderSeatIcons(slot);
+    html += '<div class="ratio">'+slot.filled+' booked / '+slot.cap+' spots'+(full?'<span class="full-tag">Full</span>':'')+'</div>';
+    if (full){
+      html += '<div class="btn-row"><button class="btn btn-outline" style="flex:1" onclick="ZC.waitlistSlot(\''+m+'\',\''+s+'\','+slotJson(slot)+')">Join Waitlist</button></div>';
+    } else {
+      html += '<div class="btn-row"><button class="btn btn-primary" onclick="ZC.bookSlot(\''+m+'\',\''+s+'\','+slotJson(slot)+')">'+(isSel&&!sc.waitlist?'Selected':'Book')+'</button><button class="btn btn-outline" onclick="ZC.waitlistSlot(\''+m+'\',\''+s+'\','+slotJson(slot)+')">Join Waitlist</button></div>';
+    }
+  } else if (S.type === 'semi'){
+    var seats = [1,2].map(function(i){ return i<=slot.filled; });
+    html += '<div class="seat-row">'+seats.map(function(f){return '<span class="seat '+(f?'filled':'free')+'"></span>';}).join('')+'</div>';
+    var open = slot.status === 'open';
+    html += '<div class="ratio">'+(open? 'Open (2 of 2)' : 'Waiting for a second participant (1 of 2)')+'</div>';
+    html += '<div class="btn-row"><button class="btn btn-primary" onclick="ZC.bookSlot(\''+m+'\',\''+s+'\','+slotJson(slot)+')">'+(isSel?'Selected':'Book')+'</button></div>';
+  } else {
+    html += '<div class="btn-row"><button class="btn btn-primary" onclick="ZC.bookSlot(\''+m+'\',\''+s+'\','+slotJson(slot)+')">'+(isSel?'Selected':'Book')+'</button></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderSeatIcons(slot){
+  var out = '<div class="seat-row">';
+  for (var i=0;i<slot.cap;i++){
+    out += '<span class="seat '+(i<slot.filled?'filled':'free')+'"></span>';
+  }
+  out += '</div>';
+  return out;
+}
+
+function slotJson(slot){
+  // minimal safe inline JSON for onclick handlers (no quotes in values)
+  return "{id:'"+slot.id+"',day:'"+slot.day+"',label:'"+slot.label+"',loc:'"+slot.loc+"',start:"+(slot.start||0)+",end:"+(slot.end||0)+",cap:"+(slot.cap||0)+",filled:"+(slot.filled||0)+",jointRisk:"+(!!slot.jointRisk)+"}";
+}
+
+/* ---- STEP 3 : Preview ---- */
+function renderStep3(){
+  var mem = activeMembers();
+  var html = '<div class="card"><div class="card-hd" style="display:flex;justify-content:space-between;align-items:center">';
+  html += '<div><h2>Preview</h2><p>The real dates your selections produce, before anything is confirmed.</p></div>';
+  html += '<div class="preview-toggle"><button class="pv-btn'+(S.previewView==='list'?' active':'')+'" onclick="ZC.togglePreviewView()">List</button><button class="pv-btn'+(S.previewView==='calendar'?' active':'')+'" onclick="ZC.togglePreviewView()">Calendar</button></div>';
+  html += '</div><div class="card-bd">';
+  mem.forEach(function(m){
+    if (mem.length > 1 && S.activeTab && S.activeTab !== m) return;
+    memberServices(m).forEach(function(s){
+      html += renderPreviewService(m,s);
+    });
+  });
+  html += '</div></div>';
+  return html;
+}
+
+function renderPreviewService(m,s){
+  var d = svcData(m,s);
+  var pk = key(m,s);
+  var data = PREVIEW_DATA[pk];
+  if (!data) return '';
+  var checks = ensurePreviewChecks(m,s);
+  var html = '<div class="pv-block-hd"><div class="pv-service-title">'+memberFirst(m).toUpperCase()+' — '+d.name.toUpperCase()+(d.level?' ('+d.level+')':'')+'</div></div>';
+  if (S.makeUp.active){
+    html += '<div class="pv-plan-line">Make-up session — no plan-period limit applies.</div>';
+    var sc = getSched(m,s);
+    if (sc.slot){
+      html += '<div class="pv-date-row"><input type="checkbox" checked disabled/> '+sc.slot.day+', '+sc.slot.label+'</div>';
+    } else {
+      html += '<div class="pv-skip">Pick a make-up time on Step 2 to preview it here.</div>';
+    }
+    return html;
+  }
+  if (data.planLine) html += '<div class="pv-plan-line">'+data.planLine+'</div>';
+
+  if (S.previewView === 'calendar'){
+    html += renderCalendarGrid(data);
+  } else {
+    var byDay = {};
+    data.dates.forEach(function(dt){
+      var dayShortName = dt.split(' ')[0];
+      byDay[dayShortName] = byDay[dayShortName] || [];
+      byDay[dayShortName].push(dt);
+    });
+    Object.keys(byDay).forEach(function(dn){
+      html += '<div class="pv-day">'+dn+'</div>';
+      byDay[dn].forEach(function(dt){
+        html += '<div class="pv-date-row"><input type="checkbox" '+(checks[dt]?'checked':'')+' onchange="ZC.togglePreviewDate(\''+m+'\',\''+s+'\',\''+dt+'\')"/> '+dt+', '+data.time+'</div>';
+      });
+      data.skipped.forEach(function(sk){
+        if (sk.date.split(' ')[0] === dn){
+          html += '<div class="pv-skip">Skipped: '+sk.date+' — '+sk.reason+' (closed)</div>';
+        }
+      });
+    });
+  }
+
+  if (data.stop) html += '<div class="pv-stop">'+data.stop+'</div>';
+  if (data.tentative && data.tentative.length){
+    html += '<div class="pv-beyond-hd">Beyond your plan (shown, not booked):</div>';
+    data.tentative.forEach(function(t){
+      html += '<div class="pv-tentative"><input type="checkbox" disabled/> '+t.date+' — Tentative. Shown from your repeating schedule. Not reserved.</div>';
+    });
+  }
+  return html;
+}
+
+function renderCalendarGrid(data){
+  var html = '<div class="cal-grid">';
+  var all = data.dates.map(function(d){return {d:d,cls:'booked'};})
+    .concat(data.skipped.map(function(s){return {d:s.date,cls:'skip'};}))
+    .concat((data.tentative||[]).map(function(t){return {d:t.date,cls:'tentative'};}));
+  all.forEach(function(item){
+    html += '<div class="cal-cell">'+item.d.split(' ').slice(1).join(' ')+'<span class="cal-chip '+item.cls+'">'+(item.cls==='booked'?'Booked':item.cls==='skip'?'Closed':'Tentative')+'</span></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+/* ---- STEP 4 : Funding ---- */
+function renderStep4(){
+  var mem = activeMembers();
+  var html = '<div class="card"><div class="card-hd"><h2>How you\'ll pay</h2><p>Choose, per class, how it will be paid for.</p></div><div class="card-bd">';
+  mem.forEach(function(m){
+    memberServices(m).forEach(function(s){
+      html += renderFundingBlock(m,s);
+    });
+  });
+  html += '</div></div>';
+  return html;
+}
+
+function renderFundingBlock(m,s){
+  var d = svcData(m,s);
+  var pk = key(m,s);
+  var html = '<div class="fund-block"><div class="fund-title">'+memberFirst(m).toUpperCase()+' — '+d.name.toUpperCase()+(d.level?' ('+d.level+')':'')+'</div>';
+
+  if (S.makeUp.active){
+    html += '<div class="fund-radio"><label><input type="radio" checked disabled/> Use my make-up token</label></div>';
+    return html+'</div>';
+  }
+
+  if (d.funding === 'rc'){
+    html += '<div class="fund-rc">Covered by your Regional Center funding for this class. Approval is pending — you\'ll be notified once it\'s approved. No action needed from you.</div>';
+    return html+'</div>';
+  }
+
+  var bought = S.purchase[pk];
+  var chosen = S.funding[pk] || (bought ? 'card-purchase' : 'balance');
+  html += '<div class="fund-radio">';
+  if (bought){
+    html += '<label><input type="radio" name="fund_'+pk+'" '+(chosen==='card-purchase'?'checked':'')+' onclick="ZC.setFunding(\''+m+'\',\''+s+'\',\'card-purchase\')"/> Pay now by card — using the '+bought.name+' you just added</label>';
+    html += '<div class="fund-sub">Member price $'+bought.member+' (was $'+bought.standard+' — you save $'+bought.saving+')</div>';
+    html += '<label><input type="radio" name="fund_'+pk+'" '+(chosen==='other-pack'?'checked':'')+' onclick="ZC.setFunding(\''+m+'\',\''+s+'\',\'other-pack\')"/> Add a different pack or subscription</label>';
+  } else {
+    html += '<label><input type="radio" name="fund_'+pk+'" '+(chosen==='balance'?'checked':'')+' onclick="ZC.setFunding(\''+m+'\',\''+s+'\',\'balance\')"/> Use my class balance — Balance: '+d.balance.avail+' / '+d.balance.total+' sessions</label>';
+    html += '<div class="fund-sub">This booking uses '+sessionsUsedFor(m,s)+' of those sessions.</div>';
+    html += '<label><input type="radio" name="fund_'+pk+'" '+(chosen==='voucher'?'checked':'')+' onclick="ZC.setFunding(\''+m+'\',\''+s+'\',\'voucher\')"/> Use a voucher</label>';
+    html += '<label><input type="radio" name="fund_'+pk+'" '+(chosen==='card'?'checked':'')+' onclick="ZC.setFunding(\''+m+'\',\''+s+'\',\'card\')"/> Pay now by card</label>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+/* ---- STEP 5 : Summary ---- */
+// Sessions this booking actually consumes = the checked (kept) dates on the Preview step
+function sessionsUsedFor(m,s){
+  var pk = key(m,s);
+  var data = PREVIEW_DATA[pk];
+  if (!data) return 1;
+  var checks = ensurePreviewChecks(m,s);
+  var n = data.dates.filter(function(d){ return checks[d]; }).length;
+  return n || 1;
+}
+function fundingLabel(m,s){
+  var d = svcData(m,s);
+  var pk = key(m,s);
+  if (S.makeUp.active) return 'Make-up token';
+  if (d.funding === 'rc') return 'Regional Center (approval pending)';
+  var bought = S.purchase[pk];
+  var chosen = S.funding[pk] || (bought?'card-purchase':'balance');
+  if (chosen === 'card-purchase' && bought) return 'Card ending 4242 ('+bought.name+')';
+  if (chosen === 'voucher') return 'Voucher';
+  if (chosen === 'card') return 'Card ending 4242';
+  return 'Class balance ('+sessionsUsedFor(m,s)+' of '+d.balance.total+' sessions)';
+}
+function creditEffectLine(m,s){
+  var sc = getSched(m,s);
+  if (sc.waitlist) return "Joining the waitlist doesn't use a session — nothing is reserved until a seat opens and you're moved in.";
+  if (S.makeUp.active) return "This booking uses your make-up token — your regular session balance isn't touched.";
+  var pk = key(m,s);
+  if (S.purchase[pk] && (S.funding[pk]||'card-purchase')==='card-purchase') return 'Uses the sessions just purchased.';
+  var n = sessionsUsedFor(m,s);
+  return n+' session'+(n===1?'':'s')+' reserved — not used yet.';
+}
+
+function renderStep5(){
+  var mem = activeMembers();
+  var html = '<div class="card"><div class="card-hd" style="display:flex;justify-content:space-between;align-items:center"><div><h2>Your booking</h2><p>Complete detail of this booking.</p></div>';
+  html += '<button class="btn btn-outline" onclick="ZC.doPrint()">Print</button></div><div class="card-bd">';
+
+  var anyRC = false;
+  mem.forEach(function(m){
+    html += '<div class="summary-name">'+memberName(m).toUpperCase()+'</div>';
+    var banner = bannerFor(m);
+    html += '<div class="banner '+banner.cls+'">'+banner.text+'</div>';
+    memberServices(m).forEach(function(s,idx){
+      var d = svcData(m,s);
+      var sc = getSched(m,s);
+      html += '<div class="dgrid">';
+      if (idx===0) html += '<div class="lbl">For</div><div>'+memberName(m)+'</div>';
+      html += '<div class="lbl">Class</div><div>'+(S.type==='group'?'Group ':S.type==='semi'?'Semi-Private ':'Private ')+d.name+(d.level?' / '+d.level:'')+'</div>';
+      var pk = key(m,s);
+      var data = PREVIEW_DATA[pk];
+      if (S.makeUp.active && sc.slot){
+        html += '<div class="lbl">Date</div><div>'+sc.slot.day+', '+sc.slot.label+'</div>';
+      } else if (data){
+        var checks = ensurePreviewChecks(m,s);
+        var kept = data.dates.filter(function(dt){return checks[dt];});
+        html += '<div class="lbl">Dates</div><div>'+kept.join(' · ')+(data.skipped.length?('<br/><span style="color:var(--text-secondary);font-size:.78rem">Skipped: '+data.skipped.map(function(sk){return sk.date+' — '+sk.reason;}).join(', ')+'</span>'):'')+'</div>';
+      } else if (sc.slot){
+        html += '<div class="lbl">Day &amp; Time</div><div>'+sc.slot.day+', '+sc.slot.label+'</div>';
+      }
+      html += '<div class="lbl">Location</div><div>Solar Swim</div>';
+      html += '<div class="lbl">Paying with</div><div>'+fundingLabel(m,s)+'</div>';
+      html += '</div>';
+      html += '<div class="credit-line">Credit effect: '+creditEffectLine(m,s)+'</div>';
+      if (S.makeUp.active){
+        html += '<div class="dgrid"><div class="lbl">Entitlement source</div><div>1 Make-Up Token</div></div>';
+      }
+      if (d.funding==='rc') anyRC = true;
+    });
+  });
+
+  var purchasedAny = Object.keys(S.purchase).length > 0;
+  if (purchasedAny){
+    html += '<div class="eyebrow">Purchases</div>';
+    Object.keys(S.purchase).forEach(function(pk){
+      var item = S.purchase[pk];
+      var parts = pk.split('|');
+      html += '<div class="purchase-line"><div>'+item.name+' for '+memberFirst(parts[0])+'</div><div style="text-align:right">Member price $'+item.member+'<br/><span style="color:var(--text-secondary);font-size:.76rem">(was $'+item.standard+' — you save $'+item.saving+')</span></div></div>';
+    });
+  }
+
+  if (anyRC){
+    html += '<div class="rc-note">Your recurring class will show as tentative until your Regional Center authorization is confirmed. This is normal — we\'ll update you when it\'s confirmed.</div>';
+  }
+
+  var due = totalDue();
+  var wl = anyBooked();
+  html += '<div class="total-row"><div>TOTAL DUE TODAY</div><div>$'+due.toFixed(2)+'</div></div>';
+  if (due > 0){
+    html += '<div class="pay-row"><div>Pay with card ending 4242</div><button class="btn-link" data-noop onclick="return false">Use a different card</button></div>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function bannerFor(m){
+  var svcs = memberServices(m);
+  var allWaitlist = svcs.length && svcs.every(function(s){ return getSched(m,s).waitlist; });
+  var anyRC = svcs.some(function(s){ return svcData(m,s).funding === 'rc'; });
+  var anySemiPending = (S.type==='semi' && !S.semiSecond);
+  if (allWaitlist) return {cls:'info', text:'Added to waitlist'};
+  if (S.makeUp.active) return {cls:'', text:'Confirmed'};
+  if (anySemiPending) return {cls:'warn', text:'Waiting for a second participant'};
+  if (anyRC) return {cls:'warn', text:'Pending Regional Center authorization'};
+  return {cls:'', text:'Confirmed'};
+}
+
+/* ---- Footer / Success ---- */
+function renderFooter(){
+  var mem = activeMembers();
+  var wl = anyBooked();
+  var nextLabel = 'Next Step';
+  var action = 'ZC.goNext()';
+  var disabled = !canAdvance();
+  if (S.step === 5){
+    nextLabel = wl.allWaitlist ? 'Join Waitlist' : (totalDue()>0 ? 'Confirm & Pay $'+totalDue().toFixed(2) : 'Confirm Booking');
+    action = 'ZC.confirmBooking()';
+    disabled = false;
+  }
+  var btnCls = (S.step===5) ? (wl.allWaitlist? 'btn-outline':'btn-emerald') : 'btn-primary';
+  return '<div class="step-footer"><button class="btn btn-outline" onclick="ZC.goBack()" '+(S.step===1?'disabled':'')+'>Back</button>' +
+    '<button class="btn '+btnCls+'" onclick="'+action+'" '+(disabled?'disabled':'')+'>'+nextLabel+'</button></div>';
+}
+
+function successSubtitle(){
+  var mem = activeMembers();
+  var svcName = mem.length ? (svcData(mem[0], memberServices(mem[0])[0])||{}).name : '';
+  var clsLabel = (S.type==='group'?'Group ':S.type==='semi'?'Semi-Private ':'Private ') + (svcName||'');
+  if (mem.length <= 1){
+    var m = mem[0];
+    var sc = m ? getSched(m, memberServices(m)[0]) : null;
+    var dayPart = sc && sc.slot ? sc.slot.day : '';
+    return memberName(m||'maria')+' / '+clsLabel+(dayPart?(' / '+dayPart):'');
+  }
+  if (mem.length === 2){
+    return memberName(mem[0])+' & '+memberName(mem[1])+' / '+clsLabel;
+  }
+  return memberFirst(mem[0])+', '+memberFirst(mem[1])+' & '+memberFirst(mem[2])+' / '+clsLabel;
+}
+
+function renderSuccess(){
+  var banner = bannerFor((activeMembers()[0])||'maria');
+  var html = '<div class="success-wrap"><div class="success-check material-symbols-rounded">check_circle</div>';
+  html += '<h1>You\'re all set!</h1>';
+  html += '<div class="success-sub">'+successSubtitle()+'</div>';
+  html += '<div class="success-chip">Status: '+banner.text+'</div>';
+  html += '<div class="success-actions"><button class="btn btn-outline" onclick="ZC.backHome()">Back to Home</button><button class="btn btn-primary" onclick="ZC.scheduleAnother()">Schedule Another Class</button></div>';
+
+  html += '<div class="demo-block"><h3>Manage an existing booking (demo)</h3>';
+  html += '<div class="booking-row"><div>Maria Garcia — Group Swimming, Mon Sep 14, 12:30–1:55 PM</div>';
+  if (!S.cancelDemoOpen) html += '<button class="btn btn-outline" onclick="ZC.openCancelDemo()">Cancel</button>';
+  html += '</div>';
+  if (S.cancelDemoOpen) html += renderCancelPanel();
+  html += '</div>';
+  html += '</div>';
+  return html;
+}
+
+function renderCancelPanel(){
+  var early = isEarlyCancel();
+  var html = '<div class="cancel-panel"><h4>Cancelling this booking</h4>';
+  html += '<div class="booking-line">Maria Garcia — Group Swimming, Mon Sep 14, 12:30–1:55 PM</div>';
+  if (early){
+    html += '<div class="window-line">This is an early cancellation — outside the 24-hour cancellation window.</div>';
+    html += '<div class="what-happens early"><b>What happens:</b><br/>Session returned to your balance.<br/>You\'ll also receive 1 make-up token, usable within 7 days, for the same service, level and location.</div>';
+  } else {
+    html += '<div class="window-line">This is a late cancellation — inside the 24-hour cancellation window.</div>';
+    html += '<div class="what-happens late"><b>What happens:</b><br/>This session will be used — nothing is returned.<br/>No make-up token is issued for a late cancellation.<br/>If you think this is wrong, contact the front desk.</div>';
+  }
+  html += '<div class="cancel-actions"><button class="btn btn-outline" onclick="ZC.closeCancelDemo()">Keep My Booking</button><button class="btn btn-danger" onclick="ZC.confirmCancel()">Cancel Booking</button></div></div>';
+  return html;
+}
+
+/* ============================= EXPOSE + INIT ============================= */
+window.ZC = {
+  switchType: switchType, toggleMember: toggleMember, setActiveTab: setActiveTab,
+  selectSemiPrimary: selectSemiPrimary, selectSemiSecond: selectSemiSecond,
+  toggleAddPicker: toggleAddPicker, addService: addService,
+  openBuy: openBuy, closeBuy: closeBuy, addToBooking: addToBooking,
+  toggleRemoveConfirm: toggleRemoveConfirm, confirmRemovePurchase: confirmRemovePurchase,
+  toggleDay: toggleDay, setFrom: setFrom, setTo: setTo, setRecurrence: setRecurrence, setOrderMode: setOrderMode,
+  bookSlot: bookSlot, waitlistSlot: waitlistSlot, jointWaitlist: jointWaitlist,
+  togglePreviewView: togglePreviewView, togglePreviewDate: togglePreviewDate,
+  setFunding: setFunding, goStep: goStep, goNext: goNext, goBack: goBack,
+  useMakeUp: useMakeUp, exitMakeUp: exitMakeUp, pickMakeupSlot: pickMakeupSlot,
+  confirmBooking: confirmBooking, scheduleAnother: scheduleAnother, backHome: backHome, doPrint: doPrint,
+  openCancelDemo: openCancelDemo, closeCancelDemo: closeCancelDemo, confirmCancel: confirmCancel,
+  noop: noop
+};
+
+// Patch bookSlot/waitlistSlot to accept inline object literals (built by slotJson) since we call them as `ZC.bookSlot('m','s',{...})`
+S._maxStep = 1;
 render();
+
+})();
 </script>
 </body>
 </html>

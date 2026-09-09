@@ -1,0 +1,15 @@
+# Claude Code worktree isolation. Created automatically when a session runs
+# EnterWorktree with its working directory inside this repo. Local scratch only —
+# it holds a duplicate copy of every prototype and must never be committed,
+# because pages.yml publishes this whole directory (path: .) to public GitHub Pages.
+.claude/
+
+# Temp render targets. Agents render a prototype here first and only move it over
+# the live file once it is complete and syntax-checked, so an interrupted write
+# cannot destroy a working prototype.
+*.new.html
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
