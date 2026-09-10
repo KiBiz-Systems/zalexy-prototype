@@ -202,7 +202,7 @@ select.f-sel{border:1px solid var(--border-input);border-radius:6px;padding:5px 
           <div class="page-sub" id="pageSub"></div>
         </div>
         <div class="page-hd-r">
-          <button class="btn btn-blue btn-sm" onclick="location.href='booking-flow-staff.html'"><span class="ms-icon" style="font-size:15px">add</span> Book</button>
+          <button class="btn btn-blue btn-sm" onclick="location.href='booking-flow.html'"><span class="ms-icon" style="font-size:15px">add</span> Book</button>
           <button class="btn btn-out btn-sm" onclick="location.href='calendar-master.html'">Calendar &#8594;</button>
           <button class="btn btn-out btn-sm" data-noop onclick="manageHoursNoop()">Manage Hours</button>
         </div>
@@ -889,7 +889,7 @@ function positionDayGrid(){
   if(dayHasNoBlocks){
     const panel=document.createElement('div'); panel.className='center-panel';
     panel.innerHTML = `<div class="cp-title">No bookings on ${fmtLong(STATE.curDate)}</div>
-      <button class="btn btn-out btn-sm" onclick="location.href='booking-flow-staff.html'">+ Book a session</button>`;
+      <button class="btn btn-out btn-sm" onclick="location.href='booking-flow.html'">+ Book a session</button>`;
     scrollContent.appendChild(panel);
   }
 
@@ -1212,7 +1212,7 @@ function renderMakeupPanel(b){
   return `<div class="panel-green"><h4>MAKE-UP TOKEN CREATED</h4>
     <p>Token ${b.makeupToken} created for ${b.client}. This token does not expire.</p>
     <p style="margin-top:8px">Booking Horizon: the client can see and book replacement slots for the next 7 days from today. This is a visibility window, not the token's expiration — the token itself never lapses.</p>
-    <button class="btn btn-blue btn-sm" style="margin-top:10px" onclick="location.href='booking-flow-staff.html'">Book Make-Up Session</button>
+    <button class="btn btn-blue btn-sm" style="margin-top:10px" onclick="location.href='booking-flow.html'">Book Make-Up Session</button>
   </div>`;
 }
 function renderLateSummary(b){
@@ -1425,7 +1425,7 @@ function renderDrawerFooter(b){
   if(STATE.panel==='drag-confirm'){ foot.innerHTML=`<span class="body2-note">Confirm or cancel the move above.</span>`; return; }
   if(b.status==='TENTATIVE'){ foot.innerHTML=`<span class="body2-note">Tentative — a computed display, not a booking. No status-change actions exist here.</span>`; return; }
   if(['CANCELLED_EARLY','CANCELLED_LATE','NO_SHOW','COMPLETED'].includes(b.status)){
-    foot.innerHTML = b.status==='CANCELLED_EARLY' ? `<button class="btn btn-blue btn-sm" onclick="location.href='booking-flow-staff.html'">Book Make-Up Session</button>` : `<span class="body2-note">No further actions — this booking is resolved.</span>`;
+    foot.innerHTML = b.status==='CANCELLED_EARLY' ? `<button class="btn btn-blue btn-sm" onclick="location.href='booking-flow.html'">Book Make-Up Session</button>` : `<span class="body2-note">No further actions — this booking is resolved.</span>`;
     return;
   }
   let btns=`<button class="btn btn-out btn-sm" onclick="openReschedule('${b.id}')">Reschedule</button>`;

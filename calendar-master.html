@@ -186,7 +186,7 @@ body.density-comfortable .block{font-size:.75rem}
           <div class="page-sub" id="pageSub"></div>
         </div>
         <div class="page-hd-r">
-          <button class="btn btn-blue btn-sm" onclick="location.href='booking-flow-staff.html'"><span class="ms" style="font-size:15px">add</span> Book</button>
+          <button class="btn btn-blue btn-sm" onclick="location.href='booking-flow.html'"><span class="ms" style="font-size:15px">add</span> Book</button>
           <button class="btn btn-out btn-sm" onclick="location.href='master-schedule-staff.html'">Master Schedule <span class="ms" style="font-size:15px">arrow_forward</span></button>
         </div>
       </div>
@@ -522,7 +522,7 @@ function render(){
     const cols=candidateCoaches.length?candidateCoaches:COACH_ORDER;
     gridHtml=buildGridHtml(cols,[],uh.open,uh.close,0,0,uh,dateBookingsAll,{});
     if(isEmptyDay){
-      overlayHtml=`<div class="empty-overlay"><div class="empty-panel"><div>No bookings on ${meta?meta.label:fmtLong(STATE.curDate)}</div><button class="btn btn-out btn-sm" onclick="location.href='booking-flow-staff.html'"><span class="ms" style="font-size:15px">add</span> Book a session</button></div></div>`;
+      overlayHtml=`<div class="empty-overlay"><div class="empty-panel"><div>No bookings on ${meta?meta.label:fmtLong(STATE.curDate)}</div><button class="btn btn-out btn-sm" onclick="location.href='booking-flow.html'"><span class="ms" style="font-size:15px">add</span> Book a session</button></div></div>`;
     } else {
       overlayHtml=`<div class="empty-overlay"><div class="empty-panel"><div>No bookings match the current filters for ${meta?meta.label:fmtLong(STATE.curDate)}</div><button class="btn btn-out btn-sm" onclick="clearAllFilters()">Clear filters</button></div></div>`;
     }
@@ -1007,7 +1007,7 @@ function renderMakeupPanel(b){
   return `<div class="panel-green"><h4>MAKE-UP TOKEN CREATED</h4>
     <p>Token ${b.makeupToken} created for ${b.client}. This token does not expire.</p>
     <p style="margin-top:8px">Booking Horizon: the client can see and book replacement slots for the next 7 days from today. This is a visibility window, not the token's expiration — the token itself never lapses.</p>
-    <button class="btn btn-blue btn-sm" style="margin-top:10px" onclick="location.href='booking-flow-staff.html'">Book Make-Up Session</button>
+    <button class="btn btn-blue btn-sm" style="margin-top:10px" onclick="location.href='booking-flow.html'">Book Make-Up Session</button>
   </div>`;
 }
 function renderLateSummary(b){
@@ -1225,7 +1225,7 @@ function renderDrawerFooter(b){
   if(b.status==='BREAK'||b.status==='UNAVAILABLE'){ foot.innerHTML=`<span class="body2-note">${b.status==='BREAK'?'Break':'Unavailable'} blocks have no actions.</span>`; return; }
   if(b.status==='TENTATIVE'){ foot.innerHTML=`<span class="body2-note">Tentative — a computed display, not a booking. No status-change actions exist here.</span>`; return; }
   if(['CANCELLED_EARLY','CANCELLED_LATE','NO_SHOW','COMPLETED'].includes(b.status)){
-    foot.innerHTML = b.status==='CANCELLED_EARLY' ? `<button class="btn btn-blue btn-sm" onclick="location.href='booking-flow-staff.html'">Book Make-Up Session</button>` : `<span class="body2-note">No further actions — this booking is resolved.</span>`;
+    foot.innerHTML = b.status==='CANCELLED_EARLY' ? `<button class="btn btn-blue btn-sm" onclick="location.href='booking-flow.html'">Book Make-Up Session</button>` : `<span class="body2-note">No further actions — this booking is resolved.</span>`;
     return;
   }
   let btns=`<button class="btn btn-out btn-sm" onclick="openReschedule('${b.id}')">Reschedule</button>`;
