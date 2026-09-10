@@ -60,6 +60,7 @@ var SHARED_SIDEBAR_HTML = `
       <a class="nav-item" href="billing-module-settings.html"><span class="material-symbols-rounded">settings</span>Admin Setup</a>
       <div class="nav-section">Scheduling</div>
       <a class="nav-item" href="calendar-master.html"><span class="material-symbols-rounded">calendar_today</span>Calendar Master</a>
+      <a class="nav-item" href="master-schedule-staff.html"><span class="material-symbols-rounded">groups</span>Master Schedule (Staff)</a>
       <a class="nav-item" href="booking-flow-staff.html"><span class="material-symbols-rounded">edit_calendar</span>Staff Booking Flow</a>
       <a class="nav-item" href="booking-flow-client.html"><span class="material-symbols-rounded">person</span>Client Booking Flow</a>
       <a class="nav-item disabled" tabindex="-1" aria-disabled="true"><span class="material-symbols-rounded">link</span>Semi-Private Invite Link <span style="color:rgba(248,250,252,.4);font-size:.65rem;margin-left:auto;">TODO</span></a>

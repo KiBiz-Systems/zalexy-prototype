@@ -215,17 +215,44 @@ h1{font-size:2rem;font-weight:700;letter-spacing:-.02em;margin:0 0 8px;}
         </div>
         <div class="card">
           <span class="tag" style="background:#d1fae5;color:#047857">Scheduling · Staff</span>
-          <h4>Calendar Master Schedule</h4>
-          <p>The staff pivot grid — coaches as columns, time slots as rows, both axes sticky, with
-            five working filters and distinct data per day. Every booking state has its own
-            block treatment and says what it is in words, not colour alone. The detail drawer
-            carries a cancellation policy preview that states early-or-late and the exact
-            credit consequence before you confirm, make-up token generation, real check-in and
-            no-show marking, the manager-approved waitlist loop, a consecutive late-cancel
-            warning and a manager funding override. Recurring slots pending authorization are
-            computed from the schedule and shown as Tentative — nothing is reserved.</p>
-          <span class="meta">Scheduling PRD · Phase — Scheduling Module</span>
+          <h4>Calendar — Day View <em>(coaches as columns)</em></h4>
+          <p><strong>Rev 2 — grid rebuilt.</strong> Coaches as columns, time as rows, both axes
+            sticky. The rework manager PRD §35 asked for: the operating window is read from the
+            location rather than hardcoded, empty leading and trailing hours collapse to a strip,
+            and a compact density unit puts a whole seeded day — 8 AM to 6 PM — inside one screen
+            with no vertical scrolling. Block heights are proportional to duration, so a
+            45-minute lesson draws as 45 minutes. Overlapping bookings split the lane and are
+            outlined as conflicts instead of being silently dropped, including a session booked
+            over an approved break. Coaches with nothing booked collapse behind one button;
+            column headers report booked, open and utilisation rather than a raw count that
+            counted cancellations. Filters announce themselves with removable chips and a
+            result count, and a filtered-out block cannot be clicked. Blocks are buttons with
+            arrow-key traversal, and drag-to-reschedule names any conflict a drop would create.
+            The detail drawer is unchanged and still carries the cancellation policy preview
+            that states early-or-late and the exact credit consequence before you confirm,
+            make-up token generation, real check-in and no-show marking, the manager-approved
+            waitlist loop, a consecutive late-cancel warning and a manager funding override.
+            Recurring slots pending authorization are computed from the schedule and shown as
+            Tentative — nothing is reserved.</p>
+          <span class="meta">Manager PRD §35, §78 · schedule-grid.md · Phase 9 — Calendar</span>
           <a class="btn btn-primary" href="calendar-master.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
+        </div>
+        <div class="card">
+          <span class="tag" style="background:#d1fae5;color:#047857">Scheduling · Staff</span>
+          <h4>Master Schedule <em>(staff as rows)</em></h4>
+          <p>The same bookings as the calendar, transposed — staff as rows with time running
+            left to right, so twelve people's whole day reads at a glance with no scrolling in
+            either direction. Answers the coverage question the calendar can't: who is loaded,
+            who is free, who is on a break. Availability is drawn as the row's background, so
+            hours outside a coach's shift are visibly hatched instead of being a separate view
+            with a separate data model — which is how the shipped app currently splits it. A
+            stat bar reports staff, working, breaks, open slots and conflicts, all computed. A
+            week mode summarises each staff-day as a load bar with counts rather than a
+            thousand unreadable slivers, and clicking a cell drills into that person's day.
+            Same status vocabulary, same block faces and the same detail drawer as the
+            calendar.</p>
+          <span class="meta">Manager PRD §35, §38–42, §46, §67 · schedule-grid.md · Phase 9 — Calendar</span>
+          <a class="btn btn-primary" href="master-schedule-staff.html">Open prototype <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span></a>
         </div>
         <div class="card">
           <span class="tag" style="background:#d1fae5;color:#047857">Scheduling · Staff</span>
