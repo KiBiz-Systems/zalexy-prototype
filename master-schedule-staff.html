@@ -1,0 +1,1453 @@
+<!--
+  Zalexy Prototype — Master Schedule (Staff Projection, P2)
+  Spec:   ai-workspace/prototypes/staff/master-schedule-staff.md
+  Design: ai-workspace/prototypes/_shared/design-system.md
+  Static prototype. Not production code. No app dependencies.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Zalexy — Master Schedule (Staff)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root{--primary:#334155;--primary-dark:#1e293b;--info:#3b82f6;--info-bg:#eff6ff;--info-dark:#1d4ed8;--success:#10b981;--success-bg:#d1fae5;--success-dark:#047857;--warning:#f59e0b;--danger:#ef4444;--text-primary:#0f172a;--text-secondary:#64748b;--border:#f1f5f9;--border-input:#cbd5e1;--bg-default:#f8fafc;--radius-card:10px;--radius-base:8px;--shadow-card:0 2px 4px rgba(0,0,0,0.02),0 1px 2px rgba(0,0,0,0.03)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg-default);color:var(--text-primary);font-size:14px;height:100vh;overflow:hidden}
+button{font:inherit;cursor:pointer}
+select,input{font:inherit}
+.ms-icon{font-family:'Material Symbols Rounded';font-weight:400;font-style:normal;font-size:18px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;vertical-align:middle}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px}
+/* SHELL */
+.app{display:flex;height:100vh;overflow:hidden}
+.main-shell{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:56px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;padding:0 20px;gap:10px;flex-shrink:0}
+.loc-pill{display:flex;align-items:center;gap:5px;font-size:.8rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default);border:1px solid var(--border-input);border-radius:6px;padding:5px 10px}
+.role-sel{border:none;background:transparent;font-weight:700;font-size:.8rem;color:var(--text-secondary);cursor:pointer;outline:none}
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:14px 16px 0}
+/* PAGE HEADER */
+.page-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-shrink:0}
+.breadcrumb{font-size:.72rem;color:var(--text-secondary);margin-bottom:3px}
+.page-title{font-size:1.2rem;font-weight:700;letter-spacing:-.01em}
+.page-sub{font-size:.8rem;color:var(--text-secondary);margin-top:2px}
+.page-hd-r{display:flex;gap:7px}
+.btn{border-radius:6px;padding:6px 12px;font-size:.82rem;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.btn-blue{background:var(--info);color:#fff}.btn-blue:hover{background:#2563eb}
+.btn-out{background:#fff;color:var(--text-primary);border:1px solid var(--border-input)}.btn-out:hover{border-color:#64748b;background:var(--bg-default)}
+.btn-out:disabled{opacity:.5;cursor:not-allowed}
+.btn-sm{padding:4px 9px;font-size:.75rem}
+/* TOOLBAR */
+.toolbar{background:#fff;border:1px solid var(--border);border-radius:var(--radius-card);padding:10px 14px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.tb-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.seg{display:flex;background:#f1f5f9;border-radius:8px;padding:4px;gap:2px}
+.seg button{border:none;background:transparent;padding:5px 12px;border-radius:6px;font-size:.78rem;font-weight:500;color:#64748b;cursor:pointer}
+.seg button.on{background:#fff;font-weight:700;color:var(--text-primary);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.date-lbl{font-size:.95rem;font-weight:700;color:var(--text-primary);white-space:nowrap;min-width:120px;text-align:center}
+.sep{width:1px;height:22px;background:var(--border)}
+select.f-sel{border:1px solid var(--border-input);border-radius:6px;padding:5px 8px;font-size:.78rem;background:#fff;color:var(--text-primary);cursor:pointer;outline:none}
+.chip{display:inline-flex;align-items:center;height:24px;border-radius:4px;padding:0 8px;font-size:.7rem;font-weight:600;white-space:nowrap;gap:5px}
+.c-ok{background:var(--success-bg);color:var(--success-dark)}.c-info{background:var(--info-bg);color:var(--info-dark)}.c-warn{background:#fef3c7;color:#b45309}.c-danger{background:#fee2e2;color:#b91c1c}.c-purple{background:#f3e8ff;color:#7c3aed}.c-muted{background:#f1f5f9;color:var(--text-secondary)}
+.chip.clickable{cursor:pointer;border:none}
+.chip .x{cursor:pointer;font-weight:800;margin-left:2px}
+.clearall{background:none;border:none;font-size:.72rem;font-weight:600;color:var(--info);cursor:pointer;text-decoration:underline}
+.showing{margin-left:auto;font-size:.72rem;font-weight:600;color:var(--text-secondary)}
+/* STAT BAR */
+.statbar{display:flex;gap:10px;margin-bottom:10px;flex-shrink:0}
+.stat-tile{background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 14px;flex:1;cursor:default}
+.stat-tile.clickable{cursor:pointer}
+.stat-val{font-size:1.25rem;font-weight:800;color:var(--text-primary)}
+.stat-val.danger{color:var(--danger)}
+.stat-lbl{font-size:.65rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em}
+/* GRID WRAP */
+.grid-outer{flex:1;overflow:hidden;background:#fff;border-radius:var(--radius-card);border:1px solid var(--border);box-shadow:var(--shadow-card);position:relative;min-height:0;display:flex;flex-direction:column}
+.grid-scrollwrap{flex:1;overflow-y:auto;overflow-x:hidden;position:relative;min-height:0}
+.grid-content{position:relative}
+/* DAY MODE */
+.ms-headerrow{display:flex;position:sticky;top:0;z-index:20;height:32px;background:#f8fafc;border-bottom:2px solid #e2e8f0}
+.ms-corner{width:180px;flex-shrink:0;position:sticky;left:0;background:#f0f4f8;z-index:21;border-right:1px solid #e2e8f0}
+.ms-timeaxis{flex:1;position:relative}
+.ms-hourlbl{position:absolute;top:0;height:100%;display:flex;align-items:center;font-size:.7rem;font-weight:600;color:#64748b;padding-left:3px;white-space:nowrap}
+.ms-staffrow{display:flex;border-bottom:1px solid #f1f5f9}
+.density-compact .ms-staffrow{height:36px}
+.density-comfortable .ms-staffrow{height:52px}
+.ms-stafflabel{width:180px;flex-shrink:0;position:sticky;left:0;z-index:10;background:#f8fafc;border-right:1px solid #e2e8f0;padding:3px 10px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden}
+.ms-avrow{display:flex;align-items:center;gap:6px}
+.ms-av{width:22px;height:22px;border-radius:50%;background:var(--info);color:#fff;display:grid;place-items:center;font-size:.6rem;font-weight:700;flex-shrink:0}
+.ms-staffnm{font-size:.8rem;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ms-util{font-size:.68rem;font-weight:600;color:var(--text-secondary);white-space:nowrap}
+.ms-lane{flex:1;position:relative;overflow:hidden}
+.ms-hatch{position:absolute;top:0;bottom:0;background:#f8fafc;background-image:repeating-linear-gradient(45deg,transparent 0 3px,rgba(148,163,184,.18) 3px 4px);z-index:1}
+.ms-block{position:absolute;border-radius:5px;border-left:3px solid;overflow:hidden;font-size:.7rem;padding:2px 6px;cursor:pointer;z-index:5;text-align:left;color:inherit;background:transparent}
+.density-comfortable .ms-block{font-size:.75rem}
+.ms-block .bl-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;line-height:1.25}
+.ms-block:hover{box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.ms-block.conflict{outline:1px solid var(--danger);outline-offset:-1px}
+.ms-block.dimmed{opacity:.25;pointer-events:none}
+.ms-block.notactive{cursor:default}
+.b-confirmed{background:#eff6ff;border-left-color:#3b82f6}
+.b-tentative{background:#fef3c7;border-left-color:#f59e0b}
+.b-semi-pending{background:#f3e8ff;border-left-color:#7c3aed}
+.b-waitlisted{background:#eff6ff;border-left-style:dashed;border-left-color:#3b82f6}
+.b-authhold{background:#fef3c7;border-left-style:dashed;border-left-color:#b45309}
+.b-paymenthold{background:#fee2e2;border-left-color:#ef4444}
+.b-cancel-early{background:#f1f5f9;border-left-color:#10b981}
+.b-cancel-late{background:#f1f5f9;border-left-color:#ef4444}
+.b-noshow{background:#fee2e2;border-left-color:#b91c1c}
+.b-completed{background:#f1f5f9;border-left-color:#64748b}
+.b-break{background:#f1f5f9;border-left-color:#94a3b8}
+.b-unavailable{background:#f8fafc;border-left-color:#e2e8f0}
+.ms-noncblock{position:absolute;border-radius:5px;border-left:3px solid;overflow:hidden;font-size:.7rem;padding:2px 6px;z-index:5}
+.ms-edge{position:absolute;top:32px;bottom:0;width:24px;background:#f8fafc;border:1px dashed #e2e8f0;font-size:.62rem;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:15;writing-mode:vertical-rl;text-align:center;padding:4px 0}
+.ms-nowline{position:absolute;top:32px;width:2px;background:var(--danger);z-index:16;pointer-events:none}
+.ms-nowdot{position:absolute;top:-4px;left:-3px;width:8px;height:8px;border-radius:50%;background:var(--danger)}
+.ms-nowlbl{position:absolute;top:-22px;left:4px;font-size:.62rem;font-weight:700;color:var(--danger);white-space:nowrap}
+.ms-ghost{position:absolute;border:2px dashed var(--info);border-radius:5px;z-index:14;pointer-events:none;background:rgba(59,130,246,.08)}
+.emptyctl-row{padding:8px 10px}
+.emptyctl-btn{border:1px solid var(--border-input);background:#fff;border-radius:6px;padding:5px 12px;font-size:.75rem;height:28px;cursor:pointer}
+.center-panel{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);background:#fafafa;border:1px dashed #e2e8f0;border-radius:8px;padding:20px 28px;text-align:center;z-index:25;max-width:420px}
+.center-panel .cp-title{font-size:.85rem;color:#94a3b8;margin-bottom:10px}
+/* WEEK MODE */
+.wk-grid{display:grid;grid-template-columns:180px repeat(7,minmax(120px,1fr))}
+.wk-hd{background:#f8fafc;border-bottom:2px solid #e2e8f0;padding:6px 8px;position:sticky;top:0;z-index:20}
+.wk-hd.today{background:rgba(59,130,246,.03)}
+.wk-hd-day{font-size:.8rem;font-weight:700}
+.wk-hd.today .wk-hd-day{color:var(--info)}
+.wk-hd-cnt{font-size:.7rem;font-weight:600;color:var(--text-secondary)}
+.wk-corner{background:#f0f4f8;border-bottom:2px solid #e2e8f0;position:sticky;top:0;left:0;z-index:22}
+.wk-stafflabel{background:#f8fafc;border-right:1px solid #e2e8f0;border-bottom:1px solid #f1f5f9;padding:4px 10px;display:flex;flex-direction:column;justify-content:center;gap:1px;position:sticky;left:0;z-index:10}
+.wk-cell{border-right:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9;padding:6px 8px;position:relative;cursor:pointer;min-height:56px}
+.wk-cell:hover{background:#f8fafc}
+.wk-cell.today{background:rgba(59,130,246,.02)}
+.wk-dash{color:var(--text-secondary);font-size:.8rem;text-align:center;background:#f8fafc;height:100%;display:flex;align-items:center;justify-content:center;border-radius:4px}
+.wk-loadbar{height:6px;border-radius:3px;background:#f1f5f9;width:calc(100% - 4px);overflow:hidden;margin-bottom:4px}
+.wk-loadfill{height:100%;background:var(--info)}
+.wk-loadfill.warn{background:var(--warning)}
+.wk-loadfill.dgr{background:var(--danger)}
+.wk-counts{font-size:.68rem;color:var(--text-secondary);font-weight:600}
+.wk-icon-tr{position:absolute;top:4px;right:4px;font-size:11px;color:#94a3b8}
+.wk-chip-tr{position:absolute;top:2px;right:2px}
+/* TOOLTIP */
+.tooltip{position:fixed;background:#1e293b;color:#f8fafc;border-radius:8px;padding:10px 12px;font-size:.75rem;width:220px;pointer-events:none;z-index:200;box-shadow:0 4px 14px rgba(0,0,0,.2);line-height:1.5}
+.tt-hidden{display:none}
+/* DRAWER */
+.drawer{position:absolute;right:0;top:0;bottom:0;width:400px;background:#fff;border-left:1px solid var(--border);box-shadow:-4px 0 16px rgba(0,0,0,.08);display:flex;flex-direction:column;z-index:40;transform:translateX(100%);transition:transform 240ms ease}
+.drawer.open{transform:translateX(0)}
+.drw-hd{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px}
+.drw-hd-top{display:flex;justify-content:space-between;align-items:flex-start}
+.drw-tag{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary)}
+.drw-nm{font-size:1rem;font-weight:700;color:var(--text-primary)}
+.drw-dt{font-size:.8rem;color:var(--text-secondary);margin-top:2px}
+.x-btn{background:none;border:none;cursor:pointer;color:var(--text-secondary);padding:3px;border-radius:4px}
+.x-btn:hover{background:var(--bg-default)}
+.drw-body{flex:1;overflow-y:auto;padding:16px}
+.drw-foot{padding:11px 16px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end;flex-shrink:0;flex-wrap:wrap}
+.det-grid{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.det-row{display:grid;grid-template-columns:110px 1fr;border-bottom:1px solid var(--border)}
+.det-row:last-child{border-bottom:none}
+.det-l{padding:8px 11px;font-size:.7rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default)}
+.det-r{padding:8px 11px;font-size:.82rem;color:var(--text-primary)}
+.det-r.bal{font-weight:700;color:var(--info-dark)}
+.det-r.clickable,.clickable{cursor:pointer;color:var(--info-dark);text-decoration:underline}
+.px-section{margin-top:12px}
+.sec-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);margin-bottom:7px}
+.px-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:6px;flex-wrap:wrap}
+.px-av{width:26px;height:26px;border-radius:50%;background:var(--info);color:#fff;display:grid;place-items:center;font-size:.65rem;font-weight:700;flex-shrink:0}
+.px-nm{font-size:.82rem;font-weight:700;flex:1}
+.wl-section{margin-top:12px}
+.wl-note{font-size:.72rem;color:var(--text-secondary);font-style:italic;margin-bottom:7px}
+.wl-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:5px;flex-wrap:wrap}
+.wl-pos{width:22px;height:22px;border-radius:50%;background:var(--info-bg);display:grid;place-items:center;font-size:.68rem;font-weight:700;color:var(--info-dark);flex-shrink:0}
+.wl-nm{font-size:.82rem;font-weight:700;flex:1}
+.panel-amber{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:16px;margin-top:10px}
+.panel-amber h4{font-size:.8rem;font-weight:700;margin-bottom:8px;letter-spacing:.03em;color:var(--text-primary)}
+.panel-green{background:var(--success-bg);border:1px solid #a7f3d0;border-radius:8px;padding:16px;margin-top:10px;font-size:.82rem;color:var(--text-primary)}
+.panel-green h4{color:var(--success-dark);font-size:.8rem;font-weight:700;margin-bottom:6px;letter-spacing:.03em}
+.panel-blue{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;color:#1e40af;font-size:.8rem;margin-bottom:8px}
+.panel-red{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 14px;color:#991b1b;font-size:.8rem}
+.panel-muted{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text-secondary);font-size:.8rem;margin-bottom:8px}
+.body2-note{font-size:.8rem;color:var(--text-secondary);line-height:1.4}
+.small-note{font-size:.72rem;color:var(--text-secondary);margin-top:4px}
+.field-lbl{font-size:.72rem;font-weight:600;color:var(--text-secondary);margin:10px 0 4px}
+.radio-row{display:flex;align-items:center;gap:6px;font-size:.82rem;margin-bottom:4px;font-weight:400}
+.policy-list{margin:6px 0 0 18px;font-size:.8rem;line-height:1.5}
+.textarea{width:100%;border:1px solid var(--border-input);border-radius:6px;padding:7px 10px;font-size:.82rem;min-height:56px;font-family:inherit;resize:vertical}
+.s-input{width:100%;border:1px solid var(--border-input);border-radius:6px;padding:7px 10px;font-size:.82rem;background:#fff;outline:none}
+.date-input{height:36px;padding:6px 10px;font-size:.8rem;border:1px solid var(--border-input);border-radius:6px;background:#fff;outline:none}
+.tent-notice{background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:12px;margin-top:10px;font-size:.8rem;color:#92400e}
+.tent-notice strong{display:block;margin-bottom:3px}
+</style>
+</head>
+<body class="density-compact">
+<div class="app">
+  <script src="shared-sidebar.js" data-inject="true"></script>
+  <div class="main-shell">
+    <div class="topbar">
+      <div class="loc-pill"><span class="ms-icon" style="font-size:15px">location_on</span>Solar Swim (PDT)</div>
+      <div class="loc-pill">Role:
+        <select class="role-sel" id="roleSel" onchange="setRole(this.value)">
+          <option value="staff">Staff</option>
+          <option value="manager">Manager</option>
+        </select>
+      </div>
+    </div>
+    <div class="main-area">
+      <div class="page-hd">
+        <div>
+          <div class="breadcrumb">Scheduling / Master Schedule</div>
+          <h1 class="page-title">Master Schedule</h1>
+          <div class="page-sub" id="pageSub"></div>
+        </div>
+        <div class="page-hd-r">
+          <button class="btn btn-blue btn-sm" onclick="location.href='booking-flow.html'"><span class="ms-icon" style="font-size:15px">add</span> Book</button>
+          <button class="btn btn-out btn-sm" onclick="location.href='calendar-master.html'">Calendar &#8594;</button>
+          <button class="btn btn-out btn-sm" data-noop onclick="manageHoursNoop()">Manage Hours</button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="tb-row">
+          <div class="seg" role="group" aria-label="View mode">
+            <button id="segWeek" onclick="setProjection('week')">Week</button>
+            <button id="segDay" onclick="setProjection('day')">Day</button>
+          </div>
+          <button class="btn btn-out btn-sm" onclick="navStep(-1)" aria-label="Previous">&#8592;</button>
+          <button class="btn btn-out btn-sm" id="todayBtn" onclick="goToday()">Today</button>
+          <button class="btn btn-out btn-sm" onclick="navStep(1)" aria-label="Next">&#8594;</button>
+          <div class="date-lbl" id="dateLbl"></div>
+          <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+            <div class="seg" role="group" aria-label="Density">
+              <button id="segCompact" onclick="setDensity('compact')">Compact</button>
+              <button id="segComfortable" onclick="setDensity('comfortable')">Comfortable</button>
+            </div>
+            <span id="conflictChip"></span>
+          </div>
+        </div>
+        <div class="tb-row">
+          <select class="f-sel" id="fLoc" onchange="onFilterChange('location',this.value)">
+            <option>All Locations</option><option>Solar Swim — Main</option><option>Solar Swim — North Annex</option>
+          </select>
+          <select class="f-sel" id="fSvc" onchange="onFilterChange('service',this.value)">
+            <option>All Services</option><option>Swim</option><option>Basketball</option><option>Group Fitness</option>
+          </select>
+          <select class="f-sel" id="fLvl" onchange="onFilterChange('level',this.value)">
+            <option>All Levels</option><option>Beginner 1</option><option>Beginner 2</option><option>Unassigned</option>
+          </select>
+          <select class="f-sel" id="fStat" onchange="onFilterChange('status',this.value)">
+            <option>All Statuses</option><option>Confirmed</option><option>Pending Partner</option><option>Waitlisted</option><option>Authorization Hold</option><option>Payment Hold</option><option>Cancelled (Early)</option><option>Cancelled (Late)</option><option>No-Show</option><option>Completed</option>
+          </select>
+          <select class="f-sel" id="fSkill" onchange="onFilterChange('skill',this.value)">
+            <option>All Skills</option>
+          </select>
+        </div>
+        <div class="tb-row" id="chipRow"></div>
+      </div>
+
+      <div class="statbar" id="statBar"></div>
+
+      <div class="grid-outer">
+        <div class="grid-scrollwrap" id="gridScrollWrap">
+          <div class="grid-content" id="gridContent"></div>
+        </div>
+        <div class="drawer" id="drawer">
+          <div class="drw-hd">
+            <div class="drw-hd-top">
+              <div>
+                <div class="drw-tag">Booking Detail</div>
+                <div class="drw-nm" id="drwNm"></div>
+                <div class="drw-dt" id="drwDt"></div>
+                <span class="chip" id="drwStatus"></span>
+              </div>
+              <button class="x-btn" onclick="closeDrawer()" aria-label="Close"><span class="ms-icon">close</span></button>
+            </div>
+          </div>
+          <div class="drw-body" id="drwBody"></div>
+          <div class="drw-foot" id="drwFoot"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="tooltip tt-hidden" id="tooltip"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const STAFF_ORDER=['Michael Torres','Sarah Chen','James Wright','Anthony Lee','Shaquem Hill','Tina Wu','Derek Cole','Priya Nair','Cory Davis','Naya Fox','Luke Dean','Emma Cole'];
+const STAFF_LOCATION={'Naya Fox':'Solar Swim — North Annex','Luke Dean':'Solar Swim — North Annex'};
+const STAFF_SERVICES={'Michael Torres':['Swim','Basketball'],'Sarah Chen':['Swim'],'James Wright':['Swim'],'Anthony Lee':['Swim'],'Shaquem Hill':['Basketball'],'Tina Wu':['Group Fitness'],'Derek Cole':['Swim','Basketball'],'Priya Nair':['Swim'],'Cory Davis':['Group Fitness'],'Naya Fox':['Swim'],'Luke Dean':['Swim'],'Emma Cole':['Swim']};
+const STAFF_SKILLS={'Michael Torres':['Swim Instruction','Basketball Coaching'],'Sarah Chen':['Swim Instruction','Swim Assessment'],'James Wright':['Swim Instruction'],'Anthony Lee':['Swim Instruction'],'Shaquem Hill':['Basketball Coaching'],'Tina Wu':['Group Fitness'],'Derek Cole':['Swim Instruction','Basketball Coaching'],'Priya Nair':['Swim Instruction','Swim Assessment'],'Cory Davis':['Group Fitness'],'Naya Fox':['Swim Instruction','Water Safety'],'Luke Dean':['Swim Instruction','Water Safety'],'Emma Cole':['Swim Instruction']};
+const SKILLS=['Swim Instruction','Swim Assessment','Basketball Coaching','Group Fitness','Water Safety'];
+function locationOf(staff){return STAFF_LOCATION[staff]||'Solar Swim — Main';}
+const LOCATION_HOURS={'Solar Swim — Main':{open:360,close:1200},'Solar Swim — North Annex':{open:480,close:1080}};
+function staffAvailabilityWindow(staff,dateISO){
+  const d=parseISO(dateISO); const dow=d.getDay(); // Wed=3, Thu=4, Fri=5
+  if(dow!==3&&dow!==4&&dow!==5) return null;
+  return locationOf(staff)==='Solar Swim — North Annex' ? {open:480,close:1020} : {open:480,close:1080};
+}
+const REQUIRED_PARTICIPANTS=2;
+const MANAGER_NAME='Dana Brooks';
+const VIOLATION_THRESHOLD=4;
+const CLIENT_VIOLATIONS={'Carlos Garcia':4};
+const FIXED_NOW=new Date(2026,8,3,10,0);
+const PLAIN_LINE={CONFIRMED:'Booked. A session is reserved.',PENDING_PARTNER:'Waiting for a second participant.',WAITLISTED:'Full. New seat goes through the waitlist below.',AUTHORIZATION_HOLD:'Waiting on Regional Center authorization.',PAYMENT_HOLD:'Waiting on payment.',CANCELLED_EARLY:'Cancelled in time. Session returned.',CANCELLED_LATE:'Cancelled late. Session used.',NO_SHOW:'Did not attend. Session used.',COMPLETED:'Attended.',TENTATIVE:'Shown from a recurring schedule. Not reserved.'};
+const STATUS_CLASS={CONFIRMED:'b-confirmed',TENTATIVE:'b-tentative',PENDING_PARTNER:'b-semi-pending',WAITLISTED:'b-waitlisted',AUTHORIZATION_HOLD:'b-authhold',PAYMENT_HOLD:'b-paymenthold',CANCELLED_EARLY:'b-cancel-early',CANCELLED_LATE:'b-cancel-late',NO_SHOW:'b-noshow',COMPLETED:'b-completed',BREAK:'b-break',UNAVAILABLE:'b-unavailable'};
+const CHIP_META={CONFIRMED:['Confirmed','c-info'],PENDING_PARTNER:['Pending Partner','c-purple'],WAITLISTED:['Waitlisted','c-info'],AUTHORIZATION_HOLD:['Authorization Hold','c-warn'],PAYMENT_HOLD:['Payment Hold','c-danger'],CANCELLED_EARLY:['Cancelled — Early','c-ok'],CANCELLED_LATE:['Cancelled — Late','c-danger'],NO_SHOW:['No-Show','c-danger'],COMPLETED:['Completed','c-muted'],TENTATIVE:['Tentative','c-warn']};
+const STATUS_FILTER_MAP={'Confirmed':'CONFIRMED','Pending Partner':'PENDING_PARTNER','Waitlisted':'WAITLISTED','Authorization Hold':'AUTHORIZATION_HOLD','Payment Hold':'PAYMENT_HOLD','Cancelled (Early)':'CANCELLED_EARLY','Cancelled (Late)':'CANCELLED_LATE','No-Show':'NO_SHOW','Completed':'COMPLETED'};
+const DRAGGABLE_STATUSES=['CONFIRMED','PENDING_PARTNER','AUTHORIZATION_HOLD','PAYMENT_HOLD'];
+const GRID_STEP=30;
+
+const ALL_BLOCKS=[
+// Wed Sep 2, 2026 — past
+{id:'m1',staff:'Naya Fox',dateISO:'2026-09-02',start:480,dur:60,status:'COMPLETED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:6,funding:'Various',balance:'Varies per participant'},
+{id:'m2',staff:'Michael Torres',dateISO:'2026-09-02',start:630,dur:60,status:'COMPLETED',service:'Private Swim B2',level:'Beginner 2',client:'Maria Garcia',funding:'Regional Center',balance:'Balance: 6 / 8 sessions',resolvedNote:"Resolved occurrence of Maria's Wed/Fri recurring subscription (§3.4)."},
+{id:'m3',staff:'Sarah Chen',dateISO:'2026-09-02',start:600,dur:90,status:'COMPLETED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:8,filled:6,funding:'Various',balance:'Varies per participant',participants:[{name:'Devon Park',funding:'Self Pay',attendance:'NO_SHOW'}],participantsNote:'5 additional participants — Attended (roster not itemized in seed data). Devon Park is tracked individually as a No-Show — the block stays COMPLETED at the block level (§3.2).'},
+{id:'m4',staff:'James Wright',dateISO:'2026-09-02',start:660,dur:60,status:'CANCELLED_LATE',service:'Semi-Private Swim',level:'Beginner 2',client:'Lucas Brown',requiredParticipants:REQUIRED_PARTICIPANTS,funding:'Self Pay',balance:'Balance: 4 / 6 sessions'},
+{id:'m5',staff:'Anthony Lee',dateISO:'2026-09-02',start:780,dur:60,status:'NO_SHOW',service:'Private Swim',level:'Beginner 2',client:'Jordan Kim',funding:'Regional Center',balance:'Balance: 3 / 6 sessions'},
+{id:'m6',staff:'Michael Torres',dateISO:'2026-09-02',start:840,dur:60,status:'CANCELLED_LATE',service:'Basketball',level:null,client:'Carlos Garcia',funding:'Self Pay',balance:'Balance: 1 / 4 sessions',resolvedNote:"This is Carlos's 4th consecutive late cancellation/no-show, crossing the configured threshold of 4 (§3.9, §7.2)."},
+{id:'m7',staff:'Sarah Chen',dateISO:'2026-09-02',start:900,dur:30,status:'CANCELLED_EARLY',service:'Private Swim',level:'Beginner 2',client:'Ava Smith',funding:'Self Pay',balance:'Balance: 5 / 8 sessions',makeupToken:'AS-3381',resolvedNote:'Make-up token AS-3381 issued.'},
+{id:'m8',staff:'Luke Dean',dateISO:'2026-09-02',start:900,dur:30,status:'COMPLETED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:5,funding:'Various',balance:'Varies per participant'},
+// Thu Sep 3, 2026 — today
+{id:'m9',staff:'Michael Torres',dateISO:'2026-09-03',start:480,dur:30,status:'CANCELLED_EARLY',service:'Private Swim B2',level:'Beginner 2',client:'Ethan Wells',funding:'Self Pay',balance:'Balance: 4 / 8 sessions',makeupToken:'EW-1187',resolvedNote:'Cancelled 2 days prior — outside the 24-hour window. Make-up token EW-1187 issued.'},
+{id:'m10',staff:'Sarah Chen',dateISO:'2026-09-03',start:540,dur:90,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:8,filled:5,funding:'Various',balance:'Varies per participant'},
+{id:'m11',staff:'Michael Torres',dateISO:'2026-09-03',start:600,dur:30,status:'BREAK'},
+{id:'m12',staff:'James Wright',dateISO:'2026-09-03',start:660,dur:60,status:'PENDING_PARTNER',service:'Semi-Private Swim',level:'Beginner 2',client:'Lucas Brown',requiredParticipants:REQUIRED_PARTICIPANTS,filled:1,funding:'Self Pay',balance:'Balance: 4 / 6 sessions'},
+{id:'m13',staff:'Emma Cole',dateISO:'2026-09-03',start:690,dur:30,status:'CONFIRMED',service:'Private Swim B1',level:'Beginner 1',client:'Grace Shah',funding:'Self Pay',balance:'Balance: 7 / 10 sessions'},
+{id:'m14',staff:'Anthony Lee',dateISO:'2026-09-03',start:780,dur:60,status:'AUTHORIZATION_HOLD',service:'Private Swim',level:'Beginner 2',client:'Jordan Kim',funding:'Regional Center',balance:'Balance: 3 / 6 sessions'},
+{id:'m15',staff:'Michael Torres',dateISO:'2026-09-03',start:840,dur:60,status:'CONFIRMED',service:'Basketball',level:null,client:'Carlos Garcia',funding:'Self Pay',balance:'Balance: 1 / 4 sessions'},
+{id:'m16',staff:'Priya Nair',dateISO:'2026-09-03',start:870,dur:30,status:'UNAVAILABLE',reason:'Off-site training'},
+{id:'m17',staff:'Sarah Chen',dateISO:'2026-09-03',start:900,dur:30,status:'BREAK'},
+{id:'m18',staff:'Cory Davis',dateISO:'2026-09-03',start:930,dur:60,status:'PAYMENT_HOLD',service:'Group Fitness',level:null,client:'Devon Ross',funding:'Self Pay',balance:'Balance: 6 / 10 sessions'},
+{id:'m19',staff:'James Wright',dateISO:'2026-09-03',start:960,dur:60,status:'WAITLISTED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,funding:'Various',balance:'Varies per participant',
+  participants:[
+    {name:'Zoe Martin',funding:'Self Pay',attendance:'NOT_MARKED'},
+    {name:'Jayden Cole',funding:'Voucher',attendance:'NOT_MARKED'},
+    {name:'Emma Rivera',funding:'RCEB',attendance:'NOT_MARKED'},
+    {name:'Noah Kim',funding:'Self Pay',attendance:'NOT_MARKED'},
+    {name:'Ava Patel',funding:'Self Pay',attendance:'NOT_MARKED'},
+    {name:'Mason Diaz',funding:'Voucher',attendance:'NOT_MARKED'},
+    {name:'Ella Brooks',funding:'RCEB',attendance:'NOT_MARKED'},
+    {name:'Devon Park',funding:'Self Pay',attendance:'CANCELLED_LATE'}
+  ],
+  waitlist:[
+    {pos:1,name:'Liam Turner',funding:'Self Pay',eligible:false,reason:'Not Eligible — payment method declined'},
+    {pos:2,name:'Priya Malhotra',funding:'Self Pay',eligible:true}
+  ],
+  seatOpen:{time:'9:04 AM, Sep 3'}
+},
+{id:'m20',staff:'Anthony Lee',dateISO:'2026-09-03',start:960,dur:60,status:'CONFIRMED',service:'Private Swim',level:'Beginner 2',client:'Ava Smith',funding:'Voucher',balance:'Balance: 5 / 8 sessions'},
+{id:'m21',staff:'Tina Wu',dateISO:'2026-09-03',start:1020,dur:60,status:'CONFIRMED',service:'Group Fitness',level:null,isGroup:true,cap:12,filled:12,funding:'Various',balance:'Varies per participant'},
+{id:'m22',staff:'Naya Fox',dateISO:'2026-09-03',start:810,dur:60,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:4,funding:'Various',balance:'Varies per participant'},
+{id:'m23',staff:'Luke Dean',dateISO:'2026-09-03',start:900,dur:30,status:'BREAK'},
+{id:'m24',staff:'Michael Torres',dateISO:'2026-09-03',start:615,dur:45,status:'CONFIRMED',service:'Private Swim B2',level:'Beginner 2',client:'Owen Hale',funding:'Self Pay',balance:'Balance: 6 / 10 sessions'},
+{id:'m25',staff:'Sarah Chen',dateISO:'2026-09-03',start:660,dur:45,status:'CONFIRMED',service:'Private Swim B2',level:'Beginner 2',client:'Isaac Vance',funding:'Self Pay',balance:'Balance: 5 / 8 sessions'},
+{id:'m26',staff:'Sarah Chen',dateISO:'2026-09-03',start:675,dur:60,status:'CONFIRMED',service:'Semi-Private Swim',level:'Beginner 2',client:'Nora Adams',client2:'Theo Ruiz',requiredParticipants:2,filled:2,funding:'Various',balance:'Varies per participant'},
+{id:'m27',staff:'Shaquem Hill',dateISO:'2026-09-03',start:720,dur:75,status:'CONFIRMED',service:'Basketball',level:null,isGroup:true,cap:10,filled:8,funding:'Various',balance:'Varies per participant'},
+{id:'m28',staff:'Emma Cole',dateISO:'2026-09-03',start:780,dur:45,status:'BREAK'},
+// Fri Sep 4, 2026 — future
+{id:'m29',staff:'Sarah Chen',dateISO:'2026-09-04',start:540,dur:90,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:8,filled:4,funding:'Various',balance:'Varies per participant'},
+{id:'m30',staff:'Michael Torres',dateISO:'2026-09-04',start:600,dur:30,status:'BREAK'},
+{id:'m31',staff:'Michael Torres',dateISO:'2026-09-04',start:630,dur:60,status:'TENTATIVE',service:'Private Swim B2',level:'Beginner 2',client:'Maria Garcia',funding:'Regional Center',balance:'Balance: 6 / 8 sessions'},
+{id:'m32',staff:'Anthony Lee',dateISO:'2026-09-04',start:660,dur:60,status:'PENDING_PARTNER',service:'Semi-Private Swim',level:'Beginner 2',client:'Ella Brooks',requiredParticipants:REQUIRED_PARTICIPANTS,filled:1,funding:'RCEB',balance:'Balance: 5 / 8 sessions'},
+{id:'m33',staff:'James Wright',dateISO:'2026-09-04',start:660,dur:60,status:'CONFIRMED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,filled:3,funding:'Various',balance:'Varies per participant'},
+{id:'m34',staff:'Sarah Chen',dateISO:'2026-09-04',start:750,dur:90,status:'CONFIRMED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,filled:4,funding:'Various',balance:'Varies per participant'},
+{id:'m35',staff:'Anthony Lee',dateISO:'2026-09-04',start:780,dur:60,status:'CONFIRMED',service:'Private Swim',level:'Beginner 2',client:'Ava Smith',funding:'Self Pay',balance:'Balance: 5 / 8 sessions'},
+{id:'m36',staff:'Michael Torres',dateISO:'2026-09-04',start:840,dur:60,status:'CONFIRMED',service:'Basketball',level:null,client:'Carlos Garcia',funding:'Self Pay',balance:'Balance: 1 / 4 sessions'},
+{id:'m37',staff:'Cory Davis',dateISO:'2026-09-04',start:930,dur:60,status:'PAYMENT_HOLD',service:'Group Fitness',level:null,client:'Devon Ross',funding:'Self Pay',balance:'Balance: 6 / 10 sessions'},
+{id:'m38',staff:'James Wright',dateISO:'2026-09-04',start:960,dur:60,status:'CONFIRMED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,filled:6,funding:'Various',balance:'Varies per participant'},
+{id:'m39',staff:'Luke Dean',dateISO:'2026-09-04',start:810,dur:60,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:5,funding:'Various',balance:'Varies per participant'},
+{id:'m40',staff:'Naya Fox',dateISO:'2026-09-04',start:900,dur:30,status:'BREAK'},
+{id:'m41',staff:'Derek Cole',dateISO:'2026-09-04',start:840,dur:45,status:'CONFIRMED',service:'Private Swim B1',level:'Beginner 1',client:'Mila Okafor',funding:'Self Pay',balance:'Balance: 8 / 10 sessions'},
+{id:'m42',staff:'Sarah Chen',dateISO:'2026-09-04',start:960,dur:45,status:'CONFIRMED',service:'Private Swim B2',level:'Beginner 2',client:'Isaac Vance',funding:'Self Pay',balance:'Balance: 5 / 8 sessions'}
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+const STATE={
+  projection:'day', density:'compact', curDate:new Date(2026,8,3), role:'staff',
+  filters:{location:'All Locations',service:'All Services',level:'All Levels',status:'All Statuses',skill:'All Skills'},
+  staffFilterChip:null, showEmptyResources:false, expandedEdges:{lead:false,trail:false},
+  conflictsOnly:false, focusedBlockId:null, drawerId:null, panel:null,
+  paxSearchOpen:null, skipFormKey:null, grantForm:null, fundingForm:null, reschedForm:null,
+  waitlistMsg:null, violationResolutions:{}, drag:null
+};
+let CURRENT_DAY_ROWS=[]; // [{staff, blocks:[...] sorted by start}] — used for keyboard nav
+
+// ─── DATE / FORMAT HELPERS ────────────────────────────────────────────────────
+const WEEKDAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function pad(n){return n<10?'0'+n:''+n;}
+function toISO(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
+function parseISO(iso){const [y,m,d]=iso.split('-').map(Number);return new Date(y,m-1,d);}
+function fmtShort(d){return `${WEEKDAYS[d.getDay()]} ${MONTHS[d.getMonth()]} ${d.getDate()}`;}
+function fmtLong(d){return `${fmtShort(d)}, ${d.getFullYear()}`;}
+function curISO(){return toISO(STATE.curDate);}
+function minutesToLabel(min){
+  let h=Math.floor(min/60), m=min%60;
+  const ap=h>=12?'PM':'AM'; let h12=h%12; if(h12===0) h12=12;
+  return `${h12}:${m<10?'0':''}${m} ${ap}`;
+}
+function startOfWeek(d){ const r=new Date(d); r.setDate(r.getDate()-r.getDay()); return r; }
+function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
+function ordinal(n){ const s=['th','st','nd','rd']; const v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+function initials(name){ return name.split(' ').map(w=>w[0]).join('').toUpperCase(); }
+function genToken(name){ const ini=name.split(' ').map(w=>w[0]).join('').toUpperCase(); const num=Math.floor(1000+Math.random()*9000); return `${ini}-${num}`; }
+function nowStamp(){ return '10:04 AM, Sep 3, 2026'; }
+function fundingChip(f){ const map={RCEB:'c-warn',Voucher:'c-info','Self Pay':'c-muted','Regional Center':'c-warn'}; return `<span class="chip ${map[f]||'c-muted'}">${f||'—'}</span>`; }
+function serviceCategory(service){ if(!service) return null; const s=service.toLowerCase(); if(s.includes('swim')) return 'Swim'; if(s.includes('basketball')) return 'Basketball'; if(s.includes('fitness')) return 'Group Fitness'; return service; }
+
+// ─── BOOKING HELPERS ──────────────────────────────────────────────────────────
+function findBlock(id){ return ALL_BLOCKS.find(b=>b.id===id); }
+function getFilled(b){ if(b.participants) return b.participants.filter(p=>p.attendance!=='CANCELLED_LATE'&&p.attendance!=='CANCELLED_EARLY').length; return b.filled||0; }
+function getWaitingCount(b){ return b.waitlist?b.waitlist.length:0; }
+function clientLabel(b){ if(b.isGroup) return `Group (${getFilled(b)} participants)`; return b.client2?`${b.client} & ${b.client2}`:b.client; }
+function subjectText(b){
+  if(b.status==='WAITLISTED') return `Group — ${getFilled(b)}/${b.cap} FULL, ${getWaitingCount(b)} waiting`;
+  if(b.isGroup) return `Group ${getFilled(b)}/${b.cap}`;
+  if(b.requiredParticipants) return `${getFilled(b)} / ${b.requiredParticipants}`;
+  return clientLabel(b);
+}
+function dayBlockLabel(b){
+  if(b.status==='BREAK') return 'Paid Break';
+  if(b.status==='UNAVAILABLE') return `Unavailable · ${b.reason}`;
+  if(b.status==='TENTATIVE') return `Tentative · ${clientLabel(b)}`;
+  return `${b.service} · ${subjectText(b)}`;
+}
+function ensureParticipants(b){
+  if(b.participants) return;
+  if(b.isGroup){ b.participants=[]; return; }
+  const att = b.status==='COMPLETED'?'ATTENDED':b.status==='NO_SHOW'?'NO_SHOW':b.status==='CANCELLED_LATE'?'CANCELLED_LATE':b.status==='CANCELLED_EARLY'?'CANCELLED_EARLY':'NOT_MARKED';
+  const rows=[{name:b.client,funding:b.funding||'Self Pay',attendance:att}];
+  if(b.client2) rows.push({name:b.client2,funding:b.funding||'Self Pay',attendance:att});
+  b.participants=rows;
+}
+function groupLikeAddable(b){ return !!(b.isGroup||b.requiredParticipants); }
+function bookingStartDate(b){ const [y,m,d]=b.dateISO.split('-').map(Number); return new Date(y,m-1,d,Math.floor(b.start/60),b.start%60); }
+function cancelCalc(b){
+  const start=bookingStartDate(b); const diffMs=start-FIXED_NOW; const diffH=diffMs/3600000; const isEarly=diffH>=24;
+  const totalMin=Math.round(diffH*60); const hh=Math.floor(totalMin/60), mm=totalMin%60;
+  const noticeLabel = mm===0?`${hh}h`:`${hh}h ${mm}m`;
+  return {isEarly,noticeLabel};
+}
+function isNonBooking(b){ return b.status==='BREAK'||b.status==='UNAVAILABLE'; }
+function blockDateTimeLabel(b){ return `${fmtLong(parseISO(b.dateISO))} · ${minutesToLabel(b.start)} – ${minutesToLabel(b.start+b.dur)}`; }
+
+// ─── FILTERING ────────────────────────────────────────────────────────────────
+function blocksForStaffOnDate(staff,dateISO){ return ALL_BLOCKS.filter(b=>b.staff===staff&&b.dateISO===dateISO); }
+function isDimmed(b){
+  const nb=isNonBooking(b);
+  if(STATE.filters.service!=='All Services'){
+    if(nb) return true;
+    if(serviceCategory(b.service)!==STATE.filters.service) return true;
+  }
+  if(!nb && STATE.filters.level!=='All Levels' && (b.level||'Unassigned')!==STATE.filters.level) return true;
+  if(STATE.filters.status!=='All Statuses'){
+    if(nb) return true;
+    if(STATUS_FILTER_MAP[STATE.filters.status]!==b.status) return true;
+  }
+  return false;
+}
+// overlap clusters (transitive, sorted by start then dur desc then id) — schedule-grid.md §4
+function clusterOverlapsForStaffDate(staff,dateISO){
+  const blocks=blocksForStaffOnDate(staff,dateISO).slice().sort((a,b)=>a.start-b.start||(b.dur-a.dur)||(a.id<b.id?-1:1));
+  const clusters=[]; let cur=[]; let curEnd=-1;
+  blocks.forEach(b=>{
+    if(cur.length && b.start < curEnd){ cur.push(b); curEnd=Math.max(curEnd,b.start+b.dur); }
+    else { if(cur.length) clusters.push(cur); cur=[b]; curEnd=b.start+b.dur; }
+  });
+  if(cur.length) clusters.push(cur);
+  return clusters; // array of arrays; size>=2 is a conflict
+}
+function staffConflictCount(staff,dateISO){ return clusterOverlapsForStaffDate(staff,dateISO).filter(c=>c.length>1).length; }
+function staffHasConflict(staff,dateISO){ return staffConflictCount(staff,dateISO)>0; }
+function totalConflicts(dateISO, staffList){ let n=0; staffList.forEach(s=>{ n+=staffConflictCount(s,dateISO); }); return n; }
+function staffPassesRowFilters(staff){
+  if(STATE.filters.location!=='All Locations' && locationOf(staff)!==STATE.filters.location) return false;
+  if(STATE.filters.service!=='All Services' && !(STAFF_SERVICES[staff]||[]).includes(STATE.filters.service)) return false;
+  if(STATE.filters.skill!=='All Skills' && !(STAFF_SKILLS[staff]||[]).includes(STATE.filters.skill)) return false;
+  if(STATE.staffFilterChip && staff!==STATE.staffFilterChip) return false;
+  if(STATE.conflictsOnly && !staffHasConflict(staff, curISO())) return false;
+  return true;
+}
+function activeLocationsForFilteredStaff(staffList){
+  const locs=new Set(staffList.map(s=>locationOf(s)));
+  if(locs.size===0) locs.add('Solar Swim — Main');
+  return [...locs];
+}
+// open-slot counting: per staff, per 30-min tick inside their availability window on a date, occupied if any block overlaps
+function staffOpenSlots(staff,dateISO){
+  const av=staffAvailabilityWindow(staff,dateISO);
+  if(!av) return {available:0,occupied:0,open:0};
+  const blocks=blocksForStaffOnDate(staff,dateISO);
+  let occupied=0, available=0;
+  for(let t=av.open;t<av.close;t+=GRID_STEP){
+    available++;
+    const covered = blocks.some(b=>b.start < t+GRID_STEP && (b.start+b.dur) > t);
+    if(covered) occupied++;
+  }
+  return {available,occupied,open:available-occupied};
+}
+function staffBookedMinutes(staff,dateISO){
+  return blocksForStaffOnDate(staff,dateISO).filter(b=>!isNonBooking(b)&&b.status!=='CANCELLED_EARLY'&&b.status!=='CANCELLED_LATE'&&b.status!=='NO_SHOW').reduce((s,b)=>s+b.dur,0);
+}
+function staffUtilRow(staff,dateISO){
+  const av=staffAvailabilityWindow(staff,dateISO);
+  const {open}=staffOpenSlots(staff,dateISO);
+  const bookedCount=blocksForStaffOnDate(staff,dateISO).filter(b=>!isNonBooking(b)&&b.status!=='CANCELLED_EARLY'&&b.status!=='CANCELLED_LATE'&&b.status!=='NO_SHOW').length;
+  const availMin = av?(av.close-av.open):0;
+  const pct = availMin>0 ? Math.round(staffBookedMinutes(staff,dateISO)/availMin*100) : 0;
+  return {bookedCount, open, pct};
+}
+
+// ─── RENDERED WINDOW (schedule-grid.md §5) ─────────────────────────────────────
+function computeLocationWindow(staffList){
+  if(STATE.filters.location!=='All Locations') return LOCATION_HOURS[STATE.filters.location];
+  const locs=activeLocationsForFilteredStaff(staffList);
+  let open=Infinity, close=-Infinity;
+  locs.forEach(l=>{ const h=LOCATION_HOURS[l]; open=Math.min(open,h.open); close=Math.max(close,h.close); });
+  if(open===Infinity){ open=360; close=1200; }
+  return {open,close};
+}
+function computeActiveWindow(dateISO, staffList, fullWindow){
+  let first=Infinity, last=-Infinity;
+  staffList.forEach(s=>{
+    blocksForStaffOnDate(s,dateISO).forEach(b=>{ first=Math.min(first,b.start); last=Math.max(last,b.start+b.dur); });
+  });
+  if(first===Infinity) return {start:fullWindow.open, end:fullWindow.close, empty:true};
+  first = Math.floor(first/GRID_STEP)*GRID_STEP;
+  last = Math.ceil(last/GRID_STEP)*GRID_STEP;
+  return {start:Math.max(fullWindow.open,first), end:Math.min(fullWindow.close,last), empty:false};
+}
+
+// ─── STAT BAR (§7) — always computed, never literal ────────────────────────────
+function statDatesForProjection(){
+  if(STATE.projection==='day') return [curISO()];
+  const wkStart=startOfWeek(STATE.curDate);
+  return [0,1,2,3,4,5,6].map(i=>toISO(addDays(wkStart,i)));
+}
+function computeStats(){
+  const allStaffFiltered = STAFF_ORDER.filter(s=>{
+    if(STATE.filters.location!=='All Locations' && locationOf(s)!==STATE.filters.location) return false;
+    if(STATE.filters.service!=='All Services' && !(STAFF_SERVICES[s]||[]).includes(STATE.filters.service)) return false;
+    if(STATE.filters.skill!=='All Skills' && !(STAFF_SKILLS[s]||[]).includes(STATE.filters.skill)) return false;
+    return true;
+  });
+  const dates = statDatesForProjection();
+  const working = new Set(); const withBreaks = new Set();
+  let openSlots=0, conflicts=0;
+  allStaffFiltered.forEach(s=>{
+    dates.forEach(d=>{
+      if(staffAvailabilityWindow(s,d)) working.add(s);
+      if(blocksForStaffOnDate(s,d).some(b=>isNonBooking(b))) withBreaks.add(s);
+      openSlots += staffOpenSlots(s,d).open;
+      conflicts += staffConflictCount(s,d);
+    });
+  });
+  return { staff:allStaffFiltered.length, working:working.size, withBreaks:withBreaks.size, openSlots, conflicts };
+}
+
+// ─── TOP-LEVEL RENDER ───────────────────────────────────────────────────────────
+function render(){
+  document.body.className = STATE.density==='compact'?'density-compact':'density-comfortable';
+  document.getElementById('segWeek').classList.toggle('on', STATE.projection==='week');
+  document.getElementById('segDay').classList.toggle('on', STATE.projection==='day');
+  document.getElementById('segCompact').classList.toggle('on', STATE.density==='compact');
+  document.getElementById('segComfortable').classList.toggle('on', STATE.density==='comfortable');
+  document.getElementById('todayBtn').textContent = STATE.projection==='week' ? 'This Week' : 'Today';
+  document.getElementById('fLoc').value = STATE.filters.location;
+  document.getElementById('fSvc').value = STATE.filters.service;
+  document.getElementById('fLvl').value = STATE.filters.level;
+  document.getElementById('fStat').value = STATE.filters.status;
+  const skillSel=document.getElementById('fSkill');
+  if(skillSel.options.length<=1){ SKILLS.forEach(sk=>{ const o=document.createElement('option'); o.textContent=sk; skillSel.appendChild(o); }); }
+  skillSel.value = STATE.filters.skill;
+
+  if(STATE.projection==='day'){
+    document.getElementById('dateLbl').textContent = fmtShort(STATE.curDate);
+  } else {
+    const wkStart=startOfWeek(STATE.curDate), wkEnd=addDays(wkStart,6);
+    document.getElementById('dateLbl').textContent = `${fmtShort(wkStart)} – ${fmtShort(wkEnd)}`;
+  }
+
+  renderStatBar();
+  renderChipsAndCount();
+  renderConflictChip();
+  renderSubtitle();
+
+  if(STATE.projection==='day') renderDay(); else renderWeek();
+}
+
+function renderSubtitle(){
+  const iso=curISO();
+  const visibleStaff = STAFF_ORDER.filter(staffPassesRowFilters);
+  const totalBookings = ALL_BLOCKS.filter(b=>b.dateISO===iso && !isNonBooking(b)).length;
+  const label = STATE.projection==='day' ? fmtLong(STATE.curDate) : `Week of ${fmtShort(startOfWeek(STATE.curDate))}`;
+  document.getElementById('pageSub').textContent = `${label} · ${STATE.filters.location} · ${visibleStaff.length} staff · ${totalBookings} bookings`;
+}
+
+function renderStatBar(){
+  const s=computeStats();
+  const tiles=[
+    ['Staff', s.staff, false],
+    ['Working', s.working, false],
+    ['With Breaks', s.withBreaks, false],
+    ['Open Slots', s.openSlots, false],
+    ['Conflicts', s.conflicts, true]
+  ];
+  document.getElementById('statBar').innerHTML = tiles.map(([lbl,val,isConflict])=>{
+    const cls = isConflict && val>0 ? 'danger' : '';
+    const click = isConflict ? `onclick="toggleConflictsOnly()"` : '';
+    const tileClick = isConflict ? 'clickable' : '';
+    return `<div class="stat-tile ${tileClick}" ${click}><div class="stat-val ${cls}">${val}</div><div class="stat-lbl">${lbl}</div></div>`;
+  }).join('');
+}
+
+function renderConflictChip(){
+  const iso=curISO();
+  const visibleStaff = STAFF_ORDER.filter(s=>{
+    if(STATE.filters.location!=='All Locations' && locationOf(s)!==STATE.filters.location) return false;
+    if(STATE.filters.service!=='All Services' && !(STAFF_SERVICES[s]||[]).includes(STATE.filters.service)) return false;
+    if(STATE.filters.skill!=='All Skills' && !(STAFF_SKILLS[s]||[]).includes(STATE.filters.skill)) return false;
+    return true;
+  });
+  const n = STATE.projection==='day' ? totalConflicts(iso, visibleStaff) : statDatesForProjection().reduce((sum,d)=>sum+totalConflicts(d,visibleStaff),0);
+  const el=document.getElementById('conflictChip');
+  if(n<=0 || STATE.projection==='week'){ el.innerHTML=''; return; }
+  if(STATE.conflictsOnly){
+    el.innerHTML = `<span class="chip c-danger">&#9888; ${n} conflict${n!==1?'s':''} <span class="x" onclick="toggleConflictsOnly()">&times;</span></span>`;
+  } else {
+    el.innerHTML = `<span class="chip c-danger clickable" onclick="toggleConflictsOnly()">&#9888; ${n} conflict${n!==1?'s':''}</span>`;
+  }
+}
+function toggleConflictsOnly(){ if(STATE.projection!=='day') return; STATE.conflictsOnly=!STATE.conflictsOnly; render(); }
+
+function renderChipsAndCount(){
+  const chips=[];
+  if(STATE.filters.location!=='All Locations') chips.push(['location',`Location: ${STATE.filters.location.replace('Solar Swim — ','')}`]);
+  if(STATE.filters.service!=='All Services') chips.push(['service',`Service: ${STATE.filters.service}`]);
+  if(STATE.filters.level!=='All Levels') chips.push(['level',`Level: ${STATE.filters.level}`]);
+  if(STATE.filters.status!=='All Statuses') chips.push(['status',`Status: ${STATE.filters.status}`]);
+  if(STATE.filters.skill!=='All Skills') chips.push(['skill',`Skill: ${STATE.filters.skill}`]);
+  if(STATE.staffFilterChip) chips.push(['staff',`Staff: ${STATE.staffFilterChip}`]);
+
+  const iso=curISO();
+  const totalBookings = ALL_BLOCKS.filter(b=>b.dateISO===iso && !isNonBooking(b)).length;
+  let showing=0;
+  STAFF_ORDER.forEach(s=>{
+    if(!staffPassesRowFilters(s)) return;
+    blocksForStaffOnDate(s,iso).forEach(b=>{ if(!isNonBooking(b) && !isDimmed(b)) showing++; });
+  });
+
+  const row=document.getElementById('chipRow');
+  if(chips.length===0 && STATE.projection==='day'){
+    row.innerHTML = `<span class="showing">${totalBookings} bookings</span>`;
+    return;
+  }
+  if(STATE.projection!=='day'){ row.innerHTML=''; return; }
+  let html = chips.map(([key,label])=>`<span class="chip c-info">${label} <span class="x" onclick="clearFilterChip('${key}')">&times;</span></span>`).join('');
+  if(chips.length>=2) html += `<button class="clearall" onclick="clearAllFilters()">Clear all</button>`;
+  html += `<span class="showing">Showing ${showing} of ${totalBookings} bookings</span>`;
+  row.innerHTML = html;
+}
+function clearFilterChip(key){
+  if(key==='staff'){ STATE.staffFilterChip=null; }
+  else if(key==='location'){ STATE.filters.location='All Locations'; }
+  else if(key==='service'){ STATE.filters.service='All Services'; }
+  else if(key==='level'){ STATE.filters.level='All Levels'; }
+  else if(key==='status'){ STATE.filters.status='All Statuses'; }
+  else if(key==='skill'){ STATE.filters.skill='All Skills'; }
+  render();
+}
+function clearAllFilters(){
+  STATE.filters={location:'All Locations',service:'All Services',level:'All Levels',status:'All Statuses',skill:'All Skills'};
+  STATE.staffFilterChip=null;
+  render();
+}
+function onFilterChange(key,val){ STATE.filters[key]=val; render(); }
+
+// ─── NAV / MODE / DENSITY ───────────────────────────────────────────────────────
+function setProjection(p){
+  if(p===STATE.projection) return;
+  if(p==='week'){ STATE.projection='week'; }
+  else {
+    if(STATE.projection==='week'){
+      const wkStart=startOfWeek(STATE.curDate), wkEnd=addDays(wkStart,6);
+      const sep3=new Date(2026,8,3);
+      if(sep3>=wkStart && sep3<=wkEnd) STATE.curDate=sep3; else STATE.curDate=wkStart;
+    }
+    STATE.projection='day';
+  }
+  closeDrawer(); render();
+}
+function setDensity(d){ STATE.density=d; render(); }
+function navStep(dir){
+  closeDrawer();
+  if(STATE.projection==='day') STATE.curDate=addDays(STATE.curDate,dir);
+  else STATE.curDate=addDays(STATE.curDate,dir*7);
+  render();
+}
+function goToday(){ closeDrawer(); STATE.curDate=new Date(2026,8,3); render(); }
+function setRole(v){ STATE.role=v; render(); if(STATE.drawerId) refreshDrawer(); }
+function manageHoursNoop(){ /* data-noop — availability editing is out of scope (§2.8) */ }
+
+// ─── DAY MODE ───────────────────────────────────────────────────────────────────
+const ROW_H={compact:36,comfortable:52};
+function renderDay(){
+  const iso=curISO();
+  const allVisible = STAFF_ORDER.filter(staffPassesRowFilters);
+  const withBlocks = allVisible.filter(s=>blocksForStaffOnDate(s,iso).length>0);
+  const withoutBlocks = allVisible.filter(s=>blocksForStaffOnDate(s,iso).length===0);
+  const dayIsFullyEmpty = withBlocks.length===0; // Sat Sep 5-style empty day (§9.2) — never collapse
+  const rowOrder = (STATE.showEmptyResources || dayIsFullyEmpty) ? allVisible : withBlocks;
+
+  const container=document.getElementById('gridContent');
+  if(allVisible.length===0){
+    container.innerHTML = renderNoStaffPanel();
+    CURRENT_DAY_ROWS=[];
+    return;
+  }
+
+  let html = `<div class="ms-headerrow" role="row"><div class="ms-corner" role="columnheader">Staff</div><div class="ms-timeaxis" id="msTimeAxis"></div></div>`;
+  html += `<div id="msRows" role="rowgroup">`;
+  rowOrder.forEach(staff=>{
+    const util=staffUtilRow(staff,iso);
+    const conflictN=staffConflictCount(staff,iso);
+    html += `<div class="ms-staffrow" role="row" data-staff="${staff}">
+      <div class="ms-stafflabel" role="rowheader">
+        <div class="ms-avrow"><div class="ms-av">${initials(staff)}</div><div class="ms-staffnm">${staff}</div></div>
+        <div class="ms-util">${util.bookedCount}b · ${util.open}o · ${util.pct}%${conflictN>0?` <span class="chip c-danger" style="height:16px;padding:0 4px;font-size:.6rem">${conflictN} conflict${conflictN!==1?'s':''}</span>`:''}</div>
+      </div>
+      <div class="ms-lane" data-staff="${staff}" ondragover="onLaneDragOver(event,'${staff}')" ondrop="onLaneDrop(event,'${staff}')"></div>
+    </div>`;
+  });
+  html += `</div>`;
+  if(withoutBlocks.length>0 && !dayIsFullyEmpty){
+    html += `<div class="emptyctl-row"><button class="emptyctl-btn" aria-expanded="${STATE.showEmptyResources}" onclick="toggleEmptyResources()">${STATE.showEmptyResources?`&minus; hide ${withoutBlocks.length} empty`:`+ ${withoutBlocks.length} staff member${withoutBlocks.length!==1?'s':''} with no bookings`}</button></div>`;
+  }
+  container.innerHTML = html;
+
+  // cache for keyboard nav
+  CURRENT_DAY_ROWS = rowOrder.map(staff=>({
+    staff,
+    blocks: blocksForStaffOnDate(staff,iso).filter(b=>!isNonBooking(b)).sort((a,b)=>a.start-b.start)
+  }));
+
+  if(rowOrder.length===0 && ALL_BLOCKS.filter(b=>b.dateISO===iso).length===0){
+    // Sat Sep5-style: no blocks at all for any visible staff -> empty-day panel
+  }
+  requestAnimationFrame(()=>positionDayGrid());
+}
+function toggleEmptyResources(){ STATE.showEmptyResources=!STATE.showEmptyResources; renderDay(); }
+function renderNoStaffPanel(){
+  const chips=[];
+  if(STATE.filters.location!=='All Locations') chips.push(`Location: ${STATE.filters.location.replace('Solar Swim — ','')}`);
+  if(STATE.filters.service!=='All Services') chips.push(`Service: ${STATE.filters.service}`);
+  if(STATE.filters.skill!=='All Skills') chips.push(`Skill: ${STATE.filters.skill}`);
+  if(STATE.staffFilterChip) chips.push(`Staff: ${STATE.staffFilterChip}`);
+  return `<div class="center-panel" style="position:relative;top:0;left:0;transform:none;margin:40px auto">
+    <div class="cp-title">No staff match these filters</div>
+    <div style="margin-bottom:10px">${chips.map(c=>`<span class="chip c-info" style="margin:2px">${c}</span>`).join('')}</div>
+    <button class="clearall" onclick="clearAllFilters()">Clear all</button>
+  </div>`;
+}
+
+function positionDayGrid(){
+  const iso=curISO();
+  const laneEl=document.querySelector('.ms-lane');
+  const timeAxis=document.getElementById('msTimeAxis');
+  if(!laneEl || !timeAxis) return;
+  const laneWidth=laneEl.getBoundingClientRect().width;
+  if(laneWidth<=0) return;
+
+  const rowStaff = CURRENT_DAY_ROWS.map(r=>r.staff);
+  const fullWindow = computeLocationWindow(rowStaff.length?rowStaff:STAFF_ORDER.filter(staffPassesRowFilters));
+  const activeWindow = computeActiveWindow(iso, rowStaff, fullWindow);
+  const dayHasNoBlocks = activeWindow.empty;
+
+  const leadCollapsible = !dayHasNoBlocks && activeWindow.start>fullWindow.open;
+  const trailCollapsible = !dayHasNoBlocks && activeWindow.end<fullWindow.close;
+  const leadCollapsed = leadCollapsible && !STATE.expandedEdges.lead;
+  const trailCollapsed = trailCollapsible && !STATE.expandedEdges.trail;
+
+  const windowStart = leadCollapsed ? activeWindow.start : fullWindow.open;
+  const windowEnd = trailCollapsed ? activeWindow.end : fullWindow.close;
+  const leadStripPx = leadCollapsed ? 24 : 0;
+  const trailStripPx = trailCollapsed ? 24 : 0;
+  const scaledWidthPx = Math.max(10, laneWidth - leadStripPx - trailStripPx);
+  const scaledMinutes = Math.max(1, windowEnd - windowStart);
+  const PX_PER_MIN = scaledWidthPx / scaledMinutes;
+
+  function xFor(min){
+    if(min<=windowStart) return leadStripPx;
+    return leadStripPx + (min-windowStart)*PX_PER_MIN;
+  }
+
+  // hour header labels
+  let hdrHtml='';
+  let hourStart = Math.ceil(windowStart/60)*60;
+  for(let t=hourStart; t<=windowEnd; t+=60){
+    const left=xFor(t);
+    hdrHtml += `<div class="ms-hourlbl" style="left:${left}px">${minutesToLabel(t).replace(':00','').replace(' ','')}</div>`;
+  }
+  timeAxis.innerHTML = hdrHtml;
+
+  const rowH = ROW_H[STATE.density];
+  const rowsEl=document.querySelectorAll('.ms-lane');
+  rowsEl.forEach(lane=>{
+    const staff=lane.dataset.staff;
+    const av=staffAvailabilityWindow(staff,iso);
+    let inner='';
+    // availability hatch: hatch the portion(s) of [windowStart,windowEnd] outside [av.open,av.close]
+    if(!av){
+      inner += `<div class="ms-hatch" style="left:0;width:${laneWidth}px" title="No availability for ${staff} on ${fmtShort(STATE.curDate)}"></div>`;
+    } else {
+      if(av.open>windowStart){
+        const w=xFor(Math.min(av.open,windowEnd))-0;
+        inner += `<div class="ms-hatch" style="left:0;width:${w}px" title="Outside ${staff.split(' ')[0]}'s ${minutesToLabel(av.open)} – ${minutesToLabel(av.close)} availability"></div>`;
+      }
+      if(av.close<windowEnd){
+        const left=xFor(Math.max(av.close,windowStart));
+        inner += `<div class="ms-hatch" style="left:${left}px;width:${Math.max(0,laneWidth-left)}px" title="Outside ${staff.split(' ')[0]}'s ${minutesToLabel(av.open)} – ${minutesToLabel(av.close)} availability"></div>`;
+      }
+    }
+    // blocks with overlap clustering
+    const clusters=clusterOverlapsForStaffDate(staff,iso).filter(cl=>cl.some(b=>b.start<windowEnd && b.start+b.dur>windowStart));
+    clusters.forEach(cluster=>{
+      const n=cluster.length;
+      cluster.forEach((b,idx)=>{
+        const left=xFor(Math.max(b.start,windowStart));
+        const right=xFor(Math.min(b.start+b.dur,windowEnd));
+        const width=Math.max(6,right-left);
+        const subH=n>1?(rowH-4)/n:rowH;
+        const subTop=n>1?idx*(rowH/n):0;
+        const dim=!isNonBooking(b)&&isDimmed(b);
+        const nb=isNonBooking(b);
+        const cls=STATUS_CLASS[b.status]||'b-confirmed';
+        const conflictCls = n>1 ? 'conflict':'';
+        const label = width>=48 ? dayBlockLabel(b) : '';
+        const statusLine = PLAIN_LINE[b.status]||'';
+        const aria = `${clientLabel2(b)}, ${b.service||b.status}, ${minutesToLabel(b.start)}–${minutesToLabel(b.start+b.dur)}, ${statusLine||b.status}`;
+        const prefix = n>1 ? '&#9888; ' : '';
+        const draggable = !nb && DRAGGABLE_STATUSES.includes(b.status);
+        if(nb){
+          inner += `<div class="ms-noncblock ${cls}" style="left:${left}px;width:${width}px;top:${subTop}px;height:${subH}px${dim?';opacity:.25':''}" aria-hidden="true" title="${dayBlockLabel(b)}">${width>=40?`<div class="bl-line">${prefix}${dayBlockLabel(b)}</div>`:''}</div>`;
+        } else {
+          inner += `<button type="button" class="ms-block ${cls} ${conflictCls} ${dim?'dimmed':''}" style="left:${left}px;width:${width}px;top:${subTop}px;height:${subH}px"
+            data-id="${b.id}" tabindex="-1" role="gridcell" aria-label="${aria.replace(/"/g,'&quot;')}"
+            draggable="${draggable}" ondragstart="onBlockDragStart(event,'${b.id}')"
+            onclick="onBlockClick('${b.id}')" onkeydown="onBlockKeydown(event,'${b.id}')"
+            onmouseenter="showTip(event,'${b.id}')" onmouseleave="hideTip()" onfocus="showTip(event,'${b.id}')" onblur="hideTip()">
+            ${label?`<div class="bl-line">${prefix}${label}</div>`:''}
+          </button>`;
+        }
+      });
+    });
+    lane.innerHTML = inner;
+  });
+
+  // now-line
+  const scrollContent=document.getElementById('gridContent');
+  const oldLine=scrollContent.querySelector('.ms-nowline'); if(oldLine) oldLine.remove();
+  document.querySelectorAll('.ms-edge').forEach(e=>e.remove());
+  if(toISO(STATE.curDate)==='2026-09-03'){
+    const nowMin=600;
+    if(nowMin>=windowStart && nowMin<=windowEnd){
+      const x=xFor(nowMin);
+      const rowsCount=CURRENT_DAY_ROWS.length;
+      const totalH=rowsCount*rowH;
+      const line=document.createElement('div');
+      line.className='ms-nowline';
+      line.style.left=(180+x)+'px';
+      line.style.height=totalH+'px';
+      line.innerHTML=`<div class="ms-nowdot"></div><div class="ms-nowlbl">10:00</div>`;
+      scrollContent.appendChild(line);
+    }
+  }
+  // edge strips
+  const rowsCount=CURRENT_DAY_ROWS.length;
+  const totalH=rowsCount*rowH;
+  if(leadCollapsible){
+    const strip=document.createElement('div'); strip.className='ms-edge';
+    strip.style.left='180px'; strip.style.height=totalH+'px';
+    strip.setAttribute('role','button'); strip.tabIndex=0;
+    strip.textContent = leadCollapsed ? `▲ ${minutesToLabel(fullWindow.open)}–${minutesToLabel(activeWindow.start)}` : '▼ collapse';
+    strip.onclick=()=>{ STATE.expandedEdges.lead=!STATE.expandedEdges.lead; positionDayGrid(); };
+    scrollContent.appendChild(strip);
+  }
+  if(trailCollapsible){
+    const strip=document.createElement('div'); strip.className='ms-edge';
+    strip.style.left=(180+laneWidth-24)+'px'; strip.style.height=totalH+'px';
+    strip.setAttribute('role','button'); strip.tabIndex=0;
+    strip.textContent = trailCollapsed ? `▼ ${minutesToLabel(activeWindow.end)}–${minutesToLabel(fullWindow.close)}` : '▲ collapse';
+    strip.onclick=()=>{ STATE.expandedEdges.trail=!STATE.expandedEdges.trail; positionDayGrid(); };
+    scrollContent.appendChild(strip);
+  }
+
+  // empty-day panel (Sat Sep 5 style — no blocks at all for visible staff)
+  const oldPanel=scrollContent.querySelector('.center-panel'); if(oldPanel) oldPanel.remove();
+  if(dayHasNoBlocks){
+    const panel=document.createElement('div'); panel.className='center-panel';
+    panel.innerHTML = `<div class="cp-title">No bookings on ${fmtLong(STATE.curDate)}</div>
+      <button class="btn btn-out btn-sm" onclick="location.href='booking-flow.html'">+ Book a session</button>`;
+    scrollContent.appendChild(panel);
+  }
+
+  restoreFocusTabindex();
+}
+function clientLabel2(b){ if(b.status==='BREAK') return 'Paid Break'; if(b.status==='UNAVAILABLE') return 'Unavailable'; return clientLabel(b); }
+
+window.addEventListener('resize', debounce(()=>{ if(STATE.projection==='day') positionDayGrid(); },80));
+function debounce(fn,ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; }
+
+// ─── WEEK MODE ──────────────────────────────────────────────────────────────────
+function renderWeek(){
+  const wkStart=startOfWeek(STATE.curDate);
+  const days=[0,1,2,3,4,5,6].map(i=>addDays(wkStart,i));
+  const visible = STAFF_ORDER.filter(staffPassesRowFilters);
+  const container=document.getElementById('gridContent');
+  if(visible.length===0){ container.innerHTML=renderNoStaffPanel(); CURRENT_DAY_ROWS=[]; return; }
+
+  let html=`<div class="wk-grid" role="grid">`;
+  html += `<div class="wk-corner" role="columnheader">Staff</div>`;
+  days.forEach(d=>{
+    const iso=toISO(d);
+    const isToday = iso==='2026-09-03';
+    const workingCount = visible.filter(s=>staffAvailabilityWindow(s,iso)).length;
+    html += `<div class="wk-hd ${isToday?'today':''}" role="columnheader"><div class="wk-hd-day">${fmtShort(d)}</div><div class="wk-hd-cnt">${workingCount}/${visible.length} working</div></div>`;
+  });
+  visible.forEach(staff=>{
+    html += `<div class="wk-stafflabel" role="rowheader"><div class="ms-avrow"><div class="ms-av">${initials(staff)}</div><div class="ms-staffnm">${staff}</div></div></div>`;
+    days.forEach(d=>{
+      const iso=toISO(d);
+      const isToday = iso==='2026-09-03';
+      const av=staffAvailabilityWindow(staff,iso);
+      if(!av){
+        html += `<div class="wk-cell ${isToday?'today':''}" role="gridcell"><div class="wk-dash" title="No availability on this day">—</div></div>`;
+        return;
+      }
+      const util=staffUtilRow(staff,iso);
+      const conflictN=staffConflictCount(staff,iso);
+      const hasBreak=blocksForStaffOnDate(staff,iso).some(isNonBooking);
+      const fillCls = util.pct>=100?'dgr':util.pct>=90?'warn':'';
+      html += `<div class="wk-cell ${isToday?'today':''}" role="gridcell" tabindex="0" onclick="onWeekCellClick('${staff}','${iso}')" onkeydown="if(event.key==='Enter')onWeekCellClick('${staff}','${iso}')">
+        ${conflictN>0?`<span class="wk-chip-tr chip c-danger" style="height:14px;padding:0 3px;font-size:.55rem">&#9888;</span>`:hasBreak?`<span class="ms-icon wk-icon-tr" title="Has ${blocksForStaffOnDate(staff,iso).filter(isNonBooking).length} break or blocked period">event_busy</span>`:''}
+        <div class="wk-loadbar"><div class="wk-loadfill ${fillCls}" style="width:${Math.min(100,util.pct)}%"></div></div>
+        <div class="wk-counts">${util.bookedCount}b</div>
+        <div class="wk-counts">${util.open} open · ${util.pct}%</div>
+      </div>`;
+    });
+  });
+  html+=`</div>`;
+  container.innerHTML=html;
+  CURRENT_DAY_ROWS=[];
+}
+function onWeekCellClick(staff,iso){
+  STATE.curDate=parseISO(iso);
+  STATE.projection='day';
+  STATE.staffFilterChip=staff;
+  closeDrawer();
+  render();
+}
+
+// ─── KEYBOARD / ROVING TABINDEX ─────────────────────────────────────────────────
+function restoreFocusTabindex(){
+  const buttons=document.querySelectorAll('.ms-block');
+  if(buttons.length===0) return;
+  let target=null;
+  if(STATE.focusedBlockId) target=document.querySelector(`.ms-block[data-id="${STATE.focusedBlockId}"]`);
+  if(!target) target=buttons[0];
+  buttons.forEach(b=>b.tabIndex=-1);
+  target.tabIndex=0;
+  STATE.focusedBlockId=target.dataset.id;
+}
+function setFocus(id, doFocus){
+  STATE.focusedBlockId=id;
+  document.querySelectorAll('.ms-block').forEach(b=>b.tabIndex=(b.dataset.id===id?0:-1));
+  const el=document.querySelector(`.ms-block[data-id="${id}"]`);
+  if(el && doFocus!==false) el.focus();
+}
+function onBlockClick(id){ openDrawer(id); }
+function onBlockKeydown(e,id){
+  const key=e.key;
+  if(key==='Enter'||key===' '){ e.preventDefault(); openDrawer(id); return; }
+  if(key==='Escape'){ closeDrawer(); return; }
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End'].includes(key)){
+    e.preventDefault(); moveFocus(id,key);
+  }
+}
+function moveFocus(curId,key){
+  const rowIdx = CURRENT_DAY_ROWS.findIndex(r=>r.blocks.some(b=>b.id===curId));
+  if(rowIdx<0) return;
+  const row=CURRENT_DAY_ROWS[rowIdx];
+  const idx=row.blocks.findIndex(b=>b.id===curId);
+  if(key==='ArrowRight'||key==='ArrowLeft'){
+    const nextIdx = key==='ArrowRight'?idx+1:idx-1;
+    if(row.blocks[nextIdx]) setFocus(row.blocks[nextIdx].id);
+    return;
+  }
+  if(key==='Home'){ setFocus(row.blocks[0].id); return; }
+  if(key==='End'){ setFocus(row.blocks[row.blocks.length-1].id); return; }
+  const dir = key==='ArrowDown'?1:-1;
+  let r=rowIdx+dir;
+  while(r>=0 && r<CURRENT_DAY_ROWS.length && CURRENT_DAY_ROWS[r].blocks.length===0) r+=dir;
+  if(r>=0 && r<CURRENT_DAY_ROWS.length){
+    const cur=row.blocks[idx];
+    const target=CURRENT_DAY_ROWS[r].blocks.reduce((best,b)=>{
+      if(!best) return b;
+      return Math.abs(b.start-cur.start)<Math.abs(best.start-cur.start)?b:best;
+    },null);
+    if(target) setFocus(target.id);
+  }
+}
+
+// ─── TOOLTIP (schedule-grid.md §10, edge-aware) ─────────────────────────────────
+function showTip(e,id){
+  const b=findBlock(id); if(!b) return;
+  const t=document.getElementById('tooltip');
+  t.innerHTML=`<strong>${clientLabel2(b)}</strong><br>${b.service||b.status}<br>Level: ${b.level||'Unassigned'}<br>Staff: ${b.staff}<br>${minutesToLabel(b.start)} – ${minutesToLabel(b.start+b.dur)}<br>Location: ${locationOf(b.staff)}<br>${PLAIN_LINE[b.status]||''}<br>Funding: ${b.funding||'—'}`;
+  t.classList.remove('tt-hidden');
+  const rect=(e.currentTarget||e.target).getBoundingClientRect();
+  const tw=220, th=t.offsetHeight||120;
+  let left=rect.left, top=rect.bottom+8;
+  if(top+th>window.innerHeight-8){ top=rect.top-th-8; }
+  if(left+tw>window.innerWidth-8){ left=window.innerWidth-tw-8; }
+  if(left<8) left=8;
+  if(top<8) top=8;
+  t.style.left=left+'px'; t.style.top=top+'px';
+}
+function hideTip(){ document.getElementById('tooltip').classList.add('tt-hidden'); }
+
+// ─── DRAG TO RESCHEDULE (schedule-grid.md §11) ──────────────────────────────────
+function onBlockDragStart(e,id){
+  const b=findBlock(id);
+  if(!DRAGGABLE_STATUSES.includes(b.status)){
+    e.preventDefault();
+    toast('Past or resolved bookings cannot be moved.');
+    return;
+  }
+  STATE.drag={blockId:id};
+  e.dataTransfer.setData('text/plain', id);
+  e.dataTransfer.effectAllowed='move';
+}
+function onLaneDragOver(e,staff){
+  if(!STATE.drag) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect='move';
+  const lane=e.currentTarget;
+  const rect=lane.getBoundingClientRect();
+  const iso=curISO();
+  const fullWindow=computeLocationWindow(CURRENT_DAY_ROWS.map(r=>r.staff));
+  const activeWindow=computeActiveWindow(iso, CURRENT_DAY_ROWS.map(r=>r.staff), fullWindow);
+  const windowStart = activeWindow.start, windowEnd=activeWindow.end;
+  const pxPerMin=rect.width/Math.max(1,(windowEnd-windowStart));
+  const relX=Math.max(0,Math.min(rect.width,e.clientX-rect.left));
+  let min=windowStart + relX/pxPerMin;
+  min=Math.round(min/GRID_STEP)*GRID_STEP;
+  STATE.drag.targetStaff=staff; STATE.drag.targetStart=min;
+  const b=findBlock(STATE.drag.blockId);
+  document.querySelectorAll('.ms-ghost').forEach(g=>g.remove());
+  const ghost=document.createElement('div'); ghost.className='ms-ghost';
+  const left=(min-windowStart)*pxPerMin;
+  ghost.style.left=left+'px'; ghost.style.top='2px';
+  ghost.style.width=Math.max(6,b.dur*pxPerMin)+'px'; ghost.style.height=(ROW_H[STATE.density]-4)+'px';
+  lane.appendChild(ghost);
+}
+function onLaneDrop(e,staff){
+  e.preventDefault();
+  document.querySelectorAll('.ms-ghost').forEach(g=>g.remove());
+  if(!STATE.drag || !STATE.drag.targetStaff) { STATE.drag=null; return; }
+  const {blockId,targetStaff,targetStart}=STATE.drag;
+  openDrawer(blockId);
+  STATE.panel='drag-confirm';
+  STATE.drag.blockId=blockId; STATE.drag.targetStaff=targetStaff; STATE.drag.targetStart=targetStart;
+  refreshDrawer();
+}
+function dragConflictNote(){
+  const {blockId,targetStaff,targetStart}=STATE.drag;
+  const b=findBlock(blockId);
+  const hit = ALL_BLOCKS.find(o=>o.id!==blockId && o.staff===targetStaff && o.dateISO===b.dateISO && o.start<targetStart+b.dur && o.start+o.dur>targetStart);
+  if(!hit) return '';
+  return ` This creates a conflict with ${clientLabel2(hit)} ${minutesToLabel(hit.start)}–${minutesToLabel(hit.start+hit.dur)}.`;
+}
+function confirmDrag(){
+  const {blockId,targetStaff,targetStart}=STATE.drag;
+  const b=findBlock(blockId);
+  b.staff=targetStaff; b.start=targetStart;
+  STATE.drag=null; STATE.panel=null;
+  reRenderAll();
+}
+function cancelDrag(){ STATE.drag=null; STATE.panel=null; refreshDrawer(); }
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+let toastT;
+function toast(m){
+  let el=document.getElementById('toast_el');
+  if(!el){el=document.createElement('div');el.id='toast_el';el.style.cssText='position:fixed;bottom:24px;right:24px;background:#1e293b;color:#f8fafc;padding:10px 16px;border-radius:8px;font-size:.82rem;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:300;transition:opacity 220ms;max-width:280px';document.body.appendChild(el);}
+  el.textContent=m;el.style.opacity='1';
+  clearTimeout(toastT);toastT=setTimeout(()=>{el.style.opacity='0';},2500);
+}
+
+// ─── DRAWER ───────────────────────────────────────────────────────────────────
+function openDrawer(id){
+  const b=findBlock(id);
+  if(!b || isNonBooking(b)) return;
+  STATE.drawerId=id; STATE.panel=null; STATE.paxSearchOpen=null; STATE.skipFormKey=null;
+  STATE.grantForm=null; STATE.fundingForm=null; STATE.reschedForm=null; STATE.waitlistMsg=null;
+  setFocus(id,false);
+  refreshDrawer();
+  document.getElementById('drawer').classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  const wasId=STATE.drawerId;
+  STATE.drawerId=null; STATE.drag=null;
+  if(wasId){ const el=document.querySelector(`.ms-block[data-id="${wasId}"]`); if(el) el.focus(); }
+}
+function reRenderAll(){ render(); if(STATE.drawerId) refreshDrawer(); }
+function refreshDrawer(){
+  const b=findBlock(STATE.drawerId);
+  if(!b) return;
+  renderDrawerHeader(b); renderDrawerBody(b); renderDrawerFooter(b);
+}
+function renderDrawerHeader(b){
+  document.getElementById('drwNm').textContent = b.isGroup ? `${b.service} — Group (${getFilled(b)} participants)` : `${clientLabel(b)} — ${b.service}`;
+  document.getElementById('drwDt').textContent = blockDateTimeLabel(b);
+  const sc=document.getElementById('drwStatus');
+  const m=CHIP_META[b.status]||['—','c-muted'];
+  sc.textContent=m[0]; sc.className='chip '+m[1];
+}
+function violationBannerHtml(client){
+  if(!client) return '';
+  const count=CLIENT_VIOLATIONS[client]||0;
+  if(count<VIOLATION_THRESHOLD) return '';
+  const res=STATE.violationResolutions[client];
+  if(res) return `<div class="panel-muted">Action recorded: ${res.action} — by ${res.manager}, ${res.when}.</div>`;
+  const disabled=STATE.role!=='manager';
+  const btn=(label)=>`<button class="btn btn-out btn-sm" ${disabled?'disabled':''} onclick="resolveViolation('${client}','${label}')">${label}</button>`;
+  return `<div class="panel-red"><strong>! CONSECUTIVE LATE-CANCEL / NO-SHOW</strong><br>${client} has reached ${count} of ${VIOLATION_THRESHOLD} consecutive late cancellations/no-shows — the configured threshold.
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">${btn('Notify')}${btn('Hold')}${btn('Drop')}${btn('Require Staff Review')}</div>
+    ${disabled?`<div class="small-note" style="color:#991b1b">Only a Manager can act on this — the flag is visible so you don't have to remember it.</div>`:''}
+  </div>`;
+}
+function resolveViolation(client,action){ if(STATE.role!=='manager') return; STATE.violationResolutions[client]={action,manager:MANAGER_NAME,when:nowStamp()}; refreshDrawer(); }
+
+function renderInfoGrid(b){
+  const statusLine=PLAIN_LINE[b.status]||'';
+  const statusCode=b.status==='TENTATIVE'?'Tentative (authorization pending)':b.status;
+  const rows=[
+    ['Client', clientLabel(b)],
+    ['Service', b.service],
+    ['Level', b.level||'Unassigned'],
+    ['Instructor', `<span class="clickable" onclick="setStaffFilterFromDrawer('${b.staff}')">${b.staff}</span>`],
+    ['Location', locationOf(b.staff)],
+    ['Date / Time', blockDateTimeLabel(b)],
+    ['Funding', b.funding||'—'],
+    ['Balance', b.balance||'—','bal'],
+    ['Status', `<div>${statusCode}</div><div class="body2-note">${statusLine}</div>${b.fundingOverrideNote?`<div class="body2-note" style="margin-top:4px">${b.fundingOverrideNote}</div>`:''}${b.resolvedNote?`<div class="body2-note" style="margin-top:4px">${b.resolvedNote}</div>`:''}`]
+  ];
+  return `<div class="det-grid">${rows.map(([l,v,cls])=>`<div class="det-row"><div class="det-l">${l}</div><div class="det-r${cls?' '+cls:''}">${v}</div></div>`).join('')}</div>`;
+}
+function setStaffFilterFromDrawer(staff){ STATE.staffFilterChip=staff; STATE.projection='day'; render(); if(STATE.drawerId) refreshDrawer(); }
+
+function tentativeNoteHtml(b){
+  if(b.status!=='TENTATIVE') return '';
+  return `<div class="tent-notice"><strong>Nothing reserved yet</strong>This slot is shown based on ${b.client}'s recurring subscription. It will be confirmed once Regional Center authorization is received. No record exists for this occurrence — it is recomputed every time this date is rendered (§2.3).</div>`;
+}
+
+// -- Drag confirmation panel (schedule-grid.md §11) --
+function renderDragConfirmPanel(b){
+  const {targetStaff,targetStart}=STATE.drag;
+  const conflictNote=dragConflictNote();
+  return `<div class="panel-amber"><h4>CONFIRM MOVE</h4>
+    <p>Move ${clientLabel2(b)} from ${b.staff} ${minutesToLabel(b.start)} to ${targetStaff} ${minutesToLabel(targetStart)}?${conflictNote}</p>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn btn-out btn-sm" onclick="cancelDrag()">Keep as is</button>
+      <button class="btn btn-blue btn-sm" onclick="confirmDrag()">Confirm move</button>
+    </div></div>`;
+}
+
+// -- Cancellation / make-up panels --
+function renderCancelPanel(b){
+  const {isEarly,noticeLabel}=cancelCalc(b);
+  if(isEarly){
+    return `<div class="panel-amber"><h4>CANCEL THIS SESSION</h4>
+      <p><strong>EARLY</strong> — this session starts in ${noticeLabel}. The configured window is 24 hours.</p>
+      <div class="field-lbl">What happens:</div>
+      <ul class="policy-list">
+        <li>This session is cancelled and marked <strong>CANCELLED_EARLY</strong>.</li>
+        <li>Session returned to your balance.</li>
+        <li>A make-up token will be generated.</li>
+        <li>This does NOT count toward the late-cancellation threshold.</li>
+      </ul>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn btn-out btn-sm" onclick="keepBooking()">Keep Booking</button>
+        <button class="btn btn-sm" style="background:var(--danger);color:#fff" onclick="confirmCancel('${b.id}')">Confirm Cancellation</button>
+      </div></div>`;
+  }
+  const count=(CLIENT_VIOLATIONS[b.client]||0)+1;
+  return `<div class="panel-amber"><h4>CANCEL THIS SESSION</h4>
+    <p><strong>LATE</strong> — this session starts in ${noticeLabel}. The configured window is 24 hours.</p>
+    <div class="field-lbl">What happens:</div>
+    <ul class="policy-list">
+      <li>This session is cancelled and marked <strong>CANCELLED_LATE</strong>.</li>
+      <li>The credit is already used — it is NOT returned to the balance.</li>
+      <li>No make-up token is generated.</li>
+      <li>This counts as this client's ${ordinal(count)} consecutive late cancellation/no-show toward the threshold of ${VIOLATION_THRESHOLD}.</li>
+    </ul>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn btn-out btn-sm" onclick="keepBooking()">Keep Booking</button>
+      <button class="btn btn-sm" style="background:var(--danger);color:#fff" onclick="confirmCancel('${b.id}')">Confirm Cancellation</button>
+    </div></div>`;
+}
+function keepBooking(){ STATE.panel=null; refreshDrawer(); }
+function confirmCancel(id){
+  const b=findBlock(id);
+  const {isEarly}=cancelCalc(b);
+  if(isEarly){ b.status='CANCELLED_EARLY'; b.makeupToken=b.makeupToken||genToken(b.client); STATE.panel='makeup'; }
+  else { b.status='CANCELLED_LATE'; CLIENT_VIOLATIONS[b.client]=(CLIENT_VIOLATIONS[b.client]||0)+1; STATE.panel='late-summary'; }
+  reRenderAll();
+}
+function renderMakeupPanel(b){
+  return `<div class="panel-green"><h4>MAKE-UP TOKEN CREATED</h4>
+    <p>Token ${b.makeupToken} created for ${b.client}. This token does not expire.</p>
+    <p style="margin-top:8px">Booking Horizon: the client can see and book replacement slots for the next 7 days from today. This is a visibility window, not the token's expiration — the token itself never lapses.</p>
+    <button class="btn btn-blue btn-sm" style="margin-top:10px" onclick="location.href='booking-flow.html'">Book Make-Up Session</button>
+  </div>`;
+}
+function renderLateSummary(b){
+  return `<div class="panel-muted"><p style="font-weight:600;color:var(--text-primary)">Cancelled late. Session used.</p>${grantMakeupBlockHtml(b)}</div>`;
+}
+function grantMakeupBlockHtml(b){
+  if(STATE.role!=='manager') return '';
+  if(b.manualMakeup) return `<div class="small-note" style="color:var(--success-dark)">Make-up token ${b.makeupToken} granted by ${b.manualMakeup.manager} — ${b.manualMakeup.reason}</div>`;
+  if(STATE.grantForm===b.id) return `<div style="margin-top:8px"><textarea class="textarea" id="grantReason" placeholder="Reason (required)"></textarea><button class="btn btn-out btn-sm" style="margin-top:6px;border-color:#fde68a;color:#b45309" onclick="grantMakeupAnyway('${b.id}')">Submit</button></div>`;
+  return `<button class="btn btn-out btn-sm" style="margin-top:8px;border-color:#fde68a;color:#b45309" onclick="STATE.grantForm='${b.id}';refreshDrawer()">Grant Make-Up Anyway</button>`;
+}
+function grantMakeupAnyway(id){
+  const reason=document.getElementById('grantReason')?.value.trim();
+  if(!reason) return;
+  const b=findBlock(id);
+  b.manualMakeup={reason,manager:MANAGER_NAME,when:nowStamp()};
+  b.makeupToken=b.makeupToken||genToken(b.client);
+  STATE.grantForm=null;
+  reRenderAll();
+}
+
+// -- Funding override (manager-only, exactly five duration modes) --
+function openFundingPanel(id){ STATE.panel='funding'; STATE.fundingForm={appliesTo:'this',funding:'',duration:'UNTIL_NEW_AUTHORIZATION',extra:'',reason:''}; refreshDrawer(); }
+function captureFundingFields(){ const f=STATE.fundingForm; if(!f) return; const fund=document.getElementById('fovFunding'); if(fund) f.funding=fund.value; const extra=document.getElementById('fovExtra'); if(extra) f.extra=extra.value; const reason=document.getElementById('fovReason'); if(reason) f.reason=reason.value; }
+function fundingDurationChange(v){ captureFundingFields(); STATE.fundingForm.duration=v; STATE.fundingForm.extra=''; refreshDrawer(); }
+function refreshApplyBtn(){ const btn=document.getElementById('fovApplyBtn'); const note=document.getElementById('fovReasonNote'); const has=(STATE.fundingForm.reason||'').trim().length>0; if(btn) btn.disabled=!has; if(note) note.style.display=has?'none':''; }
+function renderFundingPanel(b){
+  const f=STATE.fundingForm;
+  let extraField='';
+  if(f.duration==='UNTIL_DATE') extraField=`<div class="field-lbl">End Date</div><input type="date" class="s-input" id="fovExtra" value="${f.extra}">`;
+  else if(f.duration==='X_DAYS') extraField=`<div class="field-lbl">Number of Days</div><input type="number" min="1" class="s-input" id="fovExtra" value="${f.extra}">`;
+  else if(f.duration==='MANUAL') extraField=`<div class="field-lbl">Manual review note</div><textarea class="textarea" id="fovExtra">${f.extra}</textarea>`;
+  const hasReason=(f.reason||'').trim().length>0;
+  return `<div class="panel-amber"><h4>FUNDING OVERRIDE</h4>
+    <span class="chip c-warn" style="margin-bottom:8px">Override logged with your name, timestamp, and reason.</span>
+    <div class="field-lbl">Appointments affected</div>
+    <label class="radio-row"><input type="radio" name="fovScope" ${f.appliesTo==='this'?'checked':''} onchange="STATE.fundingForm.appliesTo='this'"> This appointment only</label>
+    <label class="radio-row"><input type="radio" name="fovScope" ${f.appliesTo==='recurring'?'checked':''} onchange="STATE.fundingForm.appliesTo='recurring'"> This + future recurring</label>
+    <div class="field-lbl">Funding expected</div>
+    <input class="s-input" id="fovFunding" placeholder="e.g. Regional Center — SRA11" value="${f.funding}">
+    <div class="field-lbl">Duration</div>
+    <select class="s-input" id="fovDuration" onchange="fundingDurationChange(this.value)">
+      <option value="ONE_APPOINTMENT" ${f.duration==='ONE_APPOINTMENT'?'selected':''}>One Appointment</option>
+      <option value="UNTIL_DATE" ${f.duration==='UNTIL_DATE'?'selected':''}>Until Date</option>
+      <option value="X_DAYS" ${f.duration==='X_DAYS'?'selected':''}>X Days</option>
+      <option value="UNTIL_NEW_AUTHORIZATION" ${f.duration==='UNTIL_NEW_AUTHORIZATION'?'selected':''}>Until New Authorization</option>
+      <option value="MANUAL" ${f.duration==='MANUAL'?'selected':''}>Manual</option>
+    </select>
+    ${extraField}
+    <div class="field-lbl">Reason (required)</div>
+    <textarea class="textarea" id="fovReason" oninput="STATE.fundingForm.reason=this.value;refreshApplyBtn()">${f.reason}</textarea>
+    <div class="small-note" id="fovReasonNote" style="${hasReason?'display:none':''}">Reason is required to apply an override</div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btn-out btn-sm" onclick="STATE.panel=null;STATE.fundingForm=null;refreshDrawer()">Cancel</button>
+      <button class="btn btn-blue btn-sm" id="fovApplyBtn" ${hasReason?'':'disabled'} onclick="applyFundingOverride('${b.id}')">Apply Override</button>
+    </div>
+  </div>`;
+}
+function applyFundingOverride(id){
+  captureFundingFields();
+  const f=STATE.fundingForm;
+  if(!f.reason || !f.reason.trim()) return;
+  const b=findBlock(id);
+  const durLabels={ONE_APPOINTMENT:'One Appointment',UNTIL_DATE:'Until Date',X_DAYS:'X Days',UNTIL_NEW_AUTHORIZATION:'Until New Authorization',MANUAL:'Manual'};
+  let reviewText='';
+  if(f.duration==='UNTIL_DATE'&&f.extra) reviewText=`, review by ${f.extra}`;
+  else if(f.duration==='X_DAYS'&&f.extra) reviewText=`, review in ${f.extra} days`;
+  b.fundingOverrideNote=`Funding Override active — ${durLabels[f.duration]}${reviewText}. Applied by ${MANAGER_NAME}, ${nowStamp()}.`;
+  b.status='CONFIRMED';
+  STATE.panel=null; STATE.fundingForm=null;
+  reRenderAll();
+}
+
+// -- Reschedule --
+function openReschedule(id){ STATE.panel='reschedule'; const b=findBlock(id); STATE.reschedForm={date:b.dateISO,time:minutesToLabel(b.start)}; refreshDrawer(); }
+function renderReschedulePanel(b){
+  const f=STATE.reschedForm;
+  const opts=[]; for(let t=360;t<1200;t+=30) opts.push(minutesToLabel(t));
+  return `<div class="panel-amber"><h4>RESCHEDULE</h4>
+    <div class="field-lbl">Date</div><input type="date" class="s-input" id="reschedDate" value="${f.date}">
+    <div class="field-lbl">Time</div><select class="s-input" id="reschedTime">${opts.map(t=>`<option ${t===f.time?'selected':''}>${t}</option>`).join('')}</select>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btn-out btn-sm" onclick="STATE.panel=null;refreshDrawer()">Cancel</button>
+      <button class="btn btn-blue btn-sm" onclick="submitReschedule('${b.id}')">Save</button>
+    </div></div>`;
+}
+function submitReschedule(id){
+  const b=findBlock(id);
+  const date=document.getElementById('reschedDate').value;
+  const time=document.getElementById('reschedTime').value;
+  const [tpart,ap]=time.split(' '); let [hh,mm]=tpart.split(':').map(Number);
+  if(ap==='PM'&&hh!==12) hh+=12; if(ap==='AM'&&hh===12) hh=0;
+  if(date) b.dateISO=date;
+  b.start=hh*60+mm;
+  STATE.panel=null;
+  reRenderAll();
+}
+
+// -- Participants --
+function renderParticipantRow(b,p,idx){
+  const fundChip=fundingChip(p.funding);
+  let attChip, controls;
+  if(p.attendance==='CANCELLED_LATE'||p.attendance==='CANCELLED_EARLY'){
+    attChip=`<span class="chip ${p.attendance==='CANCELLED_LATE'?'c-danger':'c-ok'}">Cancelled — ${p.attendance==='CANCELLED_LATE'?'Late':'Early'}</span>`;
+    controls=`<span class="small-note">Resolved by cancellation</span>`;
+  } else if(p.attendance==='ATTENDED'){
+    attChip=`<span class="chip c-ok">Attended</span>`; controls=`<span class="small-note">Already marked — 1 session used</span>`;
+  } else if(p.attendance==='NO_SHOW'){
+    attChip=`<span class="chip c-danger">No-Show</span>`; controls=`<span class="small-note">Already marked — 1 session used</span>`;
+  } else {
+    attChip=`<span class="chip c-muted">Not Marked</span>`;
+    controls=`<button class="btn btn-out btn-sm" onclick="markAttendance('${b.id}',${idx},'ATTENDED')">Check In</button><button class="btn btn-out btn-sm" style="color:var(--danger);border-color:#fca5a5" onclick="markAttendance('${b.id}',${idx},'NO_SHOW')">No-Show</button>`;
+  }
+  return `<div class="px-row"><div class="px-av">${initials(p.name)}</div><div class="px-nm">${p.name}</div>${fundChip}${attChip}<div style="display:flex;gap:5px;width:100%;justify-content:flex-end;margin-top:4px">${controls}</div></div>`;
+}
+function markAttendance(id,idx,state){ const b=findBlock(id); ensureParticipants(b); const p=b.participants[idx]; if(!p||p.attendance!=='NOT_MARKED') return; p.attendance=state; reRenderAll(); }
+function checkInAll(id){ const b=findBlock(id); ensureParticipants(b); b.participants.forEach(p=>{ if(p.attendance==='NOT_MARKED') p.attendance='ATTENDED'; }); reRenderAll(); }
+function allMarked(b){ ensureParticipants(b); return b.participants.length>0 && b.participants.every(p=>p.attendance!=='NOT_MARKED'); }
+function checkInSingle(id){ markAttendance(id,0,'ATTENDED'); }
+function singleResolved(b){ ensureParticipants(b); return !b.participants[0] || b.participants[0].attendance!=='NOT_MARKED'; }
+function renderParticipants(b){
+  ensureParticipants(b);
+  let html=`<div class="px-section"><div class="sec-lbl">Participants${b.requiredParticipants?` (${getFilled(b)} / ${b.requiredParticipants})`:''}</div>`;
+  if(b.participants.length===0){
+    html+=`<div class="body2-note">${b.filled||0} participants enrolled. Individual roster is not itemized in this prototype's seed data.</div>`;
+  } else {
+    b.participants.forEach((p,idx)=>{ html+=renderParticipantRow(b,p,idx); });
+  }
+  if(b.participantsNote) html+=`<div class="body2-note" style="margin-top:6px">${b.participantsNote}</div>`;
+  html+='</div>';
+  return html;
+}
+
+// -- Waitlist --
+function renderWaitlistPanel(b){
+  let html=`<div class="wl-section"><div class="sec-lbl">Waitlist</div>`;
+  if(b.seatOpen){
+    html+=`<div class="panel-blue"><strong>SEAT OPENED</strong> — ${b.seatOpen.time}<br>Manager notified. A seat is open — choose who to place from the list below.</div>`;
+  } else {
+    html+=`<div class="panel-muted">Class full. No seat open right now — the list below keeps its order for the next opening.</div>`;
+  }
+  if(STATE.waitlistMsg && STATE.waitlistMsg.forId===b.id) html+=`<div class="small-note" style="color:var(--success-dark)">${STATE.waitlistMsg.text}</div>`;
+  b.waitlist.forEach((w,idx)=>{ html+=renderWaitlistRow(b,w,idx); });
+  html+=`<div class="wl-note">Waitlist is shown for all classes — full or not.</div>`;
+  html+=`<div class="small-note">No control on this panel offers automatic promotion — every promotion happens through Promote, chosen by a Manager.</div>`;
+  html+='</div>';
+  return html;
+}
+function renderWaitlistRow(b,w,idx){
+  const key=`${b.id}:${idx}`;
+  const canAct=STATE.role==='manager' && !!b.seatOpen;
+  const elig=w.eligible?`<span class="chip c-ok">Eligible</span>`:`<span class="chip c-danger">Not Eligible — ${w.reason}</span>`;
+  let row=`<div class="wl-row"><div class="wl-pos">${w.pos}</div><div class="wl-nm">${w.name}</div>${fundingChip(w.funding)}${elig}`;
+  if(STATE.role==='manager'){
+    row+=`<div style="display:flex;gap:6px;width:100%;justify-content:flex-end;margin-top:4px">
+      <button class="btn btn-out btn-sm" ${canAct?'':'disabled'} onclick="promoteWaitlist('${b.id}',${idx})">Promote</button>
+      <button class="btn btn-out btn-sm" ${canAct?'':'disabled'} onclick="toggleSkipForm('${key}')">Skip</button>
+    </div>`;
+    if(!canAct) row+=`<div class="small-note" style="width:100%;text-align:right">No seat open right now.</div>`;
+    if(STATE.skipFormKey===key) row+=`<div style="width:100%;margin-top:6px"><input class="s-input" id="skipReasonInput" placeholder="Reason (required)"><button class="btn btn-out btn-sm" style="margin-top:5px" onclick="submitSkip('${b.id}',${idx})">Submit</button></div>`;
+  }
+  if(w.skipHistory) row+=`<div class="small-note" style="width:100%">Skipped ${w.skipHistory.when} — ${w.skipHistory.reason}</div>`;
+  row+='</div>';
+  return row;
+}
+function toggleSkipForm(key){ STATE.skipFormKey = STATE.skipFormKey===key?null:key; refreshDrawer(); }
+function submitSkip(bid,idx){
+  const val=document.getElementById('skipReasonInput')?.value?.trim();
+  if(!val) return;
+  const b=findBlock(bid);
+  b.waitlist[idx].skipHistory={when:nowStamp(),reason:val,who:MANAGER_NAME};
+  STATE.skipFormKey=null;
+  refreshDrawer();
+}
+function promoteWaitlist(bid,idx){
+  const b=findBlock(bid);
+  if(!(STATE.role==='manager' && b.seatOpen)) return;
+  ensureParticipants(b);
+  const w=b.waitlist[idx];
+  b.participants.push({name:w.name,funding:w.funding,attendance:'NOT_MARKED'});
+  b.waitlist.splice(idx,1);
+  b.seatOpen=null;
+  STATE.waitlistMsg={forId:bid,text:'Booking confirmed. Client notified.'};
+  if(b.waitlist.length===0 && getFilled(b)>=b.cap) b.status='CONFIRMED';
+  reRenderAll();
+}
+
+// -- Drawer body/footer assembly --
+function renderDrawerBody(b){
+  let html='';
+  html+=violationBannerHtml(b.client);
+  html+=renderInfoGrid(b);
+  html+=tentativeNoteHtml(b);
+  if(STATE.panel==='drag-confirm' && STATE.drag) html+=renderDragConfirmPanel(b);
+  else if(STATE.panel==='cancel') html+=renderCancelPanel(b);
+  else if(STATE.panel==='makeup') html+=renderMakeupPanel(b);
+  else if(STATE.panel==='late-summary') html+=renderLateSummary(b);
+  else if(STATE.panel==='funding') html+=renderFundingPanel(b);
+  else if(STATE.panel==='reschedule') html+=renderReschedulePanel(b);
+  else {
+    if(b.status==='CANCELLED_EARLY') html+=renderMakeupPanel(b);
+    if(b.status==='CANCELLED_LATE') html+=renderLateSummary(b);
+  }
+  if(!['BREAK','UNAVAILABLE','TENTATIVE'].includes(b.status)) html+=renderParticipants(b);
+  if(b.waitlist) html+=renderWaitlistPanel(b);
+  document.getElementById('drwBody').innerHTML=html;
+}
+function renderDrawerFooter(b){
+  const foot=document.getElementById('drwFoot');
+  if(STATE.panel==='drag-confirm'){ foot.innerHTML=`<span class="body2-note">Confirm or cancel the move above.</span>`; return; }
+  if(b.status==='TENTATIVE'){ foot.innerHTML=`<span class="body2-note">Tentative — a computed display, not a booking. No status-change actions exist here.</span>`; return; }
+  if(['CANCELLED_EARLY','CANCELLED_LATE','NO_SHOW','COMPLETED'].includes(b.status)){
+    foot.innerHTML = b.status==='CANCELLED_EARLY' ? `<button class="btn btn-blue btn-sm" onclick="location.href='booking-flow.html'">Book Make-Up Session</button>` : `<span class="body2-note">No further actions — this booking is resolved.</span>`;
+    return;
+  }
+  let btns=`<button class="btn btn-out btn-sm" onclick="openReschedule('${b.id}')">Reschedule</button>`;
+  const isHold=b.status==='AUTHORIZATION_HOLD'||b.status==='PAYMENT_HOLD';
+  const groupLike=groupLikeAddable(b);
+  if(isHold){
+    btns+=`<button class="btn btn-out btn-sm" style="border-color:#fca5a5;color:var(--danger)" onclick="STATE.panel='cancel';refreshDrawer()">Cancel</button>`;
+    if(STATE.role==='manager') btns+=`<button class="btn btn-out btn-sm" onclick="openFundingPanel('${b.id}')">Funding Override</button>`;
+  } else if(groupLike){
+    const done=allMarked(b);
+    btns+=`<button class="btn btn-blue btn-sm" onclick="checkInAll('${b.id}')" ${done?'disabled':''}>Check In All</button>`;
+    if(done) btns+=`<span class="small-note">All participants already marked.</span>`;
+  } else {
+    btns+=`<button class="btn btn-out btn-sm" style="border-color:#fca5a5;color:var(--danger)" onclick="STATE.panel='cancel';refreshDrawer()">Cancel</button>`;
+    const resolved=singleResolved(b);
+    btns+=`<button class="btn btn-blue btn-sm" onclick="checkInSingle('${b.id}')" ${resolved?'disabled':''}>Check In</button>`;
+  }
+  foot.innerHTML=btns;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>

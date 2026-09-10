@@ -3,6 +3,7 @@
   Spec:   ai-workspace/prototypes/staff/calendar-master.md
   Design: ai-workspace/prototypes/_shared/design-system.md
   Static prototype. Not production code. No app dependencies.
+  Rev 2 — grid rebuild (2026-09-10). See spec §2.11-2.16 for what Rev 1 got wrong.
 -->
 <!doctype html>
 <html lang="en">
@@ -15,71 +16,81 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <style>
-:root{--primary:#334155;--primary-dark:#1e293b;--info:#3b82f6;--info-bg:#eff6ff;--info-dark:#1d4ed8;--success:#10b981;--success-bg:#d1fae5;--success-dark:#047857;--warning:#f59e0b;--danger:#ef4444;--text-primary:#0f172a;--text-secondary:#64748b;--border:#f1f5f9;--border-input:#cbd5e1;--bg-default:#f8fafc;--radius-card:10px;--radius-base:8px;--shadow-card:0 2px 4px rgba(0,0,0,0.02),0 1px 2px rgba(0,0,0,0.03)}
+:root{--primary:#334155;--primary-dark:#1e293b;--info:#3b82f6;--info-bg:#eff6ff;--info-dark:#1d4ed8;--success:#10b981;--success-bg:#d1fae5;--success-dark:#047857;--warning:#f59e0b;--danger:#ef4444;--text-primary:#0f172a;--text-secondary:#64748b;--border:#f1f5f9;--border-input:#cbd5e1;--bg-default:#f8fafc;--radius-card:10px;--radius-base:8px;--radius-control:6px;--shadow-card:0 2px 4px rgba(0,0,0,0.02),0 1px 2px rgba(0,0,0,0.03)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',sans-serif;background:var(--bg-default);color:var(--text-primary);font-size:14px;height:100vh;overflow:hidden}
+body.density-compact{--slot-h:32px}
+body.density-comfortable{--slot-h:56px}
 button{font:inherit;cursor:pointer}
-select{font:inherit}
+select,input{font:inherit}
 .ms{font-family:'Material Symbols Rounded';font-weight:400;font-style:normal;font-size:18px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;vertical-align:middle}
-/* SHELL */
 .app{display:flex;height:100vh;overflow:hidden}
-.sidebar{width:240px;flex-shrink:0;background:var(--primary-dark);display:flex;flex-direction:column}
-.sb-logo{height:58px;display:flex;align-items:center;gap:10px;padding:0 18px;border-bottom:1px solid rgba(255,255,255,.07)}
-.sb-badge{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#3b82f6,#10b981);display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px}
-.sb-logo strong{color:#f8fafc;font-size:16px;font-weight:700}
-.sb-nav{flex:1;overflow-y:auto;padding:10px 8px}
-.sb-section{font-size:.68rem;font-weight:700;color:rgba(248,250,252,.35);text-transform:uppercase;letter-spacing:.08em;padding:10px 12px 4px}
-.nav-item{display:flex;align-items:center;gap:9px;padding:8px 12px;border-radius:7px;color:rgba(248,250,252,.65);font-size:.85rem;font-weight:500;cursor:pointer;border:none;background:transparent;width:100%;text-align:left;margin-bottom:1px;transition:background 120ms}
-.nav-item:hover{background:rgba(255,255,255,.06);color:#f8fafc}
-.nav-item.active{background:rgba(59,130,246,.2);color:#93c5fd}
 .main-shell{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .topbar{height:58px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;padding:0 20px;gap:10px;flex-shrink:0}
 .loc-pill{display:flex;align-items:center;gap:5px;font-size:.825rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default);border:1px solid var(--border-input);border-radius:6px;padding:5px 10px}
+.role-sel{border:none;background:transparent;font-weight:700;font-size:.825rem;color:var(--text-secondary);cursor:pointer;outline:none}
 .main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:16px 16px 0}
-/* PAGE HEADER */
 .page-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}
-.page-hd-l{}
 .breadcrumb{font-size:.72rem;color:var(--text-secondary);margin-bottom:3px}
 .page-title{font-size:1.2rem;font-weight:700;letter-spacing:-.01em}
 .page-sub{font-size:.8rem;color:var(--text-secondary);margin-top:2px}
 .page-hd-r{display:flex;gap:7px}
-/* FILTER BAR */
-.filter-bar{background:#fff;border:1px solid var(--border);border-radius:var(--radius-card);padding:10px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-shrink:0}
-.filter-bar select{border:1px solid var(--border-input);border-radius:6px;padding:5px 8px;font-size:.78rem;background:#fff;color:var(--text-primary);cursor:pointer;outline:none}
-.date-nav{display:flex;align-items:center;gap:6px}
-.date-lbl{font-size:.9rem;font-weight:700;color:var(--text-primary);white-space:nowrap;min-width:140px;text-align:center}
-.legend{display:flex;align-items:center;gap:8px;margin-left:auto}
-.leg-item{display:flex;align-items:center;gap:4px;font-size:.7rem;color:var(--text-secondary);font-weight:600}
-.leg-dot{width:10px;height:10px;border-radius:2px}
-.sep{width:1px;height:20px;background:var(--border)}
-/* BUTTONS */
-.btn{border-radius:6px;padding:6px 12px;font-size:.82rem;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 140ms}
+.btn{border-radius:var(--radius-control);padding:6px 12px;font-size:.82rem;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 140ms}
 .btn-blue{background:var(--info);color:#fff}.btn-blue:hover{background:#2563eb}
 .btn-out{background:#fff;color:var(--text-primary);border:1px solid var(--border-input)}.btn-out:hover{border-color:#64748b;background:var(--bg-default)}
+.btn-out:disabled{opacity:.5;cursor:not-allowed}
 .btn-sm{padding:4px 9px;font-size:.75rem}
-/* CALENDAR GRID CONTAINER */
-.cal-wrap{flex:1;overflow:hidden;background:#fff;border-radius:var(--radius-card);border:1px solid var(--border);box-shadow:var(--shadow-card);position:relative}
-.cal-scroll{width:100%;height:100%;max-height:calc(100vh - 280px);overflow:auto;position:relative}
-/* STICKY TABLE */
-.cal-table{border-collapse:collapse;table-layout:fixed;min-width:100%}
-/* CORNER CELL */
-.cal-corner{width:80px;min-width:80px;background:#f0f4f8;border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;position:sticky;left:0;top:0;z-index:30}
-/* TIME COLUMN CELLS */
-.time-cell{width:80px;min-width:80px;height:56px;background:#f8fafc;border-right:1px solid #e2e8f0;border-bottom:1px solid #f1f5f9;position:sticky;left:0;z-index:10;vertical-align:middle;padding:0 8px;white-space:nowrap}
-.time-label{font-size:.72rem;font-weight:600;color:var(--text-secondary)}
-/* COACH HEADER CELLS */
-.coach-cell{min-width:200px;width:200px;background:#f8fafc;border-right:1px solid #f1f5f9;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:9;padding:10px 12px;vertical-align:middle}
-.coach-nm{font-size:.8rem;font-weight:700;color:var(--text-primary)}
-.coach-cnt{font-size:.7rem;color:var(--text-secondary);margin-top:2px}
-/* SLOT CELLS */
-.slot-cell{min-width:200px;width:200px;height:56px;border-right:1px solid #f1f5f9;border-bottom:1px solid #f8fafc;vertical-align:top;padding:2px;position:relative}
-/* BOOKING BLOCKS */
-.block{border-radius:5px;padding:4px 7px;cursor:pointer;border-left:3px solid;overflow:hidden;position:absolute;left:3px;right:3px;transition:box-shadow 140ms;font-size:.72rem;z-index:5}
-.block:hover{box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.btn:focus-visible,select:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--info);outline-offset:2px}
+/* FILTER BAR */
+.filter-bar{background:#fff;border:1px solid var(--border);border-radius:var(--radius-card);padding:10px 14px;margin-bottom:0;display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.f-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.filter-bar select{border:1px solid var(--border-input);border-radius:6px;padding:5px 8px;font-size:.78rem;background:#fff;color:var(--text-primary);cursor:pointer;outline:none}
+.date-nav{display:flex;align-items:center;gap:6px}
+.date-lbl{font-size:.9rem;font-weight:700;color:var(--text-primary);white-space:nowrap;min-width:110px;text-align:center}
+.jump-wrap{display:flex;flex-direction:column;gap:2px}
+.jump-lbl{font-size:.68rem;font-weight:600;color:var(--text-secondary)}
+.date-input{height:36px;padding:6px 10px;font-size:.8rem;border:1px solid var(--border-input);border-radius:6px;background:#fff;outline:none;width:160px}
+.date-input:focus{border-color:var(--info)}
+.sep{width:1px;height:20px;background:var(--border)}
+.seg-track{background:#f1f5f9;border-radius:8px;padding:4px;display:inline-flex;gap:2px}
+.seg-btn{border:none;background:transparent;padding:5px 12px;border-radius:6px;font-size:.78rem;font-weight:500;color:#64748b;cursor:pointer}
+.seg-btn.active{background:#fff;font-weight:700;color:var(--text-primary);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.right-slot{margin-left:auto;display:flex;align-items:center;gap:8px}
+.chip{display:inline-flex;align-items:center;height:24px;border-radius:4px;padding:0 8px;font-size:.7rem;font-weight:600;white-space:nowrap;border:none}
+.c-ok{background:var(--success-bg);color:var(--success-dark)}.c-info{background:var(--info-bg);color:var(--info-dark)}.c-warn{background:#fef3c7;color:#b45309}.c-danger{background:#fee2e2;color:#b91c1c}.c-purple{background:#f3e8ff;color:#7c3aed}.c-muted{background:#f1f5f9;color:var(--text-secondary)}
+.chip.clickable{cursor:pointer}
+/* row 3 chips + count */
+.chip-row{display:none;flex-wrap:wrap;gap:8px;align-items:center;padding-top:2px}
+.fchip{display:inline-flex;align-items:center;gap:5px;height:24px;background:var(--info-bg);color:var(--info-dark);border-radius:4px;padding:0 6px 0 8px;font-size:.7rem;font-weight:600}
+.fchip-x{background:none;border:none;color:inherit;font-size:.9rem;cursor:pointer;line-height:1;padding:0 2px}
+.clear-all-btn{background:none;border:none;color:var(--info-dark);font-size:.72rem;font-weight:600;cursor:pointer;text-decoration:underline}
+.result-count{margin-left:auto;font-size:.72rem;color:var(--text-secondary);font-weight:600}
+/* CALENDAR WRAP */
+.cal-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#fff;border-radius:var(--radius-card);border:1px solid var(--border);box-shadow:var(--shadow-card);position:relative;margin-top:12px}
+.cal-scroll{flex:1;overflow:auto;min-height:0;position:relative}
+.cal-grid{display:grid;position:relative}
+.corner-cell{position:sticky;top:0;left:0;z-index:30;background:#f0f4f8;border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0}
+.coach-header{position:sticky;top:0;z-index:20;background:#f8fafc;border-right:1px solid #f1f5f9;border-bottom:1px solid #e2e8f0;padding:6px 10px;height:48px;display:flex;flex-direction:column;justify-content:center;gap:2px;overflow:hidden}
+.coach-nm{font-size:.8rem;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coach-util{font-size:.7rem;font-weight:600;color:#64748b;white-space:nowrap}
+.time-gutter{position:sticky;left:0;z-index:10;background:#f8fafc;border-right:1px solid #e2e8f0}
+.time-label{position:absolute;left:8px;font-size:.72rem;font-weight:600;color:#64748b;transform:translateY(-50%);white-space:nowrap}
+.coach-lane{position:relative;border-right:1px solid #f1f5f9;background-color:#fff}
+.edge-strip{display:flex;align-items:center;justify-content:center;text-align:center;width:100%;background:#f8fafc;border:1px dashed #e2e8f0;font-size:.68rem;font-weight:500;color:var(--text-secondary);cursor:pointer;font-family:inherit}
+.now-line-wrap{position:relative;pointer-events:none}
+.now-line{position:absolute;left:0;right:0;height:2px;background:var(--danger)}
+.now-dot{position:absolute;left:-4px;top:-3px;width:7px;height:7px;border-radius:50%;background:var(--danger)}
+.now-label{position:absolute;left:5px;top:-16px;font-size:.65rem;font-weight:700;color:var(--danger)}
+.block{position:absolute;border-radius:5px;padding:4px 7px;border-left-width:3px;border-left-style:solid;overflow:hidden;font-size:.7rem;cursor:pointer;text-align:left;background:none;transition:box-shadow 140ms;font-family:inherit}
+body.density-comfortable .block{font-size:.75rem}
+.block:hover{box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.block.conflict{outline:1px solid var(--danger);outline-offset:-1px}
+.block.dimmed{opacity:.25;pointer-events:none}
 .block-title{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3}
 .block-sub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#374151;line-height:1.3;margin-top:1px}
 .block-cap{font-size:.65rem;color:#6b7280;margin-top:2px}
-/* BLOCK TYPES */
+.block-line3-mandated{font-size:.68rem;line-height:1.3;margin-top:2px;font-weight:600}
+.ln-amber{color:#b45309}.ln-red{color:#b91c1c}.ln-green{color:#047857}.ln-slate{color:#64748b}
 .b-confirmed{background:#eff6ff;border-left-color:#3b82f6}
 .b-tentative{background:#fef3c7;border-left-color:#f59e0b}
 .b-semi-pending{background:#f3e8ff;border-left-color:#7c3aed}
@@ -92,17 +103,17 @@ select{font:inherit}
 .b-completed{background:#f1f5f9;border-left-color:#64748b}
 .b-break{background:#f1f5f9;border-left-color:#94a3b8;cursor:default}
 .b-unavailable{background:#f8fafc;border-left-color:#e2e8f0;cursor:default}
-.block-line3-mandated{font-size:.68rem;line-height:1.3;margin-top:2px;font-weight:600}
-.ln-amber{color:#b45309}.ln-red{color:#b91c1c}.ln-green{color:#047857}.ln-slate{color:#64748b}
-/* EMPTY COLUMN */
-.empty-col{text-align:center;vertical-align:middle;color:var(--text-secondary);font-size:.78rem;font-style:italic;padding:20px 8px;border:1px dashed var(--border);border-radius:6px;margin:4px;background:#fafafa}
-/* CHIP */
-.chip{display:inline-flex;align-items:center;height:20px;border-radius:3px;padding:0 6px;font-size:.67rem;font-weight:600;white-space:nowrap}
-.c-ok{background:var(--success-bg);color:var(--success-dark)}.c-info{background:var(--info-bg);color:var(--info-dark)}.c-warn{background:#fef3c7;color:#b45309}.c-danger{background:#fee2e2;color:#b91c1c}.c-purple{background:#f3e8ff;color:#7c3aed}
+.empty-res-bar{flex-shrink:0;padding:8px 12px;border-top:1px solid var(--border)}
+.empty-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.empty-panel{pointer-events:auto;background:#fafafa;border:1px dashed #e2e8f0;border-radius:8px;padding:24px 32px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;color:#94a3b8;font-size:.85rem}
+.drag-ghost{position:fixed;display:none;border:2px dashed var(--info);background:rgba(59,130,246,.08);border-radius:5px;pointer-events:none;z-index:100}
 /* TOOLTIP */
-.tooltip{position:fixed;background:#1e293b;color:#f8fafc;border-radius:8px;padding:10px 13px;font-size:.75rem;width:220px;pointer-events:none;z-index:200;box-shadow:0 4px 14px rgba(0,0,0,.2);line-height:1.5}
-.tooltip::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #1e293b}
+.tooltip{position:fixed;background:#1e293b;color:#f8fafc;border-radius:8px;padding:10px 12px;font-size:.75rem;width:220px;pointer-events:none;z-index:200;line-height:1.5}
 .tt-hidden{display:none}
+.tooltip.side-below::after{content:'';position:absolute;top:-6px;left:14px;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:6px solid #1e293b}
+.tooltip.side-above::after{content:'';position:absolute;bottom:-6px;left:14px;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #1e293b}
+.tooltip.side-right::after{content:'';position:absolute;left:-6px;top:14px;border-top:6px solid transparent;border-bottom:6px solid transparent;border-right:6px solid #1e293b}
+.tooltip.side-left::after{content:'';position:absolute;right:-6px;top:14px;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:6px solid #1e293b}
 /* DRAWER */
 .drawer{position:absolute;right:0;top:0;bottom:0;width:400px;background:#fff;border-left:1px solid var(--border);box-shadow:-4px 0 16px rgba(0,0,0,.08);display:flex;flex-direction:column;z-index:40;transform:translateX(100%);transition:transform 240ms ease}
 .drawer.open{transform:translateX(0)}
@@ -114,40 +125,31 @@ select{font:inherit}
 .x-btn{background:none;border:none;cursor:pointer;color:var(--text-secondary);padding:3px;border-radius:4px;line-height:1;flex-shrink:0}
 .x-btn:hover{background:var(--bg-default)}
 .drw-body{flex:1;overflow-y:auto;padding:16px}
-.drw-foot{padding:11px 16px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end;flex-shrink:0}
-/* DETAIL GRID */
+.drw-foot{padding:11px 16px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end;flex-shrink:0;flex-wrap:wrap}
 .det-grid{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:12px}
-.det-row{display:grid;grid-template-columns:110px 1fr;border-bottom:1px solid var(--border)}
+.det-row{display:grid;grid-template-columns:120px 1fr;border-bottom:1px solid var(--border)}
 .det-row:last-child{border-bottom:none}
 .det-l{padding:8px 11px;font-size:.7rem;font-weight:600;color:var(--text-secondary);background:var(--bg-default)}
 .det-r{padding:8px 11px;font-size:.82rem;color:var(--text-primary)}
 .det-r.bal{font-weight:700;color:var(--info-dark)}
-/* PARTICIPANTS */
 .px-section{margin-top:12px}
 .sec-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);margin-bottom:7px}
-.px-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:6px}
+.px-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:6px;flex-wrap:wrap}
 .px-av{width:26px;height:26px;border-radius:50%;background:var(--info);color:#fff;display:grid;place-items:center;font-size:.65rem;font-weight:700;flex-shrink:0}
 .px-nm{font-size:.82rem;font-weight:700;flex:1}
-/* WAITLIST */
 .wl-section{margin-top:12px}
 .wl-note{font-size:.72rem;color:var(--text-secondary);font-style:italic;margin-bottom:7px}
-.wl-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:5px}
+.wl-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:5px;flex-wrap:wrap}
 .wl-pos{width:22px;height:22px;border-radius:50%;background:var(--info-bg);display:grid;place-items:center;font-size:.68rem;font-weight:700;color:var(--info-dark);flex-shrink:0}
 .wl-nm{font-size:.82rem;font-weight:700;flex:1}
-/* INLINE CONFIRM */
-.inline-confirm{background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:12px;margin-top:10px}
-.inline-confirm p{font-size:.82rem;font-weight:600;color:#b91c1c;margin-bottom:10px}
-/* PAX SEARCH */
 .px-search-wrap{margin-top:8px}
 .s-input{width:100%;border:1px solid var(--border-input);border-radius:6px;padding:7px 10px;font-size:.82rem;background:#fff;outline:none}
-.s-input:focus{border-color:var(--info);outline:2px solid rgba(59,130,246,.2);outline-offset:1px}
+.s-input:focus{border-color:var(--info)}
 .px-dd{border:1px solid var(--border-input);border-radius:7px;overflow:hidden;margin-top:4px}
-.px-res{display:flex;align-items:center;justify-content:space-between;padding:8px 11px;cursor:pointer;border-bottom:1px solid var(--border);font-size:.82rem;transition:background 100ms}
+.px-res{display:flex;align-items:center;justify-content:space-between;padding:8px 11px;cursor:pointer;border-bottom:1px solid var(--border);font-size:.82rem}
 .px-res:last-child{border-bottom:none}.px-res:hover{background:var(--bg-default)}
-/* TENTATIVE NOTICE */
 .tent-notice{background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:12px;margin-top:10px;font-size:.8rem;color:#92400e}
 .tent-notice strong{display:block;margin-bottom:3px}
-/* NEW PANELS */
 .panel-amber{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:16px;margin-top:10px}
 .panel-amber h4{font-size:.8rem;font-weight:700;margin-bottom:8px;letter-spacing:.03em;color:var(--text-primary)}
 .panel-green{background:var(--success-bg);border:1px solid #a7f3d0;border-radius:8px;padding:16px;margin-top:10px;font-size:.82rem;color:var(--text-primary)}
@@ -161,141 +163,138 @@ select{font:inherit}
 .radio-row{display:flex;align-items:center;gap:6px;font-size:.82rem;margin-bottom:4px;font-weight:400}
 .policy-list{margin:6px 0 0 18px;font-size:.8rem;line-height:1.5}
 .textarea{width:100%;border:1px solid var(--border-input);border-radius:6px;padding:7px 10px;font-size:.82rem;min-height:56px;font-family:inherit;resize:vertical}
-.c-muted{background:#f1f5f9;color:var(--text-secondary)}
-.date-input{height:36px;padding:6px 10px;font-size:.8rem;border:1px solid var(--border-input);border-radius:6px;background:#fff;outline:none}
-.date-input:focus{border-color:var(--info)}
-.role-sel{border:none;background:transparent;font-weight:700;font-size:.825rem;color:var(--text-secondary);cursor:pointer;outline:none}
 </style>
 </head>
-<body>
+<body class="density-compact">
 <div class="app">
   <script src="shared-sidebar.js" data-inject="true"></script>
-
-<div class="main-shell">
-  <div class="topbar">
-    <div class="loc-pill"><span class="ms" style="font-size:15px">location_on</span>Solar Swim (PDT)</div>
-    <div class="loc-pill">Role:
-      <select class="role-sel" id="roleSel" onchange="setRole(this.value)">
-        <option value="staff">Staff</option>
-        <option value="manager">Manager</option>
-      </select>
-    </div>
-  </div>
-  <div class="main-area">
-    <!-- PAGE HEADER -->
-    <div class="page-hd">
-      <div class="page-hd-l">
-        <div class="breadcrumb">Scheduling / Calendar</div>
-        <h1 class="page-title">Calendar</h1>
-        <div class="page-sub" id="pageSub">Thu Sep 3, 2026 / Solar Swim</div>
-      </div>
-      <div class="page-hd-r">
-        <button class="btn btn-out btn-sm" data-noop>Cancellations</button>
-        <button class="btn btn-blue btn-sm" onclick="location.href='booking-flow.html'"><span class="ms" style="font-size:15px">add</span> Book</button>
+  <div class="main-shell">
+    <div class="topbar">
+      <div class="loc-pill"><span class="ms" style="font-size:15px">location_on</span>Solar Swim (PDT)</div>
+      <div class="loc-pill">Role:
+        <select class="role-sel" id="roleSel" onchange="setRole(this.value)">
+          <option value="staff">Staff</option>
+          <option value="manager">Manager</option>
+        </select>
       </div>
     </div>
+    <div class="main-area">
+      <div class="page-hd">
+        <div>
+          <div class="breadcrumb">Scheduling / Calendar</div>
+          <h1 class="page-title">Calendar</h1>
+          <div class="page-sub" id="pageSub"></div>
+        </div>
+        <div class="page-hd-r">
+          <button class="btn btn-blue btn-sm" onclick="location.href='booking-flow.html'"><span class="ms" style="font-size:15px">add</span> Book</button>
+          <button class="btn btn-out btn-sm" onclick="location.href='master-schedule-staff.html'">Master Schedule <span class="ms" style="font-size:15px">arrow_forward</span></button>
+        </div>
+      </div>
 
-    <!-- FILTER BAR -->
-    <div class="filter-bar">
-      <div class="date-nav">
-        <button class="btn btn-out btn-sm" id="prevDay" onclick="navDay(-1)">&#8592; Prev</button>
-        <span class="date-lbl" id="dateLbl">Thu Sep 3</span>
-        <button class="btn btn-out btn-sm" id="nextDay" onclick="navDay(1)">Next &#8594;</button>
-      </div>
-      <div>
-        <div style="font-size:.68rem;font-weight:600;color:var(--text-secondary);margin-bottom:2px">Jump to date</div>
-        <input type="date" class="date-input" id="datePicker" onchange="onDatePicker(this.value)">
-      </div>
-      <button class="btn btn-out btn-sm" onclick="goToday()">Today</button>
-      <div class="sep"></div>
-      <select id="fLoc" onchange="applyFilters()"><option>All Locations</option><option>Solar Swim — Main</option><option>Solar Swim — North Annex</option></select>
-      <select id="fSvc" onchange="applyFilters()"><option>All Services</option><option>Swim</option><option>Basketball</option><option>Group Fitness</option></select>
-      <select id="fLvl" onchange="applyFilters()"><option>All Levels</option><option>Beginner 1</option><option>Beginner 2</option><option>Unassigned</option></select>
-      <select id="fStat" onchange="applyFilters()"><option>All Statuses</option><option>Confirmed</option><option>Pending Partner</option><option>Waitlisted</option><option>Authorization Hold</option><option>Payment Hold</option><option>Cancelled (Early)</option><option>Cancelled (Late)</option><option>No-Show</option><option>Completed</option></select>
-      <select id="fStaff" onchange="applyFilters()"><option>All Staff</option><option>Anthony Lee</option><option>Cory Davis</option><option>Derek Cole</option><option>Emma Cole</option><option>James Wright</option><option>Luke Dean</option><option>Michael Torres</option><option>Naya Fox</option><option>Priya Nair</option><option>Sarah Chen</option><option>Shaquem Hill</option><option>Tina Wu</option></select>
-      <div class="sep"></div>
-      <div class="legend">
-        <div class="leg-item"><div class="leg-dot" style="background:#3b82f6"></div>Confirmed</div>
-        <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div>Tentative</div>
-        <div class="leg-item"><div class="leg-dot" style="background:#7c3aed"></div>Semi</div>
-        <div class="leg-item"><div class="leg-dot" style="background:#94a3b8"></div>Break</div>
-      </div>
-    </div>
-
-    <!-- CALENDAR -->
-    <div class="cal-wrap">
-      <div class="cal-scroll" id="calScroll">
-        <table class="cal-table" id="calTable"></table>
-      </div>
-      <!-- DRAWER -->
-      <div class="drawer" id="drawer">
-        <div class="drw-hd">
-          <div class="drw-hd-top">
-            <div>
-              <div class="drw-tag">Booking Detail</div>
-              <div class="drw-nm" id="drwNm">Maria Garcia</div>
-              <div class="drw-dt" id="drwDt">Mon Sep 14 / 12:30 – 1:55 PM</div>
-              <span class="chip c-ok" id="drwStatus">Confirmed</span>
+      <div class="filter-bar">
+        <div class="f-row">
+          <div class="date-nav">
+            <button class="btn btn-out btn-sm" onclick="navDay(-1)" aria-label="Previous day">&#8592;</button>
+            <span class="date-lbl" id="dateLbl"></span>
+            <button class="btn btn-out btn-sm" onclick="navDay(1)" aria-label="Next day">&#8594;</button>
+          </div>
+          <button class="btn btn-out btn-sm" onclick="goToday()">Today</button>
+          <div class="jump-wrap">
+            <label class="jump-lbl" for="datePicker">Jump to date</label>
+            <input type="date" class="date-input" id="datePicker" onchange="onDatePicker(this.value)">
+          </div>
+          <div class="right-slot">
+            <div class="seg-track" role="group" aria-label="Density">
+              <button type="button" class="seg-btn" id="segCompact" onclick="setDensity('compact')">Compact</button>
+              <button type="button" class="seg-btn" id="segComfortable" onclick="setDensity('comfortable')">Comfortable</button>
             </div>
-            <button class="x-btn" onclick="closeDrawer()"><span class="ms">close</span></button>
+            <span id="conflictChipSlot"></span>
           </div>
         </div>
-        <div class="drw-body" id="drwBody"></div>
-        <div class="drw-foot" id="drwFoot"></div>
+        <div class="f-row">
+          <select id="fLoc" onchange="setFilter('location',this.value)"><option>All Locations</option><option>Solar Swim — Main</option><option>Solar Swim — North Annex</option></select>
+          <select id="fSvc" onchange="setFilter('service',this.value)"><option>All Services</option><option>Swim</option><option>Basketball</option><option>Group Fitness</option></select>
+          <select id="fLvl" onchange="setFilter('level',this.value)"><option>All Levels</option><option>Beginner 1</option><option>Beginner 2</option><option>Unassigned</option></select>
+          <select id="fStat" onchange="setFilter('status',this.value)"><option>All Statuses</option><option>Confirmed</option><option>Pending Partner</option><option>Waitlisted</option><option>Authorization Hold</option><option>Payment Hold</option><option>Cancelled (Early)</option><option>Cancelled (Late)</option><option>No-Show</option><option>Completed</option></select>
+          <select id="fStaff" onchange="setFilter('staff',this.value)"><option>All Staff</option><option>Anthony Lee</option><option>Cory Davis</option><option>Derek Cole</option><option>Emma Cole</option><option>James Wright</option><option>Luke Dean</option><option>Michael Torres</option><option>Naya Fox</option><option>Priya Nair</option><option>Sarah Chen</option><option>Shaquem Hill</option><option>Tina Wu</option></select>
+        </div>
+        <div class="chip-row" id="chipRow"></div>
+      </div>
+
+      <div class="cal-wrap" id="calWrap">
+        <div class="cal-scroll" id="calScroll"></div>
+        <div class="empty-res-bar" id="emptyResBar"></div>
+        <div class="drawer" id="drawer">
+          <div class="drw-hd">
+            <div class="drw-hd-top">
+              <div>
+                <div class="drw-tag">Booking Detail</div>
+                <div class="drw-nm" id="drwNm"></div>
+                <div class="drw-dt" id="drwDt"></div>
+                <span class="chip c-info" id="drwStatus"></span>
+              </div>
+              <button class="x-btn" onclick="closeDrawer()" aria-label="Close"><span class="ms">close</span></button>
+            </div>
+          </div>
+          <div class="drw-body" id="drwBody"></div>
+          <div class="drw-foot" id="drwFoot"></div>
+        </div>
       </div>
     </div>
   </div>
 </div>
-</div>
-
-<!-- TOOLTIP -->
 <div class="tooltip tt-hidden" id="tooltip"></div>
+<div class="drag-ghost" id="dragGhost"></div>
 
 <script>
-// ─── DATA ─────────────────────────────────────────────────────────────────────
+// ─── CONSTANTS (data model) ─────────────────────────────────────────────────
+const LOCATION_HOURS={Main:{open:360,close:1200},'North Annex':{open:480,close:1080}}; // minutes from midnight; never hardcode window bounds from these except here
 const COACH_ORDER=['Michael Torres','Sarah Chen','James Wright','Anthony Lee','Shaquem Hill','Tina Wu','Derek Cole','Priya Nair','Cory Davis','Naya Fox','Luke Dean','Emma Cole'];
-const COACH_LOCATION={'Naya Fox':'North Annex','Luke Dean':'North Annex'}; // all others default Main
-const COACH_SERVICES={'Michael Torres':['Swim','Basketball'],'Sarah Chen':['Swim'],'James Wright':['Swim'],'Anthony Lee':['Swim'],'Shaquem Hill':['Swim'],'Tina Wu':['Group Fitness'],'Derek Cole':['Basketball'],'Priya Nair':['Swim'],'Cory Davis':['Group Fitness'],'Naya Fox':['Swim'],'Luke Dean':['Swim'],'Emma Cole':['Swim']};
-const TIMES_RANGE_FIXED=['6:00 AM','6:30 AM','7:00 AM','7:30 AM','8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','12:00 PM','12:30 PM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM','5:00 PM','5:30 PM','6:00 PM','6:30 PM','7:00 PM','7:30 PM','8:00 PM'];
-const REQUIRED_PARTICIPANTS=2; // D4 — Required Participants setting, default 2
+const COACH_LOCATION={'Naya Fox':'North Annex','Luke Dean':'North Annex'};
+const COACH_SERVICES={'Michael Torres':['Swim','Basketball'],'Sarah Chen':['Swim'],'James Wright':['Swim'],'Anthony Lee':['Swim'],'Shaquem Hill':['Swim','Basketball'],'Tina Wu':['Group Fitness'],'Derek Cole':['Basketball'],'Priya Nair':['Swim'],'Cory Davis':['Group Fitness'],'Naya Fox':['Swim'],'Luke Dean':['Swim'],'Emma Cole':['Swim']};
+const REQUIRED_PARTICIPANTS=2;
 const MANAGER_NAME='Dana Brooks';
 const VIOLATION_THRESHOLD=4;
 const CLIENT_VIOLATIONS={'Carlos Garcia':4};
-const FIXED_NOW=new Date(2026,8,3,10,0); // Thu Sep 3, 2026, 10:00 AM — fixed clock (§3.3)
+const FIXED_NOW=new Date(2026,8,3,10,0);
+const FIXED_NOW_MIN=600;
+const DRAGGABLE_STATUSES=['CONFIRMED','PENDING_PARTNER','AUTHORIZATION_HOLD','PAYMENT_HOLD'];
 const PLAIN_LINE={CONFIRMED:'Booked. A session is reserved.',PENDING_PARTNER:'Waiting for a second participant.',WAITLISTED:'Full. New seat goes through the waitlist below.',AUTHORIZATION_HOLD:'Waiting on Regional Center authorization.',PAYMENT_HOLD:'Waiting on payment.',CANCELLED_EARLY:'Cancelled in time. Session returned.',CANCELLED_LATE:'Cancelled late. Session used.',NO_SHOW:'Did not attend. Session used.',COMPLETED:'Attended.',TENTATIVE:'Shown from a recurring schedule. Not reserved.'};
 const STATUS_CLASS={CONFIRMED:'b-confirmed',TENTATIVE:'b-tentative',PENDING_PARTNER:'b-semi-pending',WAITLISTED:'b-waitlisted',AUTHORIZATION_HOLD:'b-authhold',PAYMENT_HOLD:'b-paymenthold',CANCELLED_EARLY:'b-cancel-early',CANCELLED_LATE:'b-cancel-late',NO_SHOW:'b-noshow',COMPLETED:'b-completed',BREAK:'b-break',UNAVAILABLE:'b-unavailable'};
 const STATUS_FILTER_MAP={'Confirmed':'CONFIRMED','Pending Partner':'PENDING_PARTNER','Waitlisted':'WAITLISTED','Authorization Hold':'AUTHORIZATION_HOLD','Payment Hold':'PAYMENT_HOLD','Cancelled (Early)':'CANCELLED_EARLY','Cancelled (Late)':'CANCELLED_LATE','No-Show':'NO_SHOW','Completed':'COMPLETED'};
+const CHIP_META={CONFIRMED:['Confirmed','c-info'],PENDING_PARTNER:['Pending Partner','c-purple'],WAITLISTED:['Waitlisted','c-info'],AUTHORIZATION_HOLD:['Authorization Hold','c-warn'],PAYMENT_HOLD:['Payment Hold','c-danger'],CANCELLED_EARLY:['Cancelled — Early','c-ok'],CANCELLED_LATE:['Cancelled — Late','c-danger'],NO_SHOW:['No-Show','c-danger'],COMPLETED:['Completed','c-muted'],TENTATIVE:['Tentative','c-warn']};
 const DATE_META={
   '2026-09-02':{label:'Wed Sep 2, 2026',short:'Wed Sep 2'},
   '2026-09-03':{label:'Thu Sep 3, 2026',short:'Thu Sep 3'},
-  '2026-09-04':{label:'Fri Sep 4, 2026',short:'Fri Sep 4'}
+  '2026-09-04':{label:'Fri Sep 4, 2026',short:'Fri Sep 4'},
+  '2026-09-05':{label:'Sat Sep 5, 2026',short:'Sat Sep 5'}
 };
-const CLIENT_POOL=['Zoe Martin','Jayden Cole','Emma Rivera','Noah Kim','Ava Patel','Mason Diaz','Ella Brooks','Devon Park','Liam Turner','Priya Malhotra','Maria Garcia','Grace Shah','Jordan Kim','Carlos Garcia','Ava Smith','Ethan Wells','Lucas Brown','Devon Ross'];
+const CLIENT_POOL=['Zoe Martin','Jayden Cole','Emma Rivera','Noah Kim','Ava Patel','Mason Diaz','Ella Brooks','Devon Park','Liam Turner','Priya Malhotra','Maria Garcia','Grace Shah','Jordan Kim','Carlos Garcia','Ava Smith','Ethan Wells','Lucas Brown','Devon Ross','Owen Hale','Isaac Vance','Nora Adams','Theo Ruiz','Mila Okafor'];
 
-// Each booking: id, coach, dateISO, startSlot(0=6:00AM,30-min units), dur(30-min units), status, service, level, client, isGroup, cap, filled, requiredParticipants, funding, balance, plus type-specific extras.
+// Each booking: id, coach, dateISO, startMin, durMin, status, service, level, client, isGroup, cap, filled, requiredParticipants, funding, balance.
 const ALL_BOOKINGS=[
   // ── Wed Sep 2, 2026 — past (resolved history) ──
-  {id:'b1',coach:'Naya Fox',dateISO:'2026-09-02',startSlot:4,dur:2,status:'COMPLETED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:6,funding:'Various',balance:'Varies per participant'},
-  {id:'b2',coach:'Michael Torres',dateISO:'2026-09-02',startSlot:9,dur:2,status:'COMPLETED',service:'Private Swim B2',level:'Beginner 2',client:'Maria Garcia',funding:'Regional Center',balance:'Balance: 6 / 8 sessions',resolvedNote:"Resolved occurrence of Maria's Wed/Fri recurring subscription (§3.4)."},
-  {id:'b3',coach:'Sarah Chen',dateISO:'2026-09-02',startSlot:8,dur:3,status:'COMPLETED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:8,funding:'Various',balance:'Varies per participant',participants:[{name:'Devon Park',funding:'Self Pay',attendance:'NO_SHOW'}],participantsNote:'5 additional participants — Attended (roster not itemized in seed data). Devon Park is tracked individually as a No-Show — the block stays COMPLETED at the block level (§3.2).'},
-  {id:'b4',coach:'James Wright',dateISO:'2026-09-02',startSlot:10,dur:2,status:'CANCELLED_LATE',service:'Semi-Private Swim',level:'Beginner 2',client:'Lucas Brown',requiredParticipants:REQUIRED_PARTICIPANTS,funding:'Self Pay',balance:'Balance: 4 / 6 sessions'},
-  {id:'b5',coach:'Anthony Lee',dateISO:'2026-09-02',startSlot:14,dur:2,status:'NO_SHOW',service:'Private Swim',level:'Beginner 2',client:'Jordan Kim',funding:'Regional Center',balance:'Balance: 3 / 6 sessions'},
-  {id:'b6',coach:'Michael Torres',dateISO:'2026-09-02',startSlot:16,dur:2,status:'CANCELLED_LATE',service:'Basketball',level:null,client:'Carlos Garcia',funding:'Self Pay',balance:'Balance: 1 / 4 sessions',resolvedNote:"This is Carlos's 4th consecutive late cancellation/no-show, crossing the configured threshold of 4 (§3.9)."},
-  {id:'b7',coach:'Sarah Chen',dateISO:'2026-09-02',startSlot:18,dur:1,status:'CANCELLED_EARLY',service:'Private Swim',level:'Beginner 2',client:'Ava Smith',funding:'Self Pay',balance:'Balance: 5 / 8 sessions',makeupToken:'AS-3381',resolvedNote:'Make-up token AS-3381 issued.'},
-  {id:'b8',coach:'Luke Dean',dateISO:'2026-09-02',startSlot:18,dur:1,status:'COMPLETED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:5,funding:'Various',balance:'Varies per participant'},
+  {id:'b1',coach:'Naya Fox',dateISO:'2026-09-02',startMin:480,durMin:60,status:'COMPLETED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:6,funding:'Various',balance:'Varies per participant'},
+  {id:'b2',coach:'Michael Torres',dateISO:'2026-09-02',startMin:630,durMin:60,status:'COMPLETED',service:'Private Swim B2',level:'Beginner 2',client:'Maria Garcia',funding:'Regional Center',balance:'Balance: 6 / 8 sessions',resolvedNote:"Resolved occurrence of Maria's Wed/Fri recurring subscription (§3.4)."},
+  {id:'b3',coach:'Sarah Chen',dateISO:'2026-09-02',startMin:600,durMin:90,status:'COMPLETED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:8,filled:6,funding:'Various',balance:'Varies per participant',participants:[{name:'Devon Park',funding:'Self Pay',attendance:'NO_SHOW'}],participantsNote:'5 additional participants — Attended (roster not itemized in seed data). Devon Park is tracked individually as a No-Show — the block stays COMPLETED at the block level (§3.2).'},
+  {id:'b4',coach:'James Wright',dateISO:'2026-09-02',startMin:660,durMin:60,status:'CANCELLED_LATE',service:'Semi-Private Swim',level:'Beginner 2',client:'Lucas Brown',requiredParticipants:REQUIRED_PARTICIPANTS,funding:'Self Pay',balance:'Balance: 4 / 6 sessions'},
+  {id:'b5',coach:'Anthony Lee',dateISO:'2026-09-02',startMin:780,durMin:60,status:'NO_SHOW',service:'Private Swim',level:'Beginner 2',client:'Jordan Kim',funding:'Regional Center',balance:'Balance: 3 / 6 sessions'},
+  {id:'b6',coach:'Michael Torres',dateISO:'2026-09-02',startMin:840,durMin:60,status:'CANCELLED_LATE',service:'Basketball',level:null,client:'Carlos Garcia',funding:'Self Pay',balance:'Balance: 1 / 4 sessions',resolvedNote:"This is Carlos's 4th consecutive late cancellation/no-show, crossing the configured threshold of 4 (§3.9)."},
+  {id:'b7',coach:'Sarah Chen',dateISO:'2026-09-02',startMin:900,durMin:30,status:'CANCELLED_EARLY',service:'Private Swim',level:'Beginner 2',client:'Ava Smith',funding:'Self Pay',balance:'Balance: 5 / 8 sessions',makeupToken:'AS-3381',resolvedNote:'Make-up token AS-3381 issued.'},
+  {id:'b8',coach:'Luke Dean',dateISO:'2026-09-02',startMin:900,durMin:30,status:'COMPLETED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:5,funding:'Various',balance:'Varies per participant'},
 
   // ── Thu Sep 3, 2026 — "today" ──
-  {id:'b9',coach:'Michael Torres',dateISO:'2026-09-03',startSlot:4,dur:1,status:'CANCELLED_EARLY',service:'Private Swim B2',level:'Beginner 2',client:'Ethan Wells',funding:'Self Pay',balance:'Balance: 4 / 8 sessions',makeupToken:'EW-1187',resolvedNote:'Cancelled 2 days prior — outside the 24-hour window. Make-up token EW-1187 issued.'},
-  {id:'b10',coach:'Sarah Chen',dateISO:'2026-09-03',startSlot:6,dur:3,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:8,filled:5,funding:'Various',balance:'Varies per participant'},
-  {id:'b11',coach:'Michael Torres',dateISO:'2026-09-03',startSlot:8,dur:1,status:'BREAK',durationMinutes:30},
-  {id:'b12',coach:'James Wright',dateISO:'2026-09-03',startSlot:10,dur:2,status:'PENDING_PARTNER',service:'Semi-Private Swim',level:'Beginner 2',client:'Lucas Brown',requiredParticipants:REQUIRED_PARTICIPANTS,filled:1,funding:'Self Pay',balance:'Balance: 4 / 6 sessions'},
-  {id:'b13',coach:'Emma Cole',dateISO:'2026-09-03',startSlot:11,dur:1,status:'CONFIRMED',service:'Private Swim B1',level:'Beginner 1',client:'Grace Shah',funding:'Self Pay',balance:'Balance: 7 / 10 sessions'},
-  {id:'b14',coach:'Anthony Lee',dateISO:'2026-09-03',startSlot:14,dur:2,status:'AUTHORIZATION_HOLD',service:'Private Swim',level:'Beginner 2',client:'Jordan Kim',funding:'Regional Center',balance:'Balance: 3 / 6 sessions'},
-  {id:'b15',coach:'Michael Torres',dateISO:'2026-09-03',startSlot:16,dur:2,status:'CONFIRMED',service:'Basketball',level:null,client:'Carlos Garcia',funding:'Self Pay',balance:'Balance: 1 / 4 sessions'},
-  {id:'b16',coach:'Priya Nair',dateISO:'2026-09-03',startSlot:17,dur:1,status:'UNAVAILABLE',reason:'Off-site training'},
-  {id:'b17',coach:'Sarah Chen',dateISO:'2026-09-03',startSlot:18,dur:1,status:'BREAK',durationMinutes:30},
-  {id:'b18',coach:'Cory Davis',dateISO:'2026-09-03',startSlot:19,dur:2,status:'PAYMENT_HOLD',service:'Group Fitness',level:null,client:'Devon Ross',funding:'Self Pay',balance:'Balance: 6 / 10 sessions'},
-  {id:'b19',coach:'James Wright',dateISO:'2026-09-03',startSlot:20,dur:2,status:'WAITLISTED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,funding:'Various',balance:'Varies per participant',
+  {id:'b9',coach:'Michael Torres',dateISO:'2026-09-03',startMin:480,durMin:30,status:'CANCELLED_EARLY',service:'Private Swim B2',level:'Beginner 2',client:'Ethan Wells',funding:'Self Pay',balance:'Balance: 4 / 8 sessions',makeupToken:'EW-1187',resolvedNote:'Cancelled 2 days prior — outside the 24-hour window. Make-up token EW-1187 issued.'},
+  {id:'b10',coach:'Sarah Chen',dateISO:'2026-09-03',startMin:540,durMin:90,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:8,filled:5,funding:'Various',balance:'Varies per participant'},
+  {id:'b11',coach:'Michael Torres',dateISO:'2026-09-03',startMin:600,durMin:30,status:'BREAK'},
+  {id:'b12',coach:'James Wright',dateISO:'2026-09-03',startMin:660,durMin:60,status:'PENDING_PARTNER',service:'Semi-Private Swim',level:'Beginner 2',client:'Lucas Brown',requiredParticipants:REQUIRED_PARTICIPANTS,filled:1,funding:'Self Pay',balance:'Balance: 4 / 6 sessions'},
+  {id:'b13',coach:'Emma Cole',dateISO:'2026-09-03',startMin:690,durMin:30,status:'CONFIRMED',service:'Private Swim B1',level:'Beginner 1',client:'Grace Shah',funding:'Self Pay',balance:'Balance: 7 / 10 sessions'},
+  {id:'b14',coach:'Anthony Lee',dateISO:'2026-09-03',startMin:780,durMin:60,status:'AUTHORIZATION_HOLD',service:'Private Swim',level:'Beginner 2',client:'Jordan Kim',funding:'Regional Center',balance:'Balance: 3 / 6 sessions'},
+  {id:'b15',coach:'Michael Torres',dateISO:'2026-09-03',startMin:840,durMin:60,status:'CONFIRMED',service:'Basketball',level:null,client:'Carlos Garcia',funding:'Self Pay',balance:'Balance: 1 / 4 sessions'},
+  {id:'b16',coach:'Priya Nair',dateISO:'2026-09-03',startMin:870,durMin:30,status:'UNAVAILABLE',reason:'Off-site training'},
+  {id:'b17',coach:'Sarah Chen',dateISO:'2026-09-03',startMin:900,durMin:30,status:'BREAK'},
+  {id:'b18',coach:'Cory Davis',dateISO:'2026-09-03',startMin:930,durMin:60,status:'PAYMENT_HOLD',service:'Group Fitness',level:null,client:'Devon Ross',funding:'Self Pay',balance:'Balance: 6 / 10 sessions'},
+  {id:'b19',coach:'James Wright',dateISO:'2026-09-03',startMin:960,durMin:60,status:'WAITLISTED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,funding:'Various',balance:'Varies per participant',
     participants:[
       {name:'Zoe Martin',funding:'Self Pay',attendance:'NOT_MARKED'},
       {name:'Jayden Cole',funding:'Voucher',attendance:'NOT_MARKED'},
@@ -312,41 +311,64 @@ const ALL_BOOKINGS=[
     ],
     seatOpen:{time:'9:04 AM, Sep 3'}
   },
-  {id:'b20',coach:'Anthony Lee',dateISO:'2026-09-03',startSlot:20,dur:2,status:'CONFIRMED',service:'Private Swim',level:'Beginner 2',client:'Ava Smith',funding:'Voucher',balance:'Balance: 5 / 8 sessions'},
-  {id:'b21',coach:'Tina Wu',dateISO:'2026-09-03',startSlot:22,dur:2,status:'CONFIRMED',service:'Group Fitness',level:null,isGroup:true,cap:12,filled:12,funding:'Various',balance:'Varies per participant'},
-  {id:'b22',coach:'Naya Fox',dateISO:'2026-09-03',startSlot:15,dur:2,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:4,funding:'Various',balance:'Varies per participant'},
-  {id:'b23',coach:'Luke Dean',dateISO:'2026-09-03',startSlot:18,dur:1,status:'BREAK',durationMinutes:30},
+  {id:'b20',coach:'Anthony Lee',dateISO:'2026-09-03',startMin:960,durMin:60,status:'CONFIRMED',service:'Private Swim',level:'Beginner 2',client:'Ava Smith',funding:'Voucher',balance:'Balance: 5 / 8 sessions'},
+  {id:'b21',coach:'Tina Wu',dateISO:'2026-09-03',startMin:1020,durMin:60,status:'CONFIRMED',service:'Group Fitness',level:null,isGroup:true,cap:12,filled:12,funding:'Various',balance:'Varies per participant'},
+  {id:'b22',coach:'Naya Fox',dateISO:'2026-09-03',startMin:810,durMin:60,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:4,funding:'Various',balance:'Varies per participant'},
+  {id:'b23',coach:'Luke Dean',dateISO:'2026-09-03',startMin:900,durMin:30,status:'BREAK'},
+  {id:'b24',coach:'Michael Torres',dateISO:'2026-09-03',startMin:615,durMin:45,status:'CONFIRMED',service:'Private Swim B2',level:'Beginner 2',client:'Owen Hale',funding:'Self Pay',balance:'Balance: 6 / 8 sessions',resolvedNote:"Overlaps Torres's approved 10:00–10:30 AM Paid Break by 15 minutes — both render as a conflict (§2.11)."},
+  {id:'b25',coach:'Sarah Chen',dateISO:'2026-09-03',startMin:660,durMin:45,status:'CONFIRMED',service:'Private Swim B2',level:'Beginner 2',client:'Isaac Vance',funding:'Self Pay',balance:'Balance: 5 / 8 sessions'},
+  {id:'b26',coach:'Sarah Chen',dateISO:'2026-09-03',startMin:675,durMin:60,status:'CONFIRMED',service:'Semi-Private Swim',level:'Beginner 2',client:'Nora Adams & Theo Ruiz',requiredParticipants:REQUIRED_PARTICIPANTS,filled:2,funding:'Self Pay',balance:'Varies per participant'},
+  {id:'b27',coach:'Shaquem Hill',dateISO:'2026-09-03',startMin:720,durMin:75,status:'CONFIRMED',service:'Basketball',level:null,isGroup:true,cap:10,filled:8,funding:'Various',balance:'Varies per participant'},
+  {id:'b28',coach:'Emma Cole',dateISO:'2026-09-03',startMin:780,durMin:45,status:'BREAK'},
 
   // ── Fri Sep 4, 2026 — future ──
-  {id:'b24',coach:'Sarah Chen',dateISO:'2026-09-04',startSlot:6,dur:3,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:8,filled:4,funding:'Various',balance:'Varies per participant'},
-  {id:'b25',coach:'Michael Torres',dateISO:'2026-09-04',startSlot:8,dur:1,status:'BREAK',durationMinutes:30},
-  {id:'b26',coach:'Michael Torres',dateISO:'2026-09-04',startSlot:9,dur:2,status:'TENTATIVE',service:'Private Swim B2',level:'Beginner 2',client:'Maria Garcia',funding:'Regional Center',balance:'Balance: 6 / 8 sessions'},
-  {id:'b27',coach:'Anthony Lee',dateISO:'2026-09-04',startSlot:10,dur:2,status:'PENDING_PARTNER',service:'Semi-Private Swim',level:'Beginner 2',client:'Ella Brooks',requiredParticipants:REQUIRED_PARTICIPANTS,filled:1,funding:'RCEB',balance:'Balance: 5 / 8 sessions'},
-  {id:'b28',coach:'James Wright',dateISO:'2026-09-04',startSlot:10,dur:2,status:'CONFIRMED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,filled:3,funding:'Various',balance:'Varies per participant'},
-  {id:'b29',coach:'Sarah Chen',dateISO:'2026-09-04',startSlot:13,dur:3,status:'CONFIRMED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,filled:4,funding:'Various',balance:'Varies per participant'},
-  {id:'b30',coach:'Anthony Lee',dateISO:'2026-09-04',startSlot:14,dur:2,status:'CONFIRMED',service:'Private Swim',level:'Beginner 2',client:'Ava Smith',funding:'Self Pay',balance:'Balance: 5 / 8 sessions'},
-  {id:'b31',coach:'Michael Torres',dateISO:'2026-09-04',startSlot:16,dur:2,status:'CONFIRMED',service:'Basketball',level:null,client:'Carlos Garcia',funding:'Self Pay',balance:'Balance: 1 / 4 sessions'},
-  {id:'b32',coach:'Cory Davis',dateISO:'2026-09-04',startSlot:19,dur:2,status:'PAYMENT_HOLD',service:'Group Fitness',level:null,client:'Devon Ross',funding:'Self Pay',balance:'Balance: 6 / 10 sessions'},
-  {id:'b33',coach:'James Wright',dateISO:'2026-09-04',startSlot:20,dur:2,status:'CONFIRMED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,filled:6,funding:'Various',balance:'Varies per participant'},
-  {id:'b34',coach:'Luke Dean',dateISO:'2026-09-04',startSlot:15,dur:2,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:5,funding:'Various',balance:'Varies per participant'},
-  {id:'b35',coach:'Naya Fox',dateISO:'2026-09-04',startSlot:18,dur:1,status:'BREAK',durationMinutes:30}
+  {id:'b29',coach:'Sarah Chen',dateISO:'2026-09-04',startMin:540,durMin:90,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:8,filled:4,funding:'Various',balance:'Varies per participant'},
+  {id:'b30',coach:'Michael Torres',dateISO:'2026-09-04',startMin:600,durMin:30,status:'BREAK'},
+  {id:'b31',coach:'Michael Torres',dateISO:'2026-09-04',startMin:630,durMin:60,status:'TENTATIVE',service:'Private Swim B2',level:'Beginner 2',client:'Maria Garcia',funding:'Regional Center',balance:'Balance: 6 / 8 sessions'},
+  {id:'b32',coach:'Anthony Lee',dateISO:'2026-09-04',startMin:660,durMin:60,status:'PENDING_PARTNER',service:'Semi-Private Swim',level:'Beginner 2',client:'Ella Brooks',requiredParticipants:REQUIRED_PARTICIPANTS,filled:1,funding:'RCEB',balance:'Balance: 5 / 8 sessions'},
+  {id:'b33',coach:'James Wright',dateISO:'2026-09-04',startMin:660,durMin:60,status:'CONFIRMED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,filled:3,funding:'Various',balance:'Varies per participant'},
+  {id:'b34',coach:'Sarah Chen',dateISO:'2026-09-04',startMin:750,durMin:90,status:'CONFIRMED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,filled:4,funding:'Various',balance:'Varies per participant'},
+  {id:'b35',coach:'Anthony Lee',dateISO:'2026-09-04',startMin:780,durMin:60,status:'CONFIRMED',service:'Private Swim',level:'Beginner 2',client:'Ava Smith',funding:'Self Pay',balance:'Balance: 5 / 8 sessions'},
+  {id:'b36',coach:'Michael Torres',dateISO:'2026-09-04',startMin:840,durMin:60,status:'CONFIRMED',service:'Basketball',level:null,client:'Carlos Garcia',funding:'Self Pay',balance:'Balance: 1 / 4 sessions'},
+  {id:'b37',coach:'Cory Davis',dateISO:'2026-09-04',startMin:930,durMin:60,status:'PAYMENT_HOLD',service:'Group Fitness',level:null,client:'Devon Ross',funding:'Self Pay',balance:'Balance: 6 / 10 sessions'},
+  {id:'b38',coach:'James Wright',dateISO:'2026-09-04',startMin:960,durMin:60,status:'CONFIRMED',service:'Swim B2',level:'Beginner 2',isGroup:true,cap:8,filled:6,funding:'Various',balance:'Varies per participant'},
+  {id:'b39',coach:'Luke Dean',dateISO:'2026-09-04',startMin:810,durMin:60,status:'CONFIRMED',service:'Swim B1',level:'Beginner 1',isGroup:true,cap:6,filled:5,funding:'Various',balance:'Varies per participant'},
+  {id:'b40',coach:'Naya Fox',dateISO:'2026-09-04',startMin:900,durMin:30,status:'BREAK'},
+  {id:'b41',coach:'Derek Cole',dateISO:'2026-09-04',startMin:840,durMin:45,status:'CONFIRMED',service:'Private Swim B1',level:'Beginner 1',client:'Mila Okafor',funding:'Self Pay',balance:'Balance: 8 / 10 sessions'},
+  {id:'b42',coach:'Sarah Chen',dateISO:'2026-09-04',startMin:960,durMin:45,status:'CONFIRMED',service:'Private Swim B2',level:'Beginner 2',client:'Isaac Vance',funding:'Self Pay',balance:'Balance: 5 / 8 sessions',resolvedNote:'Recommended drag-to-reschedule demo subject (schedule-grid.md §11).'}
+  // Sat Sep 5, 2026 has no seed rows — the seeded empty date (§10.2, §11).
 ];
 
+// ─── STATE ───────────────────────────────────────────────────────────────────
 const STATE={
-  role:'staff',
+  projection:'day',
+  density:'compact',
   curDate:new Date(2026,8,3),
+  role:'staff',
+  filters:{location:'All Locations',service:'All Services',level:'All Levels',status:'All Statuses',staff:'All Staff'},
+  showEmptyResources:false,
+  expandedEdges:{lead:false,trail:false},
+  conflictsOnly:false,
+  focusedBlockId:null,
   drawerId:null,
-  panel:null, // 'cancel'|'makeup'|'late-summary'|'funding'|'reschedule'|null
+  panel:null,
+  drag:null,
+  pendingFocus:false,
+  lastDateISO:null,
+  lastOpenerId:null,
   paxSearchOpen:null,
   skipFormKey:null,
   grantForm:null,
   fundingForm:null,
   reschedForm:null,
   waitlistMsg:null,
+  pendingMove:null,
   violationResolutions:{}
 };
+let NAV={order:[],byCoach:{}};
+const GEOM={pxPerMin:32/30,winStart:480,winEnd:1080,contentTop:0};
 
-// ─── HELPERS ──────────────────────────────────────────────────────────────────
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
 const WEEKDAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function pad(n){return n<10?'0'+n:''+n;}
@@ -364,13 +386,17 @@ function genToken(name){ const ini=name.split(' ').map(w=>w[0]).join('').toUpper
 function nowStamp(){ return '10:04 AM, Sep 3, 2026'; }
 function ordinal(n){ const s=['th','st','nd','rd']; const v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
 function fundingChip(f){ const map={RCEB:'c-warn',Voucher:'c-info','Self Pay':'c-muted','Regional Center':'c-warn'}; return `<span class="chip ${map[f]||'c-muted'}">${f||'—'}</span>`; }
-function bookingStartDate(b){ const [y,m,d]=b.dateISO.split('-').map(Number); const totalMin=6*60+b.startSlot*30; return new Date(y,m-1,d,Math.floor(totalMin/60),totalMin%60); }
+function fmtTime(min){ let h=Math.floor(min/60), m=((min%60)+60)%60; const ap=h<12||h>=24?'AM':'PM'; let h12=h%12; if(h12===0) h12=12; if(h>=24) h12=12; return `${h12}:${pad(m)} ${ap}`; }
+function unionLocationHours(){ const opens=Object.values(LOCATION_HOURS).map(h=>h.open); const closes=Object.values(LOCATION_HOURS).map(h=>h.close); return {open:Math.min(...opens),close:Math.max(...closes)}; }
+function activeLocationHours(){ const loc=STATE.filters.location; if(loc==='Solar Swim — Main') return LOCATION_HOURS['Main']; if(loc==='Solar Swim — North Annex') return LOCATION_HOURS['North Annex']; return unionLocationHours(); }
+function coachAvailability(coach){ if(COACH_LOCATION[coach]==='North Annex') return {open:480,close:1020}; return {open:480,close:1080}; }
+function bookingStartDate(b){ const [y,m,d]=b.dateISO.split('-').map(Number); return new Date(y,m-1,d,Math.floor(b.startMin/60), b.startMin%60); }
 function cancelCalc(b){ const start=bookingStartDate(b); const diffMs=start-FIXED_NOW; const diffH=diffMs/3600000; const isEarly=diffH>=24; const totalMin=Math.round(diffH*60); const hh=Math.floor(totalMin/60), mm=totalMin%60; const noticeLabel = mm===0?`${hh}h`:`${hh}h ${mm}m`; return {isEarly,noticeLabel}; }
 function ensureParticipants(b){ if(!b.participants){ if(b.isGroup) b.participants=[]; else b.participants=[{name:b.client, funding:b.funding||'—', attendance: b.status==='COMPLETED'?'ATTENDED':b.status==='NO_SHOW'?'NO_SHOW':b.status==='CANCELLED_LATE'?'CANCELLED_LATE':b.status==='CANCELLED_EARLY'?'CANCELLED_EARLY':'NOT_MARKED'}]; } }
 function groupLikeAddable(b){ return !!(b.isGroup || b.requiredParticipants); }
 
 function blockContent(b){
-  if(b.status==='BREAK') return {l1:'Paid Break',l2:`${b.durationMinutes} min`,l3:''};
+  if(b.status==='BREAK') return {l1:'Paid Break',l2:`${b.durMin} min`,l3:''};
   if(b.status==='UNAVAILABLE') return {l1:'Unavailable',l2:b.reason,l3:''};
   if(b.status==='TENTATIVE') return {l1:'Tentative',l2:b.client,l3:b.service};
   let l1=b.service, l2=b.isGroup?`Group (${getFilled(b)} participants)`:b.client, l3='', l3cls='';
@@ -391,105 +417,503 @@ function blockContent(b){
   }
   return {l1,l2,l3,l3cls};
 }
+function ariaLabelFor(b){
+  const subject=b.isGroup?`Group (${getFilled(b)} participants)`:(b.client||'');
+  const line=PLAIN_LINE[b.status]||'';
+  return `${subject}, ${b.service}, ${fmtTime(b.startMin)}–${fmtTime(b.startMin+b.durMin)}, ${line}`;
+}
+function isDimmed(b){
+  const f=STATE.filters;
+  if(b.status==='BREAK'||b.status==='UNAVAILABLE') return f.status!=='All Statuses';
+  if(f.service!=='All Services' && serviceCategory(b.service)!==f.service) return true;
+  if(f.level!=='All Levels' && (b.level||'Unassigned')!==f.level) return true;
+  if(f.status!=='All Statuses' && STATUS_FILTER_MAP[f.status]!==b.status) return true;
+  return false;
+}
+function computeClusters(blocks){
+  const sorted=[...blocks].sort((a,b)=> a.startMin-b.startMin || (b.durMin-a.durMin) || (a.id<b.id?-1:1));
+  const clusters=[]; let cur=[]; let curEnd=-1;
+  sorted.forEach(b=>{
+    if(cur.length===0){ cur=[b]; curEnd=b.startMin+b.durMin; }
+    else if(b.startMin<curEnd){ cur.push(b); curEnd=Math.max(curEnd,b.startMin+b.durMin); }
+    else { clusters.push(cur); cur=[b]; curEnd=b.startMin+b.durMin; }
+  });
+  if(cur.length) clusters.push(cur);
+  return clusters;
+}
+function computeCoachStats(coach, dateBookingsAll){
+  const avail=coachAvailability(coach);
+  const totalMin=avail.close-avail.open;
+  const coachBlocks=dateBookingsAll.filter(b=>b.coach===coach);
+  let bookedMin=0, bookedCount=0;
+  coachBlocks.forEach(b=>{
+    if(['BREAK','UNAVAILABLE','CANCELLED_EARLY','CANCELLED_LATE','NO_SHOW'].includes(b.status)) return;
+    bookedMin+=b.durMin; bookedCount++;
+  });
+  let openSlots=0;
+  for(let t=avail.open;t<avail.close;t+=30){
+    const covered=coachBlocks.some(b=> b.startMin<t+30 && (b.startMin+b.durMin)>t);
+    if(!covered) openSlots++;
+  }
+  const pct=totalMin>0?Math.round((bookedMin/totalMin)*100):0;
+  return {bookedCount,openSlots,pct};
+}
 
-// ─── RENDER ───────────────────────────────────────────────────────────────────
+// ─── RENDER: TOP LEVEL ──────────────────────────────────────────────────────
 function render(){
-  const iso=curISO();
-  const locFilter=document.getElementById('fLoc').value;
-  const svcFilter=document.getElementById('fSvc').value;
-  const lvlFilter=document.getElementById('fLvl').value;
-  const statFilter=document.getElementById('fStat').value;
-  const staffFilter=document.getElementById('fStaff').value;
+  document.body.className='density-'+STATE.density;
+  document.getElementById('segCompact').classList.toggle('active',STATE.density==='compact');
+  document.getElementById('segComfortable').classList.toggle('active',STATE.density==='comfortable');
 
-  const visibleCoaches=COACH_ORDER.filter(c=>{
-    if(locFilter!=='All Locations'){
+  const iso=curISO();
+  const meta=DATE_META[iso];
+  document.getElementById('dateLbl').textContent=meta?meta.short:fmtShort(STATE.curDate);
+  const dp=document.getElementById('datePicker'); if(dp) dp.value=iso;
+
+  const f=STATE.filters;
+  const dateBookingsAll=ALL_BOOKINGS.filter(b=>b.dateISO===iso);
+  const totalBookingsForDay=dateBookingsAll.filter(b=>!['BREAK','UNAVAILABLE'].includes(b.status)).length;
+  document.getElementById('pageSub').textContent=`${meta?meta.label:fmtLong(STATE.curDate)} · ${f.location} · ${totalBookingsForDay} bookings`;
+
+  const candidateCoaches=COACH_ORDER.filter(c=>{
+    if(f.location!=='All Locations'){
       const locName=`Solar Swim — ${COACH_LOCATION[c]||'Main'}`;
-      if(locName!==locFilter) return false;
+      if(locName!==f.location) return false;
     }
-    if(staffFilter!=='All Staff' && c!==staffFilter) return false;
-    if(svcFilter!=='All Services'){
-      if(!COACH_SERVICES[c] || !COACH_SERVICES[c].includes(svcFilter)) return false;
+    if(f.staff!=='All Staff' && c!==f.staff) return false;
+    if(f.service!=='All Services'){
+      if(!COACH_SERVICES[c] || !COACH_SERVICES[c].includes(f.service)) return false;
     }
     return true;
   });
 
-  const dateBookings=ALL_BOOKINGS.filter(b=>b.dateISO===iso);
+  const windowBookings=dateBookingsAll.filter(b=>candidateCoaches.includes(b.coach));
 
-  let hdr='<thead><tr><th class="cal-corner"></th>';
-  visibleCoaches.forEach(c=>{
-    const cnt=dateBookings.filter(b=>b.coach===c&&b.status!=='BREAK'&&b.status!=='UNAVAILABLE').length;
-    hdr+=`<th class="coach-cell"><div class="coach-nm">${c}</div><div class="coach-cnt">${cnt} booking${cnt!==1?'s':''}</div></th>`;
-  });
-  hdr+='</tr></thead>';
+  const clustersByCoach={};
+  candidateCoaches.forEach(c=>{ clustersByCoach[c]=computeClusters(windowBookings.filter(b=>b.coach===c)); });
+  let totalConflictClusters=0;
+  candidateCoaches.forEach(c=>{ totalConflictClusters+=clustersByCoach[c].filter(cl=>cl.length>=2).length; });
+  const conflictCoaches=candidateCoaches.filter(c=>clustersByCoach[c].some(cl=>cl.length>=2));
 
-  const skipUntil={}; visibleCoaches.forEach(c=>skipUntil[c]=0);
-  let body='<tbody>';
-  for(let row=0; row<28; row++){
-    body+=`<tr><td class="time-cell"><span class="time-label">${TIMES_RANGE_FIXED[row]}</span></td>`;
-    visibleCoaches.forEach(coach=>{
-      if(row<skipUntil[coach]) return;
-      const coachBookings=dateBookings.filter(b=>b.coach===coach);
-      if(coachBookings.length===0){
-        if(row===0){
-          body+=`<td class="slot-cell" rowspan="28" style="padding:0"><div class="empty-col" style="height:100%;display:flex;align-items:center;justify-content:center">No bookings today</div></td>`;
-          skipUntil[coach]=28;
-        }
-        return;
+  let displayCoaches=STATE.conflictsOnly?conflictCoaches:candidateCoaches;
+  const withBlocks=displayCoaches.filter(c=>windowBookings.some(b=>b.coach===c));
+  const emptyCoaches=STATE.conflictsOnly?[]:displayCoaches.filter(c=>!windowBookings.some(b=>b.coach===c));
+  const shown=STATE.showEmptyResources?displayCoaches:withBlocks;
+  const orderedShown=COACH_ORDER.filter(c=>shown.includes(c));
+
+  // conflict chip in toolbar
+  const conflictSlot=document.getElementById('conflictChipSlot');
+  if(totalConflictClusters>0){
+    conflictSlot.innerHTML=`<button type="button" class="chip c-danger clickable" onclick="toggleConflictsOnly()">⚠ ${totalConflictClusters} conflict${totalConflictClusters>1?'s':''} today${STATE.conflictsOnly?' ×':''}</button>`;
+  } else { conflictSlot.innerHTML=''; }
+
+  // chip row (active filters + result count)
+  renderChipRow(dateBookingsAll, candidateCoaches);
+
+  const isEmptyDay=dateBookingsAll.length===0;
+  const isFilteredEmpty=!isEmptyDay && windowBookings.length===0;
+
+  const scrollEl=document.getElementById('calScroll');
+  let overlayHtml='';
+  let gridHtml='';
+
+  if(isEmptyDay||isFilteredEmpty){
+    const uh=activeLocationHours();
+    const cols=candidateCoaches.length?candidateCoaches:COACH_ORDER;
+    gridHtml=buildGridHtml(cols,[],uh.open,uh.close,0,0,uh,dateBookingsAll,{});
+    if(isEmptyDay){
+      overlayHtml=`<div class="empty-overlay"><div class="empty-panel"><div>No bookings on ${meta?meta.label:fmtLong(STATE.curDate)}</div><button class="btn btn-out btn-sm" onclick="location.href='booking-flow.html'"><span class="ms" style="font-size:15px">add</span> Book a session</button></div></div>`;
+    } else {
+      overlayHtml=`<div class="empty-overlay"><div class="empty-panel"><div>No bookings match the current filters for ${meta?meta.label:fmtLong(STATE.curDate)}</div><button class="btn btn-out btn-sm" onclick="clearAllFilters()">Clear filters</button></div></div>`;
+    }
+    NAV.order=[]; NAV.byCoach={};
+  } else {
+    const locHours=activeLocationHours();
+    let minStart=Math.min(...windowBookings.map(b=>b.startMin));
+    let maxEnd=Math.max(...windowBookings.map(b=>b.startMin+b.durMin));
+    minStart=Math.floor(minStart/30)*30;
+    maxEnd=Math.ceil(maxEnd/30)*30;
+    const winStart=Math.max(minStart,locHours.open);
+    const winEnd=Math.min(maxEnd,locHours.close);
+    const leadMin=winStart-locHours.open;
+    const trailMin=locHours.close-winEnd;
+    // pick a default roving-tabindex block BEFORE building HTML so exactly one block renders tabindex=0
+    const stillValid=STATE.focusedBlockId && orderedShown.some(c=>windowBookings.some(b=>b.id===STATE.focusedBlockId && b.coach===c && b.status!=='BREAK' && b.status!=='UNAVAILABLE' && !isDimmed(b)));
+    if(!stillValid){
+      let defaultId=null;
+      for(const c of orderedShown){
+        const candidate=windowBookings.filter(b=>b.coach===c && b.status!=='BREAK' && b.status!=='UNAVAILABLE' && !isDimmed(b)).sort((a,b2)=>a.startMin-b2.startMin)[0];
+        if(candidate){ defaultId=candidate.id; break; }
       }
-      const b=coachBookings.find(x=>x.startSlot===row);
-      if(!b){ body+=`<td class="slot-cell"></td>`; return; }
-      skipUntil[coach]=row+b.dur;
-      let dim=false;
-      if(b.status!=='BREAK'&&b.status!=='UNAVAILABLE'){
-        if(svcFilter!=='All Services' && serviceCategory(b.service)!==svcFilter) dim=true;
-        if(lvlFilter!=='All Levels' && (b.level||'Unassigned')!==lvlFilter) dim=true;
-        if(statFilter!=='All Statuses' && STATUS_FILTER_MAP[statFilter]!==b.status) dim=true;
-      } else if(statFilter!=='All Statuses'){ dim=true; }
-      const h=b.dur*56;
-      const cls=STATUS_CLASS[b.status]||'b-confirmed';
-      const clickable=b.status!=='BREAK'&&b.status!=='UNAVAILABLE';
-      const handlers=clickable?`onclick="openDrawer('${b.id}')" onmouseenter="showTip(event,'${b.id}')" onmouseleave="hideTip()"`:'';
-      const c=blockContent(b);
-      body+=`<td class="slot-cell" rowspan="${b.dur}">
-        <div class="block ${cls}" style="top:3px;height:${h-6}px${dim?';opacity:0.3':''}" ${handlers}>
-          <div class="block-title">${c.l1}</div>
-          <div class="block-sub">${c.l2}</div>
-          ${c.l3?`<div class="${c.l3cls?'block-line3-mandated '+c.l3cls:'block-cap'}">${c.l3}</div>`:''}
-        </div>
-      </td>`;
-    });
-    body+='</tr>';
+      STATE.focusedBlockId=defaultId;
+    }
+    gridHtml=buildGridHtml(orderedShown,windowBookings,winStart,winEnd,leadMin,trailMin,locHours,dateBookingsAll,clustersByCoach);
   }
-  body+='</tbody>';
-  document.getElementById('calTable').innerHTML=hdr+body;
 
-  const meta=DATE_META[iso];
-  document.getElementById('dateLbl').textContent=meta?meta.short:fmtShort(STATE.curDate);
-  const dp=document.getElementById('datePicker'); if(dp) dp.value=iso;
-  document.getElementById('pageSub').textContent=`${meta?meta.label:fmtLong(STATE.curDate)} / ${locFilter}`;
+  scrollEl.innerHTML=gridHtml+overlayHtml;
+
+  // empty-resources bar
+  const barEl=document.getElementById('emptyResBar');
+  if(emptyCoaches.length>0){
+    const n=emptyCoaches.length;
+    barEl.innerHTML = STATE.showEmptyResources
+      ? `<button type="button" class="btn btn-out btn-sm" onclick="toggleEmptyResources()">− hide ${n} empty</button>`
+      : `<button type="button" class="btn btn-out btn-sm" onclick="toggleEmptyResources()">+ ${n} coach${n!==1?'es':''} with no booking${n!==1?'s':''}</button>`;
+    barEl.style.display='block';
+  } else { barEl.style.display='none'; barEl.innerHTML=''; }
+
+  // roving tabindex default
+  if(!isEmptyDay && !isFilteredEmpty){
+    if(!STATE.focusedBlockId || !NAV.order.some(c=>NAV.byCoach[c] && NAV.byCoach[c].includes(STATE.focusedBlockId))){
+      for(const c of NAV.order){ if(NAV.byCoach[c] && NAV.byCoach[c].length){ STATE.focusedBlockId=NAV.byCoach[c][0]; break; } }
+    }
+  }
+
+  if(STATE.pendingFocus && STATE.focusedBlockId){
+    const el=document.getElementById('blk_'+STATE.focusedBlockId);
+    if(el) el.focus();
+    STATE.pendingFocus=false;
+  }
+
+  // auto-scroll to now-line on first render of "today"
+  if(iso==='2026-09-03' && STATE.lastDateISO!=='2026-09-03'){
+    requestAnimationFrame(()=>{
+      const nowEl=scrollEl.querySelector('.now-line');
+      if(nowEl){
+        const top=parseFloat(nowEl.style.top||'0');
+        scrollEl.scrollTop=Math.max(0, top - scrollEl.clientHeight*0.25);
+      }
+    });
+  }
+  STATE.lastDateISO=iso;
 }
 
-// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+function renderChipRow(dateBookingsAll, candidateCoaches){
+  const f=STATE.filters;
+  const active=[];
+  if(f.location!=='All Locations') active.push(['location','Location',f.location]);
+  if(f.service!=='All Services') active.push(['service','Service',f.service]);
+  if(f.level!=='All Levels') active.push(['level','Level',f.level]);
+  if(f.status!=='All Statuses') active.push(['status','Status',f.status]);
+  if(f.staff!=='All Staff') active.push(['staff','Staff',f.staff]);
+  const container=document.getElementById('chipRow');
+  if(active.length===0){ container.style.display='none'; container.innerHTML=''; return; }
+  container.style.display='flex';
+  let x=0;
+  dateBookingsAll.forEach(b=>{
+    if(b.status==='BREAK'||b.status==='UNAVAILABLE') return;
+    if(!candidateCoaches.includes(b.coach)) return;
+    if(isDimmed(b)) return;
+    x++;
+  });
+  const y=dateBookingsAll.filter(b=>!['BREAK','UNAVAILABLE'].includes(b.status)).length;
+  let html=active.map(([key,label,val])=>`<span class="fchip">${label}: ${val} <button type="button" class="fchip-x" onclick="clearFilter('${key}')" aria-label="Clear ${label} filter">&times;</button></span>`).join('');
+  if(active.length>=2) html+=`<button type="button" class="clear-all-btn" onclick="clearAllFilters()">Clear all</button>`;
+  html+=`<span class="result-count">Showing ${x} of ${y} bookings</span>`;
+  container.innerHTML=html;
+}
+
+// ─── RENDER: GRID ───────────────────────────────────────────────────────────
+function gutterLabelsHtml(winStart,winEnd,density){
+  let html='';
+  for(let t=winStart;t<=winEnd;t+=30){
+    if(STATE.density==='compact' && (t%60!==0)) continue;
+    const top=(t-winStart)*density;
+    html+=`<div class="time-label" style="top:${top}px">${fmtTime(t)}</div>`;
+  }
+  return html;
+}
+function renderCoachHeaderHtml(coach,col,dateBookingsAll,conflictCount){
+  const stats=computeCoachStats(coach,dateBookingsAll);
+  return `<div class="coach-header" style="grid-row:1;grid-column:${col}" role="columnheader">
+    <div class="coach-nm">${coach}</div>
+    <div class="coach-util">${stats.bookedCount}b · ${stats.openSlots}o · ${stats.pct}%</div>
+    ${conflictCount>0?`<span class="chip c-danger" style="width:fit-content;height:18px;font-size:.62rem">${conflictCount} conflict${conflictCount>1?'s':''}</span>`:''}
+  </div>`;
+}
+function blockHtml(b,top,height,widthCss,leftCss,isConflict){
+  const dim=isDimmed(b);
+  const cls=STATUS_CLASS[b.status]||'b-confirmed';
+  const prefix=isConflict?'⚠ ':'';
+  const c=blockContent(b);
+  if(b.status==='BREAK'||b.status==='UNAVAILABLE'){
+    return `<div class="block ${cls}${dim?' dimmed':''}${isConflict?' conflict':''}" style="top:${top}px;height:${height}px;left:${leftCss};width:${widthCss}" aria-hidden="true">
+      <div class="block-title">${prefix}${c.l1}</div>
+      ${height>=40?`<div class="block-sub">${c.l2}</div>`:''}
+    </div>`;
+  }
+  let body;
+  if(height<40) body=`<div class="block-title">${prefix}${c.l1}${c.l2?' · '+c.l2:''}</div>`;
+  else if(height<60) body=`<div class="block-title">${prefix}${c.l1}</div><div class="block-sub">${c.l2}</div>`;
+  else body=`<div class="block-title">${prefix}${c.l1}</div><div class="block-sub">${c.l2}</div>${c.l3?`<div class="${c.l3cls?'block-line3-mandated '+c.l3cls:'block-cap'}">${c.l3}</div>`:''}`;
+  const tabIdx=dim?-1:(STATE.focusedBlockId===b.id?0:-1);
+  return `<button type="button" class="block ${cls}${dim?' dimmed':''}${isConflict?' conflict':''}" id="blk_${b.id}" role="gridcell"
+    style="top:${top}px;height:${height}px;left:${leftCss};width:${widthCss}"
+    tabindex="${tabIdx}" aria-hidden="${dim?'true':'false'}" draggable="true"
+    ondragstart="handleDragStart(event,'${b.id}')"
+    onclick="onBlockClick(event,'${b.id}')"
+    onkeydown="handleBlockKey(event,'${b.id}')"
+    onmouseenter="showTip(event,'${b.id}')" onmouseleave="hideTip()" onfocus="showTip(event,'${b.id}')" onblur="hideTip()"
+    aria-label="${ariaLabelFor(b).replace(/"/g,'&quot;')}">${body}</button>`;
+}
+function renderCoachLaneHtml(coach,windowBookings,winStart,density,clusters){
+  const blocks=windowBookings.filter(b=>b.coach===coach);
+  const meta={};
+  clusters.forEach(cl=>cl.forEach((b,idx)=>{meta[b.id]={size:cl.length,idx};}));
+  let html='';
+  blocks.forEach(b=>{
+    const top=(b.startMin-winStart)*density;
+    const height=Math.max(20,b.durMin*density);
+    const m=meta[b.id]||{size:1,idx:0};
+    const isConflict=m.size>=2;
+    const widthCss=m.size>1?`calc((100% - 6px)/${m.size})`:'calc(100% - 6px)';
+    const leftCss=m.size>1?`calc(${m.idx} * (100%/${m.size}))`:'3px';
+    html+=blockHtml(b,top,height,widthCss,leftCss,isConflict);
+  });
+  return html;
+}
+function buildGridHtml(orderedShown,windowBookings,winStart,winEnd,leadMin,trailMin,locHours,dateBookingsAll,clustersByCoach){
+  const density=STATE.density==='compact'?32/30:56/30;
+  const leadCollapsed=leadMin>0 && !STATE.expandedEdges.lead;
+  const trailCollapsed=trailMin>0 && !STATE.expandedEdges.trail;
+  const leadSegHeight=leadMin<=0?0:(leadCollapsed?24:leadMin*density);
+  const trailSegHeight=trailMin<=0?0:(trailCollapsed?24:trailMin*density);
+  const contentHeight=(winEnd-winStart)*density;
+  GEOM.pxPerMin=density; GEOM.winStart=winStart; GEOM.winEnd=winEnd;
+
+  const N=Math.max(orderedShown.length,1);
+  let html=`<div class="cal-grid" style="grid-template-columns:72px repeat(${N}, minmax(140px,1fr))">`;
+  html+=`<div class="corner-cell" style="grid-column:1;grid-row:1"></div>`;
+  orderedShown.forEach((c,i)=>{
+    const conflictCount=(clustersByCoach[c]||[]).filter(cl=>cl.length>=2).length;
+    html+=renderCoachHeaderHtml(c,i+2,dateBookingsAll,conflictCount);
+  });
+
+  let rowCursor=2;
+  if(leadMin>0){
+    const label=leadCollapsed?`▲ ${fmtTime(locHours.open)} – ${fmtTime(winStart)} · no bookings · click to expand`:`▼ collapse`;
+    html+=`<button type="button" class="edge-strip" style="grid-row:${rowCursor};grid-column:1/-1;height:${leadSegHeight}px" onclick="toggleEdge('lead')">${label}</button>`;
+    rowCursor++;
+  }
+  const contentRow=rowCursor; rowCursor++;
+  html+=`<div class="time-gutter" style="grid-row:${contentRow};grid-column:1;height:${contentHeight}px">${gutterLabelsHtml(winStart,winEnd,density)}</div>`;
+
+  NAV.order=orderedShown.slice();
+  NAV.byCoach={};
+  orderedShown.forEach((c,i)=>{
+    const col=i+2;
+    const bg=`repeating-linear-gradient(to bottom,transparent 0,transparent calc(${density*30}px - 1px),#f1f5f9 calc(${density*30}px - 1px),#f1f5f9 ${density*30}px)`;
+    html+=`<div class="coach-lane" style="grid-row:${contentRow};grid-column:${col};height:${contentHeight}px;background-image:${bg}" ondragover="handleDragOver(event,'${c.replace(/'/g,"\\'")}')" ondrop="handleDrop(event,'${c.replace(/'/g,"\\'")}')">`
+      +renderCoachLaneHtml(c,windowBookings,winStart,density,clustersByCoach[c]||[])
+      +`</div>`;
+    NAV.byCoach[c]=windowBookings.filter(b=>b.coach===c && b.status!=='BREAK' && b.status!=='UNAVAILABLE' && !isDimmed(b)).sort((a,b2)=>a.startMin-b2.startMin).map(b=>b.id);
+  });
+
+  if(curISO()==='2026-09-03' && FIXED_NOW_MIN>=winStart && FIXED_NOW_MIN<=winEnd){
+    const nowTop=(FIXED_NOW_MIN-winStart)*density;
+    html+=`<div class="now-line-wrap" style="grid-row:${contentRow};grid-column:2/-1;height:${contentHeight}px"><div class="now-line" style="top:${nowTop}px"><div class="now-dot"></div><div class="now-label">10:00</div></div></div>`;
+  }
+  if(trailMin>0){
+    const label=trailCollapsed?`▼ ${fmtTime(winEnd)} – ${fmtTime(locHours.close)} · no bookings · click to expand`:`▲ collapse`;
+    html+=`<button type="button" class="edge-strip" style="grid-row:${rowCursor};grid-column:1/-1;height:${trailSegHeight}px" onclick="toggleEdge('trail')">${label}</button>`;
+  }
+  html+='</div>';
+  return html;
+}
+
+// ─── FILTERS / DENSITY / NAV ────────────────────────────────────────────────
+function setFilter(key,val){ STATE.filters[key]=val; render(); }
+function clearFilter(key){ const d={location:'All Locations',service:'All Services',level:'All Levels',status:'All Statuses',staff:'All Staff'}; STATE.filters[key]=d[key]; syncFilterSelects(); render(); }
+function clearAllFilters(){ STATE.filters={location:'All Locations',service:'All Services',level:'All Levels',status:'All Statuses',staff:'All Staff'}; syncFilterSelects(); render(); }
+function syncFilterSelects(){ document.getElementById('fLoc').value=STATE.filters.location; document.getElementById('fSvc').value=STATE.filters.service; document.getElementById('fLvl').value=STATE.filters.level; document.getElementById('fStat').value=STATE.filters.status; document.getElementById('fStaff').value=STATE.filters.staff; }
+function setDensity(d){ STATE.density=d; render(); }
+function toggleEdge(which){ STATE.expandedEdges[which]=!STATE.expandedEdges[which]; render(); }
+function toggleEmptyResources(){ STATE.showEmptyResources=!STATE.showEmptyResources; render(); }
+function toggleConflictsOnly(){ STATE.conflictsOnly=!STATE.conflictsOnly; render(); }
 function navDay(d){ closeDrawer(); STATE.curDate.setDate(STATE.curDate.getDate()+d); render(); }
 function goToday(){ closeDrawer(); STATE.curDate=new Date(2026,8,3); render(); }
 function onDatePicker(v){ if(!v) return; closeDrawer(); const [y,m,d]=v.split('-').map(Number); STATE.curDate=new Date(y,m-1,d); render(); }
 function setRole(v){ STATE.role=v; render(); if(STATE.drawerId) refreshDrawer(); }
 
-// ─── FILTERS ──────────────────────────────────────────────────────────────────
-function applyFilters(){render();}
+// ─── KEYBOARD (roving tabindex, arrow traversal) ────────────────────────────
+function focusBlock(id){ STATE.focusedBlockId=id; STATE.pendingFocus=true; render(); }
+function handleBlockKey(e,id){
+  const key=e.key;
+  if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End'].includes(key)) return;
+  e.preventDefault();
+  const b=findBooking(id); if(!b) return;
+  const coach=b.coach;
+  const list=NAV.byCoach[coach]||[];
+  const idx=list.indexOf(id);
+  if(idx===-1) return;
+  if(key==='ArrowDown'){ if(idx<list.length-1) focusBlock(list[idx+1]); return; }
+  if(key==='ArrowUp'){ if(idx>0) focusBlock(list[idx-1]); return; }
+  if(key==='Home'){ focusBlock(list[0]); return; }
+  if(key==='End'){ focusBlock(list[list.length-1]); return; }
+  if(key==='ArrowLeft'||key==='ArrowRight'){
+    const ci=NAV.order.indexOf(coach);
+    const step=key==='ArrowRight'?1:-1;
+    let ni=ci+step;
+    while(ni>=0 && ni<NAV.order.length){
+      const targetCoach=NAV.order[ni];
+      const tlist=NAV.byCoach[targetCoach]||[];
+      if(tlist.length>0){
+        let best=tlist[0], bestDiff=Infinity;
+        tlist.forEach(tid=>{ const tb=findBooking(tid); const diff=Math.abs(tb.startMin-b.startMin); if(diff<bestDiff){bestDiff=diff;best=tid;} });
+        focusBlock(best);
+        return;
+      }
+      ni+=step;
+    }
+  }
+}
+function onBlockClick(e,id){
+  const b=findBooking(id); if(!b) return;
+  if(isDimmed(b)) return;
+  STATE.focusedBlockId=id;
+  openDrawer(id);
+}
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const drw=document.getElementById('drawer');
+    if(drw.classList.contains('open')){
+      const returnId=STATE.lastOpenerId;
+      closeDrawer();
+      if(returnId) focusBlock(returnId);
+    }
+  }
+});
 
-// ─── DRAWER ───────────────────────────────────────────────────────────────────
+// ─── DRAG TO RESCHEDULE ─────────────────────────────────────────────────────
+function findConflictAt(coach,start,dur,excludeId){
+  const iso=curISO();
+  const blocks=ALL_BOOKINGS.filter(b=>b.dateISO===iso && b.coach===coach && b.id!==excludeId);
+  return blocks.find(b=> start<b.startMin+b.durMin && start+dur>b.startMin) || null;
+}
+function handleDragStart(e,id){
+  const b=findBooking(id);
+  if(!b || !DRAGGABLE_STATUSES.includes(b.status)){
+    e.preventDefault();
+    toast('Past or resolved bookings cannot be moved.');
+    return false;
+  }
+  STATE.drag={id:id,durMin:b.durMin,targetCoach:b.coach,targetStart:b.startMin};
+  e.dataTransfer.setData('text/plain',id);
+  e.dataTransfer.effectAllowed='move';
+  return true;
+}
+function handleDragOver(e,coach){
+  if(!STATE.drag) return;
+  e.preventDefault();
+  const laneEl=e.currentTarget;
+  const rect=laneEl.getBoundingClientRect();
+  const density=GEOM.pxPerMin;
+  const y=e.clientY-rect.top;
+  let snappedStart=GEOM.winStart+Math.round((y/density)/30)*30;
+  snappedStart=Math.max(GEOM.winStart, Math.min(snappedStart, GEOM.winEnd-STATE.drag.durMin));
+  STATE.drag.targetCoach=coach; STATE.drag.targetStart=snappedStart;
+  const ghost=document.getElementById('dragGhost');
+  ghost.style.display='block';
+  ghost.style.left=rect.left+'px';
+  ghost.style.width=rect.width+'px';
+  ghost.style.top=(rect.top+(snappedStart-GEOM.winStart)*density)+'px';
+  ghost.style.height=(STATE.drag.durMin*density)+'px';
+}
+function handleDrop(e,coach){
+  e.preventDefault();
+  document.getElementById('dragGhost').style.display='none';
+  if(!STATE.drag) return;
+  const drag=STATE.drag;
+  const b=findBooking(drag.id);
+  const targetCoach=drag.targetCoach||coach;
+  const targetStart=drag.targetStart!=null?drag.targetStart:b.startMin;
+  STATE.drag=null;
+  if(targetCoach===b.coach && targetStart===b.startMin) return;
+  const conflictWith=findConflictAt(targetCoach,targetStart,b.durMin,b.id);
+  STATE.pendingMove={id:b.id,fromCoach:b.coach,fromStart:b.startMin,toCoach:targetCoach,toStart:targetStart,conflictWith:conflictWith?conflictWith.id:null};
+  openDrawer(b.id);
+  STATE.panel='drag-confirm';
+  refreshDrawer();
+}
+document.addEventListener('dragend', function(){
+  STATE.drag=null;
+  const ghost=document.getElementById('dragGhost');
+  if(ghost) ghost.style.display='none';
+});
+function confirmMove(){
+  const mv=STATE.pendingMove; if(!mv) return;
+  const b=findBooking(mv.id);
+  b.coach=mv.toCoach; b.startMin=mv.toStart;
+  STATE.pendingMove=null; STATE.panel=null;
+  reRenderAll();
+}
+function keepAsIsMove(){ STATE.pendingMove=null; STATE.panel=null; refreshDrawer(); }
+function renderDragConfirmPanel(){
+  const mv=STATE.pendingMove; if(!mv) return '';
+  const b=findBooking(mv.id);
+  const subject=b.isGroup?`Group (${getFilled(b)} participants)`:b.client;
+  let conflictLine='';
+  if(mv.conflictWith){
+    const cb=findBooking(mv.conflictWith);
+    const csubj=cb.isGroup?`Group (${getFilled(cb)} participants)`:(cb.client||cb.service);
+    conflictLine=`<p style="margin-top:8px;font-weight:600;color:var(--danger)">This creates a conflict with ${csubj} ${fmtTime(cb.startMin)}–${fmtTime(cb.startMin+cb.durMin)}.</p>`;
+  }
+  return `<div class="panel-amber"><h4>MOVE BOOKING?</h4>
+    <p>Move ${subject} from ${mv.fromCoach} ${fmtTime(mv.fromStart)} to ${mv.toCoach} ${fmtTime(mv.toStart)}?</p>
+    ${conflictLine}
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn btn-out btn-sm" onclick="keepAsIsMove()">Keep as is</button>
+      <button class="btn btn-blue btn-sm" onclick="confirmMove()">Confirm move</button>
+    </div></div>`;
+}
+
+// ─── TOOLTIP (edge-aware) ───────────────────────────────────────────────────
+function showTip(e,id){
+  const b=findBooking(id); if(!b) return;
+  const t=document.getElementById('tooltip');
+  const subject=b.isGroup?`Group (${getFilled(b)} participants)`:b.client;
+  t.innerHTML=`<strong>${subject}</strong><br>${b.service}<br>Level: ${b.level||'Unassigned'}<br>Instructor: ${b.coach}<br>${fmtTime(b.startMin)} – ${fmtTime(b.startMin+b.durMin)}<br>Location: Solar Swim — ${COACH_LOCATION[b.coach]||'Main'}<br>${PLAIN_LINE[b.status]||''}<br>Funding: ${b.funding||'—'}`;
+  t.classList.remove('tt-hidden');
+  const trigger=e.currentTarget.getBoundingClientRect();
+  const tw=220,pad8=8;
+  const th=t.offsetHeight;
+  const vw=window.innerWidth, vh=window.innerHeight;
+  let placement,top,left;
+  if(trigger.bottom+8+th<=vh-pad8){ placement='below'; top=trigger.bottom+8; left=trigger.left; }
+  else if(trigger.top-8-th>=pad8){ placement='above'; top=trigger.top-8-th; left=trigger.left; }
+  else if(trigger.right+8+tw<=vw-pad8){ placement='right'; top=trigger.top; left=trigger.right+8; }
+  else if(trigger.left-8-tw>=pad8){ placement='left'; top=trigger.top; left=trigger.left-8-tw; }
+  else { placement='below'; top=trigger.bottom+8; left=trigger.left; }
+  left=Math.max(pad8,Math.min(left,vw-tw-pad8));
+  top=Math.max(pad8,Math.min(top,vh-th-pad8));
+  t.style.left=left+'px'; t.style.top=top+'px';
+  t.className='tooltip side-'+placement;
+}
+function hideTip(){ document.getElementById('tooltip').classList.add('tt-hidden'); }
+
+// ─── TOAST ──────────────────────────────────────────────────────────────────
+let toastT;
+function toast(m){
+  let el=document.getElementById('toast_el');
+  if(!el){el=document.createElement('div');el.id='toast_el';el.style.cssText='position:fixed;bottom:24px;right:24px;background:#1e293b;color:#f8fafc;padding:10px 16px;border-radius:8px;font-size:.82rem;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:300;transition:opacity 220ms;max-width:280px';document.body.appendChild(el);}
+  el.textContent=m;el.style.opacity='1';
+  clearTimeout(toastT);toastT=setTimeout(()=>{el.style.opacity='0';},2500);
+}
+
+// ─── DRAWER ─────────────────────────────────────────────────────────────────
 function openDrawer(id){
   const b=findBooking(id);
   if(!b || b.status==='BREAK' || b.status==='UNAVAILABLE') return;
-  STATE.drawerId=id; STATE.panel=null; STATE.paxSearchOpen=null; STATE.skipFormKey=null;
+  const wasOpen=STATE.drawerId===id;
+  STATE.drawerId=id; STATE.lastOpenerId=id;
+  if(!wasOpen && STATE.panel!=='drag-confirm'){ STATE.panel=null; }
+  STATE.paxSearchOpen=null; STATE.skipFormKey=null;
   STATE.grantForm=null; STATE.fundingForm=null; STATE.reschedForm=null; STATE.waitlistMsg=null;
   refreshDrawer();
   document.getElementById('drawer').classList.add('open');
 }
-function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); STATE.drawerId=null; }
+function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); STATE.drawerId=null; STATE.panel=null; STATE.pendingMove=null; }
 function reRenderAll(){ render(); if(STATE.drawerId) refreshDrawer(); }
-
 function refreshDrawer(){
   const b=findBooking(STATE.drawerId);
   if(!b) return;
@@ -497,17 +921,13 @@ function refreshDrawer(){
   renderDrawerBody(b);
   renderDrawerFooter(b);
 }
-
-const CHIP_META={CONFIRMED:['Confirmed','c-info'],PENDING_PARTNER:['Pending Partner','c-purple'],WAITLISTED:['Waitlisted','c-info'],AUTHORIZATION_HOLD:['Authorization Hold','c-warn'],PAYMENT_HOLD:['Payment Hold','c-danger'],CANCELLED_EARLY:['Cancelled — Early','c-ok'],CANCELLED_LATE:['Cancelled — Late','c-danger'],NO_SHOW:['No-Show','c-danger'],COMPLETED:['Completed','c-muted'],TENTATIVE:['Tentative','c-warn']};
-
 function renderDrawerHeader(b){
   document.getElementById('drwNm').textContent = b.isGroup ? `${b.service} — Group (${getFilled(b)} participants)` : `${b.client} — ${b.service}`;
-  document.getElementById('drwDt').textContent = `${DATE_META[b.dateISO]?DATE_META[b.dateISO].label:fmtLong(parseISO(b.dateISO))} · ${TIMES_RANGE_FIXED[b.startSlot]} – ${TIMES_RANGE_FIXED[b.startSlot+b.dur]}`;
+  document.getElementById('drwDt').textContent = `${DATE_META[b.dateISO]?DATE_META[b.dateISO].label:fmtLong(parseISO(b.dateISO))} · ${fmtTime(b.startMin)} – ${fmtTime(b.startMin+b.durMin)}`;
   const sc=document.getElementById('drwStatus');
   const m=CHIP_META[b.status]||['—','c-muted'];
   sc.textContent=m[0]; sc.className='chip '+m[1];
 }
-
 function violationBannerHtml(client){
   if(!client) return '';
   const count=CLIENT_VIOLATIONS[client]||0;
@@ -522,9 +942,8 @@ function violationBannerHtml(client){
   </div>`;
 }
 function resolveViolation(client,action){ if(STATE.role!=='manager') return; STATE.violationResolutions[client]={action,manager:MANAGER_NAME,when:nowStamp()}; refreshDrawer(); }
-
 function renderInfoGrid(b){
-  const dt=`${DATE_META[b.dateISO]?DATE_META[b.dateISO].label:fmtLong(parseISO(b.dateISO))} · ${TIMES_RANGE_FIXED[b.startSlot]} – ${TIMES_RANGE_FIXED[b.startSlot+b.dur]}`;
+  const dt=`${DATE_META[b.dateISO]?DATE_META[b.dateISO].label:fmtLong(parseISO(b.dateISO))} · ${fmtTime(b.startMin)} – ${fmtTime(b.startMin+b.durMin)}`;
   const statusLine=PLAIN_LINE[b.status]||'';
   const statusCode=b.status==='TENTATIVE'?'Tentative (authorization pending)':b.status;
   const rows=[
@@ -540,13 +959,10 @@ function renderInfoGrid(b){
   ];
   return `<div class="det-grid">${rows.map(([l,v,cls])=>`<div class="det-row"><div class="det-l">${l}</div><div class="det-r${cls?' '+cls:''}">${v}</div></div>`).join('')}</div>`;
 }
-
 function tentativeNoteHtml(b){
   if(b.status!=='TENTATIVE') return '';
   return `<div class="tent-notice"><strong>Nothing reserved yet</strong>This slot is shown based on ${b.client}'s recurring subscription. It will be confirmed once Regional Center authorization is received. No record exists for this occurrence — it is recomputed every time this date is rendered (§2.3).</div>`;
 }
-
-// -- Cancellation / make-up panels (7.6, 7.7) --
 function renderCancelPanel(b){
   const {isEarly,noticeLabel}=cancelCalc(b);
   if(isEarly){
@@ -604,7 +1020,8 @@ function grantMakeupBlockHtml(b){
   return `<button class="btn btn-out btn-sm" style="margin-top:8px;border-color:#fde68a;color:#b45309" onclick="STATE.grantForm='${b.id}';refreshDrawer()">Grant Make-Up Anyway</button>`;
 }
 function grantMakeupAnyway(id){
-  const reason=document.getElementById('grantReason')?.value.trim();
+  const reasonEl=document.getElementById('grantReason');
+  const reason=reasonEl?reasonEl.value.trim():'';
   if(!reason) return;
   const b=findBooking(id);
   b.manualMakeup={reason,manager:MANAGER_NAME,when:nowStamp()};
@@ -612,8 +1029,6 @@ function grantMakeupAnyway(id){
   STATE.grantForm=null;
   reRenderAll();
 }
-
-// -- Funding override (7.8) --
 function openFundingPanel(id){ STATE.panel='funding'; STATE.fundingForm={appliesTo:'this',funding:'',duration:'UNTIL_NEW_AUTHORIZATION',extra:'',reason:''}; refreshDrawer(); }
 function captureFundingFields(){ const f=STATE.fundingForm; if(!f) return; const fund=document.getElementById('fovFunding'); if(fund) f.funding=fund.value; const extra=document.getElementById('fovExtra'); if(extra) f.extra=extra.value; const reason=document.getElementById('fovReason'); if(reason) f.reason=reason.value; }
 function fundingDurationChange(v){ captureFundingFields(); STATE.fundingForm.duration=v; STATE.fundingForm.extra=''; refreshDrawer(); }
@@ -664,14 +1079,15 @@ function applyFundingOverride(id){
   STATE.panel=null; STATE.fundingForm=null;
   reRenderAll();
 }
-
-// -- Reschedule (7.9) --
-function openReschedule(id){ STATE.panel='reschedule'; const b=findBooking(id); STATE.reschedForm={date:b.dateISO,time:TIMES_RANGE_FIXED[b.startSlot]}; refreshDrawer(); }
+function openReschedule(id){ STATE.panel='reschedule'; const b=findBooking(id); STATE.reschedForm={date:b.dateISO,startMin:b.startMin}; refreshDrawer(); }
 function renderReschedulePanel(b){
   const f=STATE.reschedForm;
+  const uh=unionLocationHours();
+  let opts='';
+  for(let t=uh.open;t<=uh.close;t+=30){ opts+=`<option value="${t}" ${t===f.startMin?'selected':''}>${fmtTime(t)}</option>`; }
   return `<div class="panel-amber"><h4>RESCHEDULE</h4>
     <div class="field-lbl">Date</div><input type="date" class="s-input" id="reschedDate" value="${f.date}">
-    <div class="field-lbl">Time</div><select class="s-input" id="reschedTime">${TIMES_RANGE_FIXED.slice(0,28).map(t=>`<option ${t===f.time?'selected':''}>${t}</option>`).join('')}</select>
+    <div class="field-lbl">Time</div><select class="s-input" id="reschedTime">${opts}</select>
     <div style="display:flex;gap:8px;margin-top:10px">
       <button class="btn btn-out btn-sm" onclick="STATE.panel=null;refreshDrawer()">Cancel</button>
       <button class="btn btn-blue btn-sm" onclick="submitReschedule('${b.id}')">Save</button>
@@ -680,15 +1096,12 @@ function renderReschedulePanel(b){
 function submitReschedule(id){
   const b=findBooking(id);
   const date=document.getElementById('reschedDate').value;
-  const time=document.getElementById('reschedTime').value;
-  const slot=TIMES_RANGE_FIXED.indexOf(time);
+  const startMin=parseInt(document.getElementById('reschedTime').value,10);
   if(date) b.dateISO=date;
-  if(slot>=0) b.startSlot=slot;
+  if(!isNaN(startMin)) b.startMin=startMin;
   STATE.panel=null;
   reRenderAll();
 }
-
-// -- Participants (7.4) --
 function renderParticipantRow(b,p,idx){
   const fundChip=fundingChip(p.funding);
   let attChip, controls;
@@ -703,14 +1116,13 @@ function renderParticipantRow(b,p,idx){
     attChip=`<span class="chip c-muted">Not Marked</span>`;
     controls=`<button class="btn btn-out btn-sm" onclick="markAttendance('${b.id}',${idx},'ATTENDED')">Check In</button><button class="btn btn-out btn-sm" style="color:var(--danger);border-color:#fca5a5" onclick="markAttendance('${b.id}',${idx},'NO_SHOW')">No-Show</button>`;
   }
-  return `<div class="px-row" style="flex-wrap:wrap"><div class="px-av">${initials(p.name)}</div><div class="px-nm">${p.name}</div>${fundChip}${attChip}<div style="display:flex;gap:5px;width:100%;justify-content:flex-end;margin-top:4px">${controls}</div></div>`;
+  return `<div class="px-row"><div class="px-av">${initials(p.name)}</div><div class="px-nm">${p.name}</div>${fundChip}${attChip}<div style="display:flex;gap:5px;width:100%;justify-content:flex-end;margin-top:4px">${controls}</div></div>`;
 }
 function markAttendance(id,idx,state){ const b=findBooking(id); ensureParticipants(b); const p=b.participants[idx]; if(!p||p.attendance!=='NOT_MARKED') return; p.attendance=state; reRenderAll(); }
 function checkInAll(id){ const b=findBooking(id); ensureParticipants(b); b.participants.forEach(p=>{ if(p.attendance==='NOT_MARKED') p.attendance='ATTENDED'; }); reRenderAll(); }
 function allMarked(b){ ensureParticipants(b); return b.participants.length>0 && b.participants.every(p=>p.attendance!=='NOT_MARKED'); }
 function checkInSingle(id){ markAttendance(id,0,'ATTENDED'); }
 function singleResolved(b){ ensureParticipants(b); return !b.participants[0] || b.participants[0].attendance!=='NOT_MARKED'; }
-
 function renderParticipants(b){
   ensureParticipants(b);
   let html=`<div class="px-section"><div class="sec-lbl">Participants${b.requiredParticipants?` (${getFilled(b)} / ${b.requiredParticipants})`:''}</div>`;
@@ -736,8 +1148,6 @@ function paxSearch(id,q){
   el.innerHTML=res.map(n=>`<div class="px-res" onclick="addPax('${b.id}','${n}')"><span>${n}</span><span class="chip c-ok">Eligible</span></div>`).join('')||`<div style="padding:8px 11px;font-size:.78rem;color:var(--text-secondary)">No results</div>`;
 }
 function addPax(id,name){ const b=findBooking(id); ensureParticipants(b); b.participants.push({name,funding:'Self Pay',attendance:'NOT_MARKED'}); STATE.paxSearchOpen=null; reRenderAll(); }
-
-// -- Waitlist (7.5) --
 function renderWaitlistPanel(b){
   let html=`<div class="wl-section"><div class="sec-lbl">Waitlist</div>`;
   if(b.seatOpen){
@@ -756,7 +1166,7 @@ function renderWaitlistRow(b,w,idx){
   const key=`${b.id}:${idx}`;
   const canAct=STATE.role==='manager' && !!b.seatOpen;
   const elig=w.eligible?`<span class="chip c-ok">Eligible</span>`:`<span class="chip c-danger">Not Eligible — ${w.reason}</span>`;
-  let row=`<div class="wl-row" style="flex-wrap:wrap"><div class="wl-pos">${w.pos}</div><div class="wl-nm">${w.name}</div>${fundingChip(w.funding)}${elig}`;
+  let row=`<div class="wl-row"><div class="wl-pos">${w.pos}</div><div class="wl-nm">${w.name}</div>${fundingChip(w.funding)}${elig}`;
   if(STATE.role==='manager'){
     row+=`<div style="display:flex;gap:6px;width:100%;justify-content:flex-end;margin-top:4px">
       <button class="btn btn-out btn-sm" ${canAct?'':'disabled'} onclick="promoteWaitlist('${b.id}',${idx})">Promote</button>
@@ -790,13 +1200,13 @@ function promoteWaitlist(bid,idx){
   if(b.waitlist.length===0 && getFilled(b)>=b.cap) b.status='CONFIRMED';
   reRenderAll();
 }
-
 function renderDrawerBody(b){
   let html='';
   html+=violationBannerHtml(b.client);
   html+=renderInfoGrid(b);
   html+=tentativeNoteHtml(b);
-  if(STATE.panel==='cancel') html+=renderCancelPanel(b);
+  if(STATE.panel==='drag-confirm') html+=renderDragConfirmPanel();
+  else if(STATE.panel==='cancel') html+=renderCancelPanel(b);
   else if(STATE.panel==='makeup') html+=renderMakeupPanel(b);
   else if(STATE.panel==='late-summary') html+=renderLateSummary(b);
   else if(STATE.panel==='funding') html+=renderFundingPanel(b);
@@ -810,7 +1220,6 @@ function renderDrawerBody(b){
   document.getElementById('drwBody').innerHTML=html;
   if(STATE.paxSearchOpen===b.id) document.getElementById('drwPxSrch')?.focus();
 }
-
 function renderDrawerFooter(b){
   const foot=document.getElementById('drwFoot');
   if(b.status==='BREAK'||b.status==='UNAVAILABLE'){ foot.innerHTML=`<span class="body2-note">${b.status==='BREAK'?'Break':'Unavailable'} blocks have no actions.</span>`; return; }
@@ -837,31 +1246,8 @@ function renderDrawerFooter(b){
   foot.innerHTML=btns;
 }
 
-// -- TOOLTIP --
-function showTip(e,id){
-  const b=findBooking(id); if(!b) return;
-  const t=document.getElementById('tooltip');
-  const clientLabel=b.isGroup?`Group (${getFilled(b)} participants)`:b.client;
-  t.innerHTML=`<strong>${clientLabel}</strong><br>${b.service}<br>Level: ${b.level||'Unassigned'}<br>Instructor: ${b.coach}<br>${TIMES_RANGE_FIXED[b.startSlot]} – ${TIMES_RANGE_FIXED[b.startSlot+b.dur]}<br>Location: Solar Swim — ${COACH_LOCATION[b.coach]||'Main'}<br>${b.status}: ${PLAIN_LINE[b.status]||''}<br>Funding: ${b.funding||'—'}`;
-  t.classList.remove('tt-hidden');
-  const rect=e.currentTarget.getBoundingClientRect();
-  t.style.left=Math.min(rect.left,window.innerWidth-240)+'px';
-  t.style.top=(rect.top-t.offsetHeight-10)+'px';
-}
-function hideTip(){document.getElementById('tooltip').classList.add('tt-hidden');}
-
-// ─── TOAST ────────────────────────────────────────────────────────────────────
-let toastT;
-function toast(m){
-  let el=document.getElementById('toast_el');
-  if(!el){el=document.createElement('div');el.id='toast_el';el.style.cssText='position:fixed;bottom:24px;right:24px;background:#1e293b;color:#f8fafc;padding:10px 16px;border-radius:8px;font-size:.82rem;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:300;transition:opacity 220ms;max-width:280px';document.body.appendChild(el);}
-  el.textContent=m;el.style.opacity='1';
-  clearTimeout(toastT);toastT=setTimeout(()=>{el.style.opacity='0';},2500);
-}
-
-// ─── INIT ─────────────────────────────────────────────────────────────────────
+// ─── INIT ───────────────────────────────────────────────────────────────────
 render();
 </script>
 </body>
 </html>
-
